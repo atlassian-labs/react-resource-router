@@ -1,0 +1,10 @@
+node_modules
+build
+coverage
+yarn.lock   
+
+# misc
+local-scripts/
+.idea
+.vscode
+src/webpack/__tests__/__fixtures__/webpack/output

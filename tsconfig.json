@@ -1,0 +1,20 @@
+{
+  "compilerOptions": {
+    "target": "esnext",
+    "module": "esnext",
+    "declaration": true,
+    "outDir": "lib",
+    "esModuleInterop": true,
+    "moduleResolution": "node",
+    "strict": true,
+    "preserveConstEnums": true,
+    "jsx": "preserve",
+    "typeRoots": ["./node_modules/@types", "types"],
+    "baseUrl": ".",
+    "paths": {
+      "react-loosely-lazy": ["src"],
+      "react-loosely-lazy/babel-plugin": ["src/babel"]
+    }
+  },
+  "include": ["src/**/*", "examples/**/*"]
+}
