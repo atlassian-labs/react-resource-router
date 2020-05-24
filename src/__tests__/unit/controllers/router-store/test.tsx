@@ -539,7 +539,7 @@ describe('SPA Router store', () => {
       ]);
     });
 
-    it.only('should always get new data when doing full route changes and resources have expired', async () => {
+    it('should always get new data when doing full route changes and resources have expired', async () => {
       const ComponentA = () => (
         <ResourceSubscriber resource={resourceA}>
           {({ data, loading }) => {
@@ -593,8 +593,6 @@ describe('SPA Router store', () => {
         },
       ];
 
-      console.log('1', componentRenderStates);
-
       jest.spyOn(global.Date, 'now').mockReturnValue(100);
 
       // We start at route fooA
@@ -603,8 +601,6 @@ describe('SPA Router store', () => {
         routes[0].path
       );
       const { data: dataA1 } = getResourceStoreStateData().TYPE_A.KEY_A;
-
-      console.log('2 ', componentRenderStates);
 
       jest.spyOn(global.Date, 'now').mockReturnValue(150);
 
@@ -618,6 +614,9 @@ describe('SPA Router store', () => {
       expect(dataA1 === dataA2).toBeFalsy();
       expect(componentRenderStates).toEqual([
         'loading:A',
+        `data:${dataA1}`,
+        // this duplicate render state required in this test as of react-sweet-state@2.2.0
+        // @see https://github.com/atlassian/react-sweet-state/issues/81
         `data:${dataA1}`,
         'loading:B',
         `data:${dataA2}`,

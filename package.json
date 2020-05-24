@@ -16,6 +16,24 @@
   },
   "license": "Apache-2.0",
   "author": "Atlassian Pty Ltd",
+  "contributors": [
+    {
+      "name": "Jack Brown",
+      "email": "jbrown2@atlassian.com"
+    },
+    {
+      "name": "Rohan Deshpande",
+      "email": "rohan@creativelifeform.com"
+    },
+    {
+      "name": "Alberto Gasparin",
+      "email": "albertogasparin@gmail.com"
+    },
+    {
+      "name": "Zekai Zheng",
+      "email": "kiddkai@gmail.com"
+    }
+  ],
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "types": "build/cjs/index.d.ts",
