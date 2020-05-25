@@ -942,3 +942,12 @@ import { appRoutes } from '../routing';
 const { pathname, search } = window.location;
 const matchedRoute = matchRoute(routes, pathname, search);
 ```
+
+## License
+
+Copyright (c) 2020 Atlassian and others.
+Apache 2.0 licensed, see [LICENSE](LICENSE) file.
+
+<br/>
+
+[![With ❤️ from Atlassian](https://raw.githubusercontent.com/atlassian-internal/oss-assets/master/banner-cheers-light.png)](https://www.atlassian.com)
