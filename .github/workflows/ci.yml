@@ -23,7 +23,7 @@ jobs:
         uses: actions/setup-node@v1
         with:
           node-version: ${{ matrix.node-version }}
-      - run: npm run install
+      - run: npm install
       - run: npm run lint
       - run: npm run types:check
       - run: npm run test
