@@ -5,10 +5,7 @@ type NodeChangeCallback = () => void;
 describe('createLegacyHistory', () => {
   let onNodeChanges: NodeChangeCallback = () => {};
 
-  const triggerLocationChange = async (
-    location: string,
-    push: boolean = true,
-  ) => {
+  const triggerLocationChange = async (location: string, push = true) => {
     if (push) {
       window.history.pushState({}, '', location);
     } else {
@@ -165,7 +162,7 @@ describe('createLegacyHistory', () => {
           pathname: '/home',
           search: '?param=2',
         },
-        'PUSH',
+        'PUSH'
       );
 
       await triggerLocationChange('/home?param=2&obj=3', false);
@@ -176,7 +173,7 @@ describe('createLegacyHistory', () => {
           pathname: '/home',
           search: '?param=2',
         },
-        'PUSH',
+        'PUSH'
       );
     });
 
@@ -196,7 +193,7 @@ describe('createLegacyHistory', () => {
           hash: '',
           search: '?param=2',
         },
-        'POP',
+        'POP'
       );
     });
 
@@ -218,7 +215,7 @@ describe('createLegacyHistory', () => {
           hash: '',
           search: '?param=3',
         },
-        'POP',
+        'POP'
       );
     });
 

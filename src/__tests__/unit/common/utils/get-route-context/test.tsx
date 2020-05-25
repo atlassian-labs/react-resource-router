@@ -34,7 +34,7 @@ describe('SPA Router getRouteContext util', () => {
           url: mockRoutes[2].path,
         }),
         action: mockAction,
-      }),
+      })
     );
   });
 

@@ -5,5 +5,5 @@ export const routeHasResources = (route: Route | null): boolean =>
 
 export const routeHasChanged = (
   prev: Route | null,
-  next: Route | null,
+  next: Route | null
 ): boolean => prev !== next;

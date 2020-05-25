@@ -16,7 +16,7 @@ type Props = {
     resource: RouteResourceResponse & {
       update: (getNewData: RouteResourceUpdater) => void;
       refresh: () => void;
-    },
+    }
   ) => ReactNode;
   resource: RouteResource;
 };

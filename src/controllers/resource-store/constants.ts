@@ -1,4 +1,4 @@
-export const DEFAULT_RESOURCE_MAX_AGE: number = 0;
+export const DEFAULT_RESOURCE_MAX_AGE = 0;
 
 /**
  * The base defaults which should be fed into any factory that needs to derive other props.

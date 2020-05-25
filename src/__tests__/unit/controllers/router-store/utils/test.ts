@@ -29,10 +29,10 @@ describe('path utils', () => {
 
       expect(getRelativePath(basic)).toEqual('/foobar');
       expect(getRelativePath(withQueryString)).toEqual(
-        '/foobar?foo=true&bar=false',
+        '/foobar?foo=true&bar=false'
       );
       expect(getRelativePath(withHash)).toEqual(
-        '/foobar?foo=true&bar=false#anchor',
+        '/foobar?foo=true&bar=false#anchor'
       );
     });
   });

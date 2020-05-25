@@ -70,6 +70,7 @@ export const deserializeError = (value: any) => {
   if (typeof value === 'object' && value !== null && !Array.isArray(value)) {
     const newError = new Error();
     destroyCircular(value, [], newError);
+
     return newError;
   }
 

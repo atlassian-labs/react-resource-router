@@ -26,7 +26,7 @@ describe('set expires at', () => {
 
   it('should return an object with the same expiresAt as passed if it was not null', () => {
     expect(setExpiresAt(mockRouteResourceResponse, 100)).toEqual(
-      mockRouteResourceResponse,
+      mockRouteResourceResponse
     );
   });
 });

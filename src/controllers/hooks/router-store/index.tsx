@@ -15,5 +15,6 @@ export const useRouter = (): [RouterState, RouterActionsType] => {
  */
 export const useRouterActions = (): RouterActionsType => {
   const [, allActions] = useRouterStoreStatic();
+
   return allActions;
 };

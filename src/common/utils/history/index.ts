@@ -23,6 +23,7 @@ const getLocation = () => {
   // todo - don't force non-optional search and hash
   const { pathname = '', search = '', hash = '' } =
     (hasWindow() && window.location) || {};
+
   return { pathname, search, hash };
 };
 
@@ -39,18 +40,22 @@ const createLegacyListener = (updateExposedLocation: LocationUpdater) => {
     if (prevHistoryLength === window.history.length) {
       if (historyStack[historyIndex - 1] === currentHref) {
         historyIndex -= 1;
+
         return 'POP';
       }
       if (historyStack[historyIndex + 1] === currentHref) {
         historyIndex += 1;
+
         return 'POP';
       }
       historyStack[historyStack.length - 1] = currentHref;
+
       return 'REPLACE';
     }
     historyStack.push(currentHref);
     historyIndex += 1;
     prevHistoryLength = window.history.length;
+
     return 'PUSH';
   };
   const onNodeChanges = debounce(() => {

@@ -40,8 +40,8 @@ describe('getResourceIdentifier', () => {
       getResourceIdentifier(
         mockResource,
         mockRouterStoreContext,
-        mockResourceStoreContext,
-      ),
+        mockResourceStoreContext
+      )
     ).toEqual(`${type}/${key}`);
   });
 });
@@ -63,8 +63,8 @@ describe('getResourceIdentifiers', () => {
       getResourceIdentifiers(
         [mockResource, mockResource2, mockResource3],
         mockRouterStoreContext,
-        mockResourceStoreContext,
-      ),
+        mockResourceStoreContext
+      )
     ).toEqual([
       `${type}/${key}`,
       'mockResource2/mockResource2Key',

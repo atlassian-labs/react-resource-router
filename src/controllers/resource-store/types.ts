@@ -38,35 +38,35 @@ export type Actions = {
   setResourceState: (
     type: RouteResource['type'],
     key: string,
-    state: RouteResourceResponse,
+    state: RouteResourceResponse
   ) => ResourceAction<void>;
   updateResourceState: (
     type: RouteResource['type'],
     key: string,
     maxAge: RouteResource['maxAge'],
-    getNewSliceData: RouteResourceUpdater,
+    getNewSliceData: RouteResourceUpdater
   ) => ResourceAction<void>;
   getResource: (
     resource: RouteResource,
-    routerStoreContext: RouterStoreContext,
+    routerStoreContext: RouterStoreContext
   ) => ResourceAction<Promise<RouteResourceResponse>>;
   getResourceFromRemote: (
     resource: RouteResource,
-    routerStoreContext: RouterStoreContext,
+    routerStoreContext: RouterStoreContext
   ) => ResourceAction<Promise<RouteResourceResponse>>;
   requestAllResources: (
-    routerStoreContext: RouterStoreContext,
+    routerStoreContext: RouterStoreContext
   ) => ResourceAction<Promise<RouteResourceResponse[]>>;
   cleanExpiredResources: (
     resources: RouteResource[],
-    routerStoreContext: RouterStoreContext,
+    routerStoreContext: RouterStoreContext
   ) => ResourceAction<void>;
   requestResources: (
     resources: RouteResource[],
-    routerStoreContext: RouterStoreContext,
+    routerStoreContext: RouterStoreContext
   ) => ResourceAction<Promise<RouteResourceResponse>[]>;
   hydrate: (
-    state: HydratableState,
+    state: HydratableState
   ) => ({ getState, setState }: StoreActionApi<State>) => void;
   getContext: () => ({
     setState,

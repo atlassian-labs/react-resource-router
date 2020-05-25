@@ -55,7 +55,7 @@ describe('generatePath', () => {
           projectKey: 'PEN',
           issueTypeId: 10001,
           initialSection: 'play',
-        }),
+        })
       ).toThrow();
     });
   });

@@ -65,7 +65,7 @@ export const actions: Actions = {
         ...slice,
         data: getNewSliceData(slice.data),
         expiresAt: getExpiresAt(maxAge),
-      }),
+      })
     );
   },
   /**
@@ -82,7 +82,7 @@ export const actions: Actions = {
     const key = getKey(routerStoreContext, context);
     const cached = getSliceForResource(
       { data: resourceStoreData },
-      { type, key },
+      { type, key }
     );
 
     if (shouldUseCache(cached)) {
@@ -93,6 +93,7 @@ export const actions: Actions = {
 
         return withExpiresAt;
       }
+
       return cached;
     }
 
@@ -111,7 +112,7 @@ export const actions: Actions = {
     const key = getKey(routerStoreContext, context);
     const slice = getSliceForResource(
       { data: resourceStoreData },
-      { type, key },
+      { type, key }
     );
 
     if (slice.loading) {
@@ -158,7 +159,7 @@ export const actions: Actions = {
     }
 
     return Promise.all(
-      dispatch(actions.requestResources(route.resources, routerStoreContext)),
+      dispatch(actions.requestResources(route.resources, routerStoreContext))
     );
   },
 
@@ -184,7 +185,7 @@ export const actions: Actions = {
             data: null,
             error: null,
             expiresAt: getExpiresAt(0),
-          }),
+          })
         );
       }
     });
@@ -195,7 +196,7 @@ export const actions: Actions = {
    */
   requestResources: (resources, routerStoreContext) => ({ dispatch }) =>
     resources.map(resource =>
-      dispatch(actions.getResource(resource, routerStoreContext)),
+      dispatch(actions.getResource(resource, routerStoreContext))
     ),
 
   /**
@@ -207,7 +208,7 @@ export const actions: Actions = {
     const { data, context } = getState();
     function getNextStateValue<R = any>(
       prev: ResourceStoreData | ResourceStoreContext,
-      next: ResourceStoreData | ResourceStoreContext | typeof undefined,
+      next: ResourceStoreData | ResourceStoreContext | typeof undefined
     ): R {
       if (!Object.keys(prev).length && next && Object.keys(next).length) {
         return next as R;
@@ -220,14 +221,14 @@ export const actions: Actions = {
       ({ error, ...rest }: RouteResourceResponse) => ({
         ...rest,
         error: !error ? null : deserializeError(error),
-      }),
+      })
     );
 
     setState({
       data: hydratedData,
       context: getNextStateValue<ResourceStoreContext>(
         context,
-        resourceContext,
+        resourceContext
       ),
     });
   },
@@ -250,7 +251,7 @@ export const actions: Actions = {
       error: !error
         ? null
         : serializeError(
-            error instanceof Error ? error : new Error(JSON.stringify(error)),
+            error instanceof Error ? error : new Error(JSON.stringify(error))
           ),
       loading: false,
     })),
@@ -277,7 +278,7 @@ export const ResourceActions = createSubscriber<State, Actions, void>(
   ResourceStore,
   {
     selector: null,
-  },
+  }
 );
 
 export const ResourceSubscriber = createSubscriber<
@@ -319,5 +320,5 @@ export const useResourceActions = createHook<State, Actions, void>(
   ResourceStore,
   {
     selector: null,
-  },
+  }
 );

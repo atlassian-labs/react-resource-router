@@ -39,7 +39,7 @@ describe('Redirect', () => {
       // @ts-ignore
       <Router history={MockHistory} routes={[]}>
         <Redirect {...defaultArgs} {...args} />
-      </Router>,
+      </Router>
     );
 
   let globalConsole: any;

@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import React, { ReactNode } from 'react';
 
 import { BoundActions } from 'react-sweet-state';
@@ -7,7 +8,7 @@ import { EntireRouterState, RouterActionsType } from '../router-store/types';
 
 type Props = {
   children: (
-    actions: BoundActions<EntireRouterState, RouterActionsType>,
+    actions: BoundActions<EntireRouterState, RouterActionsType>
   ) => ReactNode;
 };
 

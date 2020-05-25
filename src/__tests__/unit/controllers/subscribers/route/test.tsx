@@ -12,11 +12,11 @@ test('Route Subscriber should call listen if container is not inited', () => {
   const mockActions = { listen: jest.fn() };
 
   (RouterSubscriber as any).mockImplementation(
-    ({ children }: { children: any }) => children(mockState, mockActions),
+    ({ children }: { children: any }) => children(mockState, mockActions)
   );
 
   const wrapper = shallow(
-    <MainRouterSubscriber>{() => <div />}</MainRouterSubscriber>,
+    <MainRouterSubscriber>{() => <div />}</MainRouterSubscriber>
   );
 
   wrapper.prop('children')(mockState, mockActions);
@@ -28,11 +28,11 @@ test('Route Subscriber should not call listen if container is inited', () => {
   const mockActions = { listen: jest.fn() };
 
   (RouterSubscriber as any).mockImplementation(
-    ({ children }: { children: any }) => children(mockState, mockActions),
+    ({ children }: { children: any }) => children(mockState, mockActions)
   );
 
   const wrapper = shallow(
-    <MainRouterSubscriber>{() => <div />}</MainRouterSubscriber>,
+    <MainRouterSubscriber>{() => <div />}</MainRouterSubscriber>
   );
 
   wrapper.prop('children')(mockState, mockActions);
@@ -44,11 +44,11 @@ test('Route Subscriber should not call listen if container is static', () => {
   const mockActions = { listen: jest.fn() };
 
   (RouterSubscriber as any).mockImplementation(
-    ({ children }: { children: any }) => children(mockState, mockActions),
+    ({ children }: { children: any }) => children(mockState, mockActions)
   );
 
   const wrapper = shallow(
-    <MainRouterSubscriber>{() => <div />}</MainRouterSubscriber>,
+    <MainRouterSubscriber>{() => <div />}</MainRouterSubscriber>
   );
 
   wrapper.prop('children')(mockState, mockActions);

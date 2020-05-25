@@ -27,6 +27,7 @@ interface CreateResourceAsync extends BaseResource {
 const handleGetDataLoader = (asyncImport: GetDataLoader) => {
   return async (...args: RouteResourceGettersArgs) => {
     const { default: getDataFn } = await asyncImport();
+
     return getDataFn(...args);
   };
 };

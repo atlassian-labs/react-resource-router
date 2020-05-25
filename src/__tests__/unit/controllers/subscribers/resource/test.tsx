@@ -202,7 +202,6 @@ describe('ResourceSubscriber', () => {
     it('should call actions.getResourceFromRemote', () => {
       const getResourceSpy = jest
         .spyOn(actions, 'getResourceFromRemote')
-        // @ts-ignore
         .mockImplementation(() => {});
       let subscriberRefresh: any;
       mount(

@@ -61,14 +61,14 @@ export type RouteResourceLoading = boolean;
 
 export type RouteResourceTimestamp = number | null;
 
-export type RouteResourceError = Object | Error | null;
+export type RouteResourceError = Record<string, any> | Error | null;
 
-export type RouteResourceData = Object | null;
+export type RouteResourceData = Record<string, any> | null;
 
 export type RouteResourcePromise = Promise<any> | null;
 
 export type RouteResourceUpdater = (
-  data: RouteResourceData,
+  data: RouteResourceData
 ) => RouteResourceData;
 
 export type RouteResourceResponse = {
@@ -81,7 +81,7 @@ export type RouteResourceResponse = {
 
 export type RouteResourceGettersArgs = [
   RouterStoreContext,
-  ResourceStoreContext,
+  ResourceStoreContext
 ];
 
 export type RouteResource = {
@@ -93,7 +93,7 @@ export type RouteResource = {
 
 export type RouteResources = RouteResource[];
 
-export type ResourceStoreContext = Object;
+export type ResourceStoreContext = Record<string, any>;
 
 export type RouteResourceDataForType = {
   [index: string]: RouteResourceResponse;
@@ -136,7 +136,7 @@ export type Route = {
   canTransitionOut?: (
     currentRouteMatch: MatchedRoute,
     nextRouteMatch: MatchedRoute,
-    props: any,
+    props: any
   ) => boolean | Promise<boolean>;
   /**
    * Triggered before entering the route, can trigger full page reload if returns (or resolves) false.
@@ -145,7 +145,7 @@ export type Route = {
   canTransitionIn?: (
     currentRouteMatch: MatchedRoute,
     nextRouteMatch: MatchedRoute,
-    props: any,
+    props: any
   ) => boolean | Promise<boolean>;
   /**
    * Query string matching. Each query param must match for the route to match.
@@ -175,7 +175,7 @@ export type NavigationType = 'container' | 'product';
 export type NavigationRenderUpdater = (
   location: Location,
   match: Match,
-  route: Route,
+  route: Route
 ) => ReactNode;
 
 export type NavigationStatics = {
@@ -201,7 +201,7 @@ export type LinkProps = {
 
 export type HistoryBlocker = (
   location: Location,
-  action: string,
+  action: string
 ) => boolean | Promise<boolean>;
 
 export type HistoryLocation = {
@@ -215,7 +215,7 @@ export type HistoryLocation = {
 };
 
 export type HistoryListen = (
-  arg0: (arg0: HistoryLocation, arg1: HistoryAction) => void,
+  arg0: (arg0: HistoryLocation, arg1: HistoryAction) => void
 ) => () => void;
 
 export type HistoryActions = {

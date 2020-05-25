@@ -7,7 +7,7 @@ import matchRoute from '../match-route';
 export const getRouteContext = (
   location: Location,
   routes: Routes,
-  action: HistoryAction = 'POP',
+  action: HistoryAction = 'POP'
 ) => {
   const { pathname, search, hash } = location;
   const query = qs.parse(search) as Query;

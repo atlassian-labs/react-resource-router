@@ -21,7 +21,7 @@ type UseResourceHookResponse<
  *
  */
 export const useResource = (
-  resource: RouteResource,
+  resource: RouteResource
 ): UseResourceHookResponse[] => {
   /**
    * @gasparin - We may need to use a hook to get the router so that components using this hook
@@ -45,7 +45,7 @@ export const useResource = (
         (getNewData: RouteResourceUpdater) => {
           actions.updateResourceState(type, key, maxAge, getNewData);
         },
-        [actions, type, key, maxAge],
+        [actions, type, key, maxAge]
       ),
       refresh: useCallback(() => {
         actions.getResourceFromRemote(resource, {

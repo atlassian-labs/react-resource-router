@@ -28,7 +28,7 @@ describe('SPA Router event utils', () => {
       // @ts-ignore
       (event: any) => {
         expect(isModifiedEvent(event)).toBeTruthy();
-      },
+      }
     );
 
     it('should return false if no modifiers are present', () => {
@@ -41,7 +41,7 @@ describe('SPA Router event utils', () => {
       expect(
         isKeyboardEvent({
           type: 'keypress',
-        }),
+        })
       ).toBeTruthy();
     });
 
@@ -49,7 +49,7 @@ describe('SPA Router event utils', () => {
       expect(
         isKeyboardEvent({
           type: 'mousedown',
-        }),
+        })
       ).toBeFalsy();
     });
   });

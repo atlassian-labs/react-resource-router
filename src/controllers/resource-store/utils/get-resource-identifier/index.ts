@@ -7,7 +7,7 @@ import {
 export const getResourceIdentifier = (
   resource: RouteResource,
   routerStoreContext: RouterStoreContext,
-  resourceStoreContext: ResourceStoreContext,
+  resourceStoreContext: ResourceStoreContext
 ): string => {
   const { type, getKey } = resource;
   const key = getKey(routerStoreContext, resourceStoreContext);
@@ -18,8 +18,8 @@ export const getResourceIdentifier = (
 export const getResourceIdentifiers = (
   resources: RouteResource[],
   routerStoreContext: RouterStoreContext,
-  resourceStoreContext: ResourceStoreContext,
+  resourceStoreContext: ResourceStoreContext
 ): string[] =>
   resources.map(resource =>
-    getResourceIdentifier(resource, routerStoreContext, resourceStoreContext),
+    getResourceIdentifier(resource, routerStoreContext, resourceStoreContext)
   );

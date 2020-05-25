@@ -31,14 +31,14 @@ describe('matchRoute', () => {
       const routeB = { path: '/foo/:baz', component: Noop };
       expect(
         // @ts-ignore
-        matchRoute([routeA, routeB], '/foo/abc', DEFAULT_QUERY_PARAMS),
+        matchRoute([routeA, routeB], '/foo/abc', DEFAULT_QUERY_PARAMS)
       ).toMatchObject({
         route: routeA,
       });
 
       expect(
         // @ts-ignore
-        matchRoute([routeB], '/foo/abc', DEFAULT_QUERY_PARAMS),
+        matchRoute([routeB], '/foo/abc', DEFAULT_QUERY_PARAMS)
       ).toMatchObject({
         route: routeB,
       });
@@ -54,7 +54,7 @@ describe('matchRoute', () => {
       };
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome'))
       ).toMatchObject({
         route,
         match: {
@@ -78,7 +78,7 @@ describe('matchRoute', () => {
       };
       expect(
         // @ts-ignore
-        matchRoute([multiple], '/abc/def', parse('?foo=baz&spa=awesome')),
+        matchRoute([multiple], '/abc/def', parse('?foo=baz&spa=awesome'))
       ).toMatchObject({
         route: multiple,
       });
@@ -86,7 +86,7 @@ describe('matchRoute', () => {
       expect(matchRoute([multiple], '/abc/def', parse('?foo=baz'))).toBeNull();
       expect(
         // @ts-ignore
-        matchRoute([multiple], '/abc/def', parse('?spa=awesome')),
+        matchRoute([multiple], '/abc/def', parse('?spa=awesome'))
       ).toBeNull();
     });
 
@@ -99,7 +99,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome'))
       ).toEqual({
         route,
         match: {
@@ -124,7 +124,7 @@ describe('matchRoute', () => {
       };
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome'))
       ).toMatchObject({
         route,
         match: {
@@ -138,7 +138,7 @@ describe('matchRoute', () => {
       expect(matchRoute([route], '/abc/def', DEFAULT_QUERY_PARAMS)).toBeNull();
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=abc&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=abc&spa=awesome'))
       ).toBeNull();
     });
 
@@ -150,7 +150,7 @@ describe('matchRoute', () => {
       };
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=plan&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=plan&spa=awesome'))
       ).toMatchObject({
         route,
         match: {
@@ -161,7 +161,7 @@ describe('matchRoute', () => {
       });
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=planning&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=planning&spa=awesome'))
       ).toMatchObject({
         route,
         match: {
@@ -183,7 +183,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([numberRegexRoute], '/abc/def', parse('spaAwesomeFactor=9')),
+        matchRoute([numberRegexRoute], '/abc/def', parse('spaAwesomeFactor=9'))
       ).toMatchObject({
         route: numberRegexRoute,
       });
@@ -193,8 +193,8 @@ describe('matchRoute', () => {
           // @ts-ignore
           [numberRegexRoute],
           '/abc/def',
-          parse('spaAwesomeFactor=10'),
-        ),
+          parse('spaAwesomeFactor=10')
+        )
       ).toBeNull();
       // Should be a number
       expect(
@@ -202,8 +202,8 @@ describe('matchRoute', () => {
           // @ts-ignore
           [numberRegexRoute],
           '/abc/def',
-          parse('spaAwesomeFactor=abc'),
-        ),
+          parse('spaAwesomeFactor=abc')
+        )
       ).toBeNull();
     });
 
@@ -215,7 +215,7 @@ describe('matchRoute', () => {
       };
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=plan.detail')),
+        matchRoute([route], '/abc/def', parse('?foo=plan.detail'))
       ).toMatchObject({
         route,
         match: {
@@ -226,7 +226,7 @@ describe('matchRoute', () => {
       });
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=plansdetail')),
+        matchRoute([route], '/abc/def', parse('?foo=plansdetail'))
       ).toBeNull();
     });
 
@@ -238,7 +238,7 @@ describe('matchRoute', () => {
       };
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=baz&spa=awesome'))
       ).toMatchObject({
         route,
         match: {
@@ -249,7 +249,7 @@ describe('matchRoute', () => {
       });
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?spa=awesome'))
       ).toMatchObject({
         route,
         match: {
@@ -268,7 +268,7 @@ describe('matchRoute', () => {
       };
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=bar&spa=awesome')),
+        matchRoute([route], '/abc/def', parse('?foo=bar&spa=awesome'))
       ).toMatchObject({
         route,
         match: {
@@ -288,7 +288,7 @@ describe('matchRoute', () => {
       });
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=bar&foo2=1')),
+        matchRoute([route], '/abc/def', parse('?foo=bar&foo2=1'))
       ).toMatchObject({
         route,
         match: {
@@ -319,7 +319,7 @@ describe('matchRoute', () => {
       });
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo&baz=cool')),
+        matchRoute([route], '/abc/def', parse('?foo&baz=cool'))
       ).toMatchObject({
         route,
         match: {
@@ -331,7 +331,7 @@ describe('matchRoute', () => {
       });
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo&bar=1&baz=cool')),
+        matchRoute([route], '/abc/def', parse('?foo&bar=1&baz=cool'))
       ).toMatchObject({
         route,
         match: {
@@ -344,7 +344,7 @@ describe('matchRoute', () => {
       });
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo&baz=cool&bar=cool')),
+        matchRoute([route], '/abc/def', parse('?foo&baz=cool&bar=cool'))
       ).toBeNull();
     });
 
@@ -357,7 +357,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', '?foo&bar=1&baz=cool'),
+        matchRoute([route], '/abc/def', '?foo&bar=1&baz=cool')
       ).toMatchObject({
         route,
         match: {
@@ -394,7 +394,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=a%0Ab&bar=3')), // %0A == line feed
+        matchRoute([route], '/abc/def', parse('?foo=a%0Ab&bar=3')) // %0A == line feed
       ).toMatchObject({
         route,
         match: {
@@ -407,7 +407,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=a%00b&bar=3')), // %00 == null
+        matchRoute([route], '/abc/def', parse('?foo=a%00b&bar=3')) // %00 == null
       ).toMatchObject({
         route,
         match: {
@@ -420,7 +420,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([route], '/abc/def', parse('?foo=prøve&bar=3')), // ø is non-ascii character
+        matchRoute([route], '/abc/def', parse('?foo=prøve&bar=3')) // ø is non-ascii character
       ).toMatchObject({
         route,
         match: {

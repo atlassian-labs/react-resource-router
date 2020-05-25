@@ -38,7 +38,7 @@ describe('<Route />', () => {
       // @ts-ignore
       <Router routes={routes} history={HistoryMock}>
         <RouteComponent />
-      </Router>,
+      </Router>
     );
 
     const component = wrapper.find(MockComponent);

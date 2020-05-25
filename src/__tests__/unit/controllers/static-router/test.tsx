@@ -45,7 +45,7 @@ describe('<StaticRouter />', () => {
         <RouterSubscriber>
           {() => <div>I am a subscriber</div>}
         </RouterSubscriber>
-      </StaticRouter>,
+      </StaticRouter>
     );
 
     expect(mockHistory.listen).not.toHaveBeenCalled();
@@ -149,7 +149,7 @@ describe('<StaticRouter />', () => {
           <RouterSubscriber>
             {() => <div>I am a subscriber</div>}
           </RouterSubscriber>
-        </StaticRouter>,
+        </StaticRouter>
       );
 
       expect(getResourceStore().actions.getSafeData()).toEqual(resourceData);
@@ -171,7 +171,7 @@ describe('<StaticRouter />', () => {
           <RouterSubscriber>
             {() => <div>I am a subscriber</div>}
           </RouterSubscriber>
-        </StaticRouter>,
+        </StaticRouter>
       );
 
       expect(resourceSpy1).toHaveBeenCalledTimes(1);

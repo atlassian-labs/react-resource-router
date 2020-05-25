@@ -30,9 +30,10 @@ class Redirector extends Component<RedirectorProps> {
       ) {
         // eslint-disable-next-line no-console
         console.warn(
-          `You tried to redirect to the same route you're currently on: "${currentPath}"`,
+          `You tried to redirect to the same route you're currently on: "${currentPath}"`
         );
       }
+
       return;
     }
 
@@ -48,7 +49,7 @@ export const Redirect = (props: RedirectProps) => (
   <RouterSubscriber>
     {(
       { location }: { location: RouterState['location'] },
-      actions: RouterActionsType,
+      actions: RouterActionsType
     ) => <Redirector actions={actions} location={location} {...props} />}
   </RouterSubscriber>
 );

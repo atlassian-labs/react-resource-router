@@ -64,13 +64,19 @@ export const mockRouterStoreContext = {
   match: mockMatch,
 };
 
-export const mockRouteContextProp = (key: string, mock: Object) => ({
+export const mockRouteContextProp = (
+  key: string,
+  mock: Record<string, any>
+) => ({
   ...mockRouteContext,
   // @ts-ignore
   [key]: { ...mockRouteContext[key], ...mock },
 });
 
-export const mockRouterStoreContextProp = (key: string, mock: Object) => ({
+export const mockRouterStoreContextProp = (
+  key: string,
+  mock: Record<string, any>
+) => ({
   ...mockRouterStoreContext,
   // @ts-ignore
   [key]: { ...mockRouterStoreContext[key], ...mock },

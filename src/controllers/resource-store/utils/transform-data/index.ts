@@ -5,7 +5,7 @@ import {
 
 export const transformData = (
   data: ResourceStoreData,
-  transformer: (slice: RouteResourceResponse) => RouteResourceResponse,
+  transformer: (slice: RouteResourceResponse) => RouteResourceResponse
 ) =>
   Object.keys(data).reduce((acc: ResourceStoreData, type: string) => {
     if (!acc[type]) {

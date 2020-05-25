@@ -15,8 +15,8 @@ describe('routeHasChanged()', () => {
         {
           path: '/another-path',
           component: () => null,
-        },
-      ),
+        }
+      )
     ).toBeTruthy();
   });
 
@@ -28,8 +28,8 @@ describe('routeHasChanged()', () => {
         {
           path: '/another-path',
           component: () => null,
-        },
-      ),
+        }
+      )
     ).toBeTruthy();
   });
 

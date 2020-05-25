@@ -19,7 +19,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       type: linkType = 'a',
       ...rest
     },
-    ref,
+    ref
   ) => {
     return (
       <RouterActions>
@@ -52,12 +52,12 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
               onKeyDown: handleLinkPress,
               ref,
             },
-            children,
+            children
           );
         }}
       </RouterActions>
     );
-  },
+  }
 );
 
 Link.displayName = 'Link';

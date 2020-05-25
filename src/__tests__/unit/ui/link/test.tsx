@@ -40,13 +40,13 @@ const eventModifiers = [['metaKey'], ['altKey'], ['ctrlKey'], ['shiftKey']];
 describe('<Link />', () => {
   const mountInRouter = (
     children: LinkProps['children'],
-    props: Partial<LinkProps> = defaultProps,
+    props: Partial<LinkProps> = defaultProps
   ) =>
     mount(
       // @ts-ignore
       <Router history={HistoryMock} routes={[]}>
         <Link {...props}>{children}</Link>
-      </Router>,
+      </Router>
     );
 
   afterEach(() => {
@@ -152,7 +152,7 @@ describe('<Link />', () => {
         component.simulate('click', { ...baseClickEvent, [modifier]: true });
 
         expect(HistoryMock.push).toHaveBeenCalledTimes(0);
-      },
+      }
     );
 
     it('should not navigate if the events default behaviour has already been prevented', () => {

@@ -23,7 +23,7 @@ describe('Noop router decorator', () => {
       expect.objectContaining({
         history: expect.objectContaining(NOOP_HISTORY),
         routes: expect.any(Array),
-      }),
+      })
     );
   });
 });

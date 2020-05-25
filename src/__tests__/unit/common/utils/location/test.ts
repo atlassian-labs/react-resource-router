@@ -19,7 +19,7 @@ describe('SPA Router location utils', () => {
 
       const newLocation = normalizeToLocation(
         `${pathname}${search}${hash}`,
-        location,
+        location
       );
       expect(newLocation).toHaveProperty('pathname', pathname);
       expect(newLocation).toHaveProperty('search', search);

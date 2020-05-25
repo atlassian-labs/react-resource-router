@@ -17,7 +17,7 @@ type LinkPressArgs = {
 
 export const handleNavigation = (
   event: any,
-  { onClick, target, replace, routerActions, href }: LinkPressArgs,
+  { onClick, target, replace, routerActions, href }: LinkPressArgs
 ): void => {
   if (isKeyboardEvent(event) && event.keyCode !== 13) {
     return;

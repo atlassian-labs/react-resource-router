@@ -30,15 +30,14 @@ function compilePath(path: string, options: any) {
  */
 function matchPath(
   pathname: string,
-  options: { [key: string]: any } = {},
+  options: { [key: string]: any } = {}
 ): any {
   if (typeof options === 'string' || Array.isArray(options)) {
     options = { path: options };
   }
 
-  const { path, exact = false, strict = false, sensitive = false } = options;
-
-  const paths = [].concat(path);
+  const { path: p, exact = false, strict = false, sensitive = false } = options;
+  const paths = [].concat(p);
 
   return paths.reduce((matched: any, path: any) => {
     if (!path && path !== '') return null;
@@ -64,6 +63,7 @@ function matchPath(
       isExact, // whether or not we matched exactly
       params: keys.reduce((memo: any, key: any, index: number) => {
         memo[key.name] = values[index];
+
         return memo;
       }, {}),
     };

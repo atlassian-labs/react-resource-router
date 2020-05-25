@@ -16,7 +16,7 @@ import { routeHasChanged, routeHasResources } from '../route-checks';
 export const getResourcesForNextLocation = (
   prevRouterStoreContext: RouterStoreContext,
   nextRouterStoreContext: RouterStoreContext,
-  resourceStoreContext: ResourceStoreContext,
+  resourceStoreContext: ResourceStoreContext
 ): RouteResource[] => {
   const { route: prevRoute } = prevRouterStoreContext;
   const { resources: prevResources = [] } = prevRoute || {};
@@ -34,7 +34,7 @@ export const getResourcesForNextLocation = (
   const prevResourceIdentifiers = getResourceIdentifiers(
     prevResources,
     prevRouterStoreContext,
-    resourceStoreContext,
+    resourceStoreContext
   );
 
   return nextResources.filter(
@@ -43,8 +43,8 @@ export const getResourcesForNextLocation = (
         getResourceIdentifier(
           resource,
           nextRouterStoreContext,
-          resourceStoreContext,
-        ),
-      ),
+          resourceStoreContext
+        )
+      )
   );
 };

@@ -40,7 +40,7 @@ describe('<Router />', () => {
       // @ts-ignore
       <Router history={HistoryMock} routes={routes}>
         <div>hello</div>
-      </Router>,
+      </Router>
     );
 
     const component = wrapper.find('RouterContainer');
@@ -51,7 +51,7 @@ describe('<Router />', () => {
       expect.objectContaining({
         history: HistoryMock,
         routes,
-      }),
+      })
     );
   });
 
@@ -60,7 +60,7 @@ describe('<Router />', () => {
       // @ts-ignore
       <Router history={HistoryMock} routes={routes}>
         <div>hello</div>
-      </Router>,
+      </Router>
     );
 
     wrapper.unmount();

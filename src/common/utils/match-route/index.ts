@@ -25,7 +25,7 @@ const computeRootMatch = (pathname: string) => ({
 const matchQuery = (
   queryConfig: string[],
   queryParams: MatchParams,
-  pathMatch: Match,
+  pathMatch: Match
 ): Match | null => {
   const queryMatch: Query = {};
   const isMatchingQuery = queryConfig.every(query => {
@@ -90,7 +90,7 @@ const matchQuery = (
 export default (
   routes: Routes,
   pathname: string,
-  queryParams: MatchParams,
+  queryParams: MatchParams
 ): MatchedRoute | null => {
   const queryParamObject =
     typeof queryParams === 'string'

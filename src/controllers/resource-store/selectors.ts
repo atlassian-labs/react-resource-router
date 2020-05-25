@@ -9,7 +9,7 @@ import { getDefaultStateSlice } from './utils';
 
 export const getSliceForResource = (
   state: { data: ResourceStoreData; context?: ResourceStoreContext },
-  props: ResourceSliceIdentifier,
+  props: ResourceSliceIdentifier
 ): RouteResourceResponse => {
   const { type, key } = props;
   const slice = state.data[type] && state.data[type][key];

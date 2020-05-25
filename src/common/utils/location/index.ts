@@ -4,7 +4,7 @@ import { Location } from '../../types';
 
 export const normalizeToLocation = (
   to: string | Location,
-  currentLocation: Location,
+  currentLocation: Location
 ): Location =>
   typeof to === 'string'
     ? createLocation(to, null, '', currentLocation as HistoryLocation)

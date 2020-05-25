@@ -60,7 +60,7 @@ describe('getResourcesForNextLocation()', () => {
         // @ts-ignore - not providing all route properties on mocks
         prevRouterStoreContext,
         nextRouterStoreContext,
-        mockResourceStoreContext,
+        mockResourceStoreContext
       );
 
       expect(nextResources).toEqual([]);
@@ -94,7 +94,7 @@ describe('getResourcesForNextLocation()', () => {
         // @ts-ignore not providing all route properties on mocks
         prevRouterStoreContext,
         nextRouterStoreContext,
-        mockResourceStoreContext,
+        mockResourceStoreContext
       );
 
       expect(nextResources).toEqual(nextRoute.resources);
@@ -108,7 +108,7 @@ describe('getResourcesForNextLocation()', () => {
         { ...mockResource, type: 'another-resource' },
         { ...mockResource, type: 'even-more-resource' },
       ];
-      const mockRoute = {
+      const route = {
         path: '/my-cool-path',
         resources: [
           ...resourcesThatWillChange,
@@ -121,12 +121,12 @@ describe('getResourcesForNextLocation()', () => {
       };
       const prevRouterStoreContext = {
         ...mockRouterStoreContext,
-        route: mockRoute,
+        route,
         match: { ...mockMatch, params: { key: 'one' } },
       };
       const nextRouterStoreContext = {
         ...mockRouterStoreContext,
-        route: mockRoute,
+        route,
         match: { ...mockMatch, params: { key: 'two' } },
       };
 
@@ -134,7 +134,7 @@ describe('getResourcesForNextLocation()', () => {
         // @ts-ignore not providing all route properties on mocks
         prevRouterStoreContext,
         nextRouterStoreContext,
-        mockResourceStoreContext,
+        mockResourceStoreContext
       );
 
       expect(nextResources).toEqual(resourcesThatWillChange);
