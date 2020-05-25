@@ -436,6 +436,7 @@ describe('resource store', () => {
         },
       };
 
+      // @ts-ignore mocking resourceData
       actions.hydrate({ resourceData });
 
       const { data } = storeState.getState();
@@ -635,6 +636,7 @@ describe('resource store', () => {
           },
         },
       };
+      // @ts-ignore mocking resource store state
       const slice = getSliceForResource(state, { type, key });
 
       expect(slice).toEqual({
