@@ -25,6 +25,7 @@ jobs:
           node-version: ${{ matrix.node-version }}
       - run: npm install
       - run: npm run lint
-      - run: npm run types:check
+      - run: npm run lint:deps
+      - run: npm run lint:types
       - run: npm run test
       - run: npm run build
