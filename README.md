@@ -40,7 +40,7 @@ React Resource Router was developed by Atlassian for [Jira](https://www.atlassia
 
 Resources describe and provide the data required for your route. This data is safely stored and accessed via the `useResource` hook or `ResourceSubscriber` component.
 
-```
+```js
 import { createResource } from 'react-resource-router';
 import { fetch } from '../common/utils';
 
@@ -61,7 +61,7 @@ export const aboutResource = createResource({
 
 These are the React components that get rendered for your routes. As mentioned, they can be wired into the state of your resources via the `useResource` hook or `ResourceSubscriber` component.
 
-```javascript
+```js
 import { useResource } from 'react-resource-router';
 import { aboutResource, homeResource } from '../routes/resources';
 import { Loading, Error } from './common';
@@ -99,7 +99,7 @@ export const About = () => {
 
 Your route configuration is the single source of truth for your application's routing concerns.
 
-```javascript
+```js
 import { Home, About } from '../components';
 import { homeResource, aboutResource } from './resources';
 
@@ -125,7 +125,7 @@ export const appRoutes = [
 
 Now that you've set up your resources, components and configuration correctly, all you need to do is mount the Router in your react tree with a `RouteComponent` as a child. It will do the rest!
 
-```javascript
+```js
 import {
   Router,
   RouteComponent,
@@ -144,7 +144,7 @@ const App = () => {
 
 ## Installation
 
-```
+```bash
 npm install react-resource-router
 
 # or
@@ -186,7 +186,7 @@ export const userProfileResource = createResource({
 `createResource` takes in a configuration object that should contain the following properties.
 
 | Property        | type                                               | Description                                                                                                                                                                                                                                                                                                                          |
-| --------------- | -------------------------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------ |
+|-----------------|----------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `type`          | `string`                                           | Used as a namespace for this resource. Each resource should have a unique type                                                                                                                                                                                                                                                       |
 | `getKey`        | `(routerContext, resourceContext) => string`       | The return value of this function is used to identify this resource within the `type` namespace. The function itself is supplied with `routerContext` and `resourceContext` so that the composition of keys can use this data if required                                                                                            |
 | `getData`       | `(routerContext, resourceContext) => Promise<any>` | This function is used to load the data for the resource. The function should return a promise and resolve with the resource data object. NOTE: You may not use `getData` and `getDataLoader` on the same resource                                                                                                                    |
@@ -269,10 +269,10 @@ Here we have two resources being used for the dynamic user profile route. When t
 
 Resources expose properties and functions via the `useResource` hook or the `ResourceSubscriber`, which allow their current state to be accessed or interacted with in your components. These are
 
-| Property  | Type       | Description                                                                             |
-| --------- | ---------- | --------------------------------------------------------------------------------------- |
-| `data`    | `any`      | The result which your getData function will resolve with                                |
-| `loading` | `boolean`  | Determines if the resource is fetching its data or not                                  |
+| Property  | Type      | Description                                              |
+|-----------|-----------|----------------------------------------------------------|
+| `data`    | `any`     | The result which your getData function will resolve with |
+| `loading` | `boolean` | Determines if the resource is fetching its data or not   |
 | `error`   | `object`   | error                                                                                   | null | If your getData function throws an error, it will be stored here |
 | `update`  | `function` | Allows you to imperatively update the resource's current state bypassing its `maxAge`   |
 | `refresh` | `function` | Allows you to imperatively refresh the resource's state by calling its `getData` method |
@@ -391,7 +391,7 @@ The `routes` prop for the `Router` component is simply an array of route configu
 Each route configuration object has a number of properties which you can set
 
 | Property    | type                          | Description                                                                                                                                                         |
-| ----------- | ----------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+|-------------|-------------------------------|---------------------------------------------------------------------------------------------------------------------------------------------------------------------|
 | `path`      | `string`                      | The path that will be matched for this route to render. The path can contain params which will be provided to the component on match. This property is **required** |
 | `component` | `ComponentType<RouteContext>` | The component that will be rendered if the current location matches the path. This property is **required**                                                         |
 | `resources` | `RouteResource[]`             | The resources that will be loaded for this route                                                                                                                    |
@@ -592,7 +592,7 @@ import { appRoutes } from './routing';
 ###### Router component props
 
 | prop              | type              | description                                                                                        |
-| :---------------- | :---------------- | :------------------------------------------------------------------------------------------------- |
+|-------------------|-------------------|----------------------------------------------------------------------------------------------------|
 | `routes`          | `Routes[]`        | Your application's routes                                                                          |
 | `history`         | `History`         | The history instance for the router                                                                |
 | `resourceContext` | `ResourceContext` | Static contextual data that will be provided to all your resources' `getKey` and `getData` methods |
@@ -621,7 +621,7 @@ export const ServerApp = () => (
 ###### StaticRouter component props
 
 | prop       | type       | description                                             |
-| :--------- | :--------- | :------------------------------------------------------ |
+|------------|------------|---------------------------------------------------------|
 | `routes`   | `Routes[]` | Your application's routes                               |
 | `location` | `string`   | The string representation of the app's current location |
 
@@ -659,7 +659,7 @@ it('should send right props after render with routes', () => {
 ###### MemoryRouter props
 
 | prop       | type       | description                                             |
-| :--------- | :--------- | :------------------------------------------------------ |
+|------------|------------|---------------------------------------------------------|
 | `routes`   | `Routes[]` | Your application's routes                               |
 | `location` | `string`   | The string representation of the app's current location |
 
@@ -684,7 +684,7 @@ export const LinkExample = ({ href = '/' }) => {
 ###### Link component props
 
 | prop      | type       | description                                                                |
-| :-------- | :--------- | :------------------------------------------------------------------------- |
+|-----------|------------|----------------------------------------------------------------------------|
 | `target`  | `string`   | `<a>`tag target attribute                                                  |
 | `replace` | `boolean`  | Determines if `history.replace` should be called instead of `history.push` |
 | `href`    | `Href`     | The route to navigate to                                                   |
@@ -719,7 +719,7 @@ export const RedirectExample = () => {
 ###### Redirect component props
 
 | prop   | type                   | description                                                                          |
-| :----- | :--------------------- | :----------------------------------------------------------------------------------- |
+|--------|------------------------|--------------------------------------------------------------------------------------|
 | `to`   | `Location` or `string` | Component children                                                                   |
 | `push` | `boolean`              | Determines if the redirecting should use `history.push` instead of `history.replace` |
 
@@ -730,7 +730,7 @@ The `RouteComponent` renders a `RouteSubscriber` internally and automatically re
 ###### RouteComponent props
 
 | prop       | type            | description                                 |
-| :--------- | :-------------- | :------------------------------------------ |
+|------------|-----------------|---------------------------------------------|
 | `route`    | `Route`         | The matched route configuration object      |
 | `location` | `Location`      | The current location                        |
 | `query`    | `Query`         | The current query                           |
@@ -780,7 +780,7 @@ The `ResourceSubscriber` is a component that is subscribed to the state of a res
 ###### ResourceSubscriber component props
 
 | prop       | type            | description                  |
-| :--------- | :-------------- | :--------------------------- |
+|------------|-----------------|------------------------------|
 | `resource` | `RouteResource` | The resource to subscribe to |
 
 ```js
@@ -806,7 +806,7 @@ Actions that communicate with the router's routing functionality are exposed saf
 By using either of these you will gain access to the following actions
 
 | prop            | type       | arguments                               | description                                                                                           |
-| :-------------- | :--------- | :-------------------------------------- | :---------------------------------------------------------------------------------------------------- |
+|-----------------|------------|-----------------------------------------|-------------------------------------------------------------------------------------------------------|
 | `push`          | `function` | `path: Href` or `Location, state?: any` | Calls `history.push` with the supplied args                                                           |
 | `replace`       | `function` | `path: Href` or `Location, state?: any` | Calls `history.replace` with the supplied args                                                        |
 | `goBack`        | `function` |                                         | Goes to the previous route in history                                                                 |
@@ -830,7 +830,7 @@ The `withRouter` higher order component can be used for decorating your componen
 ###### withRouter props
 
 | prop       | type            | description                                 |
-| :--------- | :-------------- | :------------------------------------------ |
+|------------|-----------------|---------------------------------------------|
 | `route`    | `Route`         | The matched route configuration object      |
 | `location` | `Location`      | The current location                        |
 | `query`    | `Query`         | The current query                           |
