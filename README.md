@@ -139,7 +139,7 @@ yarn add react-resource-router
 
 ## Documentation
 
-Check the [docs website](https://atlassian-labs.github.io/react-resource-router/) or the [docs folder](docs/README.md).
+Check the [docs website](https://atlassian-labs.github.io/react-resource-router/) or the [docs folder](https://github.com/atlassian-labs/react-resource-router/tree/master/docs).
 
 ## License
 
