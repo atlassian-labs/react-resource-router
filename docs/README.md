@@ -20,7 +20,7 @@ React Resource Router was developed by Atlassian for [Jira](https://www.atlassia
 
 ### Create your resources
 
-Resources describe and provide the data required for your route. This data is safely stored and accessed via the `useResource` hook or `ResourceSubscriber` component.
+Resources describe and provide the data required for your route. This data is safely stored and accessed via the [`useResource`](/api/hooks#use-resource) hook or [`ResourceSubscriber`](/api/components#resourcesubscriber) component.
 
 ```js
 import { createResource } from 'react-resource-router';
@@ -41,7 +41,7 @@ export const aboutResource = createResource({
 
 ### Create your components
 
-These are the React components that get rendered for your routes. As mentioned, they can be wired into the state of your resources via the `useResource` hook or `ResourceSubscriber` component.
+These are the React components that get rendered for your routes. As mentioned, they can be wired into the state of your resources via the [`useResource`](/api/hooks#use-resource) hook or [`ResourceSubscriber`](/api/components#resourcesubscriber) component.
 
 ```js
 import { useResource } from 'react-resource-router';
@@ -79,7 +79,7 @@ export const About = () => {
 
 ### Create your routes
 
-Your route configuration is the single source of truth for your application's routing concerns.
+Your [route configuration](/router/configuration#how-to-configure-the-router) is the single source of truth for your application's routing concerns.
 
 ```js
 import { Home, About } from '../components';
@@ -105,7 +105,7 @@ export const appRoutes = [
 
 ### Use the Router
 
-Now that you've set up your resources, components and configuration correctly, all you need to do is mount the Router in your react tree with a `RouteComponent` as a child. It will do the rest!
+Now that you've set up your resources, components and configuration correctly, all you need to do is mount the [Router](/api/components#router) in your react tree with a [`RouteComponent`](/api/components#routecomponent) as a child. It will do the rest!
 
 ```js
 import {
@@ -136,10 +136,6 @@ yarn add react-resource-router
 
 - [Basic routing](https://codesandbox.io/s/react-resource-router-basic-routing-example-5rch8)
 - [Adding resources](https://codesandbox.io/s/react-resource-router-basic-routing-with-resources-example-lqm0m)
-
-## Documentation
-
-Check the [docs website](https://atlassian-labs.github.io/react-resource-router/) or the [docs folder](docs/README.md).
 
 ## License
 
