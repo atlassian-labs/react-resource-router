@@ -53,7 +53,7 @@
     "prepack": "npm run preversion -s && npm run build -s",
     "test": "jest",
     "test:watch": "jest --watch",
-    "preversion": "npm run lint -s && npm run types:check -s && npm run test -s"
+    "preversion": "npm run lint -s && npm run lint:types -s && npm run lint:deps -s && npm run test -s"
   },
   "dependencies": {
     "history": "4.10.1",
