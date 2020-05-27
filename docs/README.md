@@ -137,6 +137,10 @@ yarn add react-resource-router
 - [Basic routing](https://codesandbox.io/s/react-resource-router-basic-routing-example-5rch8)
 - [Adding resources](https://codesandbox.io/s/react-resource-router-basic-routing-with-resources-example-lqm0m)
 
+## Thanks
+
+Big thanks to [Thinkmill][https://www.thinkmill.com.au/] for their involvement in this project.
+
 ## License
 
 Copyright (c) 2020 Atlassian and others.
