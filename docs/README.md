@@ -139,7 +139,7 @@ yarn add react-resource-router
 
 ## Thanks
 
-Big thanks to [Thinkmill][https://www.thinkmill.com.au/] for their involvement in this project.
+Big thanks to [Thinkmill](https://www.thinkmill.com.au/) for their involvement in this project.
 
 ## License
 
