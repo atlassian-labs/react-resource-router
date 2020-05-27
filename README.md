@@ -141,6 +141,10 @@ yarn add react-resource-router
 
 Check the [docs website](https://atlassian-labs.github.io/react-resource-router/) or the [docs folder](https://github.com/atlassian-labs/react-resource-router/tree/master/docs).
 
+## Thanks
+
+Big thanks to [Thinkmill][https://www.thinkmill.com.au/] for their involvement in this project.
+
 ## License
 
 Copyright (c) 2020 Atlassian and others.
