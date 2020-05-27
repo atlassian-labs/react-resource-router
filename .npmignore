@@ -1,7 +1,6 @@
 
 # Ignore dev files
-.vscode
-.circleci
+.github
 .editorconfig
 .eslintrc.js
 .prettierrc.js
@@ -10,6 +9,7 @@
 *.setup.js
 .flowconfig
 tsconfig.json
+tsconfig.build.json
 
 # Ignore source files
 src
@@ -24,4 +24,5 @@ tests
 coverage
 
 # Other stuff
+.atlassian
 .DS_Store
