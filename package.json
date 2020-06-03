@@ -44,7 +44,7 @@
     "build:esm": "babel src --out-dir build/esm --extensions \".ts,.tsx\" --source-maps inline --ignore src/__tests__",
     "build:types-cjs": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/cjs && cp src/index.js.flow build/cjs",
     "build:types-esm": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/esm && cp src/index.js.flow build/esm",
-    "docs": "npx docsify-cli serve docs",
+    "docs": "docsify serve docs",
     "lint": "eslint --ext .ts,.tsx,.js src/",
     "lint:deps": "madge -c --extensions ts,tsx src",
     "lint:fix": "eslint --ext .ts,.tsx,.js src/ --fix",
