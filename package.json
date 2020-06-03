@@ -37,6 +37,9 @@
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "types": "build/cjs/index.d.ts",
+  "engines": {
+    "node": ">=10.0"
+  },
   "scripts": {
     "build": "npm run build:clean && npm run build:types-cjs && npm run build:types-esm && npm run build:cjs && npm run build:esm",
     "build:cjs": "babel src --out-dir build/cjs --extensions \".ts,.tsx\" --source-maps inline --ignore src/__tests__ --presets @babel/env",
