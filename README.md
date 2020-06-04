@@ -2,6 +2,8 @@
 
 React Resource Router (RRR) is a configuration driven routing solution for React that manages single page application route matching, data fetching and progressive rendering.
 
+[CHANGELOG](CHANGELOG.md)
+
 ## Why?
 
 React Resource Router was developed by Atlassian for [Jira](https://www.atlassian.com/software/jira) primarily to improve **performance** and prepare for **compatibility** with React's forthcoming [Concurrent Mode](https://reactjs.org/docs/concurrent-mode-intro.html) on both client and server.
