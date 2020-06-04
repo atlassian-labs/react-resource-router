@@ -25,6 +25,6 @@ jobs:
         run: npm run build
 
       - name: Publish packages to npm registry
-        run: npx workspaces-run -- npm publish --access public
+        run: npm publish --access public
         env:
           NODE_AUTH_TOKEN: ${{secrets.REACT_RESOURCE_ROUTER_NPM_TOKEN}}
