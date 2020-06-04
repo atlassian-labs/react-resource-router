@@ -18,6 +18,7 @@ module.exports = {
     '@babel/plugin-proposal-export-namespace-from',
     '@babel/plugin-syntax-dynamic-import',
     '@babel/plugin-syntax-import-meta',
+    '@babel/plugin-transform-runtime',
   ],
   env: {
     test: {
