@@ -16,6 +16,33 @@
       content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0"
     />
     <link rel="stylesheet" href="//unpkg.com/docsify/lib/themes/vue.css" />
+    <style type="text/css">
+      :root {
+        --theme-color: #00c353;
+      }
+      .markdown-section > div:first-child {
+        position: relative;
+        float: right;
+        z-index: 2;
+      }
+      .markdown-section > div:first-child p {
+        margin: 0.5em 0 0;
+      }
+      .markdown-section > div:first-child + * {
+        margin-top: 0;
+      }
+      .markdown-section code,
+      .token.keyword,
+      .token.function {
+        color: var(--theme-color);
+      }
+      .token.boolean,
+      .token.number,
+      .token.function-variable,
+      .token.string {
+        color: inherit;
+      }
+    </style>
   </head>
   <body>
     <div id="app"></div>
@@ -23,6 +50,7 @@
       window.$docsify = {
         name: 'react-resource-router',
         repo: 'https://github.com/atlassian-labs/react-resource-router',
+        themeColor: '#00c353',
         loadSidebar: true,
         subMaxLevel: 2,
       };
