@@ -22,7 +22,7 @@ export {
   getRouteContext,
 } from './common/utils';
 
-export {
+export type {
   Location,
   Route,
   Routes,
@@ -41,7 +41,7 @@ export {
   BrowserHistory,
 } from './common/types';
 
-export {
+export type {
   RouterActionsType,
   RouterActionPush,
   RouterActionReplace,
