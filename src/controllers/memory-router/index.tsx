@@ -53,4 +53,4 @@ export const MemoryRouter = (props: MemoryRouterProps) => {
   );
 };
 
-export { MemoryRouterProps };
+export type { MemoryRouterProps };

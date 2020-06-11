@@ -3,7 +3,6 @@ import { qs } from 'url-parse';
 import { Match, MatchedRoute, MatchParams, Query, Routes } from '../../types';
 
 import matchPath from './matchPath';
-// import type { Match, Route, MatchedRoute } from '../../types';
 
 /* This should match what react-router does to compute a root match. */
 const computeRootMatch = (pathname: string) => ({
