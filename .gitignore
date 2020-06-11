@@ -4,7 +4,7 @@ coverage
 yarn.lock   
 
 # misc
-local-scripts/
+.local
 .idea
 .vscode
 src/webpack/__tests__/__fixtures__/webpack/output
