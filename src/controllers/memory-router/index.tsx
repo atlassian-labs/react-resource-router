@@ -5,7 +5,7 @@ import { createMemoryHistory, MemoryHistoryBuildOptions } from 'history';
 import { Router } from '../router';
 import { RouterProps } from '../router/types';
 
-import { MemoryRouterProps } from './types';
+import { MemoryRouterProps } from '../../common/types';
 
 const getRouterProps = (memoryRouterProps: MemoryRouterProps) => {
   const {
@@ -52,5 +52,3 @@ export const MemoryRouter = (props: MemoryRouterProps) => {
     </Router>
   );
 };
-
-export type { MemoryRouterProps };
