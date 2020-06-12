@@ -4,7 +4,7 @@ export { MemoryRouter } from './memory-router';
 export { StaticRouter } from './static-router';
 export { RouterActions } from './router-actions';
 export { Redirect } from './redirect';
-export { withRouter } from './with-router';
+export { withRouter, WithRouterProps } from './with-router';
 export { useResource, useRouter, useRouterActions } from './hooks';
 export { useResourceStoreContext } from './resource-store';
 export { createResource } from './resource-utils';

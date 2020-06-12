@@ -110,12 +110,16 @@ export type RouterStoreContext = {
   location: Location;
 };
 
+type RouteComponentProps = Partial<RouteContext> & {
+  [k: string]: any;
+};
+
 export type Route = {
   path: string;
   exact?: boolean;
 
   /** The component to render on match, typed explicitly */
-  component: ComponentType<RouteContext>;
+  component: ComponentType<RouteComponentProps> | ComponentType<any>;
 
   /** If present, must return true to include the route. */
   enabled?: () => boolean;

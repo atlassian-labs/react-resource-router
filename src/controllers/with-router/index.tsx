@@ -1,10 +1,14 @@
 import React, { ComponentType } from 'react';
 
 import { BrowserHistory, RouteContext } from '../../common/types';
+import { RouterActionPush, RouterActionReplace } from '../router-store/types';
 import { RouterSubscriber } from '../subscribers/route';
 
-// TODO
-type WithRouter = RouteContext & { history: BrowserHistory };
+export type WithRouterProps = RouteContext & {
+  history: BrowserHistory;
+  push: RouterActionPush;
+  replace: RouterActionReplace;
+};
 
 const getWrappedComponentDisplayName = (
   component: ComponentType<any>
@@ -23,12 +27,12 @@ const getWrappedComponentDisplayName = (
   return `withRouter(${componentDisplayName})`;
 };
 
-export const withRouter = <P extends Record<string, any>>(
+export const withRouter = <P extends Record<string, any> = {}>(
   WrappedComponent: ComponentType<P>
-) => {
+): ComponentType<Omit<P, keyof WithRouterProps>> => {
   const displayName = getWrappedComponentDisplayName(WrappedComponent);
-  const Component = WrappedComponent as ComponentType<WithRouter & P>;
-  const ComponentWithRouter = (props: P) => (
+  const Component = WrappedComponent;
+  const ComponentWithRouter = (unknownProps: any) => (
     <RouterSubscriber>
       {(
         // @ts-ignore access private `history` store property
@@ -36,7 +40,7 @@ export const withRouter = <P extends Record<string, any>>(
         { push, replace }
       ) => (
         <Component
-          {...props}
+          {...unknownProps}
           route={route}
           location={location}
           query={query}

@@ -7,6 +7,7 @@ export {
   Redirect,
   RouterActions,
   withRouter,
+  WithRouterProps,
   ResourceSubscriber,
   useResource,
   useRouter,
