@@ -32,7 +32,7 @@ export const withRouter = <P extends Record<string, any> = {}>(
 ): ComponentType<Omit<P, keyof WithRouterProps>> => {
   const displayName = getWrappedComponentDisplayName(WrappedComponent);
   const Component = WrappedComponent;
-  const ComponentWithRouter = (unknownProps: any) => (
+  const ComponentWithRouter = (props: any) => (
     <RouterSubscriber>
       {(
         // @ts-ignore access private `history` store property
@@ -40,7 +40,7 @@ export const withRouter = <P extends Record<string, any> = {}>(
         { push, replace }
       ) => (
         <Component
-          {...unknownProps}
+          {...props}
           route={route}
           location={location}
           query={query}
