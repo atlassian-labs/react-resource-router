@@ -120,6 +120,7 @@
   },
   "peerDependencies": {
     "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react-dom": "^16.8.0",
+    "typescript": "^3.8.0"
   }
 }
