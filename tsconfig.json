@@ -12,8 +12,7 @@
     "typeRoots": ["./node_modules/@types", "types"],
     "baseUrl": ".",
     "paths": {
-      "react-loosely-lazy": ["src"],
-      "react-loosely-lazy/babel-plugin": ["src/babel"]
+      "react-resource-router": ["src"]
     }
   },
   "include": ["src/**/*", "examples/**/*"]

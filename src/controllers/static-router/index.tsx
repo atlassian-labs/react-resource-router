@@ -2,7 +2,8 @@ import React from 'react';
 
 import { createLocation, createMemoryHistory } from 'history';
 
-import { MemoryRouter, MemoryRouterProps } from '../memory-router';
+import { MemoryRouterProps } from '../../common/types';
+import { MemoryRouter } from '../memory-router';
 import { getResourceStore } from '../resource-store';
 import { getRouterStore } from '../router-store';
 

@@ -226,3 +226,12 @@ export type HistoryActions = {
   registerBlock: (blocker: HistoryBlocker) => () => void;
   listen: HistoryListen;
 };
+
+export type MemoryRouterProps = {
+  isStatic?: boolean;
+  location?: string;
+  routes: Routes;
+  children: ReactNode;
+  resourceData?: ResourceStoreData;
+  resourceContext?: ResourceStoreContext;
+};
