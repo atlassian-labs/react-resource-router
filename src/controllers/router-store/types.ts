@@ -15,6 +15,7 @@ import {
   Route,
   Routes,
 } from '../../common/types';
+import { MemoryHistory } from 'history';
 
 type PublicStateProperties = {
   location: Location;
@@ -38,7 +39,7 @@ export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
 
 export type ContainerProps = {
   isStatic?: boolean;
-  history: BrowserHistory;
+  history: BrowserHistory | MemoryHistory;
   location?: Location;
   routes: Routes;
   resourceData?: ResourceStoreData;
