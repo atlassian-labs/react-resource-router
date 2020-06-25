@@ -46,10 +46,15 @@ export type ContainerProps = {
   resourceContext?: ResourceStoreContext;
 };
 
+export type UniversalRouterContainerProps = Omit<ContainerProps, 'isStatic'>;
+
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
 
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
+  bootstrapStoreUniversal: (
+    initialState: UniversalRouterContainerProps
+  ) => RouterAction;
   requestRouteResources: () => RouterAction;
   listen: () => RouterAction;
 };

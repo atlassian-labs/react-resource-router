@@ -8,6 +8,7 @@ import { RouterSubscriber } from '../../../../controllers/subscribers/route';
 import { getResourceStore } from '../../../../controllers/resource-store';
 import { defaultRegistry } from 'react-sweet-state';
 import { getRouterState } from '../../../../controllers/router-store';
+import { isNodeEnvironment } from '../../../../common/utils';
 
 const mockLocation = {
   pathname: '/pathname',
@@ -28,9 +29,15 @@ const expiresAt = null;
 const unlistenMock = jest.fn();
 const routes: any[] = [];
 
+jest.mock('../../../../common/utils', () => ({
+  ...jest.requireActual<any>('../../../../common/utils'),
+  isNodeEnvironment: jest.fn(),
+}));
+
 describe('UniversalRouter', () => {
   describe('Browser environment', () => {
     beforeEach(() => {
+      (isNodeEnvironment as any).mockImplementation(() => false);
       mockHistory.listen.mockReturnValue(unlistenMock);
     });
 
@@ -46,7 +53,7 @@ describe('UniversalRouter', () => {
         </Router>
       );
 
-      const component = wrapper.find('RouterContainer');
+      const component = wrapper.find('UniversalRouterContainer');
 
       expect(component).toHaveLength(1);
 

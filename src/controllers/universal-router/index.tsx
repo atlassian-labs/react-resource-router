@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 
 import { DEFAULT_HISTORY } from '../../common/constants';
-import { getRouterState, RouterContainer } from '../router-store';
+import { getRouterState, UniversalRouterContainer } from '../router-store';
 import { UnlistenHistory } from '../router-store/types';
 import { isNodeEnvironment } from '../../common/utils';
 import { UniversalRouterProps, RequestResourcesParams } from './types';
@@ -9,9 +9,6 @@ import { createMemoryHistory, createLocation } from 'history';
 import { BrowserHistory } from 'src/common/types';
 import { getResourceStore } from '../resource-store';
 import { getRouterStore } from '../router-store';
-
-const getIsStaticRouter = (isStatic?: boolean) =>
-  isStatic === undefined ? isNodeEnvironment() : isStatic;
 
 const getInferredHistory = (history: BrowserHistory, location?: string) =>
   location ? createMemoryHistory({ initialEntries: [location] }) : history;
@@ -32,16 +29,18 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
    * TODO: return type
    */
   static async requestResources(props: RequestResourcesParams) {
-    const { bootstrapStore, requestRouteResources } = getRouterStore().actions;
+    const {
+      bootstrapStoreUniversal,
+      requestRouteResources,
+    } = getRouterStore().actions;
     const { location, ...bootstrapProps } = props;
     const initialEntries = [location];
     const overrides = {
       history: createMemoryHistory({ initialEntries }),
       location: createLocation(location),
-      isStatic: true,
     };
 
-    bootstrapStore({ ...bootstrapProps, ...overrides });
+    bootstrapStoreUniversal({ ...bootstrapProps, ...overrides });
 
     await requestRouteResources();
 
@@ -59,7 +58,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
   unlistenHistory: UnlistenHistory | null = null;
 
   componentDidMount() {
-    if (!getIsStaticRouter(this.props.isStatic)) {
+    if (!isNodeEnvironment()) {
       const state = getRouterState();
       this.unlistenHistory = state.unlisten;
     }
@@ -80,23 +79,21 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
       children,
       routes,
       history = DEFAULT_HISTORY,
-      isStatic,
       location,
       resourceContext,
       resourceData,
     } = this.props;
 
     return (
-      <RouterContainer
+      <UniversalRouterContainer
         routes={routes}
         history={getInferredHistory(history, location)}
-        isStatic={getIsStaticRouter(isStatic)}
         resourceContext={resourceContext}
         resourceData={resourceData}
         isGlobal
       >
         {children}
-      </RouterContainer>
+      </UniversalRouterContainer>
     );
   }
 }
