@@ -7,7 +7,7 @@ import { isServerEnvironment } from '../../common/utils';
 import { UniversalRouterProps, RequestResourcesParams } from './types';
 import { createMemoryHistory, createLocation } from 'history';
 import { BrowserHistory } from 'src/common/types';
-import { getResourceStore } from '../resource-store';
+import { getResourceStore, ResourceContainer } from '../resource-store';
 import { getRouterStore } from '../router-store';
 
 const getInferredHistory = (history: BrowserHistory, location?: string) =>
@@ -93,7 +93,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
         resourceData={resourceData}
         isGlobal={isGlobal}
       >
-        {children}
+        <ResourceContainer isGlobal={isGlobal}>{children}</ResourceContainer>
       </UniversalRouterContainer>
     );
   }

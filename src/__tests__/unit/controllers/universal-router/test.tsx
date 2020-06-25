@@ -6,8 +6,6 @@ import { mockRoute } from '../../../../common/mocks';
 import { UniversalRouter as Router } from '../../../../controllers/universal-router';
 import { RouterSubscriber } from '../../../../controllers/subscribers/route';
 import { getResourceStore } from '../../../../controllers/resource-store';
-import { defaultRegistry } from 'react-sweet-state';
-import { getRouterState } from '../../../../controllers/router-store';
 import { isServerEnvironment } from '../../../../common/utils';
 
 const mockLocation = {
@@ -117,7 +115,7 @@ describe('UniversalRouter', () => {
 
   describe('Server environment', () => {
     afterEach(() => {
-      defaultRegistry.stores.clear();
+      // defaultRegistry.stores.clear();
       jest.resetAllMocks();
       jest.restoreAllMocks();
     });
@@ -130,7 +128,7 @@ describe('UniversalRouter', () => {
 
     it('should not respond to history changes', () => {
       mount(
-        <Router routes={[]}>
+        <Router routes={[]} isGlobal={false}>
           <RouterSubscriber>
             {() => <div>I am a subscriber</div>}
           </RouterSubscriber>
@@ -234,7 +232,7 @@ describe('UniversalRouter', () => {
         };
 
         mount(
-          <Router routes={[]}>
+          <Router routes={[]} isGlobal={false}>
             <RouterSubscriber>
               {() => <div>I am a subscriber</div>}
             </RouterSubscriber>
@@ -262,7 +260,7 @@ describe('UniversalRouter', () => {
         });
 
         mount(
-          <Router location={location} routes={[]}>
+          <Router location={location} routes={[]} isGlobal={false}>
             <RouterSubscriber>
               {() => <div>I am a subscriber</div>}
             </RouterSubscriber>
@@ -276,20 +274,25 @@ describe('UniversalRouter', () => {
   });
 
   describe('Memory environment', () => {
-    afterEach(() => {
-      defaultRegistry.stores.clear();
-    });
-
     it('should register an instance of memory history in the router store when mounted with a location set', () => {
+      let memoryHistory;
+
       mount(
-        <Router routes={[]} location={'/'}>
-          {'hello world'}
+        <Router routes={[]} location={'/'} isGlobal={false}>
+          <RouterSubscriber>
+            {
+              /* @ts-ignore */
+              ({ history }) => {
+                memoryHistory = history;
+
+                return null;
+              }
+            }
+          </RouterSubscriber>
         </Router>
       );
 
-      const { history } = getRouterState();
-
-      expect(history).toHaveProperty('canGo');
+      expect(memoryHistory).toHaveProperty('canGo');
     });
   });
 });
