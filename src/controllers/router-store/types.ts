@@ -46,7 +46,10 @@ export type ContainerProps = {
   resourceContext?: ResourceStoreContext;
 };
 
-export type UniversalRouterContainerProps = Omit<ContainerProps, 'isStatic'>;
+export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
+  ContainerProps,
+  'isStatic'
+>;
 
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
 

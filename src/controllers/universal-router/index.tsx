@@ -19,7 +19,7 @@ const getInferredHistory = (history: BrowserHistory, location?: string) =>
  */
 export class UniversalRouter extends Component<UniversalRouterProps> {
   static defaultProps = {
-    isStatic: false,
+    isGlobal: true,
     history: DEFAULT_HISTORY,
   };
 
@@ -82,6 +82,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
       location,
       resourceContext,
       resourceData,
+      isGlobal,
     } = this.props;
 
     return (
@@ -90,7 +91,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
         history={getInferredHistory(history, location)}
         resourceContext={resourceContext}
         resourceData={resourceData}
-        isGlobal
+        isGlobal={isGlobal}
       >
         {children}
       </UniversalRouterContainer>

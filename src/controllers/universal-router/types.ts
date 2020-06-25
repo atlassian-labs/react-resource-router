@@ -9,7 +9,7 @@ import {
 
 export type UniversalRouterProps = {
   history?: BrowserHistory;
-  isStatic?: boolean;
+  isGlobal?: boolean;
   location?: string;
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;

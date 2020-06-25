@@ -6,6 +6,7 @@ import type { ComponentType, Node, ElementConfig } from 'react';
 import type { Action, BoundActions } from 'react-sweet-state';
 import type {
   BrowserHistory,
+  MemoryHistory,
   LocationShape as HistoryLocationShape,
 } from 'history/createBrowserHistory';
 
@@ -123,6 +124,15 @@ type ContainerProps = {|
   resourceContext?: ResourceStoreContext,
 |};
 
+type UniversalRouterContainerProps = {|
+  isGlobal?: boolean,
+  history: BrowserHistory | MemoryHistory,
+  location?: Location,
+  routes: Routes,
+  resourceData?: ResourceStoreData,
+  resourceContext?: ResourceStoreContext,
+|};
+
 type PublicStateProperties = {|
   location: Location,
   query: Query,
@@ -176,6 +186,15 @@ export type RouterAction = Action<
 export type RouterProps = {
   isStatic?: boolean,
   history?: BrowserHistory,
+  resourceContext?: ResourceStoreContext,
+  resourceData?: ResourceStoreData,
+  routes: Routes,
+  children: Node,
+};
+
+export type UniversalRouterProps = {
+  isGlobal?: boolean,
+  history?: BrowserHistory | MemoryHistory,
   resourceContext?: ResourceStoreContext,
   resourceData?: ResourceStoreData,
   routes: Routes,
