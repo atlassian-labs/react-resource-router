@@ -14,7 +14,7 @@ import {
   DEFAULT_MATCH,
   DEFAULT_ROUTE,
 } from '../../common/constants';
-import { getRouteContext, isNodeEnvironment } from '../../common/utils';
+import { getRouteContext, isServerEnvironment } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
 import { getResourcesForNextLocation } from '../resource-store/utils';
 
@@ -63,7 +63,7 @@ const actions: AllRouterActions = {
   },
 
   /**
-   * Duplicate method that uses isNodeEnvironment instead of removed isStatic prop
+   * Duplicate method that uses isServerEnvironment instead of removed isStatic prop
    * internally. We can remove this when UniversalRouter replaces Router completely.
    */
   bootstrapStoreUniversal: props => ({ setState, dispatch }) => {
@@ -79,7 +79,7 @@ const actions: AllRouterActions = {
     });
     getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
-    if (!isNodeEnvironment()) {
+    if (!isServerEnvironment()) {
       dispatch(actions.listen());
     }
   },
@@ -239,7 +239,7 @@ export const UniversalRouterContainer = createContainer<
   displayName: 'UniversalRouterContainer',
   onInit: () => ({ dispatch }, props) => {
     dispatch(actions.bootstrapStoreUniversal(props));
-    !isNodeEnvironment() && dispatch(actions.requestRouteResources());
+    !isServerEnvironment() && dispatch(actions.requestRouteResources());
   },
   onCleanup: () => () => {
     if (process.env.NODE_ENV === 'development') {

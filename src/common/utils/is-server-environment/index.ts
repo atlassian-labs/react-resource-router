@@ -7,8 +7,12 @@ const isJsDomEnvironment = () =>
   navigator.userAgent.includes('Node.js') ||
   navigator.userAgent.includes('jsdom');
 
-export const isNodeEnvironment = () => {
-  if (typeof window === 'undefined') {
+export const isServerEnvironment = () => {
+  if (
+    typeof process !== 'undefined' &&
+    process.versions != null &&
+    process.versions.node != null
+  ) {
     return true;
   }
 
