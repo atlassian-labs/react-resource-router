@@ -15,6 +15,7 @@ import {
   Route,
   Routes,
 } from '../../common/types';
+import { MemoryHistory } from 'history';
 
 type PublicStateProperties = {
   location: Location;
@@ -38,17 +39,25 @@ export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
 
 export type ContainerProps = {
   isStatic?: boolean;
-  history: BrowserHistory;
+  history: BrowserHistory | MemoryHistory;
   location?: Location;
   routes: Routes;
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
 };
 
+export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
+  ContainerProps,
+  'isStatic'
+>;
+
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
 
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
+  bootstrapStoreUniversal: (
+    initialState: UniversalRouterContainerProps
+  ) => RouterAction;
   requestRouteResources: () => RouterAction;
   listen: () => RouterAction;
 };

@@ -14,11 +14,16 @@ import {
   DEFAULT_MATCH,
   DEFAULT_ROUTE,
 } from '../../common/constants';
-import { getRouteContext } from '../../common/utils/get-route-context';
+import { getRouteContext, isServerEnvironment } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
 import { getResourcesForNextLocation } from '../resource-store/utils';
 
-import { AllRouterActions, ContainerProps, EntireRouterState } from './types';
+import {
+  AllRouterActions,
+  ContainerProps,
+  UniversalRouterContainerProps,
+  EntireRouterState,
+} from './types';
 import { getRelativePath, isExternalAbsolutePath } from './utils';
 
 export const INITIAL_STATE: EntireRouterState = {
@@ -53,6 +58,28 @@ const actions: AllRouterActions = {
     getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
     if (!isStatic) {
+      dispatch(actions.listen());
+    }
+  },
+
+  /**
+   * Duplicate method that uses isServerEnvironment instead of removed isStatic prop
+   * internally. We can remove this when UniversalRouter replaces Router completely.
+   */
+  bootstrapStoreUniversal: props => ({ setState, dispatch }) => {
+    const { resourceContext, resourceData, ...initialProps } = props;
+    const { history, routes } = initialProps;
+    const routeContext = getRouteContext(history.location, routes);
+
+    setState({
+      ...initialProps,
+      ...routeContext,
+      route: routeContext.route,
+      match: routeContext.match,
+    });
+    getResourceStore().actions.hydrate({ resourceContext, resourceData });
+
+    if (!isServerEnvironment()) {
       dispatch(actions.listen());
     }
   },
@@ -197,12 +224,32 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
         console.warn(
-          `Warning: @atlaskit/router has been unmounted! Was this intentional? Resources will be refetched when the router is mounted again.`
+          `Warning: react-resource-router has been unmounted! Was this intentional? Resources will be refetched when the router is mounted again.`
         );
       }
     },
   }
 );
+
+export const UniversalRouterContainer = createContainer<
+  State,
+  Actions,
+  UniversalRouterContainerProps
+>(RouterStore, {
+  displayName: 'UniversalRouterContainer',
+  onInit: () => ({ dispatch }, props) => {
+    dispatch(actions.bootstrapStoreUniversal(props));
+    !isServerEnvironment() && dispatch(actions.requestRouteResources());
+  },
+  onCleanup: () => () => {
+    if (process.env.NODE_ENV === 'development') {
+      // eslint-disable-next-line no-console
+      console.warn(
+        `Warning: react-resource-router has been unmounted! Was this intentional? Resources will be refetched when the router is mounted again.`
+      );
+    }
+  },
+});
 
 export const RouterSubscriber = createSubscriber<State, Actions>(RouterStore, {
   displayName: 'BaseRouterSubscriber',
