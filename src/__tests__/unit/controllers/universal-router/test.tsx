@@ -126,7 +126,7 @@ describe('UniversalRouter', () => {
         .mockImplementation(() => mockHistory);
     });
 
-    it('should not respond to history changes', () => {
+    it('should listen to memory history if no history provided', () => {
       mount(
         <Router routes={[]} isGlobal={false}>
           <RouterSubscriber>
@@ -135,7 +135,7 @@ describe('UniversalRouter', () => {
         </Router>
       );
 
-      expect(mockHistory.listen).not.toHaveBeenCalled();
+      expect(mockHistory.listen).toHaveBeenCalled();
     });
 
     describe('static requestResources', () => {
