@@ -1,11 +1,10 @@
-// eslint-disable-next-line @typescript-eslint/camelcase
-import { unstable_batchedUpdates } from 'react-dom';
 import {
   createContainer,
   createHook,
   createStore,
   createSubscriber,
   defaultRegistry,
+  batch,
 } from 'react-sweet-state';
 
 import {
@@ -146,7 +145,7 @@ const actions: AllRouterActions = {
        * If we do not batch, React might be re-render when route changes but resource
        * fetching has not started yet, making the app render with data null */
 
-      unstable_batchedUpdates(() => {
+      batch(() => {
         cleanExpiredResources(nextResources, nextLocationContext);
         setState({
           ...nextContext,

@@ -615,9 +615,6 @@ describe('SPA Router store', () => {
       expect(componentRenderStates).toEqual([
         'loading:A',
         `data:${dataA1}`,
-        // this duplicate render state required in this test as of react-sweet-state@2.2.0
-        // @see https://github.com/atlassian/react-sweet-state/issues/81
-        `data:${dataA1}`,
         'loading:B',
         `data:${dataA2}`,
       ]);
