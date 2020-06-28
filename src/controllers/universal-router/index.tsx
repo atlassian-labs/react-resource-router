@@ -1,17 +1,12 @@
 import React, { Component } from 'react';
 
-import { DEFAULT_HISTORY } from '../../common/constants';
 import { getRouterState, UniversalRouterContainer } from '../router-store';
 import { UnlistenHistory } from '../router-store/types';
-import { isServerEnvironment } from '../../common/utils';
 import { UniversalRouterProps, RequestResourcesParams } from './types';
 import { createMemoryHistory, createLocation } from 'history';
 import { BrowserHistory } from 'src/common/types';
 import { getResourceStore, ResourceContainer } from '../resource-store';
 import { getRouterStore } from '../router-store';
-
-const getInferredHistory = (history: BrowserHistory, location?: string) =>
-  location ? createMemoryHistory({ initialEntries: [location] }) : history;
 
 /**
  * Default prop provider for the RouterContainer.
@@ -20,7 +15,6 @@ const getInferredHistory = (history: BrowserHistory, location?: string) =>
 export class UniversalRouter extends Component<UniversalRouterProps> {
   static defaultProps = {
     isGlobal: true,
-    history: DEFAULT_HISTORY,
   };
 
   /**
@@ -56,12 +50,17 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
    * is re-mounted.
    */
   unlistenHistory: UnlistenHistory | null = null;
+  history: BrowserHistory;
+
+  constructor(props: UniversalRouterProps) {
+    super(props);
+    const initialEntries = props.location ? [props.location] : [];
+    this.history = props.history || createMemoryHistory({ initialEntries });
+  }
 
   componentDidMount() {
-    if (!isServerEnvironment()) {
-      const state = getRouterState();
-      this.unlistenHistory = state.unlisten;
-    }
+    const state = getRouterState();
+    this.unlistenHistory = state.unlisten;
   }
 
   /**
@@ -78,8 +77,6 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
     const {
       children,
       routes,
-      history = DEFAULT_HISTORY,
-      location,
       resourceContext,
       resourceData,
       isGlobal,
@@ -88,7 +85,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
     return (
       <UniversalRouterContainer
         routes={routes}
-        history={getInferredHistory(history, location)}
+        history={this.history}
         resourceContext={resourceContext}
         resourceData={resourceData}
         isGlobal={isGlobal}
