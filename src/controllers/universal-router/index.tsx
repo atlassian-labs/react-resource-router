@@ -2,7 +2,6 @@ import React, { Component } from 'react';
 
 import { getRouterState, UniversalRouterContainer } from '../router-store';
 import { UnlistenHistory } from '../router-store/types';
-import { isServerEnvironment } from '../../common/utils';
 import { UniversalRouterProps, RequestResourcesParams } from './types';
 import { createMemoryHistory, createLocation } from 'history';
 import { BrowserHistory } from 'src/common/types';
@@ -60,10 +59,8 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
   }
 
   componentDidMount() {
-    if (!isServerEnvironment()) {
-      const state = getRouterState();
-      this.unlistenHistory = state.unlisten;
-    }
+    const state = getRouterState();
+    this.unlistenHistory = state.unlisten;
   }
 
   /**
