@@ -18,7 +18,7 @@ const HistoryMock = {
   goBack: jest.fn(),
   goForward: jest.fn(),
   block: jest.fn(),
-  listen: jest.fn(),
+  listen: () => jest.fn(),
   location: MockLocation,
   _history: jest.fn(),
 };

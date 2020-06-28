@@ -114,16 +114,17 @@ describe('UniversalRouter', () => {
   });
 
   describe('Server environment', () => {
-    afterEach(() => {
-      // defaultRegistry.stores.clear();
-      jest.resetAllMocks();
-      jest.restoreAllMocks();
-    });
     beforeEach(() => {
       jest
         .spyOn(historyHelper, 'createMemoryHistory')
         // @ts-ignore
         .mockImplementation(() => mockHistory);
+      mockHistory.listen.mockReturnValue(unlistenMock);
+    });
+
+    afterEach(() => {
+      jest.resetAllMocks();
+      jest.restoreAllMocks();
     });
 
     it('should not respond to history changes', () => {
