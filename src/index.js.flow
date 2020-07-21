@@ -18,6 +18,7 @@ import type {
   Location,
   LocationShape,
   Match,
+  MatchedInvariantRoute,
   MatchedRoute,
   MatchParams,
   MemoryRouterProps,
@@ -73,7 +74,7 @@ export {
   RouterStoreContext,
   RouterSubscriberProps,
   Routes,
-};
+} from './types.js.flow';
 
 declare export function Link(props: LinkProps): Node;
 declare export function Redirect(props: {
