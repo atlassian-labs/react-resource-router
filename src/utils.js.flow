@@ -12,14 +12,6 @@ import type {
   Routes,
 } from './types.js.flow';
 
-export type {
-  HistoryAction,
-  InvariantRoutes,
-  MatchedRoute,
-  MatchParams,
-  Routes,
-};
-
 declare export function createLegacyHistory(): BrowserHistory;
 
 declare export function generatePath(

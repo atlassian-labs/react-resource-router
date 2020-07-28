@@ -46,36 +46,6 @@ import type {
   StaticRouterProps,
 } from './types.js.flow';
 
-export {
-  HistoryAction,
-  HistoryBlocker,
-  InvariantRoutes,
-  LinkProps,
-  Location,
-  LocationShape,
-  Match,
-  MatchedRoute,
-  MatchParams,
-  Navigation,
-  NavigationStatics,
-  NavigationType,
-  Query,
-  ResourceStoreData,
-  Route,
-  RouteContext,
-  RouterAction,
-  RouterActionPush,
-  RouterActionReplace,
-  RouterActionsType,
-  RouteResource,
-  RouteResourceError,
-  RouteResourceResponse,
-  RouterProps,
-  RouterStoreContext,
-  RouterSubscriberProps,
-  Routes,
-} from './types.js.flow';
-
 declare export function Link(props: LinkProps): Node;
 declare export function Redirect(props: {
   to: Location | string,
