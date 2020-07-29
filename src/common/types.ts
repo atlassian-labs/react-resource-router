@@ -124,9 +124,6 @@ export type InvariantRoute = {
   path: string;
   exact?: boolean;
 
-  /** Signals that this is a redirect route, we need to handle these in a special way. */
-  isRedirect?: boolean;
-
   /** Used to prevent transitions between app groups */
   group?: string;
 
