@@ -60,6 +60,7 @@ type PrivateRouterActions = {
   ) => RouterAction;
   requestRouteResources: () => RouterAction;
   listen: () => RouterAction;
+  getContext: () => RouterAction;
 };
 
 type PublicRouterActions = {

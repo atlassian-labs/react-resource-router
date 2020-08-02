@@ -1,12 +1,15 @@
-import { useCallback } from 'react';
+import { useCallback, useMemo } from 'react';
 
 import {
   RouteResource,
   RouteResourceResponse,
   RouteResourceUpdater,
+  RouterContext,
 } from '../../../common/types';
 import { useResourceActions, useResourceStore } from '../../resource-store';
-import { getRouterState } from '../../router-store';
+import { useRouterStoreStatic, RouterStore } from '../../router-store';
+import { EntireRouterState, AllRouterActions } from '../../router-store/types';
+import { createHook } from 'react-sweet-state';
 
 type UseResourceHookResponse<
   D = RouteResourceResponse['data']
@@ -16,45 +19,58 @@ type UseResourceHookResponse<
   refresh: () => void;
 };
 
-/**
- * Utility hook for using a resource. Will throw a promise if we are using suspense.
- *
- */
-export const useResource = (
-  resource: RouteResource
-): UseResourceHookResponse[] => {
-  /**
-   * @gasparin - We may need to use a hook to get the router so that components using this hook
-   * will respond to route changes, so something like
-   *
-   * const [router] = useRouterStore()
-   */
-  const { route, match, query, location } = getRouterState();
-  const { type, getKey, maxAge } = resource;
-  const [, actions] = useResourceActions();
-  const key = getKey({ match, query, route, location }, actions.getContext());
-  const [slice] = useResourceStore({
-    type,
-    key,
-  });
+type UseResourceOptions = {
+  routerContext?: RouterContext;
+};
 
-  return [
-    {
-      ...slice,
-      update: useCallback(
-        (getNewData: RouteResourceUpdater) => {
-          actions.updateResourceState(type, key, maxAge, getNewData);
-        },
-        [actions, type, key, maxAge]
-      ),
-      refresh: useCallback(() => {
-        actions.getResourceFromRemote(resource, {
-          route,
-          match,
-          query,
-          location,
-        });
-      }, [actions, resource, route, match, query, location]),
+export const useResource = (
+  resource: RouteResource,
+  options?: UseResourceOptions
+): UseResourceHookResponse => {
+  const [, actions] = useResourceActions();
+  const [, { getContext: getRouterContext }] = useRouterStoreStatic();
+
+  // Dynamically generate a router subscriber based on the resource:
+  // makes the component re-render only when key changes instead of
+  // after every route change
+  const useKey = useMemo(
+    () =>
+      createHook<
+        EntireRouterState,
+        AllRouterActions,
+        string,
+        RouterContext | void
+      >(RouterStore, {
+        selector: ({ match, query, route }, keyArg): string =>
+          resource.getKey(
+            keyArg != null ? keyArg : { match, query, route },
+            actions.getContext()
+          ),
+      }),
+    [resource, actions]
+  );
+
+  const key = useKey(options?.routerContext!)[0];
+  const [slice] = useResourceStore({ type: resource.type, key });
+
+  const update = useCallback(
+    (updater: RouteResourceUpdater) => {
+      actions.updateResourceState(resource.type, key, resource.maxAge, updater);
     },
-  ];
+    [resource, key, actions]
+  );
+
+  // we keep route context bound to key, so route context won't refresh
+  // unless key changes. This allows refresh to be called on effect cleanup
+  // or asynchronously, when route context might already have changed
+  const routerContext = useMemo(
+    () => options?.routerContext! || getRouterContext(),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    [key]
+  );
+  const refresh = useCallback(() => {
+    actions.getResourceFromRemote(resource, routerContext);
+  }, [resource, routerContext, actions]);
+
+  return { ...slice, update, refresh };
 };

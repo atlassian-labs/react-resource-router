@@ -51,6 +51,7 @@ describe('createLegacyHistory', () => {
         pathname: expect.any(String),
         search: expect.any(String),
       }),
+      action: 'PUSH',
       length: 1,
       push: expect.any(Function),
       replace: expect.any(Function),

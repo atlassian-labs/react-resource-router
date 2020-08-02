@@ -23,6 +23,18 @@ export const App = () => (
 );
 ```
 
+## createRouterContext
+
+Utility to create custom router contexts to be passed to resources.
+
+```js
+import { myRoute } from '../routing';
+
+const params = { id: '1' };
+const query = { order: 'asc' };
+const routerContext = createRouterContext(myRoute, params, query);
+```
+
 ## matchRoute
 
 If you ever need to match the current route outside of the router itself, you can use this function. This may be required if you have any other app functionality that needs route context outside of the React lifecycle.

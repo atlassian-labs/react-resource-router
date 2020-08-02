@@ -22,7 +22,6 @@ const mockRouterStoreContext = {
   route: mockRoute,
   match: mockMatch,
   query: {},
-  location: { pathname: '', search: '', hash: '' },
 };
 
 const mockResource = createResource({

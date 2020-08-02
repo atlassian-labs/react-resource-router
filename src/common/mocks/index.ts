@@ -59,7 +59,6 @@ export const mockRouteResourceResponse = {
 
 export const mockRouterStoreContext = {
   route: mockRoute,
-  location: { pathname: '', search: '', hash: '' },
   query: mockQuery,
   match: mockMatch,
 };

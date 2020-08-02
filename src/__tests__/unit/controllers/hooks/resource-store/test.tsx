@@ -5,15 +5,12 @@ import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
-import {
-  DEFAULT_HISTORY,
-  DEFAULT_MATCH,
-  DEFAULT_ROUTE,
-} from '../../../../../common/constants';
+import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../../../common/constants';
 import { useResource } from '../../../../../controllers/hooks/resource-store';
 import { ResourceStore } from '../../../../../controllers/resource-store';
 import { createResource } from '../../../../../controllers/resource-utils';
 import { getRouterState } from '../../../../../controllers/router-store';
+import { createRouterContext } from '../../../../../common/utils';
 
 jest.mock('../../../../../controllers/router-store', () => ({
   ...jest.requireActual<any>('../../../../../controllers/router-store'),
@@ -33,14 +30,14 @@ const mockData = 'some-data';
 const getDataPromise = Promise.resolve(mockData);
 const mockRoute = {
   name: '',
-  path: '',
+  path: ':page?',
   component: () => null,
 };
 const mockMatch = {
   params: {},
   query: {},
   isExact: false,
-  path: '',
+  path: ':page?',
   url: '',
 };
 const mockResource = createResource({
@@ -62,15 +59,14 @@ const mockHydratableState = {
   },
 };
 
-const MockComponent = ({ children }: { children: any }) => {
-  return children();
+const MockComponent = ({ children, ...rest }: any) => {
+  return children(rest);
 };
 
-const mockRouterStoreContext = {
+const mockRouterContext = {
   route: DEFAULT_ROUTE,
   match: DEFAULT_MATCH,
   query: {},
-  location: DEFAULT_HISTORY.location,
 };
 
 describe('useResource hook', () => {
@@ -85,7 +81,7 @@ describe('useResource hook', () => {
     storeState = resourceStore.storeState;
     actions = resourceStore.actions;
 
-    (getRouterState as any).mockReturnValue(mockRouterStoreContext);
+    (getRouterState as any).mockReturnValue(mockRouterContext);
 
     actions.hydrate(mockHydratableState);
     jest.spyOn(global.Date, 'now').mockReturnValue(0);
@@ -110,13 +106,11 @@ describe('useResource hook', () => {
       </MockComponent>
     );
 
-    expect(spy).toHaveBeenCalledWith([
-      {
-        ...mockSlice,
-        update: expect.any(Function),
-        refresh: expect.any(Function),
-      },
-    ]);
+    expect(spy).toHaveBeenCalledWith({
+      ...mockSlice,
+      update: expect.any(Function),
+      refresh: expect.any(Function),
+    });
   });
 
   describe('update action', () => {
@@ -126,7 +120,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const [resource] = useResource(mockResource);
+            const resource = useResource(mockResource);
             resourceResponse = resource;
 
             return <h1>my test</h1>;
@@ -151,7 +145,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const [resource] = useResource(mockResource);
+            const resource = useResource(mockResource);
             resourceResponse = resource;
 
             return <h1>my test</h1>;
@@ -178,7 +172,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const [resource] = useResource(mockResource);
+            const resource = useResource(mockResource);
             resourceResponse = resource;
 
             return <h1>my test</h1>;
@@ -202,7 +196,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const [resource] = useResource(mockResource);
+            const resource = useResource(mockResource);
             resourceResponse = resource;
 
             return <h1>my test</h1>;
@@ -214,8 +208,45 @@ describe('useResource hook', () => {
 
       expect(getResourceSpy).toHaveBeenCalledWith(
         mockResource,
-        mockRouterStoreContext
+        mockRouterContext
       );
+    });
+  });
+
+  describe('options: custom router context', () => {
+    it('should retrieve data of a custom resource state', () => {
+      const mockRes = createResource({
+        type: mockType,
+        getKey: ({ match: { params } }) => params.page || '',
+        getData: () => Promise.resolve('original-data'),
+      });
+      let resourceResponse: any;
+      const wrapper = mount(
+        <MockComponent page="page1">
+          {({ page }: { page: string }) => {
+            const resource = useResource(mockRes, {
+              routerContext: createRouterContext(mockRoute, { page }),
+            });
+            resourceResponse = resource;
+
+            return <h1>my test</h1>;
+          }}
+        </MockComponent>
+      );
+
+      act(() => resourceResponse.update(() => 'new-data'));
+
+      expect(storeState.getState().data[mockType]['page1']).toMatchObject({
+        data: 'new-data',
+      });
+
+      // should retrieve data also on router context change
+      wrapper.setProps({ page: 'page2' });
+      act(() => resourceResponse.update(() => 'new-data-2'));
+
+      expect(storeState.getState().data[mockType]['page2']).toMatchObject({
+        data: 'new-data-2',
+      });
     });
   });
 });

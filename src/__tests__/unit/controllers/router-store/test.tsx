@@ -383,19 +383,13 @@ describe('SPA Router store', () => {
         </MemoryRouter>
       );
 
-      const {
-        route,
-        match,
-        query,
-        location: currentLocation,
-      } = getRouterState();
+      const { route, match, query } = getRouterState();
 
       expect(spy).toBeCalledTimes(1);
       expect(spy).toBeCalledWith({
         route,
         match,
         query,
-        location: currentLocation,
       });
     });
   });

@@ -1,7 +1,7 @@
 import {
   ResourceStoreContext,
   RouteResource,
-  RouterStoreContext,
+  RouterContext,
 } from '../../../../common/types';
 import {
   getResourceIdentifier,
@@ -14,8 +14,8 @@ import { routeHasChanged, routeHasResources } from '../route-checks';
  *
  */
 export const getResourcesForNextLocation = (
-  prevRouterStoreContext: RouterStoreContext,
-  nextRouterStoreContext: RouterStoreContext,
+  prevRouterStoreContext: RouterContext,
+  nextRouterStoreContext: RouterContext,
   resourceStoreContext: ResourceStoreContext
 ): RouteResource[] => {
   const { route: prevRoute } = prevRouterStoreContext;

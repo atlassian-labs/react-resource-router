@@ -19,7 +19,8 @@ export {
   matchRoute,
   generatePath,
   createLegacyHistory,
-  getRouteContext,
+  createRouterContext,
+  findRouterContext,
 } from './common/utils';
 
 export type {
@@ -30,7 +31,7 @@ export type {
   MatchedRoute,
   RouteResource,
   RouteContext,
-  RouterStoreContext,
+  RouterContext,
   ResourceStoreData,
   HistoryBlocker,
   Navigation,
