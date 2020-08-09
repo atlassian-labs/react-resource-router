@@ -16,7 +16,7 @@ You can use these properties and functions to implement your own customised rend
 
 Using resources via the [`useResource`](/api/hooks#useresource) hook is the **recommended** way to access your current resource state in a component. Here is an example of how you can do that
 
-```js
+```jsx
 import { useResource } from 'react-resource-router';
 import { avatarResource } from '../routing/resources';
 import { Circle } from './primitives';
@@ -33,7 +33,7 @@ export const Avatar = () => {
 
 If you are unable to use the [`useResource`](/api/hooks#useresource) hook for whatever reason, you can also use the [`ResourceSubscriber`](/api/components#resourcesubscriber) component which provides your resource state via render props
 
-```js
+```jsx
 import { ResourceSubscriber } from 'react-resource-router';
 import { avatarResource } from '../routing/resources';
 import { Circle } from './primitives';
@@ -41,10 +41,34 @@ import { Circle } from './primitives';
 export class Avatar extends Component {
   render() {
     <ResourceSubscriber>
-      {({ data, loading }) => (
-        <Circle image={loading ? '' : data} />
-      )}
+      {({ data, loading }) => <Circle image={loading ? '' : data} />}
     </ResourceSubscriber>;
   }
 }
+```
+
+## Accessing resource state for another route or url
+
+By default, the hook and the subscriber access data and state of a resource given current router context. So if your resource key is based on some parameters for instance, the resource state will be bound to such key and the hooks/subscribers will calculate it based on current router state.
+
+There are situations however, where you might want to access a different key for a resource, like to triggering an ahead of time fetch, refresh or just invalidating data. For this reasons the hooks/subscribers accept an optional `routerContext` that will be passed to `getData` and `getKey`.
+
+As an example, assuming your `blogPostRoute` has path `/blogs/:id` and you are on `/`, you can populate the resurce of blog `id: 1` by creating a custom `routerContext`:
+
+```jsx
+import { useResource, createRouterContext } from 'react-resource-router';
+import { blogPostResource } from '../routing/resources';
+import { blogPostRoute } from '../routing';
+
+export const PrefetchBlogPost = ({ id }) => {
+  const [{ refresh }] = useResource(blogPostResource, {
+    routerContext: createRouterContext(blogPostRoute, { id }),
+  });
+
+  useEffect(() => {
+    refresh();
+  }, [refresh]);
+
+  return null;
+};
 ```

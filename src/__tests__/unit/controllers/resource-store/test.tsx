@@ -69,7 +69,6 @@ describe('resource store', () => {
     route: mockRoute,
     match: mockMatch,
     query: {},
-    location: { pathname: '', search: '', hash: '' },
   };
   const mockResource = createResource({
     type,
@@ -587,7 +586,7 @@ describe('resource store', () => {
       actions.getResource(mockResourceWithLongRequest, mockRouterStoreContext);
 
       const Component = () => {
-        const [{ data, loading }] = useResource(mockResource);
+        const { data, loading } = useResource(mockResource);
 
         if (loading) {
           return <div id="loading" />;
@@ -665,7 +664,7 @@ describe('resource store', () => {
       });
 
       const Component = () => {
-        const [{ data, loading }] = useResource(mockResource);
+        const { data, loading } = useResource(mockResource);
 
         if (loading) {
           return <div id="loading" />;
@@ -766,7 +765,6 @@ describe('resource store', () => {
         route: mockRoute,
         match: mockMatch,
         query: {},
-        location: { pathname: '', search: '', hash: '' },
       });
 
       const { data } = storeState.getState();

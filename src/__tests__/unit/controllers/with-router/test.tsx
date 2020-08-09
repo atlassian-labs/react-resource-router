@@ -35,11 +35,11 @@ describe('withRouter', () => {
     );
     expect(wrapper.find(ComponentToBeWrapped).props()).toEqual({
       foo: 'bar',
-      location: {
+      location: expect.objectContaining({
         hash: '',
         pathname: '/',
         search: '',
-      },
+      }),
       history,
       match: expect.objectContaining({
         isExact: false,

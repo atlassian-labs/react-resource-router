@@ -1,12 +1,12 @@
 import {
   ResourceStoreContext,
   RouteResource,
-  RouterStoreContext,
+  RouterContext,
 } from '../../../../common/types';
 
 export const getResourceIdentifier = (
   resource: RouteResource,
-  routerStoreContext: RouterStoreContext,
+  routerStoreContext: RouterContext,
   resourceStoreContext: ResourceStoreContext
 ): string => {
   const { type, getKey } = resource;
@@ -17,7 +17,7 @@ export const getResourceIdentifier = (
 
 export const getResourceIdentifiers = (
   resources: RouteResource[],
-  routerStoreContext: RouterStoreContext,
+  routerStoreContext: RouterContext,
   resourceStoreContext: ResourceStoreContext
 ): string[] =>
   resources.map(resource =>
