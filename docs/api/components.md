@@ -217,9 +217,10 @@ The `ResourceSubscriber` is a component that is subscribed to the state of a res
 
 ### ResourceSubscriber props
 
-| prop       | type            | description                  |
-| ---------- | --------------- | ---------------------------- |
-| `resource` | `RouteResource` | The resource to subscribe to |
+| prop       | type            | description                                |
+| ---------- | --------------- | ------------------------------------------ |
+| `resource` | `RouteResource` | The resource to subscribe to               |
+| `options`  | `Options`       | Object containing optional `routerContext` |
 
 ```js
 import { ResourceSubscriber } from 'react-resource-router';

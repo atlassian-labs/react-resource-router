@@ -8,7 +8,7 @@ import {
   RouteResource,
   RouteResourceResponse,
   RouteResourceUpdater,
-  RouterStoreContext,
+  RouterContext,
 } from '../../common/types';
 
 export type State = {
@@ -48,22 +48,22 @@ export type Actions = {
   ) => ResourceAction<void>;
   getResource: (
     resource: RouteResource,
-    routerStoreContext: RouterStoreContext
+    routerStoreContext: RouterContext
   ) => ResourceAction<Promise<RouteResourceResponse>>;
   getResourceFromRemote: (
     resource: RouteResource,
-    routerStoreContext: RouterStoreContext
+    routerStoreContext: RouterContext
   ) => ResourceAction<Promise<RouteResourceResponse>>;
   requestAllResources: (
-    routerStoreContext: RouterStoreContext
+    routerStoreContext: RouterContext
   ) => ResourceAction<Promise<RouteResourceResponse[]>>;
   cleanExpiredResources: (
     resources: RouteResource[],
-    routerStoreContext: RouterStoreContext
+    routerStoreContext: RouterContext
   ) => ResourceAction<void>;
   requestResources: (
     resources: RouteResource[],
-    routerStoreContext: RouterStoreContext
+    routerStoreContext: RouterContext
   ) => ResourceAction<Promise<RouteResourceResponse>[]>;
   hydrate: (
     state: HydratableState

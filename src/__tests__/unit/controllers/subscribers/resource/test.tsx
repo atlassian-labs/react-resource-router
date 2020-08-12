@@ -5,11 +5,7 @@ import { mount } from 'enzyme';
 import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
-import {
-  DEFAULT_HISTORY,
-  DEFAULT_MATCH,
-  DEFAULT_ROUTE,
-} from '../../../../../common/constants';
+import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../../../common/constants';
 import { ResourceStore } from '../../../../../controllers/resource-store';
 import { createResource } from '../../../../../controllers/resource-utils';
 import { ResourceSubscriber } from '../../../../../controllers/subscribers/resource';
@@ -228,7 +224,6 @@ describe('ResourceSubscriber', () => {
         route: DEFAULT_ROUTE,
         match: DEFAULT_MATCH,
         query: {},
-        location: DEFAULT_HISTORY.location,
       };
 
       expect(getResourceSpy).toHaveBeenCalledWith(

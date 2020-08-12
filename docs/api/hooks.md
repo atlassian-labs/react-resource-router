@@ -31,6 +31,7 @@ export const Feed = () => {
 };
 ```
 
+It also acceps some options as second argument to customise the behaviour, like `routerContext`.
 Check out [this section](/resources/usage) for more details on how to use the `useResource` hook.
 
 ## useRouter

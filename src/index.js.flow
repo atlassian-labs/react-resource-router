@@ -40,7 +40,7 @@ import type {
   RouteResourceResponse,
   RouterProps,
   RouterState,
-  RouterStoreContext,
+  RouterContext,
   RouterSubscriberProps,
   Routes,
   StaticRouterProps,
@@ -94,7 +94,9 @@ declare export function useRouterActions(): BoundActions<RouterActionsType>;
 declare export function useResourceStoreContext(): ResourceStoreContext;
 
 // Utils
-type WithRouterProps = RouteContext & {| history: BrowserHistory |};
+type WithRouterProps = RouteContext & {|
+  history: BrowserHistory,
+|};
 
 declare export function withRouter<
   Props: {},
@@ -127,6 +129,17 @@ declare export function generatePath(
 
 declare export function createLegacyHistory(): BrowserHistory;
 
+declare export function createRouterContext(
+  route: Route,
+  params?: MatchParams,
+  query?: Query
+): RouterContext;
+
+declare export function findRouterContext(
+  routes: Routes,
+  location: Location
+): RouterContext;
+
 /**
  * Utility method to created async versions of getData functions
  *
@@ -156,4 +169,4 @@ declare export function createResource(args: CreateResourceArg): RouteResource;
 declare export var mockRoute: Route;
 declare export var mockRouterActions: BoundActions<RouterActionsType>;
 declare export var mockRouterContextProp: RouteContext;
-declare export var mockRouterStoreContextProp: RouterStoreContext;
+declare export var mockRouterStoreContextProp: RouterContext;

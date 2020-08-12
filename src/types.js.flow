@@ -64,7 +64,7 @@ export type RouteResourceResponse = {|
   expiresAt: RouteResourceTimestamp,
 |};
 
-type RouteResourceGettersArgs = [RouterStoreContext, ResourceStoreContext];
+type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
 
 export type RouteResource = {|
   type: string,
@@ -164,6 +164,7 @@ type PrivateRouterActions = {|
   bootstrapStore: (initialState: ContainerProps) => RouterAction,
   requestRouteResources: () => RouterAction,
   listen: () => RouterAction,
+  getContext: () => RouterAction,
 |};
 
 type Href = string;
@@ -233,11 +234,10 @@ export type ResourceStoreData =
   | { [type: string]: RouteResourceDataForType }
   | {||};
 
-export type RouterStoreContext = {|
+export type RouterContext = {|
   route: Route,
   match: Match,
   query: Query,
-  location: Location,
 |};
 
 export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';

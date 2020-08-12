@@ -5,7 +5,6 @@ import noop from 'lodash.noop';
 import { BrowserHistory, Location } from '../../types';
 
 type HistoryAction = 'POP' | 'PUSH' | 'REPLACE';
-type LocationUpdater = (location: Location) => void;
 type Listener = (location: Location, action: HistoryAction) => void;
 
 const hasWindow = () => typeof window !== 'undefined';
@@ -27,7 +26,7 @@ const getLocation = () => {
   return { pathname, search, hash };
 };
 
-const createLegacyListener = (updateExposedLocation: LocationUpdater) => {
+const createLegacyListener = (updateExposedLocation: Listener) => {
   const node = document.querySelector('#content');
   let prevHref = window.location.href;
   let listeners: Listener[] = [];
@@ -61,8 +60,8 @@ const createLegacyListener = (updateExposedLocation: LocationUpdater) => {
   const onNodeChanges = debounce(() => {
     if (prevHref !== window.location.href) {
       const newLocation = getLocation();
-      updateExposedLocation(newLocation);
       const action = getAction();
+      updateExposedLocation(newLocation, action);
 
       listeners.forEach(listener => listener(newLocation, action));
       prevHref = window.location.href;
@@ -90,8 +89,10 @@ const createLegacyListener = (updateExposedLocation: LocationUpdater) => {
 
 export const createLegacyHistory = (): BrowserHistory => {
   let currentLocation = getLocation();
-  const updateExposedLocation: LocationUpdater = v => {
+  let currentAction: HistoryAction = 'PUSH';
+  const updateExposedLocation: Listener = (v, a) => {
     currentLocation = v;
+    currentAction = a;
   };
 
   return {
@@ -100,6 +101,9 @@ export const createLegacyHistory = (): BrowserHistory => {
     },
     get length() {
       return hasWindow() ? window.history.length : 1; // default length is 1
+    },
+    get action() {
+      return currentAction;
     },
     ...(hasWindow()
       ? {

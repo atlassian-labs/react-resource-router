@@ -16,7 +16,7 @@ export type Location = {
 
 export type BrowserHistory = Omit<
   History,
-  'location' | 'action' | 'go' | 'createHref' | 'push' | 'replace'
+  'location' | 'go' | 'createHref' | 'push' | 'replace'
 > & {
   location: Location;
   push: (path: string) => void;
@@ -84,10 +84,7 @@ export type RouteResourceResponse = {
   expiresAt: RouteResourceTimestamp;
 };
 
-export type RouteResourceGettersArgs = [
-  RouterStoreContext,
-  ResourceStoreContext
-];
+export type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
 
 export type RouteResource = {
   type: string;
@@ -108,11 +105,10 @@ export type ResourceStoreData = {
   [index: string]: RouteResourceDataForType;
 };
 
-export type RouterStoreContext = {
+export type RouterContext = {
   route: Route;
   match: Match;
   query: Query;
-  location: Location;
 };
 
 /**
