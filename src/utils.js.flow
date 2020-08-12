@@ -19,10 +19,9 @@ declare export function generatePath(
   params?: { [paramName: string]: string | number | boolean | null | void }
 ): string;
 
-declare export function getRouteContext(
+declare export function findRouterContext(
   location: Location,
-  routes: Routes,
-  action: HistoryAction
+  routes: Routes
 ): string;
 
 declare export function matchRoute(

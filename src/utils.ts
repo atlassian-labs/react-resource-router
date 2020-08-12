@@ -1,7 +1,7 @@
 export {
   createLegacyHistory,
   generatePath,
-  getRouteContext,
+  findRouterContext,
   matchRoute,
   matchInvariantRoute,
 } from './common/utils';
