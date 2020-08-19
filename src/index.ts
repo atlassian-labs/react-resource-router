@@ -1,3 +1,5 @@
+export { createBrowserHistory, createMemoryHistory } from 'history';
+
 export {
   Router,
   MemoryRouter,
@@ -14,7 +16,9 @@ export {
   createResource,
   useRouterActions,
 } from './controllers';
+
 export { RouteComponent, Link, noopRouterDecorator } from './ui';
+
 export {
   matchRoute,
   generatePath,
@@ -23,7 +27,7 @@ export {
   findRouterContext,
 } from './common/utils';
 
-export type {
+export {
   Location,
   Route,
   Routes,
@@ -40,13 +44,12 @@ export type {
   NavigationStatics,
   LinkProps,
   BrowserHistory,
+  LocationShape,
 } from './common/types';
 
-export type {
+export {
   RouterActionsType,
   RouterActionPush,
   RouterActionReplace,
   RouterSubscriberProps,
 } from './controllers/router-store/types';
-
-export { createBrowserHistory, createMemoryHistory } from 'history';

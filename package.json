@@ -1,6 +1,6 @@
 {
   "name": "react-resource-router",
-  "version": "0.11.4",
+  "version": "0.12.0",
   "description": "Configuration driven routing solution for React that manages SPA route matching, data fetching and progressive rendering",
   "keywords": [
     "react",
@@ -121,6 +121,6 @@
   "peerDependencies": {
     "react": "^16.8.0",
     "react-dom": "^16.8.0",
-    "typescript": "^3.8.0"
+    "typescript": "^3.7.2"
   }
 }
