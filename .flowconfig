@@ -1,6 +1,7 @@
 [ignore]
 
 [include]
+<PROJECT_ROOT>/src/*.flow
 
 [libs]
 

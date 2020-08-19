@@ -1,297 +1,50 @@
 /* eslint-disable no-undef */
 /* eslint-disable no-unused-vars */
 // @flow
-
-import type { ComponentType, Node, ElementConfig } from 'react';
+import type { ComponentType, ElementConfig, Node } from 'react';
 import type { Action, BoundActions } from 'react-sweet-state';
 import type {
   BrowserHistory,
-  MemoryHistory,
   LocationShape as HistoryLocationShape,
+  MemoryHistory,
 } from 'history/createBrowserHistory';
 
-export type LocationShape = {| ...HistoryLocationShape |};
-
-export type Location = {|
-  pathname: string,
-  search: string,
-  hash: string,
-|};
-
-export type Query = { [string]: string };
-
-export type Match = {|
-  /** TODO we are supporting `undefined` here because we are currently using both
-   * this version of the `Match` type, and react-routers version (which allows for `undefined`)
-   * To fix this we should move `matchPath` to our own util so we can apply our own types, then
-   * decide if we want to support undefined types.
-   */
-  params: { [string]: string | null | typeof undefined },
-  query: Query,
-  isExact: boolean,
-  path: string,
-  url: string,
-|};
-
-export type MatchedRoute = {|
-  route: Route,
-  match: Match,
-|};
-
-export type RouteContext = {|
-  location: Location,
-  query: Query,
-  route: Route,
-  match: Match,
-  action: HistoryAction,
-|};
-
-type RouteResourceLoading = boolean;
-type RouteResourceTimestamp = number | null;
-export type RouteResourceError = Object | Error | null;
-type RouteResourceData = Object | null;
-type RouteResourcePromise = Promise<any> | null;
-
-export type RouteResourceResponse = {|
-  loading: RouteResourceLoading,
-  error: RouteResourceError,
-  data: RouteResourceData,
-  promise: RouteResourcePromise,
-  expiresAt: RouteResourceTimestamp,
-|};
-
-type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
-
-export type RouteResource = {|
-  type: string,
-  getKey: (...args: RouteResourceGettersArgs) => string,
-  maxAge: number,
-  getData: (...args: RouteResourceGettersArgs) => RouteResourcePromise,
-|};
-
-type RouteResources = RouteResource[];
-
-type ResourceStoreContext = Object;
-
-type RouteResourceDataForType = {
-  [key: string]: RouteResourceResponse,
-};
-
-export type Route = {
-  path: string,
-  exact?: boolean,
-  /** The component to render on match, typed explicitly */
-  component: React$ComponentType<RouteContext>,
-  /** If present, must return true to include the route. */
-  enabled?: () => boolean,
-  /** Signals that this is a redirect route, we need to handle these in a special way. */
-  isRedirect?: boolean,
-  /** Used to prevent transitions between app groups */
-  group?: string,
-  /** Unique name for the route */
-  name: string,
-  /**
-   * Query string matching. Each query param must match for the route to match.
-   *
-   * A query param can take the following shapes:
-   *  * query name only: 'foo' - matches if query name 'foo' is present
-   *  * query name matching value: 'foo=bar' - matches if query name 'foo' equals
-   *    'bar' exactly
-   *  * query name matching regex: 'foo=(bar.+) - matches if query name 'foo' equals
-   *    regex '^(bar.+)$'. Note you must escape backslashes and wrap regex in parentheses.
-   *  * query name NOT matching value: 'foo!=bar' - matches if query name 'foo' does
-   *    not equal bar OR if query name 'foo' does not exist at all
-   */
-  query?: string[],
-  /**
-   * The resources for the route
-   */
-  resources?: RouteResource[],
-
-  // allow for custom route properties
-  [key: string]: any,
-  ...
-};
-
-export type Routes = Route[];
-
-type ContainerProps = {|
-  isStatic?: boolean,
-  history: BrowserHistory,
-  location?: Location,
-  routes: Routes,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-|};
-
-type UniversalRouterContainerProps = {|
-  isGlobal?: boolean,
-  history: BrowserHistory | MemoryHistory,
-  location?: Location,
-  routes: Routes,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-|};
-
-type PublicStateProperties = {|
-  location: Location,
-  query: Query,
-  route: Route,
-  match: Match,
-  action: HistoryAction,
-|};
-
-type PrivateStateProperties = {|
-  routes: Routes,
-  history: BrowserHistory,
-  unlisten: (() => void) | null,
-  isStatic: boolean,
-  shouldUseSuspense: boolean,
-|};
-
-type EntireRouterState = {|
-  ...PublicStateProperties,
-  ...PrivateStateProperties,
-|};
-
-type PrivateRouterActions = {|
-  bootstrapStore: (initialState: ContainerProps) => RouterAction,
-  requestRouteResources: () => RouterAction,
-  listen: () => RouterAction,
-  getContext: () => RouterAction,
-|};
-
-type Href = string;
-
-export type RouterActionsType = {|
-  push: (path: Href | LocationShape, state?: any) => RouterAction,
-  replace: (path: Href | LocationShape, state?: any) => RouterAction,
-  goBack: () => RouterAction,
-  goForward: () => RouterAction,
-  registerBlock: (blocker: HistoryBlocker | any) => RouterAction,
-|};
-
-type AllRouterActions = {|
-  ...PrivateRouterActions,
-  ...RouterActionsType,
-|};
-
-// eslint-disable-next-line no-use-before-define
-export type RouterAction = Action<
-  EntireRouterState,
-  ContainerProps,
-  AllRouterActions
->;
-
-// TODO: DRY out all these different router props if possible
-export type RouterProps = {
-  isStatic?: boolean,
-  history?: BrowserHistory,
-  resourceContext?: ResourceStoreContext,
-  resourceData?: ResourceStoreData,
-  routes: Routes,
-  children: Node,
-};
-
-export type UniversalRouterProps = {
-  isGlobal?: boolean,
-  history?: BrowserHistory | MemoryHistory,
-  resourceContext?: ResourceStoreContext,
-  resourceData?: ResourceStoreData,
-  routes: Routes,
-  children: Node,
-};
-
-type MemoryRouterProps = {
-  isStatic?: boolean,
-  location?: string,
-  routes?: Routes,
-  children: Node,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-};
-
-type StaticRouterProps = {
-  isStatic?: boolean,
-  location?: string,
-  routes: Routes,
-  children: Node,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-};
-
-export type MatchParams = {
-  [key: string]: string | null | typeof undefined,
-};
-
-export type ResourceStoreData =
-  | { [type: string]: RouteResourceDataForType }
-  | {||};
-
-export type RouterContext = {|
-  route: Route,
-  match: Match,
-  query: Query,
-|};
-
-export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
-
-export type NavigationType = 'container' | 'product';
-
-type NavigationRenderUpdater = (
-  location: Location,
-  match: Match,
-  route: Route
-) => Node;
-
-export type NavigationStatics = {
-  [key: string]: any,
-  type: NavigationType,
-  view: (...args: any[]) => string,
-};
-
-export type Navigation = {
-  [key: string]: any,
-  ...NavigationStatics,
-  renderNavigationUpdater: NavigationRenderUpdater,
-  sidebar?: boolean,
-};
-
-export type HistoryBlocker = (
-  location: Location,
-  action: string
-) => boolean | Promise<boolean>;
-
-type RouterState = PublicStateProperties;
-
-export type RouterActionPush = (
-  path: string | LocationShape,
-  state?: any
-) => RouterAction;
-
-export type RouterActionReplace = (
-  path: string | LocationShape,
-  state?: any
-) => RouterAction;
-
-export type LinkProps = {|
-  children: Node,
-  target?: '_blank' | '_self' | '_parent' | '_top',
-  href?: string,
-  to?: string,
-  replace?: boolean,
-  type?: 'a' | 'button',
-  onClick?: (e: any) => void,
-|};
-
-export type RouterSubscriberProps = {|
-  children: (
-    state: RouterState,
-    actions: BoundActions<RouterActionsType>
-  ) => Node,
-|};
-
-// Components
+import type {
+  HistoryAction,
+  HistoryBlocker,
+  InvariantRoute,
+  InvariantRoutes,
+  LinkProps,
+  Location,
+  LocationShape,
+  Match,
+  MatchedInvariantRoute,
+  MatchedRoute,
+  MatchParams,
+  MemoryRouterProps,
+  Navigation,
+  NavigationStatics,
+  NavigationType,
+  Query,
+  ResourceStoreContext,
+  ResourceStoreData,
+  Route,
+  RouteContext,
+  RouterAction,
+  RouterActionPush,
+  RouterActionReplace,
+  RouterActionsType,
+  RouteResource,
+  RouteResourceData,
+  RouteResourceError,
+  RouteResourceResponse,
+  RouterProps,
+  RouterState,
+  RouterContext,
+  RouterSubscriberProps,
+  Routes,
+  StaticRouterProps,
+} from './types.js.flow';
 
 declare export function Link(props: LinkProps): Node;
 declare export function Redirect(props: {
@@ -360,6 +113,12 @@ declare export function matchRoute(
   pathname: string,
   queryParams: MatchParams | string
 ): MatchedRoute | null;
+
+declare export function matchInvariantRoute(
+  routes: InvariantRoutes,
+  pathname: string,
+  queryParams: MatchParams | string
+): MatchedInvariantRoute | null;
 
 declare export function noopRouterDecorator(story: () => Node): Node;
 

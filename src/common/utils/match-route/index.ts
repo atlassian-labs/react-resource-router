@@ -1,6 +1,14 @@
 import { qs } from 'url-parse';
 
-import { Match, MatchedRoute, MatchParams, Query, Routes } from '../../types';
+import {
+  Match,
+  InvariantRoutes,
+  MatchedRoute,
+  MatchParams,
+  MatchedInvariantRoute,
+  Query,
+  Routes,
+} from '../../types';
 
 import matchPath from './matchPath';
 
@@ -86,11 +94,11 @@ const matchQuery = (
  *
  * Note: This does not support nested routes at this stage.
  */
-export default (
-  routes: Routes,
+const matchRoute = <T extends Routes | InvariantRoutes>(
+  routes: T,
   pathname: string,
   queryParams: MatchParams
-): MatchedRoute | null => {
+): (T extends Routes ? MatchedRoute : MatchedInvariantRoute) | null => {
   const queryParamObject =
     typeof queryParams === 'string'
       ? (qs.parse(queryParams) as Query)
@@ -118,3 +126,15 @@ export default (
 
   return matchedRoute;
 };
+
+export const matchInvariantRoute = (
+  routes: InvariantRoutes,
+  pathname: string,
+  queryParams: MatchParams
+): MatchedInvariantRoute | null => matchRoute(routes, pathname, queryParams);
+
+export default (
+  routes: Routes,
+  pathname: string,
+  queryParams: MatchParams
+): MatchedRoute | null => matchRoute(routes, pathname, queryParams);

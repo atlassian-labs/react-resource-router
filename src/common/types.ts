@@ -44,6 +44,11 @@ export type Query = {
   [key: string]: string;
 };
 
+export type MatchedInvariantRoute = {
+  route: InvariantRoute;
+  match: Match;
+};
+
 export type MatchedRoute = {
   route: Route;
   match: Match;
@@ -106,18 +111,14 @@ export type RouterContext = {
   query: Query;
 };
 
-export type Route = {
+/**
+ * Invariant route
+ *
+ * Base type for route, which doesn't contain implementation details
+ */
+export type InvariantRoute = {
   path: string;
   exact?: boolean;
-
-  /** The component to render on match, typed explicitly */
-  component: ComponentType<RouteContext>;
-
-  /** If present, must return true to include the route. */
-  enabled?: () => boolean;
-
-  /** Signals that this is a redirect route, we need to handle these in a special way. */
-  isRedirect?: boolean;
 
   /** Used to prevent transitions between app groups */
   group?: string;
@@ -125,24 +126,6 @@ export type Route = {
   /** Unique name for the route */
   name: string;
 
-  /**
-   * Triggered before leaving the route, can trigger full page reload if returns (or resolves) false.
-   * Defaults to true.
-   */
-  canTransitionOut?: (
-    currentRouteMatch: MatchedRoute,
-    nextRouteMatch: MatchedRoute,
-    props: any
-  ) => boolean | Promise<boolean>;
-  /**
-   * Triggered before entering the route, can trigger full page reload if returns (or resolves) false.
-   * Defaults to true.
-   */
-  canTransitionIn?: (
-    currentRouteMatch: MatchedRoute,
-    nextRouteMatch: MatchedRoute,
-    props: any
-  ) => boolean | Promise<boolean>;
   /**
    * Query string matching. Each query param must match for the route to match.
    *
@@ -156,6 +139,35 @@ export type Route = {
    *    not equal bar OR if query name 'foo' does not exist at all
    */
   query?: string[];
+};
+
+export type Route = InvariantRoute & {
+  /** The component to render on match, typed explicitly */
+  component: ComponentType<RouteContext>;
+
+  /** If present, must return true to include the route. */
+  enabled?: () => boolean;
+
+  /**
+   * Triggered before leaving the route, can trigger full page reload if returns (or resolves) false.
+   * Defaults to true.
+   */
+  canTransitionOut?: (
+    currentRouteMatch: MatchedRoute,
+    nextRouteMatch: MatchedRoute,
+    props: any
+  ) => boolean | Promise<boolean>;
+
+  /**
+   * Triggered before entering the route, can trigger full page reload if returns (or resolves) false.
+   * Defaults to true.
+   */
+  canTransitionIn?: (
+    currentRouteMatch: MatchedRoute,
+    nextRouteMatch: MatchedRoute,
+    props: any
+  ) => boolean | Promise<boolean>;
+
   /**
    * The resources for the route
    */
@@ -164,6 +176,7 @@ export type Route = {
 
 export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
 
+export type InvariantRoutes = InvariantRoute[];
 export type Routes = Route[];
 
 export type NavigationType = 'container' | 'product';

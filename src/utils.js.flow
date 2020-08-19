@@ -1,0 +1,37 @@
+/* eslint-disable no-unused-vars */
+// @flow
+
+import type { BrowserHistory } from 'history/createBrowserHistory';
+
+import type {
+  HistoryAction,
+  InvariantRoutes,
+  MatchedInvariantRoute,
+  MatchedRoute,
+  MatchParams,
+  Routes,
+} from './types.js.flow';
+
+declare export function createLegacyHistory(): BrowserHistory;
+
+declare export function generatePath(
+  pattern: string,
+  params?: { [paramName: string]: string | number | boolean | null | void }
+): string;
+
+declare export function findRouterContext(
+  location: Location,
+  routes: Routes
+): string;
+
+declare export function matchRoute(
+  routes: Routes,
+  pathname: string,
+  queryParams: MatchParams | string
+): MatchedRoute | null;
+
+declare export function matchInvariantRoute(
+  routes: InvariantRoutes,
+  pathname: string,
+  queryParams: MatchParams | string
+): MatchedInvariantRoute | null;

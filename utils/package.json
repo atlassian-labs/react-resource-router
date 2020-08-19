@@ -1,0 +1,5 @@
+{
+  "main": "../build/cjs/utils.js",
+  "module": "../build/esm/utils.js",
+  "types": "../build/cjs/utils.d.ts"
+}
