@@ -2,9 +2,9 @@
 
 import { ComponentType, ReactNode } from 'react';
 
-import { History, Location as LocationShape } from 'history';
+import { History, Location as HistoryLocationShape } from 'history';
 
-export { LocationShape };
+export type LocationShape = HistoryLocationShape;
 
 export type Href = string;
 
