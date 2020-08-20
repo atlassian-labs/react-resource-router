@@ -1,6 +1,6 @@
 {
   "name": "react-resource-router",
-  "version": "0.12.0",
+  "version": "0.12.1",
   "description": "Configuration driven routing solution for React that manages SPA route matching, data fetching and progressive rendering",
   "keywords": [
     "react",
