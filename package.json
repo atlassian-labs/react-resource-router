@@ -32,6 +32,10 @@
     {
       "name": "Zekai Zheng",
       "email": "kiddkai@gmail.com"
+    },
+    {
+      "name": "Dinesh Pandiyan",
+      "email": "flexdinesh@gmail.com"
     }
   ],
   "main": "build/cjs/index.js",
@@ -54,6 +58,7 @@
     "lint:types": "tsc --noEmit && flow --max-warnings=0",
     "lint:types-watch": "tsc --noEmit --watch",
     "prepack": "npm run preversion -s && npm run build -s",
+    "start": "webpack-dev-server --open",
     "test": "jest",
     "test:watch": "jest --watch",
     "preversion": "npm run lint -s && npm run lint:types -s && npm run lint:deps -s && npm run test -s"
@@ -97,6 +102,7 @@
     "babel-jest": "^26.0.1",
     "babel-loader": "^8.1.0",
     "babel-types": "^6.26.0",
+    "clean-webpack-plugin": "^3.0.0",
     "docsify-cli": "^4.4.0",
     "dtslint": "^3.6.4",
     "enzyme": "^3.10.0",
@@ -111,12 +117,16 @@
     "eslint-plugin-react-hooks": "^4.0.2",
     "flow-bin": "^0.124.0",
     "flow-copy-source": "^2.0.7",
+    "html-webpack-plugin": "^4.3.0",
     "jest": "^26.0.1",
     "madge": "^3.9.0",
     "prettier": "^2.0.5",
     "react": "^16.10.2",
     "react-dom": "^16.10.2",
-    "typescript": "^3.9.2"
+    "typescript": "^3.9.2",
+    "webpack": "^4.44.1",
+    "webpack-cli": "^3.3.12",
+    "webpack-dev-server": "^3.11.0"
   },
   "peerDependencies": {
     "react": "^16.8.0",
