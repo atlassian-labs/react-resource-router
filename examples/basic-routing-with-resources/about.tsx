@@ -6,21 +6,16 @@ export const aboutResource = createResource({
   getKey: () => 'data',
   maxAge: 0,
   getData: async () => {
-    let result;
-    // eslint-disable-next-line
-    try {
-      const response = await fetch(
-        'https://dog.ceo/api/breed/schnauzer/images/random'
-      );
-
-      result = await response.json();
-    } catch (e) {
-      throw e;
-    }
+    const response = await fetch(
+      'https://dog.ceo/api/breed/schnauzer/images/random'
+    );
+    const result = await response.json();
 
     return result;
   },
 });
+
+const baseURL = 'basic-routing-with-resources';
 
 export const About = () => {
   // eslint-disable-next-line
@@ -29,7 +24,7 @@ export const About = () => {
   return (
     <div>
       <h1>About</h1>
-      <Link to="/">Go to home</Link>
+      <Link to={`/${baseURL}`}>Go to home</Link>
       <section>
         <p>A picture of a schnauzer</p>
         <section>

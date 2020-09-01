@@ -6,19 +6,14 @@ export const homeResource = createResource({
   getKey: () => 'data',
   maxAge: 0,
   getData: async () => {
-    let result;
-    // eslint-disable-next-line
-    try {
-      const response = await fetch('https://dog.ceo/api/breeds/image/random');
-
-      result = await response.json();
-    } catch (e) {
-      throw e;
-    }
+    const response = await fetch('https://dog.ceo/api/breeds/image/random');
+    const result = await response.json();
 
     return result;
   },
 });
+
+const baseURL = 'basic-routing-with-resources';
 
 export const Home = () => {
   // eslint-disable-next-line
@@ -27,7 +22,7 @@ export const Home = () => {
   return (
     <div>
       <h1>Home</h1>
-      <Link to="/about">Go to about</Link>
+      <Link to={`/${baseURL}/about`}>Go to about</Link>
       <section>
         <p>A random picture of a cute dog</p>
         <section>

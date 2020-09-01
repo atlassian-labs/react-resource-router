@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import {
   Router,
@@ -11,10 +12,12 @@ import { About, aboutResource } from './about';
 
 const myHistory = createBrowserHistory();
 
+const baseURL = 'basic-routing-with-resources';
+
 const appRoutes = [
   {
     name: 'home',
-    path: '/',
+    path: `/${baseURL}`,
     exact: true,
     component: Home,
     navigation: null,
@@ -22,7 +25,7 @@ const appRoutes = [
   },
   {
     name: 'about',
-    path: '/about',
+    path: `/${baseURL}/about`,
     exact: true,
     component: About,
     navigation: null,
@@ -30,7 +33,7 @@ const appRoutes = [
   },
 ];
 
-const BasicRoutingWithResourcesExample = () => {
+const App = () => {
   return (
     <Router routes={appRoutes} history={myHistory}>
       <RouteComponent />
@@ -38,4 +41,4 @@ const BasicRoutingWithResourcesExample = () => {
   );
 };
 
-export default BasicRoutingWithResourcesExample;
+ReactDOM.render(<App />, document.getElementById('root'));

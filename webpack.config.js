@@ -1,28 +1,41 @@
+const { lstatSync, readdirSync } = require('fs');
 const path = require('path');
-const HtmlWebpackPlugin = require('html-webpack-plugin');
-const { CleanWebpackPlugin } = require('clean-webpack-plugin');
+
+// This function generates configuration for files in the
+// ./src/examples/ folder
+const generateExampleEntries = function () {
+  const src = './examples';
+
+  // Get all subdirectories in the ./src/apps,
+  // so we can just add a new folder there and
+  // have automatically the entry points updated
+
+  const getDirectories = source =>
+    readdirSync(source)
+      .map(name => path.resolve(source, name))
+      .filter(s => lstatSync(s).isDirectory());
+
+  const exampleDirs = getDirectories(src);
+
+  return exampleDirs.reduce((entry, dir) => {
+    entry['./' + path.basename(dir) + '/bundle'] = `${dir}/index`;
+
+    return entry;
+  }, {});
+};
 
 module.exports = {
   mode: 'development',
 
-  entry: './examples/index.tsx',
-  devtool: 'inline-source-map',
+  entry: generateExampleEntries(),
 
   devServer: {
-    contentBase: './dist',
+    contentBase: path.resolve(__dirname, 'examples'),
+    publicPath: '/',
   },
 
-  plugins: [
-    new CleanWebpackPlugin({ cleanStaleWebpackAssets: false }),
-    new HtmlWebpackPlugin({
-      template: './examples/index.html',
-      filename: 'index.html',
-      inject: 'body',
-    }),
-  ],
-
   output: {
-    filename: '[name].bundle.js',
+    filename: '[name].js',
     path: path.resolve(__dirname, 'dist'),
   },
 

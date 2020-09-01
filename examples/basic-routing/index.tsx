@@ -1,4 +1,5 @@
 import React from 'react';
+import ReactDOM from 'react-dom';
 
 import {
   Router,
@@ -11,24 +12,26 @@ import { About } from './about';
 
 const myHistory = createBrowserHistory();
 
+const baseURL = 'basic-routing';
+
 const appRoutes = [
   {
     name: 'home',
-    path: '/',
+    path: `/${baseURL}`,
     exact: true,
     component: Home,
     navigation: null,
   },
   {
     name: 'about',
-    path: '/about',
+    path: `/${baseURL}/about`,
     exact: true,
     component: About,
     navigation: null,
   },
 ];
 
-const BasicRoutingExample = () => {
+const App = () => {
   return (
     <Router routes={appRoutes} history={myHistory}>
       <RouteComponent />
@@ -36,4 +39,4 @@ const BasicRoutingExample = () => {
   );
 };
 
-export default BasicRoutingExample;
+ReactDOM.render(<App />, document.getElementById('root'));
