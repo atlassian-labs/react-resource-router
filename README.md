@@ -58,7 +58,7 @@ import { aboutResource, homeResource } from '../routes/resources';
 import { Loading, Error } from './common';
 
 export const Home = () => {
-  const [{ data, loading, error }] = useResource(homeResource);
+  const { data, loading, error } = useResource(homeResource);
 
   if (error) {
     return <Error error={error} />;
@@ -72,7 +72,7 @@ export const Home = () => {
 };
 
 export const About = () => {
-  const [{ data, loading, error }] = useResource(aboutResource);
+  const { data, loading, error } = useResource(aboutResource);
 
   if (error) {
     return <Error error={error} />;
@@ -141,14 +141,19 @@ npm install react-resource-router
 yarn add react-resource-router
 ```
 
-## Examples
-
-- [Basic routing](https://codesandbox.io/s/react-resource-router-basic-routing-example-5rch8)
-- [Adding resources](https://codesandbox.io/s/react-resource-router-basic-routing-with-resources-example-lqm0m)
-
 ## Documentation
 
 Check the [docs website](https://atlassian-labs.github.io/react-resource-router/) or the [docs folder](https://github.com/atlassian-labs/react-resource-router/tree/master/docs).
+
+## Examples
+
+You can checkout the repo and play around with the examples we have setup to demonstrate how the API can be used for various use cases.
+
+1. Clone the repo and install dependencies
+2. Run `npm start`
+3. Local dev site will launch with all the examples
+
+
 
 ## Thanks
 
