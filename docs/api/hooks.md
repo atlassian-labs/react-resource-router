@@ -61,3 +61,30 @@ export const RouterActionsHookExample = () => {
   return <MyComponent push={push} />;
 };
 ```
+
+## useQueryParam
+
+You can use the `useQueryParam` hook to access the query params in current route.
+
+```js
+import { useQueryParam } from 'react-resource-router';
+
+// Current route in address bar — /home/projects?foo=bar
+
+export const MyComponent = () => {
+  const [foo, setFoo] = useQueryParam('foo');
+  // => foo will have the value 'bar'
+
+  const clickHandler = () => {
+    setFoo('baz');
+    // => Will update current route to /home/projects?foo=baz
+  };
+
+  return (
+    <div>
+      <p>Hello World!</p>
+      <button onClick={clickHandler}>Update param</button>
+    </div>
+  );
+};
+```
