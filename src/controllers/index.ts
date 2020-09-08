@@ -10,6 +10,7 @@ export {
   useRouter,
   useRouterActions,
   useQueryParam,
+  usePathParam,
 } from './hooks';
 export { useResourceStoreContext } from './resource-store';
 export { createResource } from './resource-utils';

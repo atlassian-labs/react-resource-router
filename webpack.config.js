@@ -32,9 +32,6 @@ module.exports = {
   devServer: {
     contentBase: path.resolve(__dirname, 'examples'),
     publicPath: '/',
-    // historyApiFallback: {
-    //   rewrites: [{ from: /\/hooks\/*/, to: '/hooks/index.html' }],
-    // },
   },
 
   output: {

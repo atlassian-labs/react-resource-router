@@ -7,7 +7,13 @@ const Home = () => {
   return (
     <div>
       <h1>Available Hooks</h1>
-      <Link to={`${baseURL}/query-param?foo=abc&bar=xyz`}>useQueryParam</Link>
+      <Link to={`${baseURL}/query-param?foo=abc&bar=xyz#abc`}>
+        useQueryParam
+      </Link>
+      <br />
+      <Link to={`${baseURL}/path-param/hello/world#abc?foo=abc&bar=xyz`}>
+        usePathParam
+      </Link>
     </div>
   );
 };

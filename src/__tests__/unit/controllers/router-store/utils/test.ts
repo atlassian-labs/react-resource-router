@@ -2,6 +2,7 @@ import {
   getRelativePath,
   isAbsolutePath,
   isExternalAbsolutePath,
+  updateQueryParams,
 } from '../../../../../controllers/router-store/utils/path-utils';
 
 describe('path utils', () => {
@@ -79,6 +80,68 @@ describe('path utils', () => {
       ];
 
       paths.forEach(path => expect(isExternalAbsolutePath(path)).toBeTruthy());
+    });
+  });
+
+  describe('updateQueryParams', () => {
+    it('should update query params in URL without hash', () => {
+      const location = {
+        pathname: '/browse',
+        search: '?foo=hello&bar=world',
+        hash: '',
+      };
+
+      const query = {
+        foo: 'newVal',
+      };
+
+      const expectedOutput = '/browse?foo=newVal';
+
+      expect(updateQueryParams(location, query)).toEqual(expectedOutput);
+    });
+
+    it('should update query params in URL with hash', () => {
+      const location = {
+        pathname: '/browse',
+        search: '?foo=hello&bar=world',
+        hash: '#abc',
+      };
+
+      const query = {
+        foo: 'newVal',
+      };
+
+      const expectedOutput = '/browse?foo=newVal#abc';
+
+      expect(updateQueryParams(location, query)).toEqual(expectedOutput);
+    });
+
+    it('should return proper URL when query obj is empty', () => {
+      const location = {
+        pathname: '/browse',
+        search: '?foo=hello&bar=world',
+        hash: '#abc',
+      };
+
+      const query = {};
+
+      const expectedOutput = '/browse#abc';
+
+      expect(updateQueryParams(location, query)).toEqual(expectedOutput);
+    });
+
+    it('should return proper URL', () => {
+      const location = {
+        pathname: '/browse',
+        search: '',
+        hash: '#abc',
+      };
+
+      const query = { foo: 'newVal' };
+
+      const expectedOutput = '/browse?foo=newVal#abc';
+
+      expect(updateQueryParams(location, query)).toEqual(expectedOutput);
     });
   });
 });

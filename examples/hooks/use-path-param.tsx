@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, useQueryParam } from 'react-resource-router';
+import { Link, usePathParam } from 'react-resource-router';
 
 const baseURL = '/hooks';
 
@@ -26,7 +26,7 @@ const generateLightColorHex = () => {
 
 const UpdateButton = ({ for: paramKey = '' }) => {
   //eslint-disable-next-line
-  const [param, setParam] = useQueryParam(paramKey);
+  const [param, setParam] = usePathParam(paramKey);
 
   return (
     <div
@@ -35,14 +35,13 @@ const UpdateButton = ({ for: paramKey = '' }) => {
       }}
     >
       <button onClick={() => setParam(randomStr(5))}>Update {paramKey}</button>
-      <button onClick={() => setParam(undefined)}>Empty {paramKey}</button>
     </div>
   );
 };
 
 const ComponentFoo = () => {
   // eslint-disable-next-line
-  const [foo, setFoo] = useQueryParam('foo');
+  const [foo, setFoo] = usePathParam('foo');
 
   return (
     <div
@@ -63,7 +62,7 @@ const ComponentFoo = () => {
 
 const ComponentBar = () => {
   // eslint-disable-next-line
-  const [bar, setBar] = useQueryParam('bar');
+  const [bar, setBar] = usePathParam('bar');
 
   return (
     <div
@@ -82,10 +81,10 @@ const ComponentBar = () => {
   );
 };
 
-const QueryParamExample = () => {
+const PathParamExample = () => {
   return (
     <div>
-      <h1>useQueryParam</h1>
+      <h1>usePathParam - /hooks/use-path-param/:foo/:bar</h1>
       <ComponentFoo />
       <UpdateButton for={'foo'} />
       <ComponentBar />
@@ -95,4 +94,4 @@ const QueryParamExample = () => {
   );
 };
 
-export default QueryParamExample;
+export default PathParamExample;

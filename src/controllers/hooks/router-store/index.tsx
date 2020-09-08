@@ -1,10 +1,9 @@
 import React from 'react';
-import { qs } from 'url-parse';
+import { createHook } from 'react-sweet-state';
 import {
   useRouterStore,
   useRouterStoreStatic,
   RouterStore,
-  getRouterState,
 } from '../../router-store';
 import {
   RouterActionsType,
@@ -12,7 +11,6 @@ import {
   EntireRouterState,
   AllRouterActions,
 } from '../../router-store/types';
-import { createHook } from 'react-sweet-state';
 
 /**
  * Utility hook for accessing the public router store
@@ -32,7 +30,7 @@ export const useRouterActions = (): RouterActionsType => {
   return allActions;
 };
 
-const useParam = createHook<
+const createQueryParamHook = createHook<
   EntireRouterState,
   AllRouterActions,
   string,
@@ -41,33 +39,48 @@ const useParam = createHook<
   selector: ({ query }, { paramKey }): string => query[paramKey],
 });
 
+const createPathParamHook = createHook<
+  EntireRouterState,
+  AllRouterActions,
+  string,
+  { paramKey: string }
+>(RouterStore, {
+  selector: ({ match: { params } }, { paramKey }): string =>
+    params[paramKey] as string,
+});
+
 /**
  * Utility hook for accessing URL query params
  */
 export const useQueryParam = (
   paramKey: string
-): [string | undefined, (qp: string | null) => void] => {
-  const [paramVal, routerActions] = useParam({ paramKey });
+): [string | undefined, (qp: string | undefined) => void] => {
+  const [paramVal, routerActions] = createQueryParamHook({ paramKey });
 
   const setQueryParam = React.useCallback(
-    (newValue: string | undefined | null) => {
-      const {
-        location: { pathname },
-        query,
-      } = getRouterState();
-      const { [paramKey]: deletedKey, ...newQueryObj } = query;
-
-      if (newValue) {
-        newQueryObj[paramKey] = newValue;
-      }
-
-      const stringifiedQuery = qs.stringify(newQueryObj);
-      routerActions.push(
-        pathname + (stringifiedQuery !== '' ? `?${stringifiedQuery}` : '')
-      );
+    (newValue: string | undefined) => {
+      routerActions.pushQueryParam({ [paramKey]: newValue });
     },
     [paramKey, routerActions]
   );
 
   return [paramVal, setQueryParam];
+};
+
+/**
+ * Utility hook for accessing URL path params
+ */
+export const usePathParam = (
+  paramKey: string
+): [string | undefined, (pp: string | undefined) => void] => {
+  const [paramVal, routerActions] = createPathParamHook({ paramKey });
+
+  const setPathParam = React.useCallback(
+    (newValue: string | undefined) => {
+      routerActions.pushPathParam({ [paramKey]: newValue });
+    },
+    [paramKey, routerActions]
+  );
+
+  return [paramVal, setPathParam];
 };

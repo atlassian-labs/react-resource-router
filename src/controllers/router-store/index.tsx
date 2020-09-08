@@ -13,7 +13,11 @@ import {
   DEFAULT_MATCH,
   DEFAULT_ROUTE,
 } from '../../common/constants';
-import { findRouterContext, isServerEnvironment } from '../../common/utils';
+import {
+  findRouterContext,
+  isServerEnvironment,
+  generatePath as generatePathUsingPathParams,
+} from '../../common/utils';
 import { getResourceStore } from '../resource-store';
 import { getResourcesForNextLocation } from '../resource-store/utils';
 
@@ -23,7 +27,15 @@ import {
   UniversalRouterContainerProps,
   EntireRouterState,
 } from './types';
-import { getRelativePath, isExternalAbsolutePath } from './utils';
+
+import { Query } from '../../common/types';
+
+import {
+  getRelativePath,
+  isExternalAbsolutePath,
+  updateQueryParams,
+  getRelativeURLFromLocation,
+} from './utils';
 
 export const INITIAL_STATE: EntireRouterState = {
   history: DEFAULT_HISTORY,
@@ -199,6 +211,36 @@ const actions: AllRouterActions = {
     const { query, route, match } = getState();
 
     return { query, route, match };
+  },
+
+  pushQueryParam: params => ({ getState }) => {
+    const { query: existingQueryParams, history, location } = getState();
+    const updatedQueryParams = { ...existingQueryParams, ...params };
+    // remove undefined keys
+    Object.keys(updatedQueryParams).forEach(
+      key =>
+        updatedQueryParams[key] === undefined && delete updatedQueryParams[key]
+    );
+    const updatedPath = updateQueryParams(
+      location,
+      updatedQueryParams as Query
+    );
+
+    history.push(updatedPath);
+  },
+
+  pushPathParam: params => ({ getState }) => {
+    const {
+      history,
+      location,
+      route: { path: rawPath },
+      match: { params: existingPathParams },
+    } = getState();
+    const updatedPathParams = { ...existingPathParams, ...params };
+    const updatedPath = generatePathUsingPathParams(rawPath, updatedPathParams);
+    const updatedLocation = { ...location, pathname: updatedPath };
+
+    history.push(getRelativeURLFromLocation(updatedLocation));
   },
 };
 

@@ -13,6 +13,7 @@ export {
   useResource,
   useRouter,
   useQueryParam,
+  usePathParam,
   useResourceStoreContext,
   createResource,
   useRouterActions,
