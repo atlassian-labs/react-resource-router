@@ -12,7 +12,8 @@ export const getSliceForResource = (
   props: ResourceSliceIdentifier
 ): RouteResourceResponse => {
   const { type, key } = props;
-  const slice = state.data[type] && state.data[type][key];
+  const slice =
+    state.data[type] && (state.data[type][key] as RouteResourceResponse);
 
   return slice ? { ...slice } : getDefaultStateSlice();
 };

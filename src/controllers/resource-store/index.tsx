@@ -105,7 +105,7 @@ export const actions: Actions = {
   getResourceFromRemote: (resource, routerStoreContext) => async ({
     getState,
     dispatch,
-  }): Promise<RouteResourceResponse> => {
+  }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
     const { setResourceState } = actions;
     const { data: resourceStoreData, context } = getState();
@@ -218,7 +218,7 @@ export const actions: Actions = {
     }
     const hydratedData = transformData(
       getNextStateValue<ResourceStoreData>(data, resourceData),
-      ({ error, ...rest }: RouteResourceResponse) => ({
+      ({ error, ...rest }) => ({
         ...rest,
         error: !error ? null : deserializeError(error),
       })
@@ -240,12 +240,13 @@ export const actions: Actions = {
   getContext: () => ({ getState }) => getState().context,
 
   /**
-   * Returns safe, portable and reydratable data.
+   * Returns safe, portable and rehydratable data.
    *
    */
   getSafeData: () => ({ getState }) =>
-    transformData(getState().data, ({ data, error }) => ({
+    transformData(getState().data, ({ data, key, error }) => ({
       data,
+      key,
       promise: null,
       expiresAt: null,
       error: !error
@@ -284,7 +285,7 @@ export const ResourceActions = createSubscriber<State, Actions, void>(
 export const ResourceSubscriber = createSubscriber<
   State,
   Actions,
-  RouteResourceResponse,
+  RouteResourceResponse<unknown>,
   { resourceType: string; resourceKey: string }
 >(ResourceStore, {
   displayName: 'ResourceSelectorSubscriber',
@@ -302,7 +303,7 @@ export const getResourceStore = () =>
 export const useResourceStore = createHook<
   State,
   Actions,
-  RouteResourceResponse,
+  RouteResourceResponse<unknown>,
   ResourceSliceIdentifier
 >(ResourceStore, {
   selector: getSliceForResource,

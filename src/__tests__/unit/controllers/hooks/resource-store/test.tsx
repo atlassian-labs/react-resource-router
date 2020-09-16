@@ -23,6 +23,7 @@ const mockSlice = {
   data: null,
   error: null,
   loading: false,
+  key: 'i-am-a-key',
   promise: Promise.resolve(),
   expiresAt: 0,
 };
