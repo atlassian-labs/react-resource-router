@@ -474,15 +474,15 @@ describe('SPA Router store', () => {
 
       const ComponentB = () => (
         <ResourceSubscriber resource={resourceB}>
-          {({ data, loading, error }) => {
-            if (loading) {
-              return <div>{loading}</div>;
+          {props => {
+            if (props.loading) {
+              return <div>{props.loading}</div>;
             }
-            if (error) {
-              return <div>{error}</div>;
+            if (props.error) {
+              return <div>{props.error}</div>;
             }
 
-            return <div>{data.toString()}</div>;
+            return <div>{props.data.toString()}</div>;
           }}
         </ResourceSubscriber>
       );
