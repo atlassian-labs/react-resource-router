@@ -248,6 +248,52 @@ describe('useQueryParam', () => {
     expect(renderedFoo).toEqual(3);
     expect(renderedBar).toEqual(3);
   });
+
+  it('should return the right param value when two hooks are used in the same component', async () => {
+    const mockPath = mockLocation.pathname;
+    let fooVal: string | undefined;
+    let fooUpdateFn: (qp: string) => void;
+    let barVal: string | undefined;
+    let barUpdateFn: (qp: string) => void;
+
+    mount(
+      <Router routes={mockRoutes} history={history}>
+        <MockComponent>
+          {() => {
+            const [foo, setFoo] = useQueryParam('foo');
+            const [bar, setBar] = useQueryParam('bar');
+            fooVal = foo;
+            fooUpdateFn = setFoo;
+            barVal = bar;
+            barUpdateFn = setBar;
+
+            return null;
+          }}
+        </MockComponent>
+      </Router>
+    );
+
+    expect(fooVal).toEqual('hello');
+    expect(barVal).toEqual('world');
+
+    act(() => fooUpdateFn('newFoo'));
+    await nextTick();
+
+    expect(fooVal).toEqual('newFoo');
+    expect(barVal).toEqual('world');
+    expect(historyPushSpy).toBeCalledWith(
+      `${mockPath}?foo=newFoo&bar=world#hash`
+    );
+
+    act(() => barUpdateFn('newBar'));
+    await nextTick();
+
+    expect(fooVal).toEqual('newFoo');
+    expect(barVal).toEqual('newBar');
+    expect(historyPushSpy).toBeCalledWith(
+      `${mockPath}?foo=newFoo&bar=newBar#hash`
+    );
+  });
 });
 
 describe('usePathParam', () => {
