@@ -61,3 +61,59 @@ export const RouterActionsHookExample = () => {
   return <MyComponent push={push} />;
 };
 ```
+
+## useQueryParam
+
+You can use the `useQueryParam` hook to access the query params in current route. Pass in `undefined` to remove a query param from the url.
+
+```js
+import { useQueryParam } from 'react-resource-router';
+
+// Current route in address bar — /home/projects?foo=bar
+
+export const MyComponent = () => {
+  const [foo, setFoo] = useQueryParam('foo');
+  // => foo will have the value 'bar'
+
+  const clickHandler = () => {
+    setFoo('baz');
+    // => Will update current route to /home/projects?foo=baz
+  };
+
+  return (
+    <div>
+      <p>Hello World!</p>
+      <button onClick={clickHandler}>Update param</button>
+    </div>
+  );
+};
+```
+
+## usePathParam
+
+You can use the `usePathParam` hook to access the path params in current route. Pass in `undefined` to remove an [optional param](https://github.com/pillarjs/path-to-regexp#optional) from the url.
+
+```js
+import { usePathParam } from 'react-resource-router';
+
+// path — /projects/:projectId/board/:boardId
+
+// Current route in address bar — /projects/123/board/456?foo=bar
+
+export const MyComponent = () => {
+  const [projectId, setProjectId] = usePathParam('projectId');
+  // => projectId will have the value '123'
+
+  const clickHandler = () => {
+    setProjectId('222');
+    // => Will update current route to /projects/222/board/456?foo=bar
+  };
+
+  return (
+    <div>
+      <p>Hello World!</p>
+      <button onClick={clickHandler}>Update param</button>
+    </div>
+  );
+};
+```
