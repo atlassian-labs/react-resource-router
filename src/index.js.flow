@@ -92,6 +92,8 @@ declare export function useRouter(): [
 ];
 declare export function useRouterActions(): BoundActions<RouterActionsType>;
 declare export function useResourceStoreContext(): ResourceStoreContext;
+declare export function useQueryParam(paramKey: string): [string | void, (qp: string | void) => void];
+declare export function usePathParam(paramKey: string): [string | void, (pp: string | void) => void];
 
 // Utils
 type WithRouterProps = RouteContext & {|

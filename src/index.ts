@@ -12,6 +12,8 @@ export {
   ResourceSubscriber,
   useResource,
   useRouter,
+  useQueryParam,
+  usePathParam,
   useResourceStoreContext,
   createResource,
   useRouterActions,

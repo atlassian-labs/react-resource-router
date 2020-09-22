@@ -1,6 +1,6 @@
-import URL from 'url-parse';
+import URL, { qs } from 'url-parse';
 
-import { Href, Location } from '../../../common/types';
+import { Href, Location, Query } from '../../../common/types';
 
 export const isAbsolutePath = (path: string): boolean => {
   const regex = new RegExp('^([a-z]+://|//)', 'i');
@@ -27,4 +27,15 @@ export const getRelativePath = (path: Href | Location): string | Location => {
   const url = new URL(path);
 
   return `${url.pathname}${url.query}${url.hash}`;
+};
+
+export const updateQueryParams = (location: Location, query: Query): string => {
+  // @ts-ignore stringify accepts two params but it's type doesn't say so
+  const stringifiedQuery = qs.stringify(query, true);
+
+  return `${location.pathname}${stringifiedQuery}${location.hash}`;
+};
+
+export const getRelativeURLFromLocation = (location: Location): string => {
+  return `${location.pathname}${location.search}${location.hash}`;
 };
