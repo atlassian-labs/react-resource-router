@@ -1,30 +1,34 @@
-import { RouteResource, RouteResourceGettersArgs } from '../../common/types';
+import {
+  RouteResource,
+  RouteResourceDataPayload,
+  RouteResourceGettersArgs,
+} from '../../common/types';
 import { DEFAULT_RESOURCE_MAX_AGE } from '../resource-store/constants';
 
 /**
  * Utility method to created async versions of getData functions
  *
  */
-type GetDataLoader = () => Promise<{
-  default: RouteResource['getData'];
+type GetDataLoader<T> = () => Promise<{
+  default: RouteResource<T>['getData'];
 }>;
 
 type BaseResource = Pick<RouteResource, 'type' | 'getKey'>;
 
-interface CreateResourceSync extends BaseResource {
-  getData: RouteResource['getData'];
+interface CreateResourceSync<T> extends BaseResource {
+  getData: RouteResource<T>['getData'];
   maxAge?: number;
 }
-interface CreateResourceAsync extends BaseResource {
+interface CreateResourceAsync<T> extends BaseResource {
   getDataLoader: (
     ...args: RouteResourceGettersArgs
   ) => Promise<{
-    default: GetDataLoader;
+    default: GetDataLoader<T>;
   }>;
   maxAge?: number;
 }
 
-const handleGetDataLoader = (asyncImport: GetDataLoader) => {
+const handleGetDataLoader = (asyncImport: GetDataLoader<unknown>) => {
   return async (...args: RouteResourceGettersArgs) => {
     const { default: getDataFn } = await asyncImport();
 
@@ -32,8 +36,12 @@ const handleGetDataLoader = (asyncImport: GetDataLoader) => {
   };
 };
 
-export function createResource(args: CreateResourceSync): RouteResource;
-export function createResource(args: CreateResourceAsync): RouteResource;
+export function createResource<T extends unknown = RouteResourceDataPayload>(
+  args: CreateResourceSync<T>
+): RouteResource<T>;
+export function createResource<T extends unknown = RouteResourceDataPayload>(
+  args: CreateResourceAsync<T>
+): RouteResource<T>;
 export function createResource(args: any) {
   return {
     type: args.type,

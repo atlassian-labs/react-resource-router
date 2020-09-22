@@ -9,7 +9,7 @@ export const aboutResource = createResource({
     const response = await fetch(
       'https://dog.ceo/api/breed/schnauzer/images/random'
     );
-    const result = await response.json();
+    const result:{ message: string} = await response.json();
 
     return result;
   },

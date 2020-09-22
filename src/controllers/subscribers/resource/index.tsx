@@ -8,20 +8,24 @@ import {
 } from '../../../common/types';
 import { useResource } from '../../hooks/resource-store';
 
-type Props = {
+type Props<T> = {
   children: (
-    resource: RouteResourceResponse & {
-      update: (getNewData: RouteResourceUpdater) => void;
+    resource: RouteResourceResponse<T> & {
+      update: (getNewData: RouteResourceUpdater<T>) => void;
       refresh: () => void;
     }
   ) => ReactNode;
-  resource: RouteResource;
+  resource: RouteResource<T>;
   options?: {
     routerContext?: RouterContext;
   };
 };
 
-export const ResourceSubscriber = ({ children, resource, options }: Props) => {
+export const ResourceSubscriber = <T extends unknown>({
+  children,
+  resource,
+  options,
+}: Props<T>) => {
   const result = useResource(resource, options);
 
   return <>{children(result)}</>;

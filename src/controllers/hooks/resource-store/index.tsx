@@ -11,11 +11,10 @@ import { useRouterStoreStatic, RouterStore } from '../../router-store';
 import { EntireRouterState, AllRouterActions } from '../../router-store/types';
 import { createHook } from 'react-sweet-state';
 
-type UseResourceHookResponse<
-  D = RouteResourceResponse['data']
-> = RouteResourceResponse & {
-  data: D;
-  update: (getNewData: RouteResourceUpdater) => void;
+type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
+  RouteResourceData
+> & {
+  update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
   refresh: () => void;
 };
 
@@ -23,10 +22,10 @@ type UseResourceOptions = {
   routerContext?: RouterContext;
 };
 
-export const useResource = (
-  resource: RouteResource,
+export const useResource = <RouteResourceData extends unknown>(
+  resource: RouteResource<RouteResourceData>,
   options?: UseResourceOptions
-): UseResourceHookResponse => {
+): UseResourceHookResponse<RouteResourceData> => {
   const [, actions] = useResourceActions();
   const [, { getContext: getRouterContext }] = useRouterStoreStatic();
 
@@ -51,11 +50,19 @@ export const useResource = (
   );
 
   const key = useKey(options?.routerContext!)[0];
-  const [slice] = useResourceStore({ type: resource.type, key });
+  const [slice] = useResourceStore({
+    type: resource.type,
+    key,
+  }) as RouteResourceResponse<RouteResourceData>[];
 
   const update = useCallback(
-    (updater: RouteResourceUpdater) => {
-      actions.updateResourceState(resource.type, key, resource.maxAge, updater);
+    (updater: RouteResourceUpdater<RouteResourceData>) => {
+      actions.updateResourceState(
+        resource.type,
+        key,
+        resource.maxAge,
+        updater as RouteResourceUpdater<unknown>
+      );
     },
     [resource, key, actions]
   );
@@ -72,5 +79,5 @@ export const useResource = (
     actions.getResourceFromRemote(resource, routerContext);
   }, [resource, routerContext, actions]);
 
-  return { ...slice, update, refresh };
+  return { ...slice, update, key, refresh };
 };
