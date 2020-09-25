@@ -12,12 +12,10 @@ import { About, aboutResource } from './about';
 
 const myHistory = createBrowserHistory();
 
-const baseURL = 'basic-routing-with-resources';
-
 const appRoutes = [
   {
     name: 'home',
-    path: `/${baseURL}`,
+    path: '/',
     exact: true,
     component: Home,
     navigation: null,
@@ -25,7 +23,7 @@ const appRoutes = [
   },
   {
     name: 'about',
-    path: `/${baseURL}/about`,
+    path: '/about',
     exact: true,
     component: About,
     navigation: null,
@@ -35,7 +33,11 @@ const appRoutes = [
 
 const App = () => {
   return (
-    <Router routes={appRoutes} history={myHistory}>
+    <Router
+      routes={appRoutes}
+      history={myHistory}
+      basename="/routing-with-resources"
+    >
       <RouteComponent />
     </Router>
   );

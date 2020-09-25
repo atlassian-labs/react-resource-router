@@ -9,13 +9,11 @@ export const aboutResource = createResource({
     const response = await fetch(
       'https://dog.ceo/api/breed/schnauzer/images/random'
     );
-    const result:{ message: string} = await response.json();
+    const result: { message: string } = await response.json();
 
     return result;
   },
 });
-
-const baseURL = 'basic-routing-with-resources';
 
 export const About = () => {
   // eslint-disable-next-line
@@ -24,7 +22,7 @@ export const About = () => {
   return (
     <div>
       <h1>About</h1>
-      <Link to={`/${baseURL}`}>Go to home</Link>
+      <Link to={'/'}>Go to home</Link>
       <section>
         <p>A picture of a schnauzer</p>
         <section>

@@ -1,8 +1,6 @@
 import React from 'react';
 import { Link, useQueryParam } from 'react-resource-router';
 
-const baseURL = '/hooks';
-
 const randomStr = (length: number) => {
   let result = '';
   const characters = 'abcdefghijklmnopqrstuvwxyz';
@@ -93,7 +91,7 @@ const QueryParamExample = () => {
       <UpdateButton for={'foo'} />
       <ComponentBar />
       <UpdateButton for={'bar'} />
-      <Link to={`${baseURL}`}>Go back to list of hooks</Link>
+      <Link to={'/'}>Go back to list of hooks</Link>
     </div>
   );
 };
