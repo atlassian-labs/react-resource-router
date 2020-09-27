@@ -144,6 +144,8 @@ export type RouterContext = {
  * Base type for route, which doesn't contain implementation details
  */
 export type InvariantRoute = {
+  /* Base prefix that gets appended to all paths */
+  basePath?: string;
   path: string;
   exact?: boolean;
 
@@ -264,6 +266,7 @@ export type HistoryActions = {
 };
 
 export type MemoryRouterProps = {
+  basePath?: string;
   isStatic?: boolean;
   location?: string;
   routes: Routes;

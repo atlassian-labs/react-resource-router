@@ -36,7 +36,7 @@ const App = () => {
     <Router
       routes={appRoutes}
       history={myHistory}
-      basename="/routing-with-resources"
+      basePath="/routing-with-resources"
     >
       <RouteComponent />
     </Router>

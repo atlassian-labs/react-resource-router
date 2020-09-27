@@ -36,8 +36,14 @@ function matchPath(
     options = { path: options };
   }
 
-  const { path: p, exact = false, strict = false, sensitive = false } = options;
-  const paths = [].concat(p);
+  const {
+    path: p,
+    exact = false,
+    strict = false,
+    sensitive = false,
+    basePath = '',
+  } = options;
+  const paths = [].concat(basePath + p);
 
   return paths.reduce((matched: any, path: any) => {
     if (!path && path !== '') return null;

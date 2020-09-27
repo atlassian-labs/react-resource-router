@@ -38,11 +38,13 @@ const mockHistory = {
 
 const mockRoutes = [
   {
+    basePath: '',
     path: '/pathname',
     component: () => <div>path</div>,
     name: '',
   },
   {
+    basePath: '',
     path: '/blah',
     component: () => <div>path</div>,
     name: '',

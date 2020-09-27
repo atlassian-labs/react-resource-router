@@ -12,6 +12,7 @@ export type RouterProps = {
   history: BrowserHistory;
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
+  basePath?: string;
   routes: Routes;
   children: ReactNode;
 };

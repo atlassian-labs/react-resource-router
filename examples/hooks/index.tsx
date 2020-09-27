@@ -39,7 +39,7 @@ const appRoutes = [
 
 const App = () => {
   return (
-    <Router routes={appRoutes} history={myHistory} basename="/hooks">
+    <Router routes={appRoutes} history={myHistory} basePath="/hooks">
       <RouteComponent />
     </Router>
   );

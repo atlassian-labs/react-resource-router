@@ -2,6 +2,22 @@ import URL, { qs } from 'url-parse';
 
 import { Href, Location, Query } from '../../../common/types';
 
+const stripTrailingSlash = (path: string) =>
+  path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
+
+const addLeadingSlash = (path: string) =>
+  path.charAt(0) === '/' ? path : '/' + path;
+
+export const sanitizePath = (path: string, prefix = ''): string => {
+  if (prefix) {
+    prefix = stripTrailingSlash(prefix);
+    prefix = addLeadingSlash(prefix);
+    path = addLeadingSlash(path);
+  }
+
+  return prefix + path;
+};
+
 export const isAbsolutePath = (path: string): boolean => {
   const regex = new RegExp('^([a-z]+://|//)', 'i');
 
@@ -19,8 +35,17 @@ export const isExternalAbsolutePath = (path: Href | Location): boolean => {
   return pathHostname !== currentHostname;
 };
 
-export const getRelativePath = (path: Href | Location): string | Location => {
-  if (typeof path !== 'string' || !isAbsolutePath(path)) {
+export const getRelativePath = (
+  path: Href | Location,
+  prefix = ''
+): string | Location => {
+  if (typeof path !== 'string') {
+    return path;
+  }
+
+  if (!isAbsolutePath(path)) {
+    path = sanitizePath(path, prefix);
+
     return path;
   }
 

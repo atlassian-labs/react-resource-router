@@ -10,11 +10,13 @@ import { MemoryRouterProps } from '../../common/types';
 const getRouterProps = (memoryRouterProps: MemoryRouterProps) => {
   const {
     isStatic = false,
+    basePath,
     routes,
     resourceData,
     resourceContext,
   } = memoryRouterProps;
   let routerProps: Partial<RouterProps> = {
+    basePath,
     routes,
     isStatic,
   };

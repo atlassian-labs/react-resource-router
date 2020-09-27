@@ -46,6 +46,7 @@ export const INITIAL_STATE: EntireRouterState = {
   match: DEFAULT_MATCH,
   action: DEFAULT_ACTION,
   unlisten: null,
+  basePath: '',
   isStatic: false,
   shouldUseSuspense: false,
 };
@@ -56,13 +57,29 @@ const actions: AllRouterActions = {
    *
    */
   bootstrapStore: props => ({ setState, dispatch }) => {
-    const { resourceContext, resourceData, ...initialProps } = props;
-    const { history, routes, isStatic } = initialProps;
-    const routerContext = findRouterContext(routes, history.location);
+    const {
+      resourceContext,
+      resourceData,
+      basePath = '',
+      routes,
+      ...initialProps
+    } = props;
+    const { history, isStatic } = initialProps;
+    const routesWithBasePath = routes.map(r => ({
+      ...r,
+      basePath,
+    }));
+
+    const routerContext = findRouterContext(
+      routesWithBasePath,
+      history.location
+    );
 
     setState({
       ...initialProps,
       ...routerContext,
+      basePath,
+      routes: routesWithBasePath,
       location: history.location,
       action: history.action,
     });
@@ -78,9 +95,22 @@ const actions: AllRouterActions = {
    * internally. We can remove this when UniversalRouter replaces Router completely.
    */
   bootstrapStoreUniversal: props => ({ setState, dispatch }) => {
-    const { resourceContext, resourceData, ...initialProps } = props;
+    const {
+      resourceContext,
+      resourceData,
+      basePath = '',
+      ...initialProps
+    } = props;
     const { history, routes } = initialProps;
-    const routerContext = findRouterContext(routes, history.location);
+    const routesWithBasePath = routes.map(r => ({
+      ...r,
+      basePath,
+    }));
+
+    const routerContext = findRouterContext(
+      routesWithBasePath,
+      history.location
+    );
 
     setState({
       ...initialProps,
@@ -170,22 +200,21 @@ const actions: AllRouterActions = {
   },
 
   push: path => ({ getState }) => {
-    const { history } = getState();
-
+    const { history, basePath } = getState();
     if (isExternalAbsolutePath(path)) {
       window.location.assign(path as string);
     } else {
-      history.push(getRelativePath(path) as any);
+      history.push(getRelativePath(path, basePath) as any);
     }
   },
 
   replace: path => ({ getState }) => {
-    const { history } = getState();
+    const { history, basePath } = getState();
 
     if (isExternalAbsolutePath(path)) {
       window.location.replace(path as string);
     } else {
-      history.replace(getRelativePath(path) as any);
+      history.replace(getRelativePath(path, basePath) as any);
     }
   },
 
@@ -236,11 +265,15 @@ const actions: AllRouterActions = {
     const {
       history,
       location,
-      route: { path: rawPath },
+      route: { path, basePath },
       match: { params: existingPathParams },
     } = getState();
+    const pathWithBasePath = basePath + path;
     const updatedPathParams = { ...existingPathParams, ...params };
-    const updatedPath = generatePathUsingPathParams(rawPath, updatedPathParams);
+    const updatedPath = generatePathUsingPathParams(
+      pathWithBasePath,
+      updatedPathParams
+    );
     const updatedLocation = { ...location, pathname: updatedPath };
 
     const existingRelativePath = getRelativeURLFromLocation(location);

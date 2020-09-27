@@ -18,6 +18,7 @@ import {
 import { MemoryHistory } from 'history';
 
 type PublicStateProperties = {
+  basePath: string;
   location: Location;
   query: Query;
   route: Route;
@@ -41,6 +42,7 @@ export type ContainerProps = {
   isStatic?: boolean;
   history: BrowserHistory | MemoryHistory;
   location?: Location;
+  basePath?: string;
   routes: Routes;
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;

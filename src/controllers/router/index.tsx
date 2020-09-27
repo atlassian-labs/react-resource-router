@@ -49,12 +49,14 @@ export class Router extends Component<RouterProps> {
       routes,
       history,
       isStatic,
+      basePath,
       resourceContext,
       resourceData,
     } = this.props;
 
     return (
       <RouterContainer
+        basePath={basePath}
         routes={routes}
         history={history}
         isStatic={isStatic}
