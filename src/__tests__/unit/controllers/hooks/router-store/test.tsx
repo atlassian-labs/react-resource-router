@@ -39,6 +39,7 @@ const historyBuildOptions = {
 
 let history = historyHelper.createMemoryHistory(historyBuildOptions);
 let historyPushSpy = jest.spyOn(history, 'push');
+let historyReplaceSpy = jest.spyOn(history, 'replace');
 const nextTick = () => new Promise(resolve => setTimeout(resolve));
 
 const MockComponent = ({ children, ...rest }: any) => {
@@ -49,6 +50,7 @@ describe('useQueryParam', () => {
   beforeEach(() => {
     history = historyHelper.createMemoryHistory(historyBuildOptions);
     historyPushSpy = jest.spyOn(history, 'push');
+    historyReplaceSpy = jest.spyOn(history, 'replace');
   });
 
   afterEach(() => {
@@ -117,7 +119,7 @@ describe('useQueryParam', () => {
   it('should update URL with new param value', async () => {
     const mockPath = mockLocation.pathname;
     let qpVal: string | undefined;
-    let qpUpdateFn: (qp: string) => void;
+    let qpUpdateFn: (qp: string, updateType?: 'push' | 'replace') => void;
 
     mount(
       <Router routes={mockRoutes} history={history}>
@@ -134,9 +136,10 @@ describe('useQueryParam', () => {
     );
 
     expect(qpVal).toEqual('hello');
-    act(() => qpUpdateFn('newVal'));
+    act(() => qpUpdateFn('newVal', 'push'));
     await nextTick();
 
+    expect(historyReplaceSpy).not.toBeCalled();
     expect(historyPushSpy).toBeCalledWith(
       `${mockPath}?foo=newVal&bar=world#hash`
     );
@@ -173,6 +176,33 @@ describe('useQueryParam', () => {
       `${mockPath}?foo=newVal&bar=world#hash`
     );
     expect(renderCount).toEqual(2);
+  });
+
+  it('should replace the URL with new param value', async () => {
+    const mockPath = mockLocation.pathname;
+    let qpVal: string | undefined;
+    let qpUpdateFn: (qp: string, updateType?: 'push' | 'replace') => void;
+
+    mount(
+      <Router routes={mockRoutes} history={history}>
+        <MockComponent>
+          {() => {
+            [qpVal, qpUpdateFn] = useQueryParam('foo');
+
+            return null;
+          }}
+        </MockComponent>
+      </Router>
+    );
+
+    expect(qpVal).toEqual('hello');
+    act(() => qpUpdateFn('newVal', 'replace'));
+    await nextTick();
+
+    expect(historyPushSpy).not.toBeCalled();
+    expect(historyReplaceSpy).toBeCalledWith(
+      `${mockPath}?foo=newVal&bar=world#hash`
+    );
   });
 
   it('should remove param from URL when set to undefined', async () => {
@@ -333,6 +363,7 @@ describe('usePathParam', () => {
   beforeEach(() => {
     history = historyHelper.createMemoryHistory(historyBuildOptions);
     historyPushSpy = jest.spyOn(history, 'push');
+    historyReplaceSpy = jest.spyOn(history, 'replace');
   });
 
   afterEach(() => {
@@ -378,7 +409,10 @@ describe('usePathParam', () => {
 
   it('should update URL with new param value', async () => {
     let ppVal: string | undefined;
-    let ppUpdateFn: (qp: string | undefined) => void;
+    let ppUpdateFn: (
+      qp: string | undefined,
+      updateType?: 'push' | 'replace'
+    ) => void;
 
     mount(
       <Router routes={mockRoutes} history={history}>
@@ -396,11 +430,12 @@ describe('usePathParam', () => {
 
     expect(ppVal).toEqual('123');
 
-    act(() => ppUpdateFn('newVal'));
+    act(() => ppUpdateFn('newVal', 'push'));
     await nextTick();
 
     const { storeState } = getRouterStore();
     const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
+    expect(historyReplaceSpy).not.toBeCalled();
     expect(historyPushSpy).toBeCalledWith(expectedPath);
     expect(storeState.getState().location.pathname).toEqual(
       '/projects/newVal/board/456'
@@ -442,6 +477,39 @@ describe('usePathParam', () => {
       '/projects/newVal/board/456'
     );
     expect(renderCount).toEqual(2);
+  });
+
+  it('should replace URL with new param value', async () => {
+    let ppVal: string | undefined;
+    let ppUpdateFn: (
+      qp: string | undefined,
+      updateType?: 'push' | 'replace'
+    ) => void;
+
+    mount(
+      <Router routes={mockRoutes} history={history}>
+        <MockComponent>
+          {() => {
+            [ppVal, ppUpdateFn] = usePathParam('projectId');
+
+            return null;
+          }}
+        </MockComponent>
+      </Router>
+    );
+
+    expect(ppVal).toEqual('123');
+
+    act(() => ppUpdateFn('newVal', 'replace'));
+    await nextTick();
+
+    const { storeState } = getRouterStore();
+    const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
+    expect(historyPushSpy).not.toBeCalled();
+    expect(historyReplaceSpy).toBeCalledWith(expectedPath);
+    expect(storeState.getState().location.pathname).toEqual(
+      '/projects/newVal/board/456'
+    );
   });
 
   it('should remove :optional? param from URL when updated with undefined', async () => {
