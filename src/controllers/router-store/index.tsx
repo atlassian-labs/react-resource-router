@@ -213,7 +213,7 @@ const actions: AllRouterActions = {
     return { query, route, match };
   },
 
-  updateQueryParam: (params, updateType) => ({ getState }) => {
+  updateQueryParam: (params, updateType = 'push') => ({ getState }) => {
     const { query: existingQueryParams, history, location } = getState();
     const updatedQueryParams = { ...existingQueryParams, ...params };
     // remove undefined keys
@@ -228,11 +228,11 @@ const actions: AllRouterActions = {
     );
 
     if (updatedPath !== existingPath) {
-      history[updateType ?? 'push'](updatedPath);
+      history[updateType](updatedPath);
     }
   },
 
-  updatePathParam: (params, updateType) => ({ getState }) => {
+  updatePathParam: (params, updateType = 'push') => ({ getState }) => {
     const {
       history,
       location,
@@ -247,7 +247,7 @@ const actions: AllRouterActions = {
     const updatedRelativePath = getRelativeURLFromLocation(updatedLocation);
 
     if (updatedRelativePath !== existingRelativePath) {
-      history[updateType ?? 'push'](updatedRelativePath);
+      history[updateType](updatedRelativePath);
     }
   },
 };
