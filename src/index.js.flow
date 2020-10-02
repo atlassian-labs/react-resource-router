@@ -6,6 +6,10 @@ import type { BoundActions } from 'react-sweet-state';
 import type { BrowserHistory } from 'history/createBrowserHistory';
 
 import type {
+  HistoryAction,
+  HistoryBlocker,
+  HistoryUpdateType,
+  InvariantRoute,
   InvariantRoutes,
   LinkProps,
   Location,
@@ -81,10 +85,10 @@ declare export function useRouterActions(): BoundActions<RouterActionsType>;
 declare export function useResourceStoreContext(): ResourceStoreContext;
 declare export function useQueryParam(
   paramKey: string
-): [string | void, (qp: string | void) => void];
+): [string | void, (newValue: string | void, updateType?: HistoryUpdateType) => void];
 declare export function usePathParam(
   paramKey: string
-): [string | void, (pp: string | void) => void];
+): [string | void, (newValue: string | void, updateType?: HistoryUpdateType) => void];
 
 // Utils
 type WithRouterProps = RouteContext & {|

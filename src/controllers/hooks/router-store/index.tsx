@@ -55,7 +55,10 @@ const createPathParamHook = createHook<
  */
 export const useQueryParam = (
   paramKey: string
-): [string | undefined, (qp: string | undefined) => void] => {
+): [
+  string | undefined,
+  (newValue: string | undefined, updateType?: HistoryUpdateType) => void
+] => {
   const [paramVal, routerActions] = createQueryParamHook({ paramKey });
 
   const setQueryParam = React.useCallback(
@@ -73,7 +76,10 @@ export const useQueryParam = (
  */
 export const usePathParam = (
   paramKey: string
-): [string | undefined, (pp: string | undefined) => void] => {
+): [
+  string | undefined,
+  (newValue: string | undefined, updateType?: HistoryUpdateType) => void
+] => {
   const [paramVal, routerActions] = createPathParamHook({ paramKey });
 
   const setPathParam = React.useCallback(

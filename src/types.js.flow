@@ -249,6 +249,8 @@ export type RouterContext = {|
 
 export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
 
+export type HistoryUpdateType = 'push' | 'replace';
+
 export type NavigationType = 'container' | 'product';
 
 type NavigationRenderUpdater = (
