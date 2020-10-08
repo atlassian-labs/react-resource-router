@@ -142,6 +142,39 @@ describe('useQueryParam', () => {
     );
   });
 
+  it('should not rerender if the setter is called with the same param value', async () => {
+    const mockPath = mockLocation.pathname;
+    let qpVal: string | undefined;
+    let qpUpdateFn: (qp: string) => void;
+    let renderCount = 0;
+
+    mount(
+      <Router routes={mockRoutes} history={history}>
+        <MockComponent>
+          {() => {
+            const [param, setParam] = useQueryParam('foo');
+            qpVal = param;
+            qpUpdateFn = setParam;
+            renderCount++;
+
+            return null;
+          }}
+        </MockComponent>
+      </Router>
+    );
+
+    expect(qpVal).toEqual('hello');
+    act(() => qpUpdateFn('newVal'));
+    act(() => qpUpdateFn('newVal'));
+    await nextTick();
+
+    expect(historyPushSpy).toBeCalledTimes(1);
+    expect(historyPushSpy).toBeCalledWith(
+      `${mockPath}?foo=newVal&bar=world#hash`
+    );
+    expect(renderCount).toEqual(2);
+  });
+
   it('should remove param from URL when set to undefined', async () => {
     const mockPath = mockLocation.pathname;
     let qpVal: string | undefined;
@@ -372,6 +405,43 @@ describe('usePathParam', () => {
     expect(storeState.getState().location.pathname).toEqual(
       '/projects/newVal/board/456'
     );
+  });
+
+  it('should not update the URL if the setter is called with the same param value', async () => {
+    let ppVal: string | undefined;
+    let ppUpdateFn: (qp: string | undefined) => void;
+    let renderCount = 0;
+
+    mount(
+      <Router routes={mockRoutes} history={history}>
+        <MockComponent>
+          {() => {
+            const [param, setParam] = usePathParam('projectId');
+            ppVal = param;
+            ppUpdateFn = setParam;
+            renderCount++;
+
+            return null;
+          }}
+        </MockComponent>
+      </Router>
+    );
+
+    expect(ppVal).toEqual('123');
+
+    act(() => ppUpdateFn('newVal'));
+    act(() => ppUpdateFn('newVal'));
+    await nextTick();
+
+    const { storeState } = getRouterStore();
+    const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
+
+    expect(historyPushSpy).toBeCalledTimes(1);
+    expect(historyPushSpy).toBeCalledWith(expectedPath);
+    expect(storeState.getState().location.pathname).toEqual(
+      '/projects/newVal/board/456'
+    );
+    expect(renderCount).toEqual(2);
   });
 
   it('should remove :optional? param from URL when updated with undefined', async () => {
