@@ -221,12 +221,17 @@ const actions: AllRouterActions = {
       key =>
         updatedQueryParams[key] === undefined && delete updatedQueryParams[key]
     );
+    const existingPath = updateQueryParams(location, existingQueryParams);
     const updatedPath = updateQueryParams(
       location,
       updatedQueryParams as Query
     );
 
-    history.push(updatedPath);
+    console.log('updatedPath', updatedPath);
+
+    if (updatedPath !== existingPath) {
+      history.push(updatedPath);
+    }
   },
 
   pushPathParam: params => ({ getState }) => {
@@ -240,7 +245,12 @@ const actions: AllRouterActions = {
     const updatedPath = generatePathUsingPathParams(rawPath, updatedPathParams);
     const updatedLocation = { ...location, pathname: updatedPath };
 
-    history.push(getRelativeURLFromLocation(updatedLocation));
+    const existingRelativePath = getRelativeURLFromLocation(location);
+    const updatedRelativePath = getRelativeURLFromLocation(updatedLocation);
+
+    if (updatedRelativePath !== existingRelativePath) {
+      history.push(updatedRelativePath);
+    }
   },
 };
 
