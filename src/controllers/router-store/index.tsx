@@ -227,8 +227,6 @@ const actions: AllRouterActions = {
       updatedQueryParams as Query
     );
 
-    console.log('updatedPath', updatedPath);
-
     if (updatedPath !== existingPath) {
       history.push(updatedPath);
     }
