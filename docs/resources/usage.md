@@ -22,7 +22,7 @@ import { avatarResource } from '../routing/resources';
 import { Circle } from './primitives';
 
 export const Avatar = () => {
-  const [{ data, loading }] = useResource(avatarResource);
+  const { data, loading } = useResource(avatarResource);
   const image = loading ? '' : data;
 
   return <Circle image={image} />;
@@ -61,7 +61,7 @@ import { blogPostResource } from '../routing/resources';
 import { blogPostRoute } from '../routing';
 
 export const PrefetchBlogPost = ({ id }) => {
-  const [{ refresh }] = useResource(blogPostResource, {
+  const { refresh } = useResource(blogPostResource, {
     routerContext: createRouterContext(blogPostRoute, { id }),
   });
 

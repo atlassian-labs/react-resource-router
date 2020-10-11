@@ -62,6 +62,7 @@ export type RouteResourceResponse = {|
   data: RouteResourceData,
   promise: RouteResourcePromise,
   expiresAt: RouteResourceTimestamp,
+  key: string,
 |};
 
 type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
@@ -79,6 +80,10 @@ export type ResourceStoreContext = Object;
 
 type RouteResourceDataForType = {
   [key: string]: RouteResourceResponse,
+};
+
+export type ResourceOptions = {
+  routerContext?: RouterContext,
 };
 
 export type InvariantRoute = {
@@ -103,7 +108,9 @@ export type InvariantRoute = {
   query?: string[],
 };
 
-export type Route = InvariantRoute & {
+export type Route = {
+  ...InvariantRoute,
+
   /** The component to render on match, typed explicitly */
   component: React$ComponentType<RouteContext>,
   /** If present, must return true to include the route. */

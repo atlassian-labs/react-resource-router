@@ -140,7 +140,7 @@ import { userResource } from 'src/routes/resources';
 import { Profile } from 'src/components/user';
 
 export const RedirectExample = () => {
-  const [{ data, loading, error }] = useResource(userResource);
+  const { data, loading, error } = useResource(userResource);
 
   if (loading) {
     return <div>Loading...</div>;

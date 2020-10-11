@@ -13,7 +13,7 @@ import { useResource } from 'react-resource-router';
 import { accountInfoResource } from '../routing/resources';
 
 export const UsernameUpdater = ({ newUsername }) => {
-  const [{ update }] = useResource(accountInfoResource);
+  const { update } = useResource(accountInfoResource);
   const updateUsername = () =>
     update(currentData => ({
       ...currentData,
@@ -39,7 +39,7 @@ import { useResource } from 'react-resource-router';
 import { accountInfoResource } from '../routing/resources';
 
 export const UsernameResetter = ({ newUsername }) => {
-  const [{ data, refresh }] = useResource(accountInfoResource);
+  const { data, refresh } = useResource(accountInfoResource);
 
   return (
     <button onClick={() => refresh()}>

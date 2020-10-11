@@ -11,7 +11,7 @@ import { FeedUpdater } from './FeedUpdater';
 import { FeedRefresher } from './FeedRefresher';
 
 export const Feed = () => {
-  const [{ data, loading, error, update, refresh }] = useResource(feedResource);
+  const { data, loading, error, update, refresh } = useResource(feedResource);
 
   if (error) {
     return <Error error={error} />;

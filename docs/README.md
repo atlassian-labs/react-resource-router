@@ -52,7 +52,7 @@ import { aboutResource, homeResource } from '../routes/resources';
 import { Loading, Error } from './common';
 
 export const Home = () => {
-  const [{ data, loading, error }] = useResource(homeResource);
+  const { data, loading, error } = useResource(homeResource);
 
   if (error) {
     return <Error error={error} />;
@@ -66,7 +66,7 @@ export const Home = () => {
 };
 
 export const About = () => {
-  const [{ data, loading, error }] = useResource(aboutResource);
+  const { data, loading, error } = useResource(aboutResource);
 
   if (error) {
     return <Error error={error} />;
