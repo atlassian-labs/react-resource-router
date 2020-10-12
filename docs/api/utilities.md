@@ -30,9 +30,10 @@ Utility to create custom router contexts to be passed to resources.
 ```js
 import { myRoute } from '../routing';
 
+const basePath = '/base';
 const params = { id: '1' };
 const query = { order: 'asc' };
-const routerContext = createRouterContext(myRoute, params, query);
+const routerContext = createRouterContext(myRoute, params, query, basePath);
 ```
 
 ## matchRoute
@@ -42,6 +43,7 @@ If you ever need to match the current route outside of the router itself, you ca
 ```js
 import { appRoutes } from '../routing';
 
+const basePath = '/base';
 const { pathname, search } = window.location;
-const matchedRoute = matchRoute(routes, pathname, search);
+const matchedRoute = matchRoute(routes, pathname, search, basePath);
 ```

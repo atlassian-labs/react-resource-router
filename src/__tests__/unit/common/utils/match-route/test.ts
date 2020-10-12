@@ -47,7 +47,7 @@ describe('matchRoute', () => {
 
   describe('pathname with basePath', () => {
     it('should match a pathname when basePath is empty', () => {
-      const route = { path: '/foo/:bar', component: Noop, basePath: '' };
+      const route = { path: '/foo/:bar', component: Noop };
       expect(
         // @ts-ignore
         matchRoute([route], '/foo/abc', DEFAULT_QUERY_PARAMS)
@@ -73,10 +73,11 @@ describe('matchRoute', () => {
     });
 
     it('should match a basePath+pathname without a query string', () => {
-      const route = { path: '/foo/:bar', component: Noop, basePath: '/base' };
+      const route = { path: '/foo/:bar', component: Noop };
+      const basePath = '/base';
       expect(
         // @ts-ignore
-        matchRoute([route], '/base/foo/abc', DEFAULT_QUERY_PARAMS)
+        matchRoute([route], '/base/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
       ).toEqual({
         route,
         match: {
@@ -90,27 +91,33 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([route], '/foo/abc', DEFAULT_QUERY_PARAMS)
+        matchRoute([route], '/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
       ).toBeNull();
       expect(
         // @ts-ignore
-        matchRoute([route], '/base/baz/abc', DEFAULT_QUERY_PARAMS)
+        matchRoute([route], '/base/baz/abc', DEFAULT_QUERY_PARAMS, basePath)
       ).toBeNull();
     });
 
     it('should return the first route that is a match', () => {
-      const routeA = { path: '/foo/:bar', component: Noop, basePath: '/base' };
-      const routeB = { path: '/foo/:baz', component: Noop, basePath: '/base' };
+      const routeA = { path: '/foo/:bar', component: Noop };
+      const routeB = { path: '/foo/:baz', component: Noop };
+      const basePath = '/base';
       expect(
-        // @ts-ignore
-        matchRoute([routeA, routeB], '/base/foo/abc', DEFAULT_QUERY_PARAMS)
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeB],
+          '/base/foo/abc',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
       ).toMatchObject({
         route: routeA,
       });
 
       expect(
         // @ts-ignore
-        matchRoute([routeB], '/base/foo/abc', DEFAULT_QUERY_PARAMS)
+        matchRoute([routeB], '/base/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
       ).toMatchObject({
         route: routeB,
       });

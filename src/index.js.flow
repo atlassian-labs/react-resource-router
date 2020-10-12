@@ -108,13 +108,15 @@ declare export function withRouter<
 declare export function matchRoute(
   routes: Routes,
   pathname: string,
-  queryParams: MatchParams | string
+  queryParams: MatchParams | string,
+  basePath?: string
 ): MatchedRoute | null;
 
 declare export function matchInvariantRoute(
   routes: InvariantRoutes,
   pathname: string,
-  queryParams: MatchParams | string
+  queryParams: MatchParams | string,
+  basePath?: string
 ): MatchedInvariantRoute | null;
 
 declare export function generatePath(
@@ -127,12 +129,14 @@ declare export function createLegacyHistory(): BrowserHistory;
 declare export function createRouterContext(
   route: Route,
   params?: MatchParams,
-  query?: Query
+  query?: Query,
+  basePath?: string
 ): RouterContext;
 
 declare export function findRouterContext(
   routes: Routes,
-  location: Location
+  location: Location,
+  basePath?: string
 ): RouterContext;
 
 /**

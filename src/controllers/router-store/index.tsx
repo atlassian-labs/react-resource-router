@@ -65,21 +65,13 @@ const actions: AllRouterActions = {
       ...initialProps
     } = props;
     const { history, isStatic } = initialProps;
-    const routesWithBasePath = routes.map(r => ({
-      ...r,
-      basePath,
-    }));
-
-    const routerContext = findRouterContext(
-      routesWithBasePath,
-      history.location
-    );
+    const routerContext = findRouterContext(routes, history.location, basePath);
 
     setState({
       ...initialProps,
       ...routerContext,
       basePath,
-      routes: routesWithBasePath,
+      routes,
       location: history.location,
       action: history.action,
     });
@@ -102,19 +94,12 @@ const actions: AllRouterActions = {
       ...initialProps
     } = props;
     const { history, routes } = initialProps;
-    const routesWithBasePath = routes.map(r => ({
-      ...r,
-      basePath,
-    }));
-
-    const routerContext = findRouterContext(
-      routesWithBasePath,
-      history.location
-    );
+    const routerContext = findRouterContext(routes, history.location, basePath);
 
     setState({
       ...initialProps,
       ...routerContext,
+      basePath,
       location: history.location,
       action: history.action,
     });
@@ -146,10 +131,10 @@ const actions: AllRouterActions = {
    *
    */
   listen: () => ({ getState, setState }) => {
-    const { history, routes } = getState();
+    const { history, routes, basePath } = getState();
 
     const stopListening = history.listen(async (location, action) => {
-      const nextContext = findRouterContext(routes, location);
+      const nextContext = findRouterContext(routes, location, basePath);
       const {
         match: currentMatch,
         route: currentRoute,
@@ -265,8 +250,9 @@ const actions: AllRouterActions = {
     const {
       history,
       location,
-      route: { path, basePath },
+      route: { path },
       match: { params: existingPathParams },
+      basePath,
     } = getState();
     const pathWithBasePath = basePath + path;
     const updatedPathParams = { ...existingPathParams, ...params };
