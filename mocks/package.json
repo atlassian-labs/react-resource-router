@@ -1,0 +1,5 @@
+{
+  "main": "../build/cjs/mocks.js",
+  "module": "../build/esm/mocks.js",
+  "types": "../build/esm/mocks.d.ts"
+}
