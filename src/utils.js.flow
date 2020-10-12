@@ -4,7 +4,6 @@
 import type { BrowserHistory } from 'history/createBrowserHistory';
 
 import type {
-  HistoryAction,
   InvariantRoutes,
   MatchedInvariantRoute,
   MatchedRoute,

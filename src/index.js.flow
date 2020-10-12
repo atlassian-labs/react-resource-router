@@ -2,41 +2,25 @@
 /* eslint-disable no-unused-vars */
 // @flow
 import type { ComponentType, ElementConfig, Node } from 'react';
-import type { Action, BoundActions } from 'react-sweet-state';
-import type {
-  BrowserHistory,
-  LocationShape as HistoryLocationShape,
-  MemoryHistory,
-} from 'history/createBrowserHistory';
+import type { BoundActions } from 'react-sweet-state';
+import type { BrowserHistory } from 'history/createBrowserHistory';
 
 import type {
-  HistoryAction,
-  HistoryBlocker,
-  InvariantRoute,
   InvariantRoutes,
   LinkProps,
   Location,
-  LocationShape,
-  Match,
   MatchedInvariantRoute,
   MatchedRoute,
   MatchParams,
   MemoryRouterProps,
-  Navigation,
-  NavigationStatics,
-  NavigationType,
   Query,
+  ResourceOptions,
   ResourceStoreContext,
-  ResourceStoreData,
   Route,
   RouteContext,
-  RouterAction,
-  RouterActionPush,
-  RouterActionReplace,
   RouterActionsType,
   RouteResource,
   RouteResourceData,
-  RouteResourceError,
   RouteResourceResponse,
   RouterProps,
   RouterState,
@@ -45,6 +29,8 @@ import type {
   Routes,
   StaticRouterProps,
 } from './types.js.flow';
+
+export * from './types.js.flow';
 
 declare export function Link(props: LinkProps): Node;
 declare export function Redirect(props: {
@@ -75,25 +61,30 @@ declare export function RouteResourceEnabledSubscriber(props: {|
   children: (isResourceEnabled: boolean) => Node,
 |}): Node;
 
+declare export function RouteComponent(): ComponentType<RouteContext>;
+
 // hooks
 
 declare export function useResource(
-  resource: RouteResource
-): [
-  {|
-    ...RouteResourceResponse,
-    update: (data: RouteResourceData | null) => void,
-    refresh: () => void,
-  |}
-];
+  resource: RouteResource,
+  options?: ResourceOptions
+): {|
+  ...RouteResourceResponse,
+  update: (data: RouteResourceData | null) => void,
+  refresh: () => void,
+|};
 declare export function useRouter(): [
   RouterState,
   BoundActions<RouterActionsType>
 ];
 declare export function useRouterActions(): BoundActions<RouterActionsType>;
 declare export function useResourceStoreContext(): ResourceStoreContext;
-declare export function useQueryParam(paramKey: string): [string | void, (qp: string | void) => void];
-declare export function usePathParam(paramKey: string): [string | void, (pp: string | void) => void];
+declare export function useQueryParam(
+  paramKey: string
+): [string | void, (qp: string | void) => void];
+declare export function usePathParam(
+  paramKey: string
+): [string | void, (pp: string | void) => void];
 
 // Utils
 type WithRouterProps = RouteContext & {|
@@ -101,13 +92,13 @@ type WithRouterProps = RouteContext & {|
 |};
 
 declare export function withRouter<
-  Props: {},
-  Component: React$ComponentType<Props>
+  Props: { ... },
+  Component: ComponentType<Props>
 >(
   WrappedComponent: Component
-): React$ComponentType<
+): ComponentType<
   // $FlowFixMe - $Supertype is deprecated https://github.com/flow-typed/flow-typed/issues/2991
-  $Diff<React$ElementConfig<$Supertype<Component>>, WithRouterProps>
+  $Diff<ElementConfig<$Supertype<Component>>, WithRouterProps>
 >;
 
 declare export function matchRoute(
@@ -146,8 +137,9 @@ declare export function findRouterContext(
  * Utility method to created async versions of getData functions
  *
  */
-type GetDataLoader = () => Promise</* inexact */ {
+type GetDataLoader = () => Promise<{
   default: $PropertyType<RouteResource, 'getData'>,
+  ...
 }>;
 
 /**
@@ -166,9 +158,3 @@ type CreateResourceArg =
     |};
 
 declare export function createResource(args: CreateResourceArg): RouteResource;
-
-// mocks
-declare export var mockRoute: Route;
-declare export var mockRouterActions: BoundActions<RouterActionsType>;
-declare export var mockRouterContextProp: RouteContext;
-declare export var mockRouterStoreContextProp: RouterContext;

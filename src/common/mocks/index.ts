@@ -55,6 +55,7 @@ export const mockRouteResourceResponse = {
   data: { foo: 'bar' },
   promise: null,
   expiresAt: Date.now(),
+  key: '',
 };
 
 export const mockRouterStoreContext = {

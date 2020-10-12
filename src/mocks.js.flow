@@ -1,0 +1,15 @@
+// @flow
+
+import type { BoundActions } from 'react-sweet-state';
+
+import type {
+  Route,
+  RouteContext,
+  RouterActionsType,
+  RouterContext,
+} from './types.js.flow';
+
+declare export var mockRoute: Route;
+declare export var mockRouterActions: BoundActions<RouterActionsType>;
+declare export var mockRouterContextProp: RouteContext;
+declare export var mockRouterStoreContextProp: RouterContext;
