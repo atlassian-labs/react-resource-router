@@ -53,6 +53,8 @@ export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
 
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
 
+export type HistoryUpdateType = 'push' | 'replace';
+
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
   bootstrapStoreUniversal: (
@@ -61,12 +63,18 @@ type PrivateRouterActions = {
   requestRouteResources: () => RouterAction;
   listen: () => RouterAction;
   getContext: () => RouterAction;
-  pushQueryParam: (params: {
-    [key: string]: string | undefined;
-  }) => RouterAction;
-  pushPathParam: (params: {
-    [key: string]: string | undefined;
-  }) => RouterAction;
+  updateQueryParam: (
+    params: {
+      [key: string]: string | undefined;
+    },
+    updateType?: HistoryUpdateType
+  ) => RouterAction;
+  updatePathParam: (
+    params: {
+      [key: string]: string | undefined;
+    },
+    updateType?: HistoryUpdateType
+  ) => RouterAction;
 };
 
 type PublicRouterActions = {

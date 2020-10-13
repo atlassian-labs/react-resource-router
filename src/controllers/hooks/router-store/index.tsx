@@ -10,6 +10,7 @@ import {
   RouterState,
   EntireRouterState,
   AllRouterActions,
+  HistoryUpdateType,
 } from '../../router-store/types';
 
 /**
@@ -54,12 +55,15 @@ const createPathParamHook = createHook<
  */
 export const useQueryParam = (
   paramKey: string
-): [string | undefined, (qp: string | undefined) => void] => {
+): [
+  string | undefined,
+  (newValue: string | undefined, updateType?: HistoryUpdateType) => void
+] => {
   const [paramVal, routerActions] = createQueryParamHook({ paramKey });
 
   const setQueryParam = React.useCallback(
-    (newValue: string | undefined) => {
-      routerActions.pushQueryParam({ [paramKey]: newValue });
+    (newValue: string | undefined, updateType?: HistoryUpdateType) => {
+      routerActions.updateQueryParam({ [paramKey]: newValue }, updateType);
     },
     [paramKey, routerActions]
   );
@@ -72,12 +76,15 @@ export const useQueryParam = (
  */
 export const usePathParam = (
   paramKey: string
-): [string | undefined, (pp: string | undefined) => void] => {
+): [
+  string | undefined,
+  (newValue: string | undefined, updateType?: HistoryUpdateType) => void
+] => {
   const [paramVal, routerActions] = createPathParamHook({ paramKey });
 
   const setPathParam = React.useCallback(
-    (newValue: string | undefined) => {
-      routerActions.pushPathParam({ [paramKey]: newValue });
+    (newValue: string | undefined, updateType?: HistoryUpdateType) => {
+      routerActions.updatePathParam({ [paramKey]: newValue }, updateType);
     },
     [paramKey, routerActions]
   );

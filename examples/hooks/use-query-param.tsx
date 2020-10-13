@@ -35,6 +35,9 @@ const UpdateButton = ({ for: paramKey = '' }) => {
       }}
     >
       <button onClick={() => setParam(randomStr(5))}>Update {paramKey}</button>
+      <button onClick={() => setParam(randomStr(5), 'replace')}>
+        Replace {paramKey}
+      </button>
       <button onClick={() => setParam(undefined)}>Empty {paramKey}</button>
     </div>
   );
@@ -53,8 +56,8 @@ const ComponentFoo = () => {
       }}
     >
       <div>
-        I am ComponentFoo that consumes 'foo' query param. My background color
-        changes on every render.
+        I am ComponentFoo that consumes &apos;foo&apos; query param. My
+        background color changes on every render.
       </div>
       <p>foo={foo}</p>
     </div>
@@ -74,8 +77,8 @@ const ComponentBar = () => {
       }}
     >
       <div>
-        I am ComponentBar that consumes 'bar' query param. My background color
-        changes on every render.
+        I am ComponentBar that consumes &apos;bar&apos; query param. My
+        background color changes on every render.
       </div>
       <p>bar={bar}</p>
     </div>
