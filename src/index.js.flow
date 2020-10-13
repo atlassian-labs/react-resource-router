@@ -65,7 +65,7 @@ declare export function RouteResourceEnabledSubscriber(props: {|
   children: (isResourceEnabled: boolean) => Node,
 |}): Node;
 
-declare export function RouteComponent(): ComponentType<RouteContext>;
+declare export function RouteComponent(): Node;
 
 // hooks
 
@@ -116,8 +116,6 @@ declare export function matchInvariantRoute(
   pathname: string,
   queryParams: MatchParams | string
 ): MatchedInvariantRoute | null;
-
-declare export function noopRouterDecorator(story: () => Node): Node;
 
 declare export function generatePath(
   pattern: string,
