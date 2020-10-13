@@ -19,7 +19,7 @@ export {
   useRouterActions,
 } from './controllers';
 
-export { RouteComponent, Link, noopRouterDecorator } from './ui';
+export { RouteComponent, Link } from './ui';
 
 export {
   matchRoute,
