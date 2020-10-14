@@ -65,7 +65,10 @@ const actions: AllRouterActions = {
       ...initialProps
     } = props;
     const { history, isStatic } = initialProps;
-    const routerContext = findRouterContext(routes, history.location, basePath);
+    const routerContext = findRouterContext(routes, {
+      location: history.location,
+      basePath,
+    });
 
     setState({
       ...initialProps,
@@ -94,7 +97,10 @@ const actions: AllRouterActions = {
       ...initialProps
     } = props;
     const { history, routes } = initialProps;
-    const routerContext = findRouterContext(routes, history.location, basePath);
+    const routerContext = findRouterContext(routes, {
+      location: history.location,
+      basePath,
+    });
 
     setState({
       ...initialProps,
@@ -134,7 +140,7 @@ const actions: AllRouterActions = {
     const { history, routes, basePath } = getState();
 
     const stopListening = history.listen(async (location, action) => {
-      const nextContext = findRouterContext(routes, location, basePath);
+      const nextContext = findRouterContext(routes, { location, basePath });
       const {
         match: currentMatch,
         route: currentRoute,

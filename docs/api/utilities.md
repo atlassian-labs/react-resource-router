@@ -30,10 +30,13 @@ Utility to create custom router contexts to be passed to resources.
 ```js
 import { myRoute } from '../routing';
 
-const basePath = '/base';
-const params = { id: '1' };
-const query = { order: 'asc' };
-const routerContext = createRouterContext(myRoute, params, query, basePath);
+const options = {
+  params: { id: '1' },
+  query: { order: 'asc' },
+  basePath: '/base',
+};
+
+const routerContext = createRouterContext(myRoute, options);
 ```
 
 ## matchRoute

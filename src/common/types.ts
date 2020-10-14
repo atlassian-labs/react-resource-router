@@ -144,8 +144,6 @@ export type RouterContext = {
  * Base type for route, which doesn't contain implementation details
  */
 export type InvariantRoute = {
-  /* Base prefix that gets appended to all paths */
-  basePath?: string;
   path: string;
   exact?: boolean;
 
@@ -273,4 +271,15 @@ export type MemoryRouterProps = {
   children: ReactNode;
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
+};
+
+export type CreateRouterContextOptions = {
+  params?: MatchParams;
+  query?: Query;
+  basePath?: string;
+};
+
+export type FindRouterContextOptions = {
+  location: Location;
+  basePath?: string;
 };

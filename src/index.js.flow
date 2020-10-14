@@ -32,8 +32,10 @@ import type {
   RouterSubscriberProps,
   Routes,
   StaticRouterProps,
+  CreateRouterContextOptions
 } from './types.js.flow';
 
+export * from './utils.js.flow';
 export * from './types.js.flow';
 
 declare export function Link(props: LinkProps): Node;
@@ -105,20 +107,6 @@ declare export function withRouter<
   $Diff<ElementConfig<$Supertype<Component>>, WithRouterProps>
 >;
 
-declare export function matchRoute(
-  routes: Routes,
-  pathname: string,
-  queryParams: MatchParams | string,
-  basePath?: string
-): MatchedRoute | null;
-
-declare export function matchInvariantRoute(
-  routes: InvariantRoutes,
-  pathname: string,
-  queryParams: MatchParams | string,
-  basePath?: string
-): MatchedInvariantRoute | null;
-
 declare export function generatePath(
   pattern: string,
   params?: { [paramName: string]: string | number | boolean | null | void }
@@ -128,15 +116,7 @@ declare export function createLegacyHistory(): BrowserHistory;
 
 declare export function createRouterContext(
   route: Route,
-  params?: MatchParams,
-  query?: Query,
-  basePath?: string
-): RouterContext;
-
-declare export function findRouterContext(
-  routes: Routes,
-  location: Location,
-  basePath?: string
+  options?: CreateRouterContextOptions,
 ): RouterContext;
 
 /**

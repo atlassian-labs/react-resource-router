@@ -9,6 +9,8 @@ import type {
   MatchedRoute,
   MatchParams,
   Routes,
+  FindRouterContextOptions,
+  RouterContext,
 } from './types.js.flow';
 
 declare export function createLegacyHistory(): BrowserHistory;
@@ -19,10 +21,9 @@ declare export function generatePath(
 ): string;
 
 declare export function findRouterContext(
-  location: Location,
   routes: Routes,
-  basePath?: string
-): string;
+  options: FindRouterContextOptions
+): RouterContext;
 
 declare export function matchRoute(
   routes: Routes,
