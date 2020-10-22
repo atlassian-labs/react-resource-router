@@ -45,6 +45,85 @@ describe('matchRoute', () => {
     });
   });
 
+  describe('pathname with basePath', () => {
+    it('should match a pathname when basePath is empty', () => {
+      const route = { path: '/foo/:bar', component: Noop };
+      expect(
+        // @ts-ignore
+        matchRoute([route], '/foo/abc', DEFAULT_QUERY_PARAMS)
+      ).toEqual({
+        route,
+        match: {
+          params: { bar: 'abc' },
+          isExact: true,
+          path: '/foo/:bar',
+          query: {},
+          url: '/foo/abc',
+        },
+      });
+
+      expect(
+        // @ts-ignore
+        matchRoute([route], '/hello/foo/abc', DEFAULT_QUERY_PARAMS)
+      ).toBeNull();
+      expect(
+        // @ts-ignore
+        matchRoute([route], '/baz/abc', DEFAULT_QUERY_PARAMS)
+      ).toBeNull();
+    });
+
+    it('should match a basePath+pathname without a query string', () => {
+      const route = { path: '/foo/:bar', component: Noop };
+      const basePath = '/base';
+      expect(
+        // @ts-ignore
+        matchRoute([route], '/base/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
+      ).toEqual({
+        route,
+        match: {
+          params: { bar: 'abc' },
+          isExact: true,
+          path: '/base/foo/:bar',
+          query: {},
+          url: '/base/foo/abc',
+        },
+      });
+
+      expect(
+        // @ts-ignore
+        matchRoute([route], '/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
+      ).toBeNull();
+      expect(
+        // @ts-ignore
+        matchRoute([route], '/base/baz/abc', DEFAULT_QUERY_PARAMS, basePath)
+      ).toBeNull();
+    });
+
+    it('should return the first route that is a match', () => {
+      const routeA = { path: '/foo/:bar', component: Noop };
+      const routeB = { path: '/foo/:baz', component: Noop };
+      const basePath = '/base';
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeB],
+          '/base/foo/abc',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeA,
+      });
+
+      expect(
+        // @ts-ignore
+        matchRoute([routeB], '/base/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
+      ).toMatchObject({
+        route: routeB,
+      });
+    });
+  });
+
   describe('query', () => {
     it('should match query config requiring query name to be present', () => {
       const route = {

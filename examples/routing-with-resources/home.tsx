@@ -7,13 +7,11 @@ export const homeResource = createResource({
   maxAge: 0,
   getData: async () => {
     const response = await fetch('https://dog.ceo/api/breeds/image/random');
-    const result:{ message: string} = await response.json();
+    const result: { message: string } = await response.json();
 
     return result;
   },
 });
-
-const baseURL = 'basic-routing-with-resources';
 
 export const Home = () => {
   // eslint-disable-next-line
@@ -22,7 +20,7 @@ export const Home = () => {
   return (
     <div>
       <h1>Home</h1>
-      <Link to={`/${baseURL}/about`}>Go to about</Link>
+      <Link to={'/about'}>Go to about</Link>
       <section>
         <p>A random picture of a cute dog</p>
         <section>

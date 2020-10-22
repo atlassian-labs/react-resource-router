@@ -12,19 +12,17 @@ import { About } from './about';
 
 const myHistory = createBrowserHistory();
 
-const baseURL = 'basic-routing';
-
 const appRoutes = [
   {
     name: 'home',
-    path: `/${baseURL}`,
+    path: '/',
     exact: true,
     component: Home,
     navigation: null,
   },
   {
     name: 'about',
-    path: `/${baseURL}/about`,
+    path: '/about',
     exact: true,
     component: About,
     navigation: null,
@@ -33,7 +31,7 @@ const appRoutes = [
 
 const App = () => {
   return (
-    <Router routes={appRoutes} history={myHistory}>
+    <Router routes={appRoutes} history={myHistory} basePath="/basic-routing">
       <RouteComponent />
     </Router>
   );

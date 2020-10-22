@@ -305,3 +305,14 @@ export type RouterSubscriberProps = {|
     actions: BoundActions<RouterActionsType>
   ) => Node,
 |};
+
+export type CreateRouterContextOptions = {
+  params?: MatchParams;
+  query?: Query;
+  basePath?: string;
+};
+
+export type FindRouterContextOptions = {
+  location: Location;
+  basePath?: string;
+};

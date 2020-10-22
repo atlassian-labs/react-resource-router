@@ -264,10 +264,22 @@ export type HistoryActions = {
 };
 
 export type MemoryRouterProps = {
+  basePath?: string;
   isStatic?: boolean;
   location?: string;
   routes: Routes;
   children: ReactNode;
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
+};
+
+export type CreateRouterContextOptions = {
+  params?: MatchParams;
+  query?: Query;
+  basePath?: string;
+};
+
+export type FindRouterContextOptions = {
+  location: Location;
+  basePath?: string;
 };

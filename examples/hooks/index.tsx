@@ -13,26 +13,24 @@ import PathParamExample from './use-path-param';
 
 const myHistory = createBrowserHistory();
 
-const baseURL = '/hooks';
-
 const appRoutes = [
   {
     name: 'home',
-    path: `${baseURL}`,
+    path: '/',
     exact: true,
     component: Home,
     navigation: null,
   },
   {
     name: 'query-param',
-    path: `${baseURL}/query-param`,
+    path: '/query-param',
     exact: true,
     component: QueryParamExample,
     navigation: null,
   },
   {
     name: 'path-param',
-    path: `${baseURL}/path-param/:foo/:bar`,
+    path: '/path-param/:foo/:bar',
     exact: true,
     component: PathParamExample,
     navigation: null,
@@ -41,7 +39,7 @@ const appRoutes = [
 
 const App = () => {
   return (
-    <Router routes={appRoutes} history={myHistory}>
+    <Router routes={appRoutes} history={myHistory} basePath="/hooks">
       <RouteComponent />
     </Router>
   );

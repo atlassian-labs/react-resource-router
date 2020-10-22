@@ -62,7 +62,7 @@ import { blogPostRoute } from '../routing';
 
 export const PrefetchBlogPost = ({ id }) => {
   const { refresh } = useResource(blogPostResource, {
-    routerContext: createRouterContext(blogPostRoute, { id }),
+    routerContext: createRouterContext(blogPostRoute, { params: { id } }),
   });
 
   useEffect(() => {

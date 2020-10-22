@@ -226,7 +226,9 @@ describe('useResource hook', () => {
         <MockComponent page="page1">
           {({ page }: { page: string }) => {
             const resource = useResource(mockRes, {
-              routerContext: createRouterContext(mockRoute, { page }),
+              routerContext: createRouterContext(mockRoute, {
+                params: { page },
+              }),
             });
             resourceResponse = resource;
 

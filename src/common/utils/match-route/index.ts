@@ -97,7 +97,8 @@ const matchQuery = (
 const matchRoute = <T extends Routes | InvariantRoutes>(
   routes: T,
   pathname: string,
-  queryParams: MatchParams
+  queryParams: MatchParams,
+  basePath = ''
 ): (T extends Routes ? MatchedRoute : MatchedInvariantRoute) | null => {
   const queryParamObject =
     typeof queryParams === 'string'
@@ -107,7 +108,11 @@ const matchRoute = <T extends Routes | InvariantRoutes>(
 
   routes.some(route => {
     const pathMatch = route.path
-      ? matchPath(pathname, route)
+      ? matchPath(pathname, {
+          path: route.path,
+          exact: route.exact,
+          basePath,
+        })
       : computeRootMatch(pathname);
     let match = pathMatch;
 
@@ -130,11 +135,14 @@ const matchRoute = <T extends Routes | InvariantRoutes>(
 export const matchInvariantRoute = (
   routes: InvariantRoutes,
   pathname: string,
-  queryParams: MatchParams
-): MatchedInvariantRoute | null => matchRoute(routes, pathname, queryParams);
+  queryParams: MatchParams,
+  basePath = ''
+): MatchedInvariantRoute | null =>
+  matchRoute(routes, pathname, queryParams, basePath);
 
 export default (
   routes: Routes,
   pathname: string,
-  queryParams: MatchParams
-): MatchedRoute | null => matchRoute(routes, pathname, queryParams);
+  queryParams: MatchParams,
+  basePath = ''
+): MatchedRoute | null => matchRoute(routes, pathname, queryParams, basePath);

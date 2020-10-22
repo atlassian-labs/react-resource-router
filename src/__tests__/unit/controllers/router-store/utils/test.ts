@@ -3,6 +3,7 @@ import {
   isAbsolutePath,
   isExternalAbsolutePath,
   updateQueryParams,
+  sanitizePath,
 } from '../../../../../controllers/router-store/utils/path-utils';
 
 describe('path utils', () => {
@@ -142,6 +143,32 @@ describe('path utils', () => {
       const expectedOutput = '/browse?foo=newVal#abc';
 
       expect(updateQueryParams(location, query)).toEqual(expectedOutput);
+    });
+  });
+
+  describe('sanitizePath', () => {
+    it('should sanitize path + basePath', () => {
+      const path = '/path';
+      const basePath = '/base';
+
+      const expectedOutput = '/base/path';
+      expect(sanitizePath(path, basePath)).toEqual(expectedOutput);
+    });
+
+    it('should sanitize path without basePath', () => {
+      const path = '/path';
+      const basePath = '';
+
+      const expectedOutput = '/path';
+      expect(sanitizePath(path, basePath)).toEqual(expectedOutput);
+    });
+
+    it('should format the slashes before appending', () => {
+      const path = 'path';
+      const basePath = 'base';
+
+      const expectedOutput = '/base/path';
+      expect(sanitizePath(path, basePath)).toEqual(expectedOutput);
     });
   });
 });
