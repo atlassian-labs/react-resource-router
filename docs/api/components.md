@@ -33,6 +33,7 @@ import { appRoutes } from './routing';
 | ----------------- | ----------------- | -------------------------------------------------------------------------------------------------- |
 | `routes`          | `Routes[]`        | Your application's routes                                                                          |
 | `history`         | `History`         | The history instance for the router                                                                |
+| `basePath`        | `string`          | Base path string that will get prepended to all route paths                                        |
 | `resourceContext` | `ResourceContext` | Static contextual data that will be provided to all your resources' `getKey` and `getData` methods |
 | `resourceData`    | `ResourceData`    | Pre-resolved resource data. When provided, the router will not request resources on mount          |
 
@@ -58,10 +59,11 @@ export const ServerApp = () => (
 
 ### StaticRouter props
 
-| prop       | type       | description                                             |
-| ---------- | ---------- | ------------------------------------------------------- |
-| `routes`   | `Routes[]` | Your application's routes                               |
-| `location` | `string`   | The string representation of the app's current location |
+| prop       | type       | description                                                 |
+| ---------- | ---------- | ----------------------------------------------------------- |
+| `routes`   | `Routes[]` | Your application's routes                                   |
+| `location` | `string`   | The string representation of the app's current location     |
+| `basePath` | `string`   | Base path string that will get prepended to all route paths |
 
 ## MemoryRouter
 
@@ -96,10 +98,11 @@ it('should send right props after render with routes', () => {
 
 ### MemoryRouter props
 
-| prop       | type       | description                                             |
-| ---------- | ---------- | ------------------------------------------------------- |
-| `routes`   | `Routes[]` | Your application's routes                               |
-| `location` | `string`   | The string representation of the app's current location |
+| prop       | type       | description                                                 |
+| ---------- | ---------- | ----------------------------------------------------------- |
+| `routes`   | `Routes[]` | Your application's routes                                   |
+| `location` | `string`   | The string representation of the app's current location     |
+| `basePath` | `string`   | Base path string that will get prepended to all route paths |
 
 ## Link component
 
