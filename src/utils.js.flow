@@ -1,9 +1,8 @@
 /* eslint-disable no-unused-vars */
 // @flow
 
-import type { BrowserHistory } from 'history/createBrowserHistory';
-
 import type {
+  BrowserHistory,
   InvariantRoutes,
   MatchedInvariantRoute,
   MatchedRoute,

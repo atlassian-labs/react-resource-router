@@ -3,13 +3,10 @@
 
 import type { Node } from 'react';
 import type { Action, BoundActions } from 'react-sweet-state';
-import type {
-  BrowserHistory,
-  LocationShape as HistoryLocationShape,
-  MemoryHistory,
-} from 'history/createBrowserHistory';
 
-export type LocationShape = {| ...HistoryLocationShape |};
+export type BrowserHistory = { ... };
+export type MemoryHistory = { ... };
+export type LocationShape = { ... };
 
 export type Location = {|
   pathname: string,
@@ -85,6 +82,8 @@ type RouteResourceDataForType = {
 export type ResourceOptions = {
   routerContext?: RouterContext,
 };
+
+export type RouteResourceUpdater<T: RouteResourceData> = (data: T) => T;
 
 export type InvariantRoute = {
   path: string,
@@ -307,12 +306,12 @@ export type RouterSubscriberProps = {|
 |};
 
 export type CreateRouterContextOptions = {
-  params?: MatchParams;
-  query?: Query;
-  basePath?: string;
+  params?: MatchParams,
+  query?: Query,
+  basePath?: string,
 };
 
 export type FindRouterContextOptions = {
-  location: Location;
-  basePath?: string;
+  location: Location,
+  basePath?: string,
 };
