@@ -15,5 +15,6 @@
       "react-resource-router": ["src"]
     }
   },
-  "include": ["src/**/*", "examples/**/*"]
+  "include": ["src/**/*", "examples/**/*"],
+  "exclude": ["**/*.js.flow"]
 }

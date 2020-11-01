@@ -1,23 +1,14 @@
-/* eslint-disable no-undef */
-/* eslint-disable no-unused-vars */
+/* eslint-disable no-undef, no-unused-vars */
 // @flow
 import type { ComponentType, ElementConfig, Node } from 'react';
 import type { BoundActions } from 'react-sweet-state';
-import type { BrowserHistory } from 'history/createBrowserHistory';
 
 import type {
-  HistoryAction,
-  HistoryBlocker,
+  BrowserHistory,
   HistoryUpdateType,
-  InvariantRoute,
-  InvariantRoutes,
   LinkProps,
   Location,
-  MatchedInvariantRoute,
-  MatchedRoute,
-  MatchParams,
   MemoryRouterProps,
-  Query,
   ResourceOptions,
   ResourceStoreContext,
   Route,
@@ -26,13 +17,13 @@ import type {
   RouteResource,
   RouteResourceData,
   RouteResourceResponse,
+  RouteResourceUpdater,
   RouterProps,
   RouterState,
   RouterContext,
   RouterSubscriberProps,
-  Routes,
   StaticRouterProps,
-  CreateRouterContextOptions
+  CreateRouterContextOptions,
 } from './types.js.flow';
 
 export * from './utils.js.flow';
@@ -55,7 +46,7 @@ declare export function StaticRouter(props: StaticRouterProps): Node;
 declare export function ResourceSubscriber(props: {
   children: (
     resource: RouteResourceResponse & {
-      update: (data: RouteResourceData | null) => void,
+      update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void,
       refresh: () => void,
     }
   ) => Node,
@@ -76,7 +67,7 @@ declare export function useResource(
   options?: ResourceOptions
 ): {|
   ...RouteResourceResponse,
-  update: (data: RouteResourceData | null) => void,
+  update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void,
   refresh: () => void,
 |};
 declare export function useRouter(): [
@@ -87,10 +78,16 @@ declare export function useRouterActions(): BoundActions<RouterActionsType>;
 declare export function useResourceStoreContext(): ResourceStoreContext;
 declare export function useQueryParam(
   paramKey: string
-): [string | void, (newValue: string | void, updateType?: HistoryUpdateType) => void];
+): [
+  string | void,
+  (newValue: string | void, updateType?: HistoryUpdateType) => void
+];
 declare export function usePathParam(
   paramKey: string
-): [string | void, (newValue: string | void, updateType?: HistoryUpdateType) => void];
+): [
+  string | void,
+  (newValue: string | void, updateType?: HistoryUpdateType) => void
+];
 
 // Utils
 type WithRouterProps = RouteContext & {|
@@ -103,7 +100,7 @@ declare export function withRouter<
 >(
   WrappedComponent: Component
 ): ComponentType<
-  // $FlowFixMe - $Supertype is deprecated https://github.com/flow-typed/flow-typed/issues/2991
+  // $FlowFixMe[deprecated-utility] - $Supertype is deprecated https://github.com/flow-typed/flow-typed/issues/2991
   $Diff<ElementConfig<$Supertype<Component>>, WithRouterProps>
 >;
 
@@ -116,7 +113,7 @@ declare export function createLegacyHistory(): BrowserHistory;
 
 declare export function createRouterContext(
   route: Route,
-  options?: CreateRouterContextOptions,
+  options?: CreateRouterContextOptions
 ): RouterContext;
 
 /**
