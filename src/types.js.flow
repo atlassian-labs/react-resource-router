@@ -4,9 +4,9 @@
 import type { Node } from 'react';
 import type { Action, BoundActions } from 'react-sweet-state';
 
-export type BrowserHistory = { ... };
-export type MemoryHistory = { ... };
-export type LocationShape = { ... };
+export type BrowserHistory = any;
+export type MemoryHistory = any;
+export type LocationShape = any;
 
 export type Location = {|
   pathname: string,
