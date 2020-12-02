@@ -38,7 +38,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([routeB], '/foo/abc', DEFAULT_QUERY_PARAMS)
+        matchRoute([routeB], '/foo/abcd', DEFAULT_QUERY_PARAMS)
       ).toMatchObject({
         route: routeB,
       });
@@ -117,7 +117,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([routeB], '/base/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
+        matchRoute([routeB], '/base/foo/abcd', DEFAULT_QUERY_PARAMS, basePath)
       ).toMatchObject({
         route: routeB,
       });

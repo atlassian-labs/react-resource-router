@@ -48,6 +48,7 @@ export class Router extends Component<RouterProps> {
       children,
       routes,
       history,
+      initialRoute,
       isStatic,
       basePath,
       resourceContext,
@@ -59,6 +60,7 @@ export class Router extends Component<RouterProps> {
         basePath={basePath}
         routes={routes}
         history={history}
+        initialRoute={initialRoute}
         isStatic={isStatic}
         resourceContext={resourceContext}
         resourceData={resourceData}

@@ -41,6 +41,7 @@ export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
 export type ContainerProps = {
   isStatic?: boolean;
   history: BrowserHistory | MemoryHistory;
+  initialRoute?: Route;
   location?: Location;
   basePath?: string;
   routes: Routes;
@@ -81,7 +82,9 @@ type PrivateRouterActions = {
 
 type PublicRouterActions = {
   push: (path: Href | Location, state?: any) => RouterAction;
+  pushTo: (route: Route, attributes?: any) => RouterAction;
   replace: (path: Href | Location) => RouterAction;
+  replaceTo: (route: Route, attributes?: any) => RouterAction;
   goBack: () => RouterAction;
   goForward: () => RouterAction;
   registerBlock: (blocker: HistoryBlocker | any) => RouterAction;

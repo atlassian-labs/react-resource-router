@@ -1,9 +1,9 @@
-import React, { createElement, forwardRef } from 'react';
-
 import { createPath } from 'history';
+import { createElement, forwardRef, useState } from 'react';
 
-import { LinkProps } from '../../common/types';
-import { RouterActions } from '../../controllers';
+import { LinkProps, Route } from '../../common/types';
+import { generateLocationFromPath } from '../../common/utils';
+import { useRouterActions } from '../../controllers';
 
 import { getValidLinkType, handleNavigation } from './utils';
 
@@ -13,49 +13,57 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       children,
       target = '_self',
       replace = false,
-      href = '',
-      to = '',
+      href = undefined,
+      to = undefined,
       onClick = undefined,
       type: linkType = 'a',
+      params,
+      query,
       ...rest
     },
     ref
   ) => {
-    return (
-      <RouterActions>
-        {({ push, replace: replaceAction }) => {
-          const validLinkType = getValidLinkType(linkType);
-          const linkTargetProp = href || to || '';
-          const linkDestination =
-            typeof linkTargetProp === 'object'
-              ? createPath(linkTargetProp)
-              : linkTargetProp;
+    const routerActions = useRouterActions();
+    const validLinkType = getValidLinkType(linkType);
+    const [route, setRoute] = useState<Route | void>(() => {
+      if (to && typeof to !== 'string') {
+        if ('then' in to) to.then(r => setRoute(r.default));
+        else return to;
+      }
+    });
 
-          const routerActions = { push, replace: replaceAction };
+    const routeAttributes = { params, query, basePath: '' };
+    const linkDestination = href
+      ? typeof href !== 'string'
+        ? createPath(href)
+        : href
+      : typeof to !== 'string'
+      ? (route &&
+          createPath(generateLocationFromPath(route.path, routeAttributes))) ||
+        ''
+      : to;
 
-          const handleLinkPress = (e: any) =>
-            handleNavigation(e, {
-              onClick,
-              target,
-              replace,
-              routerActions,
-              href: linkDestination,
-            });
+    const handleLinkPress = (e: any) =>
+      handleNavigation(e, {
+        onClick,
+        target,
+        replace,
+        routerActions,
+        href: linkDestination,
+        to: route && [route, { params, query }],
+      });
 
-          return createElement(
-            validLinkType,
-            {
-              ...rest,
-              href: linkDestination,
-              target,
-              onClick: handleLinkPress,
-              onKeyDown: handleLinkPress,
-              ref,
-            },
-            children
-          );
-        }}
-      </RouterActions>
+    return createElement(
+      validLinkType,
+      {
+        ...rest,
+        href: linkDestination,
+        target,
+        onClick: handleLinkPress,
+        onKeyDown: handleLinkPress,
+        ref,
+      },
+      children
     );
   }
 );

@@ -122,7 +122,7 @@ export type RouteResource<RouteResourceData = unknown> = {
 
 export type RouteResources = RouteResource[];
 
-export type ResourceStoreContext = Record<string, any>;
+export type ResourceStoreContext = any;
 
 export type RouteResourceDataForType = {
   [index: string]: RouteResourceResponseBase<unknown>;
@@ -229,10 +229,12 @@ export type LinkProps = {
   children: ReactNode;
   target?: '_blank' | '_self' | '_parent' | '_top';
   href?: string;
-  to?: string;
+  to?: string | Route | Promise<{ default: Route }>;
   replace?: boolean;
   type?: 'a' | 'button';
   onClick?: (e: any) => void;
+  params?: MatchParams;
+  query?: Query;
 };
 
 export type HistoryBlocker = (
@@ -271,6 +273,12 @@ export type MemoryRouterProps = {
   children: ReactNode;
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
+};
+
+export type GenerateLocationOptions = {
+  params?: MatchParams;
+  query?: Query;
+  basePath?: string;
 };
 
 export type CreateRouterContextOptions = {
