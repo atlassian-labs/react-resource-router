@@ -32,7 +32,11 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       }
     });
 
-    const routeAttributes = { params, query, basePath: '' };
+    const routeAttributes = {
+      params,
+      query,
+      basePath: routerActions.getBasePath() as any,
+    };
     const linkDestination = href
       ? typeof href !== 'string'
         ? createPath(href)

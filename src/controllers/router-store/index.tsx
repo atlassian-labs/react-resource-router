@@ -205,7 +205,7 @@ const actions: AllRouterActions = {
     }
   },
 
-  pushTo: (route, attributes) => ({ getState }) => {
+  pushTo: (route, attributes = {}) => ({ getState }) => {
     const { history, basePath } = getState();
     const location = generateLocationFromPath(route.path, {
       ...attributes,
@@ -230,7 +230,7 @@ const actions: AllRouterActions = {
     }
   },
 
-  replaceTo: (route, attributes) => ({ getState }) => {
+  replaceTo: (route, attributes = {}) => ({ getState }) => {
     const { history, basePath } = getState();
     const location = generateLocationFromPath(route.path, {
       ...attributes,
@@ -268,6 +268,12 @@ const actions: AllRouterActions = {
     const { query, route, match } = getState();
 
     return { query, route, match };
+  },
+
+  getBasePath: () => ({ getState }) => {
+    const { basePath } = getState();
+
+    return basePath;
   },
 
   updateQueryParam: (params, updateType = 'push') => ({ getState }) => {

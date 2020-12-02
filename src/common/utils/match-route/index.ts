@@ -57,7 +57,7 @@ const matchRoute = <T extends Route | InvariantRoute>(
 export const matchInvariantRoute = (
   routes: InvariantRoutes,
   pathname: string,
-  queryParams: Query,
+  queryParams: Query | undefined,
   basePath = ''
 ): MatchedInvariantRoute | null =>
   matchRoute(routes, pathname, queryParams, basePath);
@@ -65,6 +65,6 @@ export const matchInvariantRoute = (
 export default (
   routes: Routes,
   pathname: string,
-  queryParams: Query,
+  queryParams: Query | undefined,
   basePath = ''
 ): MatchedRoute | null => matchRoute(routes, pathname, queryParams, basePath);

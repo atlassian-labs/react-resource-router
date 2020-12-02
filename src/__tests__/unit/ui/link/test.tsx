@@ -40,11 +40,12 @@ const eventModifiers = [['metaKey'], ['altKey'], ['ctrlKey'], ['shiftKey']];
 describe('<Link />', () => {
   const mountInRouter = (
     children: LinkProps['children'],
-    props: Partial<LinkProps> = defaultProps
+    props: Partial<LinkProps> = defaultProps,
+    basePath = ''
   ) =>
     mount(
       // @ts-ignore
-      <Router history={HistoryMock} routes={[]}>
+      <Router history={HistoryMock} routes={[]} basePath={basePath}>
         <Link {...props}>{children}</Link>
       </Router>
     );
@@ -270,24 +271,32 @@ describe('<Link />', () => {
 
     it('should render with correct link', () => {
       // @ts-ignore
-      const wrapper = mountInRouter('my link', {
-        to: route,
-        params: { id: '1' },
-        query: { foo: 'bar' },
-      });
+      const wrapper = mountInRouter(
+        'my link',
+        {
+          to: route,
+          params: { id: '1' },
+          query: { foo: 'bar' },
+        },
+        '/base'
+      );
 
       expect(wrapper.html()).toEqual(
-        '<a href="/my-page/1?foo=bar" target="_self">my link</a>'
+        '<a href="/base/my-page/1?foo=bar" target="_self">my link</a>'
       );
     });
 
     it('should push history with correct link', () => {
       // @ts-ignore
-      const wrapper = mountInRouter('my link', {
-        to: route,
-        params: { id: '1' },
-        query: { foo: 'bar' },
-      });
+      const wrapper = mountInRouter(
+        'my link',
+        {
+          to: route,
+          params: { id: '1' },
+          query: { foo: 'bar' },
+        },
+        '/base'
+      );
       const component = wrapper.find('Link');
 
       component.simulate('click', baseClickEvent);
@@ -295,7 +304,7 @@ describe('<Link />', () => {
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
       expect(HistoryMock.push).toHaveBeenCalledWith({
         hash: '',
-        pathname: '/my-page/1',
+        pathname: '/base/my-page/1',
         search: '?foo=bar',
       });
     });

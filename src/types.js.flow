@@ -175,12 +175,20 @@ type PrivateRouterActions = {|
 
 type Href = string;
 
+type ToAttributes = {
+  params?: MatchParams,
+  query?: Query,
+};
+
 export type RouterActionsType = {|
   push: (path: Href | LocationShape, state?: any) => RouterAction,
+  pushTo: (route: Route, attributes: ToAttributes) => RouterAction,
   replace: (path: Href | LocationShape, state?: any) => RouterAction,
+  replaceTo: (route: Route, attributes: ToAttributes) => RouterAction,
   goBack: () => RouterAction,
   goForward: () => RouterAction,
   registerBlock: (blocker: HistoryBlocker | any) => RouterAction,
+  getBasePath: () => RouterAction,
 |};
 
 type AllRouterActions = {|
