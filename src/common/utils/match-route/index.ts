@@ -62,6 +62,19 @@ export const matchInvariantRoute = (
 ): MatchedInvariantRoute | null =>
   matchRoute(routes, pathname, queryParams, basePath);
 
+/**
+ * Performance optimisation to fast-match a single route
+ * instead of looping thorugh all defined routes
+ */
+export const warmupMatchRouteCache = (
+  route: Route,
+  pathname: string,
+  queryParams: Query | undefined,
+  basePath = ''
+) => {
+  matchRoute([route], pathname, queryParams, basePath);
+};
+
 export default (
   routes: Routes,
   pathname: string,

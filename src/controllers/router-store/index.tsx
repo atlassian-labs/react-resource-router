@@ -18,7 +18,7 @@ import {
   isServerEnvironment,
   generatePath as generatePathUsingPathParams,
   generateLocationFromPath,
-  matchRoute,
+  warmupMatchRouteCache,
 } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
 import { getResourcesForNextLocation } from '../resource-store/utils';
@@ -211,13 +211,7 @@ const actions: AllRouterActions = {
       ...attributes,
       basePath,
     });
-    const newMatch = matchRoute(
-      [route],
-      location.pathname,
-      attributes.query,
-      basePath
-    );
-    if (!newMatch) throw new Error('Provided route does not match');
+    warmupMatchRouteCache(route, location.pathname, attributes.query, basePath);
     history.push(location as any);
   },
 
@@ -236,13 +230,7 @@ const actions: AllRouterActions = {
       ...attributes,
       basePath,
     });
-    const newMatch = matchRoute(
-      [route],
-      location.pathname,
-      attributes.query,
-      basePath
-    );
-    if (!newMatch) throw new Error('Provided route does not match');
+    warmupMatchRouteCache(route, location.pathname, attributes.query, basePath);
     history.replace(location as any);
   },
 

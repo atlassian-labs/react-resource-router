@@ -300,10 +300,12 @@ export type LinkProps = {|
   children: Node,
   target?: '_blank' | '_self' | '_parent' | '_top',
   href?: string,
-  to?: string,
+  to?: string | Route | Promise<{ default: Route, ... }> | Promise<Route>,
   replace?: boolean,
   type?: 'a' | 'button',
   onClick?: (e: any) => void,
+  params?: MatchParams,
+  query?: Query,
 |};
 
 export type RouterSubscriberProps = {|

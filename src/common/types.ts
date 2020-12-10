@@ -229,7 +229,7 @@ export type LinkProps = {
   children: ReactNode;
   target?: '_blank' | '_self' | '_parent' | '_top';
   href?: string;
-  to?: string | Route | Promise<{ default: Route }>;
+  to?: string | Route | Promise<{ default: Route } | Route>;
   replace?: boolean;
   type?: 'a' | 'button';
   onClick?: (e: any) => void;

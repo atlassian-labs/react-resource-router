@@ -27,7 +27,8 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     const validLinkType = getValidLinkType(linkType);
     const [route, setRoute] = useState<Route | void>(() => {
       if (to && typeof to !== 'string') {
-        if ('then' in to) to.then(r => setRoute(r.default));
+        if ('then' in to)
+          to.then(r => setRoute('default' in r ? r.default : r));
         else return to;
       }
     });

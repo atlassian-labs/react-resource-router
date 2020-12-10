@@ -1,12 +1,17 @@
 import { qs } from 'url-parse';
 
 import matchRoute from '../../../../../common/utils/match-route';
+import { matchRouteCache } from '../../../../../common/utils/match-route/utils';
 
 const Noop = () => null;
 const DEFAULT_QUERY_PARAMS = {};
 const { parse } = qs;
 
 describe('matchRoute', () => {
+  beforeEach(() => {
+    matchRouteCache.cache.clear();
+  });
+
   describe('pathname', () => {
     it('should match a pathname without a query string', () => {
       const route = { path: '/foo/:bar', component: Noop };
@@ -38,7 +43,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([routeB], '/foo/abcd', DEFAULT_QUERY_PARAMS)
+        matchRoute([routeB], '/foo/abc', DEFAULT_QUERY_PARAMS)
       ).toMatchObject({
         route: routeB,
       });
@@ -117,7 +122,7 @@ describe('matchRoute', () => {
 
       expect(
         // @ts-ignore
-        matchRoute([routeB], '/base/foo/abcd', DEFAULT_QUERY_PARAMS, basePath)
+        matchRoute([routeB], '/base/foo/abc', DEFAULT_QUERY_PARAMS, basePath)
       ).toMatchObject({
         route: routeB,
       });
