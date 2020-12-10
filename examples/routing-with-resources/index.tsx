@@ -7,29 +7,11 @@ import {
   createBrowserHistory,
 } from 'react-resource-router';
 
-import { Home, homeResource } from './home';
-import { About, aboutResource } from './about';
+import { homeRoute, aboutRoute } from './routes';
 
 const myHistory = createBrowserHistory();
 
-const appRoutes = [
-  {
-    name: 'home',
-    path: '/',
-    exact: true,
-    component: Home,
-    navigation: null,
-    resources: [homeResource],
-  },
-  {
-    name: 'about',
-    path: '/about',
-    exact: true,
-    component: About,
-    navigation: null,
-    resources: [aboutResource],
-  },
-];
+const appRoutes = [homeRoute, aboutRoute];
 
 const App = () => {
   return (

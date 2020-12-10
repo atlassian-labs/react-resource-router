@@ -124,14 +124,16 @@ export const LinkExample = ({ href = '/' }) => {
 
 ### Link props
 
-| prop      | type       | description                                                                |
-| --------- | ---------- | -------------------------------------------------------------------------- |
-| `target`  | `string`   | `<a>`tag target attribute                                                  |
-| `replace` | `boolean`  | Determines if `history.replace` should be called instead of `history.push` |
-| `href`    | `Href`     | The route to navigate to                                                   |
-| `to`      | `Href`     | Alternative to `href`                                                      |
-| `onClick` | `function` | The function to call when the component is clicked                         |
-| `type`    | `string`   | The tag type to render, `a` and `button` are supported                     |
+| prop      | type                        | description                                                                |
+| --------- | --------------------------- | -------------------------------------------------------------------------- |
+| `target`  | `string`                    | `<a>`tag target attribute                                                  |
+| `replace` | `boolean`                   | Determines if `history.replace` should be called instead of `history.push` |
+| `href`    | `string` or `Location`      | The path to navigate to                                                    |
+| `to`      | `Route` or `Promise<Route>` | Links to supplied route                                                    |
+| `onClick` | `function`                  | The function to call when the component is clicked                         |
+| `type`    | `string`                    | The tag type to render, `a` and `button` are supported                     |
+| `params`  | `{ [key]: string }`         | Used with `to` to generate correct path url                                |
+| `query`   | `{ [key]: string }`         | Used with `to` to generate correct query string url                        |
 
 ## Redirect
 
@@ -247,13 +249,15 @@ Actions that communicate with the router's routing functionality are exposed saf
 
 By using either of these you will gain access to the following actions
 
-| prop            | type       | arguments                               | description                                                                                           |
-| --------------- | ---------- | --------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `push`          | `function` | `path: Href` or `Location, state?: any` | Calls `history.push` with the supplied args                                                           |
-| `replace`       | `function` | `path: Href` or `Location, state?: any` | Calls `history.replace` with the supplied args                                                        |
-| `goBack`        | `function` |                                         | Goes to the previous route in history                                                                 |
-| `goForward`     | `function` |                                         | Goes to the next route in history                                                                     |
-| `registerBlock` | `function` | `blocker: HistoryBlocker`               | Custom `history` API that allows you to stop a transition from happening so route changes are stopped |
+| prop            | type       | arguments                                                | description                                                                                           |
+| --------------- | ---------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
+| `push`          | `function` | `path: Href` or `Location, state?: any`                  | Calls `history.push` with the supplied args                                                           |
+| `pushTo`        | `function` | `route: Route, attributes?: { params?: {}, query?: {} }` | Calls `history.push` generating the path from supplied route and attributes                           |
+| `replace`       | `function` | `path: Href` or `Location, state?: any`                  | Calls `history.replace` with the supplied args                                                        |
+| `replaceTo`     | `function` | `route: Route, attributes?: { params?: {}, query?: {} }` | Calls `history.replace` generating the path from supplied route and attributes                        |
+| `goBack`        | `function` |                                                          | Goes to the previous route in history                                                                 |
+| `goForward`     | `function` |                                                          | Goes to the next route in history                                                                     |
+| `registerBlock` | `function` | `blocker: HistoryBlocker`                                | Custom `history` API that allows you to stop a transition from happening so route changes are stopped |
 
 Here's how you can use the component:
 
