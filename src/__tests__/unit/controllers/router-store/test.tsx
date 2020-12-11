@@ -469,7 +469,9 @@ describe('SPA Router store', () => {
       routes: any[],
       initialLocation: string
     ): Promise<any> => {
-      let historyPush = (path: string) => path;
+      let historyPush = (path: string) => {
+        path;
+      };
 
       mount(
         <MemoryRouter routes={routes} location={initialLocation}>

@@ -197,11 +197,7 @@ type AllRouterActions = {|
 |};
 
 // eslint-disable-next-line no-use-before-define
-export type RouterAction = Action<
-  EntireRouterState,
-  ContainerProps,
-  AllRouterActions
->;
+export type RouterAction = Action<EntireRouterState, ContainerProps, *>;
 
 // TODO: DRY out all these different router props if possible
 export type RouterProps = {

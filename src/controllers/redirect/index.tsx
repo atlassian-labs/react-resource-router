@@ -47,9 +47,8 @@ class Redirector extends Component<RedirectorProps> {
 
 export const Redirect = (props: RedirectProps) => (
   <RouterSubscriber>
-    {(
-      { location }: { location: RouterState['location'] },
-      actions: RouterActionsType
-    ) => <Redirector actions={actions} location={location} {...props} />}
+    {({ location }, actions) => (
+      <Redirector actions={actions} location={location} {...props} />
+    )}
   </RouterSubscriber>
 );
