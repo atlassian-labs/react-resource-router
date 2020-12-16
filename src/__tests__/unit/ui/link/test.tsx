@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { mount } from 'enzyme';
-import { createPath } from 'history';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { LinkProps } from '../../../../common/types';
@@ -187,27 +186,6 @@ describe('<Link />', () => {
       component.simulate('click', baseClickEvent);
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(0);
-    });
-  });
-
-  describe('legacy support for Location objects', () => {
-    const location = {
-      search: '?foo=bar',
-      pathname: '/my-page',
-      hash: '#lol',
-    };
-
-    it('should navigate correctly when `href` is a location object', () => {
-      // @ts-ignore
-      const wrapper = mountInRouter('my link', { href: location });
-      const component = wrapper.find('Link');
-
-      component.simulate('click', baseClickEvent);
-      expect(wrapper.html()).toEqual(
-        '<a href="/my-page?foo=bar#lol" target="_self">my link</a>'
-      );
-      expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-      expect(HistoryMock.push).toHaveBeenCalledWith(createPath(location));
     });
   });
 

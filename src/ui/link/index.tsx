@@ -38,15 +38,16 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       query,
       basePath: routerActions.getBasePath() as any,
     };
-    const linkDestination = href
-      ? typeof href !== 'string'
-        ? createPath(href)
-        : href
-      : typeof to !== 'string'
-      ? (route &&
-          createPath(generateLocationFromPath(route.path, routeAttributes))) ||
-        ''
-      : to;
+    const linkDestination =
+      href != null
+        ? href
+        : typeof to !== 'string'
+        ? (route &&
+            createPath(
+              generateLocationFromPath(route.path, routeAttributes)
+            )) ||
+          ''
+        : to;
 
     const handleLinkPress = (e: any) =>
       handleNavigation(e, {
