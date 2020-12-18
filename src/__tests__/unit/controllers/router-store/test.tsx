@@ -295,6 +295,32 @@ describe('SPA Router store', () => {
       });
     });
 
+    describe('pushTo', () => {
+      let children: any;
+
+      beforeEach(() => {
+        children = jest.fn().mockReturnValue(null);
+      });
+
+      it('should push a relative path generated from route and parameters', () => {
+        mount(
+          <MemoryRouter routes={[]}>
+            <RouterSubscriber>{children}</RouterSubscriber>
+          </MemoryRouter>
+        );
+        const route = { name: '', path: '/page/:id', component: () => null };
+        const { actions } = getRouterStore();
+
+        actions.pushTo(route, { params: { id: '1' }, query: { uid: '1' } });
+
+        expect(mockHistory.push).toBeCalledWith({
+          hash: '',
+          pathname: '/page/1',
+          search: '?uid=1',
+        });
+      });
+    });
+
     describe('replace', () => {
       let children: any;
 
@@ -335,6 +361,32 @@ describe('SPA Router store', () => {
 
         expect(window.location.href).toEqual(currentLocation);
         expect(window.location.replace).toBeCalledWith(path);
+      });
+    });
+
+    describe('replaceTo', () => {
+      let children: any;
+
+      beforeEach(() => {
+        children = jest.fn().mockReturnValue(null);
+      });
+
+      it('should replace a relative path generated from route and parameters', () => {
+        mount(
+          <MemoryRouter routes={[]}>
+            <RouterSubscriber>{children}</RouterSubscriber>
+          </MemoryRouter>
+        );
+        const route = { name: '', path: '/page/:id', component: () => null };
+        const { actions } = getRouterStore();
+
+        actions.replaceTo(route, { params: { id: '1' }, query: { uid: '1' } });
+
+        expect(mockHistory.replace).toBeCalledWith({
+          hash: '',
+          pathname: '/page/1',
+          search: '?uid=1',
+        });
       });
     });
   });

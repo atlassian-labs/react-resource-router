@@ -1,12 +1,17 @@
 import { qs } from 'url-parse';
 
 import matchRoute from '../../../../../common/utils/match-route';
+import { matchRouteCache } from '../../../../../common/utils/match-route/utils';
 
 const Noop = () => null;
 const DEFAULT_QUERY_PARAMS = {};
 const { parse } = qs;
 
 describe('matchRoute', () => {
+  beforeEach(() => {
+    matchRouteCache.cache.clear();
+  });
+
   describe('pathname', () => {
     it('should match a pathname without a query string', () => {
       const route = { path: '/foo/:bar', component: Noop };

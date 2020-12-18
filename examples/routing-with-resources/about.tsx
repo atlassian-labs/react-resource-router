@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link, createResource, useResource } from 'react-resource-router';
+import { homeRoute } from './routes';
 
 export const aboutResource = createResource({
   type: 'about',
@@ -22,7 +23,7 @@ export const About = () => {
   return (
     <div>
       <h1>About</h1>
-      <Link to={'/'}>Go to home</Link>
+      <Link to={homeRoute}>Go to home</Link>
       <section>
         <p>A picture of a schnauzer</p>
         <section>
