@@ -28,6 +28,7 @@ import {
   ContainerProps,
   UniversalRouterContainerProps,
   EntireRouterState,
+  RouterState,
 } from './types';
 
 import { Query } from '../../common/types';
@@ -390,6 +391,20 @@ export const useRouterStoreStatic = createHook<
 >(RouterStore, {
   selector: null,
 });
+
+/**
+ * Utility to create custom hooks without re-rendering on route change
+ */
+export function createRouterSelector<T>(selector: (state: RouterState) => T) {
+  const useHook = createHook<EntireRouterState, AllRouterActions, T>(
+    RouterStore,
+    { selector }
+  );
+
+  return function useRouterSelector() {
+    return useHook()[0];
+  };
+}
 
 export const getRouterStore = () =>
   // @ts-ignore calling `getStore` without providing a scopeId

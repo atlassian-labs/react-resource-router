@@ -11,6 +11,7 @@ import { MemoryRouter } from '../../../../controllers/memory-router';
 import { getResourceStore } from '../../../../controllers/resource-store';
 import { createResource } from '../../../../controllers/resource-utils';
 import {
+  createRouterSelector,
   getRouterState,
   getRouterStore,
   INITIAL_STATE,
@@ -776,6 +777,22 @@ describe('SPA Router store', () => {
 
       expect(dataA1 === dataA2).toBeTruthy();
       expect(componentRenderStates.includes('data:null')).toBeFalsy();
+    });
+  });
+
+  describe('createRouterSelector', () => {
+    it('should return selected state', () => {
+      const useRouteName = createRouterSelector(s => s.route.name);
+      const RouteName = () => <>{useRouteName()}</>;
+      const route = { path: '', name: 'home', component: () => null };
+
+      const wrapper = mount(
+        <MemoryRouter routes={[route]}>
+          <RouteName />
+        </MemoryRouter>
+      );
+
+      expect(wrapper.html()).toEqual('home');
     });
   });
 });
