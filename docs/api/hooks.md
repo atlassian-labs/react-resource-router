@@ -50,6 +50,22 @@ export const MyRouteComponent = () => {
 };
 ```
 
+If you are worried about `useRouter` re-rendering too much, you can create custom router hooks using selectors that will trigger a re-render only when the selector output changes.  
+To access/manipulate path or query parameters we still suggest to use `usePathParam` or `useQueryParam`, as they provide a simplified interface for that data.
+Also note that this utility will only return state, not actions. To access actions, combine it with [useRouterActions](#userouteractions).
+
+```js
+import { createRouterSelector } from 'react-resource-router';
+
+const useRouteName = createRouterSelector(o => o.route.name);
+
+export const MyRouteComponent = () => {
+  const routeName = useRouteName();
+
+  return <MyComponent currentRouteName={routeName} push={routerActions.push} />;
+};
+```
+
 ## useRouterActions
 
 You can access [Router Actions](#routeractions) using this hook.
@@ -122,7 +138,7 @@ export const MyComponent = () => {
   const replaceClickHandler = () => {
     setProjectId('333', 'replace');
     // => Will relace current route to /projects/333/board/456?foo=bar
-  }
+  };
 
   return (
     <div>

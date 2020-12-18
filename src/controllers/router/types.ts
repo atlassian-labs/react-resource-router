@@ -1,4 +1,4 @@
-import { ReactNode } from 'react';
+import { PropsWithChildren } from 'react';
 
 import {
   BrowserHistory,
@@ -7,12 +7,11 @@ import {
   Routes,
 } from '../../common/types';
 
-export type RouterProps = {
+export type RouterProps = PropsWithChildren<{
   isStatic: boolean;
   history: BrowserHistory;
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
   basePath?: string;
   routes: Routes;
-  children: ReactNode;
-};
+}>;

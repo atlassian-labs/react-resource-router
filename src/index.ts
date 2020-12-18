@@ -17,6 +17,7 @@ export {
   useResourceStoreContext,
   createResource,
   useRouterActions,
+  createRouterSelector,
 } from './controllers';
 
 export { RouteComponent, Link } from './ui';

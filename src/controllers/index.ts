@@ -14,4 +14,7 @@ export {
 } from './hooks';
 export { useResourceStoreContext } from './resource-store';
 export { createResource } from './resource-utils';
-export { RouteResourceEnabledSubscriber } from './router-store';
+export {
+  RouteResourceEnabledSubscriber,
+  createRouterSelector,
+} from './router-store';
