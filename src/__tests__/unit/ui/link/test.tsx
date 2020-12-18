@@ -1,7 +1,6 @@
 import React from 'react';
 
 import { mount } from 'enzyme';
-import { createPath } from 'history';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { LinkProps } from '../../../../common/types';
@@ -40,11 +39,12 @@ const eventModifiers = [['metaKey'], ['altKey'], ['ctrlKey'], ['shiftKey']];
 describe('<Link />', () => {
   const mountInRouter = (
     children: LinkProps['children'],
-    props: Partial<LinkProps> = defaultProps
+    props: Partial<LinkProps> = defaultProps,
+    basePath = ''
   ) =>
     mount(
       // @ts-ignore
-      <Router history={HistoryMock} routes={[]}>
+      <Router history={HistoryMock} routes={[]} basePath={basePath}>
         <Link {...props}>{children}</Link>
       </Router>
     );
@@ -189,33 +189,75 @@ describe('<Link />', () => {
     });
   });
 
-  describe('legacy support for Location objects', () => {
-    const location = {
-      search: '?foo=bar',
-      pathname: '/my-page',
-      hash: '#lol',
+  describe('when the link has `to` route prop defined', () => {
+    const route = {
+      name: 'my-page',
+      path: '/my-page/:id',
+      component: () => null,
     };
 
-    it('should navigate correctly when `href` is a location object', () => {
-      // @ts-ignore
-      const wrapper = mountInRouter('my link', { href: location });
-      const component = wrapper.find('Link');
+    it('should render the correct link', () => {
+      const wrapper = mountInRouter(
+        'my link',
+        {
+          to: route,
+          params: { id: '1' },
+          query: { foo: 'bar' },
+        },
+        '/base'
+      );
 
-      component.simulate('click', baseClickEvent);
-
-      expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-      expect(HistoryMock.push).toHaveBeenCalledWith(createPath(location));
+      expect(wrapper.html()).toEqual(
+        '<a href="/base/my-page/1?foo=bar" target="_self">my link</a>'
+      );
     });
 
-    it('should navigate correctly when `to` is a location object', () => {
-      // @ts-ignore
-      const wrapper = mountInRouter('my link', { to: location });
+    it('should push history with correct link', () => {
+      const wrapper = mountInRouter(
+        'my link',
+        {
+          to: route,
+          params: { id: '1' },
+          query: { foo: 'bar' },
+        },
+        '/base'
+      );
       const component = wrapper.find('Link');
 
       component.simulate('click', baseClickEvent);
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-      expect(HistoryMock.push).toHaveBeenCalledWith(createPath(location));
+      expect(HistoryMock.push).toHaveBeenCalledWith({
+        hash: '',
+        pathname: '/base/my-page/1',
+        search: '?foo=bar',
+      });
+    });
+
+    it('should handle async route imports', async () => {
+      const wrapper = mountInRouter('my link', {
+        to: Promise.resolve({ default: route }),
+        params: { id: '1' },
+        query: { foo: 'bar' },
+      });
+      await Promise.resolve();
+      const component = wrapper.find('Link');
+
+      component.simulate('click', baseClickEvent);
+
+      expect(wrapper.html()).toEqual(
+        '<a href="/my-page/1?foo=bar" target="_self">my link</a>'
+      );
+      expect(HistoryMock.push).toHaveBeenCalledTimes(1);
+      expect(HistoryMock.push).toHaveBeenCalledWith({
+        hash: '',
+        pathname: '/my-page/1',
+        search: '?foo=bar',
+      });
+    });
+
+    it('should error if required route parameters are missing', () => {
+      expect(() => mountInRouter('my link', { to: route })).toThrow();
     });
   });
 

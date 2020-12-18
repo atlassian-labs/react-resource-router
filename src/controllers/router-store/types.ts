@@ -9,6 +9,7 @@ import {
   Href,
   Location,
   Match,
+  MatchParams,
   Query,
   ResourceStoreContext,
   ResourceStoreData,
@@ -41,6 +42,7 @@ export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
 export type ContainerProps = {
   isStatic?: boolean;
   history: BrowserHistory | MemoryHistory;
+  initialRoute?: Route;
   location?: Location;
   basePath?: string;
   routes: Routes;
@@ -56,6 +58,11 @@ export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
 
 export type HistoryUpdateType = 'push' | 'replace';
+
+type ToAttributes = {
+  params?: MatchParams;
+  query?: Query;
+};
 
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
@@ -80,11 +87,14 @@ type PrivateRouterActions = {
 };
 
 type PublicRouterActions = {
-  push: (path: Href | Location, state?: any) => RouterAction;
-  replace: (path: Href | Location) => RouterAction;
+  push: (path: Href, state?: any) => RouterAction;
+  pushTo: (route: Route, attributes?: ToAttributes) => RouterAction;
+  replace: (path: Href) => RouterAction;
+  replaceTo: (route: Route, attributes?: ToAttributes) => RouterAction;
   goBack: () => RouterAction;
   goForward: () => RouterAction;
   registerBlock: (blocker: HistoryBlocker | any) => RouterAction;
+  getBasePath: () => RouterAction;
 };
 
 export type AllRouterActions = PrivateRouterActions & PublicRouterActions;

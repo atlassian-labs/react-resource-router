@@ -175,12 +175,20 @@ type PrivateRouterActions = {|
 
 type Href = string;
 
+type ToAttributes = {
+  params?: MatchParams,
+  query?: Query,
+};
+
 export type RouterActionsType = {|
-  push: (path: Href | LocationShape, state?: any) => RouterAction,
-  replace: (path: Href | LocationShape, state?: any) => RouterAction,
+  push: (path: Href, state?: any) => RouterAction,
+  pushTo: (route: Route, attributes: ToAttributes) => RouterAction,
+  replace: (path: Href, state?: any) => RouterAction,
+  replaceTo: (route: Route, attributes: ToAttributes) => RouterAction,
   goBack: () => RouterAction,
   goForward: () => RouterAction,
   registerBlock: (blocker: HistoryBlocker | any) => RouterAction,
+  getBasePath: () => RouterAction,
 |};
 
 type AllRouterActions = {|
@@ -292,10 +300,12 @@ export type LinkProps = {|
   children: Node,
   target?: '_blank' | '_self' | '_parent' | '_top',
   href?: string,
-  to?: string,
+  to?: string | Route | Promise<{ default: Route, ... }> | Promise<Route>,
   replace?: boolean,
   type?: 'a' | 'button',
   onClick?: (e: any) => void,
+  params?: MatchParams,
+  query?: Query,
 |};
 
 export type RouterSubscriberProps = {|

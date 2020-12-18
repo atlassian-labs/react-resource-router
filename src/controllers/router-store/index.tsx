@@ -17,6 +17,8 @@ import {
   findRouterContext,
   isServerEnvironment,
   generatePath as generatePathUsingPathParams,
+  generateLocationFromPath,
+  warmupMatchRouteCache,
 } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
 import { getResourcesForNextLocation } from '../resource-store/utils';
@@ -63,13 +65,14 @@ const actions: AllRouterActions = {
       resourceData,
       basePath = '',
       routes,
+      initialRoute,
       ...initialProps
     } = props;
     const { history, isStatic } = initialProps;
-    const routerContext = findRouterContext(routes, {
-      location: history.location,
-      basePath,
-    });
+    const routerContext = findRouterContext(
+      initialRoute ? [initialRoute] : routes,
+      { location: history.location, basePath }
+    );
 
     setState({
       ...initialProps,
@@ -138,11 +141,12 @@ const actions: AllRouterActions = {
    *
    */
   listen: () => ({ getState, setState }) => {
-    const { history, routes, basePath } = getState();
+    const { history } = getState();
 
-    const stopListening = history.listen(async (location, action) => {
-      const nextContext = findRouterContext(routes, { location, basePath });
+    const stopListening = history.listen((location, action) => {
       const {
+        routes,
+        basePath,
         match: currentMatch,
         route: currentRoute,
         query: currentQuery,
@@ -155,6 +159,8 @@ const actions: AllRouterActions = {
           getContext: getResourceStoreContext,
         },
       } = getResourceStore();
+
+      const nextContext = findRouterContext(routes, { location, basePath });
       const nextLocationContext = {
         route: nextContext.route,
         match: nextContext.match,
@@ -200,14 +206,33 @@ const actions: AllRouterActions = {
     }
   },
 
+  pushTo: (route, attributes = {}) => ({ getState }) => {
+    const { history, basePath } = getState();
+    const location = generateLocationFromPath(route.path, {
+      ...attributes,
+      basePath,
+    });
+    warmupMatchRouteCache(route, location.pathname, attributes.query, basePath);
+    history.push(location as any);
+  },
+
   replace: path => ({ getState }) => {
     const { history, basePath } = getState();
-
     if (isExternalAbsolutePath(path)) {
       window.location.replace(path as string);
     } else {
       history.replace(getRelativePath(path, basePath) as any);
     }
+  },
+
+  replaceTo: (route, attributes = {}) => ({ getState }) => {
+    const { history, basePath } = getState();
+    const location = generateLocationFromPath(route.path, {
+      ...attributes,
+      basePath,
+    });
+    warmupMatchRouteCache(route, location.pathname, attributes.query, basePath);
+    history.replace(location as any);
   },
 
   goBack: () => ({ getState }) => {
@@ -232,6 +257,12 @@ const actions: AllRouterActions = {
     const { query, route, match } = getState();
 
     return { query, route, match };
+  },
+
+  getBasePath: () => ({ getState }) => {
+    const { basePath } = getState();
+
+    return basePath;
   },
 
   updateQueryParam: (params, updateType = 'push') => ({ getState }) => {
