@@ -7,9 +7,7 @@ import { RouterActionsSubscriber } from '../router-store';
 import { EntireRouterState, RouterActionsType } from '../router-store/types';
 
 type Props = {
-  children: (
-    actions: BoundActions<EntireRouterState, RouterActionsType>
-  ) => ReactNode;
+  children: (actions: RouterActionsType) => ReactNode;
 };
 
 export const RouterActions = ({ children }: Props) => (

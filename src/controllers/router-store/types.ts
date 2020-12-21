@@ -1,6 +1,6 @@
 import { ReactNode } from 'react';
 
-import { ActionAny as Action } from 'react-sweet-state';
+import { Action, BoundActions } from 'react-sweet-state';
 
 import {
   BrowserHistory,
@@ -16,7 +16,7 @@ import {
   Route,
   Routes,
 } from '../../common/types';
-import { MemoryHistory } from 'history';
+import { MemoryHistory, UnregisterCallback } from 'history';
 
 type PublicStateProperties = {
   basePath: string;
@@ -69,9 +69,17 @@ type PrivateRouterActions = {
   bootstrapStoreUniversal: (
     initialState: UniversalRouterContainerProps
   ) => RouterAction;
-  requestRouteResources: () => RouterAction;
+  requestRouteResources: () => Action<
+    EntireRouterState,
+    AllRouterActions,
+    Promise<unknown[]>
+  >;
   listen: () => RouterAction;
-  getContext: () => RouterAction;
+  getContext: () => Action<
+    EntireRouterState,
+    AllRouterActions,
+    { query: Query; route: Route; match: Match }
+  >;
   updateQueryParam: (
     params: {
       [key: string]: string | undefined;
@@ -93,8 +101,10 @@ type PublicRouterActions = {
   replaceTo: (route: Route, attributes?: ToAttributes) => RouterAction;
   goBack: () => RouterAction;
   goForward: () => RouterAction;
-  registerBlock: (blocker: HistoryBlocker | any) => RouterAction;
-  getBasePath: () => RouterAction;
+  registerBlock: (
+    blocker: HistoryBlocker | any
+  ) => Action<EntireRouterState, AllRouterActions, UnregisterCallback>;
+  getBasePath: () => Action<EntireRouterState, AllRouterActions, string>;
 };
 
 export type AllRouterActions = PrivateRouterActions & PublicRouterActions;
@@ -103,7 +113,10 @@ export type AllRouterActions = PrivateRouterActions & PublicRouterActions;
  * Public API
  */
 export type RouterState = PublicStateProperties;
-export type RouterActionsType = PublicRouterActions;
+export type RouterActionsType = BoundActions<
+  EntireRouterState,
+  PublicRouterActions
+>;
 export type RouterActionPush = RouterActionsType['push'];
 export type RouterActionReplace = RouterActionsType['replace'];
 export type RouterSubscriberProps = {
