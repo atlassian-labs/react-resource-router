@@ -166,13 +166,6 @@ export type EntireRouterState = {|
   ...PrivateStateProperties,
 |};
 
-type PrivateRouterActions = {|
-  bootstrapStore: (initialState: ContainerProps) => RouterAction,
-  requestRouteResources: () => RouterAction,
-  listen: () => RouterAction,
-  getContext: () => RouterAction,
-|};
-
 type Href = string;
 
 type ToAttributes = {
@@ -180,24 +173,20 @@ type ToAttributes = {
   query?: Query,
 };
 
-export type RouterActionsType = {|
-  push: (path: Href, state?: any) => RouterAction,
-  pushTo: (route: Route, attributes: ToAttributes) => RouterAction,
-  replace: (path: Href, state?: any) => RouterAction,
-  replaceTo: (route: Route, attributes: ToAttributes) => RouterAction,
-  goBack: () => RouterAction,
-  goForward: () => RouterAction,
-  registerBlock: (blocker: HistoryBlocker | any) => RouterAction,
-  getBasePath: () => RouterAction,
-|};
-
-type AllRouterActions = {|
-  ...PrivateRouterActions,
-  ...RouterActionsType,
-|};
-
-// eslint-disable-next-line no-use-before-define
 export type RouterAction = Action<EntireRouterState, ContainerProps, *>;
+
+type UnregisterCallback = () => void;
+
+export type RouterActionsType = {|
+  push: (path: Href, state?: any) => void,
+  pushTo: (route: Route, attributes: ToAttributes) => void,
+  replace: (path: Href, state?: any) => void,
+  replaceTo: (route: Route, attributes: ToAttributes) => void,
+  goBack: () => void,
+  goForward: () => void,
+  registerBlock: (blocker: HistoryBlocker | any) => UnregisterCallback,
+  getBasePath: () => string,
+|};
 
 // TODO: DRY out all these different router props if possible
 export type RouterProps = {
@@ -285,12 +274,12 @@ export type RouterState = PublicStateProperties;
 export type RouterActionPush = (
   path: string | LocationShape,
   state?: any
-) => RouterAction;
+) => void;
 
 export type RouterActionReplace = (
   path: string | LocationShape,
   state?: any
-) => RouterAction;
+) => void;
 
 export type LinkProps = {|
   children: Node,
@@ -305,10 +294,7 @@ export type LinkProps = {|
 |};
 
 export type RouterSubscriberProps = {|
-  children: (
-    state: RouterState,
-    actions: BoundActions<RouterActionsType>
-  ) => Node,
+  children: (state: RouterState, actions: RouterActionsType) => Node,
 |};
 
 export type CreateRouterContextOptions = {
