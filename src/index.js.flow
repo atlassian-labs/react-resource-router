@@ -1,7 +1,6 @@
 /* eslint-disable no-undef, no-unused-vars */
 // @flow
 import type { ComponentType, ElementConfig, Node } from 'react';
-import type { BoundActions } from 'react-sweet-state';
 
 import type {
   BrowserHistory,
@@ -36,7 +35,7 @@ declare export function Redirect(props: {
 }): Node;
 
 declare export function RouterActions(props: {|
-  children: (actions: BoundActions<RouterActionsType>) => Node,
+  children: (actions: RouterActionsType) => Node,
 |}): Node;
 
 declare export function Router(props: RouterProps): Node;
@@ -70,11 +69,8 @@ declare export function useResource(
   update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void,
   refresh: () => void,
 |};
-declare export function useRouter(): [
-  RouterState,
-  BoundActions<RouterActionsType>
-];
-declare export function useRouterActions(): BoundActions<RouterActionsType>;
+declare export function useRouter(): [RouterState, RouterActionsType];
+declare export function useRouterActions(): RouterActionsType;
 declare export function useResourceStoreContext(): ResourceStoreContext;
 declare export function createRouterSelector<T>(
   selector: (state: RouterState) => T
