@@ -23,6 +23,8 @@ import type {
   RouterSubscriberProps,
   StaticRouterProps,
   CreateRouterContextOptions,
+  RouterActionPush,
+  RouterActionReplace,
 } from './types.js.flow';
 
 export * from './utils.js.flow';
@@ -90,8 +92,10 @@ declare export function usePathParam(
 ];
 
 // Utils
-type WithRouterProps = RouteContext & {|
+export type WithRouterProps = RouteContext & {|
   history: BrowserHistory,
+  push: RouterActionPush,
+  replace: RouterActionReplace,
 |};
 
 declare export function withRouter<
