@@ -99,10 +99,7 @@ declare export function withRouter<
   Component: ComponentType<Props>
 >(
   WrappedComponent: Component
-): ComponentType<
-  // $FlowFixMe[deprecated-utility] - $Supertype is deprecated https://github.com/flow-typed/flow-typed/issues/2991
-  $Diff<ElementConfig<$Supertype<Component>>, WithRouterProps>
->;
+): ComponentType<$Diff<ElementConfig<Component>, WithRouterProps>>;
 
 declare export function generatePath(
   pattern: string,
