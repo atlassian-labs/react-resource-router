@@ -53,6 +53,7 @@ export class Router extends Component<RouterProps> {
       basePath,
       resourceContext,
       resourceData,
+      onPrefetch,
     } = this.props;
 
     return (
@@ -64,6 +65,7 @@ export class Router extends Component<RouterProps> {
         isStatic={isStatic}
         resourceContext={resourceContext}
         resourceData={resourceData}
+        onPrefetch={onPrefetch}
         isGlobal
       >
         {children}

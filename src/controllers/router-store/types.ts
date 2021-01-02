@@ -14,6 +14,7 @@ import {
   ResourceStoreContext,
   ResourceStoreData,
   Route,
+  RouterContext,
   Routes,
 } from '../../common/types';
 import { MemoryHistory, UnregisterCallback } from 'history';
@@ -34,7 +35,7 @@ type PrivateStateProperties = {
   history: BrowserHistory;
   unlisten: UnlistenHistory | null;
   isStatic: boolean;
-  shouldUseSuspense: boolean;
+  onPrefetch?: (routerContext: RouterContext) => void;
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
@@ -48,6 +49,7 @@ export type ContainerProps = {
   routes: Routes;
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
+  onPrefetch?: (routerContext: RouterContext) => void;
 };
 
 export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
@@ -74,6 +76,10 @@ type PrivateRouterActions = {
     AllRouterActions,
     Promise<unknown[]>
   >;
+  prefetchNextRouteResources: (
+    path: Href,
+    nextContext: RouterContext | null
+  ) => RouterAction;
   listen: () => RouterAction;
   getContext: () => Action<
     EntireRouterState,

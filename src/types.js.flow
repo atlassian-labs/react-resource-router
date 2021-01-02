@@ -196,6 +196,8 @@ export type RouterProps = {
   resourceData?: ResourceStoreData,
   routes: Routes,
   children: Node,
+  initialRoute?: Route,
+  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type UniversalRouterProps = {
@@ -205,6 +207,8 @@ export type UniversalRouterProps = {
   resourceData?: ResourceStoreData,
   routes: Routes,
   children: Node,
+  initialRoute?: Route,
+  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type MemoryRouterProps = {
@@ -214,6 +218,8 @@ export type MemoryRouterProps = {
   children: Node,
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
+  initialRoute?: Route,
+  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type StaticRouterProps = {
@@ -223,6 +229,7 @@ export type StaticRouterProps = {
   children: Node,
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
+  initialRoute?: Route,
 };
 
 export type MatchParams = {

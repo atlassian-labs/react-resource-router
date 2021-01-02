@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 
-import { ComponentType, ReactNode } from 'react';
+import { ComponentType, ReactNode, MouseEvent, KeyboardEvent } from 'react';
 
 import { History, Location as HistoryLocationShape } from 'history';
 
@@ -113,10 +113,14 @@ export type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
 
 export type RouteResource<RouteResourceData = unknown> = {
   type: string;
-  getKey: (...args: RouteResourceGettersArgs) => string;
+  getKey: (
+    routerContext: RouterContext,
+    customContext: ResourceStoreContext
+  ) => string;
   maxAge: number;
   getData: (
-    ...args: RouteResourceGettersArgs
+    routerContext: RouterContext & ResourceFetchContext,
+    customContext: ResourceStoreContext
   ) => RouteResourcePromise<RouteResourceData>;
 };
 
@@ -136,6 +140,10 @@ export type RouterContext = {
   route: Route;
   match: Match;
   query: Query;
+};
+
+export type ResourceFetchContext = {
+  isPrefetch: boolean;
 };
 
 /**
@@ -232,9 +240,12 @@ export type LinkProps = {
   to?: string | Route | Promise<{ default: Route } | Route>;
   replace?: boolean;
   type?: 'a' | 'button';
-  onClick?: (e: any) => void;
+  onClick?: (e: MouseEvent | KeyboardEvent) => void;
+  onMouseEnter?: (e: MouseEvent) => void;
+  onMouseLeave?: (e: MouseEvent) => void;
   params?: MatchParams;
   query?: Query;
+  prefetch?: false | 'hover' | 'mount';
 };
 
 export type HistoryBlocker = (

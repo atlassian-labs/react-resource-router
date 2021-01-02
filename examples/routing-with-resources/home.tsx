@@ -21,7 +21,9 @@ export const Home = () => {
   return (
     <div>
       <h1>Home</h1>
-      <Link to={aboutRoute}>Go to about</Link>
+      <Link to={aboutRoute} prefetch="hover">
+        Go to about
+      </Link>
       <section>
         <p>A random picture of a cute dog</p>
         <section>

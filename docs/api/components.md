@@ -29,13 +29,15 @@ import { appRoutes } from './routing';
 
 ### Router props
 
-| prop              | type              | description                                                                                        |
-| ----------------- | ----------------- | -------------------------------------------------------------------------------------------------- |
-| `routes`          | `Routes[]`        | Your application's routes                                                                          |
-| `history`         | `History`         | The history instance for the router                                                                |
-| `basePath`        | `string`          | Base path string that will get prepended to all route paths                                        |
-| `resourceContext` | `ResourceContext` | Static contextual data that will be provided to all your resources' `getKey` and `getData` methods |
-| `resourceData`    | `ResourceData`    | Pre-resolved resource data. When provided, the router will not request resources on mount          |
+| prop              | type                      | description                                                                                        |
+| ----------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
+| `routes`          | `Routes[]`                | Your application's routes                                                                          |
+| `initialRoute`    | `Route`                   | The route your application is initially showing                                                    |
+| `history`         | `History`                 | The history instance for the router                                                                |
+| `basePath`        | `string`                  | Base path string that will get prepended to all route paths                                        |
+| `resourceContext` | `ResourceContext`         | Static contextual data that will be provided to all your resources' `getKey` and `getData` methods |
+| `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount          |
+| `onPrefetch`      | `function(RouterContext)` | Called when prefetch is triggered from a Link                                                      |
 
 ## StaticRouter
 
@@ -124,16 +126,17 @@ export const LinkExample = ({ href = '/' }) => {
 
 ### Link props
 
-| prop      | type                                    | description                                                                |
-| --------- | --------------------------------------- | -------------------------------------------------------------------------- |
-| `target`  | `string`                                | `<a>`tag target attribute                                                  |
-| `replace` | `boolean`                               | Determines if `history.replace` should be called instead of `history.push` |
-| `href`    | `string`                                | The path to navigate to                                                    |
-| `to`      | `string` or `Route` or `Promise<Route>` | Links to supplied route                                                    |
-| `onClick` | `function`                              | The function to call when the component is clicked                         |
-| `type`    | `string`                                | The tag type to render, `a` and `button` are supported                     |
-| `params`  | `{ [key]: string }`                     | Used with `to` to generate correct path url                                |
-| `query`   | `{ [key]: string }`                     | Used with `to` to generate correct query string url                        |
+| prop       | type                                    | description                                                                |
+| ---------- | --------------------------------------- | -------------------------------------------------------------------------- |
+| `target`   | `string`                                | `<a>`tag target attribute                                                  |
+| `replace`  | `boolean`                               | Determines if `history.replace` should be called instead of `history.push` |
+| `href`     | `string`                                | The path to navigate to                                                    |
+| `to`       | `string` or `Route` or `Promise<Route>` | Links to supplied route                                                    |
+| `onClick`  | `function`                              | The function to call when the component is clicked                         |
+| `type`     | `string`                                | The tag type to render, `a` and `button` are supported                     |
+| `params`   | `{ [key]: string }`                     | Used with `to` to generate correct path url                                |
+| `query`    | `{ [key]: string }`                     | Used with `to` to generate correct query string url                        |
+| `prefetch` | `false` or `hover` or `mount`           | Used to start prefetching router resources                                 |
 
 ## Redirect
 

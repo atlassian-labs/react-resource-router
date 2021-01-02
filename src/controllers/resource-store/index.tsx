@@ -29,6 +29,8 @@ import {
   transformData,
 } from './utils';
 
+const PREFETCH_MAX_AGE = 10000;
+
 export const actions: Actions = {
   /**
    * Set the state of a resource in the cache.
@@ -72,7 +74,7 @@ export const actions: Actions = {
    * Get a single resource, either from the cache if it exists and has not expired, or
    * the remote if it has expired.
    */
-  getResource: (resource, routerStoreContext) => async ({
+  getResource: (resource, routerStoreContext, options) => async ({
     getState,
     dispatch,
   }) => {
@@ -97,12 +99,14 @@ export const actions: Actions = {
       return cached;
     }
 
-    return dispatch(getResourceFromRemote(resource, routerStoreContext));
+    return dispatch(
+      getResourceFromRemote(resource, routerStoreContext, options)
+    );
   },
   /**
    * Request a single resource and update the resource cache.
    */
-  getResourceFromRemote: (resource, routerStoreContext) => async ({
+  getResourceFromRemote: (resource, routerStoreContext, options) => async ({
     getState,
     dispatch,
   }): Promise<RouteResourceResponse<unknown>> => {
@@ -124,7 +128,10 @@ export const actions: Actions = {
       data: maxAge === 0 ? null : slice.data,
       error: maxAge === 0 ? null : slice.error,
       loading: true,
-      promise: getData(routerStoreContext, context),
+      promise: getData(
+        { ...routerStoreContext, isPrefetch: !!options.prefetch },
+        context
+      ),
     };
 
     dispatch(setResourceState(type, key, pending));
@@ -141,7 +148,9 @@ export const actions: Actions = {
     }
 
     response.loading = false;
-    response.expiresAt = getExpiresAt(maxAge);
+    response.expiresAt = getExpiresAt(
+      options.prefetch && maxAge < PREFETCH_MAX_AGE ? PREFETCH_MAX_AGE : maxAge
+    );
 
     dispatch(setResourceState(type, key, response));
 
@@ -159,7 +168,9 @@ export const actions: Actions = {
     }
 
     return Promise.all(
-      dispatch(actions.requestResources(route.resources, routerStoreContext))
+      dispatch(
+        actions.requestResources(route.resources, routerStoreContext, {})
+      )
     );
   },
 
@@ -194,9 +205,11 @@ export const actions: Actions = {
   /**
    * Requests a specific set of resources.
    */
-  requestResources: (resources, routerStoreContext) => ({ dispatch }) =>
+  requestResources: (resources, routerStoreContext, options) => ({
+    dispatch,
+  }) =>
     resources.map(resource =>
-      dispatch(actions.getResource(resource, routerStoreContext))
+      dispatch(actions.getResource(resource, routerStoreContext, options))
     ),
 
   /**
