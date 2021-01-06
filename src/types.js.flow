@@ -62,13 +62,19 @@ export type RouteResourceResponse = {|
   key: string,
 |};
 
-type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
+type ResourceFetchContext = { isPrefetch: boolean };
 
 export type RouteResource = {|
   type: string,
-  getKey: (...args: RouteResourceGettersArgs) => string,
+  getKey: (
+    routerContext: RouterContext,
+    customContext: ResourceStoreContext
+  ) => string,
   maxAge: number,
-  getData: (...args: RouteResourceGettersArgs) => RouteResourcePromise,
+  getData: (
+    routerContext: RouterContext & ResourceFetchContext,
+    customContext: ResourceStoreContext
+  ) => RouteResourcePromise,
 |};
 
 export type RouteResources = RouteResource[];

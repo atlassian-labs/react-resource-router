@@ -69,6 +69,8 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         : to;
 
     const triggerPrefetch = useCallback(() => {
+      prefetchRef.current = undefined;
+
       // ignore if async route not ready yet
       if (typeof to !== 'string' && !route) return;
 
@@ -109,6 +111,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     const handleMouseLeave = (e: MouseEvent) => {
       if (prefetch === 'hover' && prefetchRef.current) {
         clearTimeout(prefetchRef.current);
+        prefetchRef.current = undefined;
       }
       onMouseLeave && onMouseLeave(e);
     };

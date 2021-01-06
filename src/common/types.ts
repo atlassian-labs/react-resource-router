@@ -109,7 +109,10 @@ export type RouteResourceResponse<
     | RouteResourceResponseLoaded<RouteResourceData>
   );
 
-export type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
+export type RouteResourceGettersArgs = [
+  RouterContext & ResourceFetchContext,
+  ResourceStoreContext
+];
 
 export type RouteResource<RouteResourceData = unknown> = {
   type: string;

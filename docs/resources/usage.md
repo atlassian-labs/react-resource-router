@@ -2,13 +2,14 @@
 
 Resources expose properties and functions via the [`useResource`](/api/hooks#useresource) hook or the [`ResourceSubscriber`](/api/components#resourcesubscriber), which allow their current state to be accessed or interacted with in your components. These are
 
-| Property  | Type       | Description                                                                             |
-| --------- | ---------- | --------------------------------------------------------------------------------------- |
-| `data`    | `any`      | The result which your getData function will resolve with                                |
-| `loading` | `boolean`  | Determines if the resource is fetching its data or not                                  |
-| `error`   | `object`   | error                                                                                   | null | If your getData function throws an error, it will be stored here |
-| `update`  | `function` | Allows you to imperatively update the resource's current state bypassing its `maxAge`   |
-| `refresh` | `function` | Allows you to imperatively refresh the resource's state by calling its `getData` method |
+| Property  | Type              | Description                                                                             |
+| --------- | ----------------- | --------------------------------------------------------------------------------------- |
+| `data`    | `any`             | The result which your getData function will resolve with                                |
+| `loading` | `boolean`         | Determines if the resource is fetching its data or not                                  |
+| `error`   | `error` or `null` | If your getData function throws an error, it will be stored here                        |
+| `update`  | `function`        | Allows you to imperatively update the resource's current state bypassing its `maxAge`   |
+| `refresh` | `function`        | Allows you to imperatively refresh the resource's state by calling its `getData` method |
+| `key`     | `string`          | Unique key for the resource                                                             |
 
 You can use these properties and functions to implement your own customised render logic inside your resource consuming components.
 

@@ -35,7 +35,7 @@ import { appRoutes } from './routing';
 | `initialRoute`    | `Route`                   | The route your application is initially showing                                                    |
 | `history`         | `History`                 | The history instance for the router                                                                |
 | `basePath`        | `string`                  | Base path string that will get prepended to all route paths                                        |
-| `resourceContext` | `ResourceContext`         | Static contextual data that will be provided to all your resources' `getKey` and `getData` methods |
+| `resourceContext` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods |
 | `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount          |
 | `onPrefetch`      | `function(RouterContext)` | Called when prefetch is triggered from a Link                                                      |
 

@@ -209,7 +209,8 @@ describe('useResource hook', () => {
 
       expect(getResourceSpy).toHaveBeenCalledWith(
         mockResource,
-        mockRouterContext
+        mockRouterContext,
+        { prefetch: false }
       );
     });
   });
