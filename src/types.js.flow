@@ -192,6 +192,7 @@ export type RouterActionsType = {|
 export type RouterProps = {
   isStatic?: boolean,
   history?: BrowserHistory,
+  initialRoute?: Route,
   resourceContext?: ResourceStoreContext,
   resourceData?: ResourceStoreData,
   routes: Routes,
