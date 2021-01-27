@@ -28,6 +28,10 @@ export type ResourceSliceIdentifier = {
   key: string;
 };
 
+type GetResourceOptions = {
+  prefetch?: boolean;
+};
+
 type ResourceAction<R> = ({
   getState,
   setState,
@@ -48,11 +52,13 @@ export type Actions = {
   ) => ResourceAction<void>;
   getResource: (
     resource: RouteResource,
-    routerStoreContext: RouterContext
+    routerStoreContext: RouterContext,
+    options: GetResourceOptions
   ) => ResourceAction<Promise<RouteResourceResponse>>;
   getResourceFromRemote: (
     resource: RouteResource,
-    routerStoreContext: RouterContext
+    routerStoreContext: RouterContext,
+    options: GetResourceOptions
   ) => ResourceAction<Promise<RouteResourceResponse>>;
   requestAllResources: (
     routerStoreContext: RouterContext
@@ -63,7 +69,8 @@ export type Actions = {
   ) => ResourceAction<void>;
   requestResources: (
     resources: RouteResource[],
-    routerStoreContext: RouterContext
+    routerStoreContext: RouterContext,
+    options: GetResourceOptions
   ) => ResourceAction<Promise<RouteResourceResponse>[]>;
   hydrate: (
     state: HydratableState

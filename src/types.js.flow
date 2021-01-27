@@ -62,13 +62,19 @@ export type RouteResourceResponse = {|
   key: string,
 |};
 
-type RouteResourceGettersArgs = [RouterContext, ResourceStoreContext];
+type ResourceFetchContext = { isPrefetch: boolean };
 
 export type RouteResource = {|
   type: string,
-  getKey: (...args: RouteResourceGettersArgs) => string,
+  getKey: (
+    routerContext: RouterContext,
+    customContext: ResourceStoreContext
+  ) => string,
   maxAge: number,
-  getData: (...args: RouteResourceGettersArgs) => RouteResourcePromise,
+  getData: (
+    routerContext: RouterContext & ResourceFetchContext,
+    customContext: ResourceStoreContext
+  ) => RouteResourcePromise,
 |};
 
 export type RouteResources = RouteResource[];
@@ -196,6 +202,8 @@ export type RouterProps = {
   resourceData?: ResourceStoreData,
   routes: Routes,
   children: Node,
+  initialRoute?: Route,
+  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type UniversalRouterProps = {
@@ -205,6 +213,8 @@ export type UniversalRouterProps = {
   resourceData?: ResourceStoreData,
   routes: Routes,
   children: Node,
+  initialRoute?: Route,
+  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type MemoryRouterProps = {
@@ -214,6 +224,8 @@ export type MemoryRouterProps = {
   children: Node,
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
+  initialRoute?: Route,
+  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type StaticRouterProps = {
@@ -223,6 +235,7 @@ export type StaticRouterProps = {
   children: Node,
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
+  initialRoute?: Route,
 };
 
 export type MatchParams = {

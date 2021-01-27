@@ -6,6 +6,7 @@ import {
   defaultRegistry,
   batch,
 } from 'react-sweet-state';
+import { parsePath } from 'history';
 
 import {
   DEFAULT_ACTION,
@@ -51,7 +52,7 @@ export const INITIAL_STATE: EntireRouterState = {
   unlisten: null,
   basePath: '',
   isStatic: false,
-  shouldUseSuspense: false,
+  onPrefetch: undefined,
 };
 
 const actions: AllRouterActions = {
@@ -135,6 +136,35 @@ const actions: AllRouterActions = {
     });
   },
 
+  prefetchNextRouteResources: (path, nextContext) => ({ getState }) => {
+    const { routes, basePath, onPrefetch, route, match, query } = getState();
+    const {
+      cleanExpiredResources,
+      requestResources,
+      getContext: getResourceStoreContext,
+    } = getResourceStore().actions;
+
+    if (!nextContext && !isExternalAbsolutePath(path)) {
+      const location = parsePath(getRelativePath(path, basePath) as any);
+      nextContext = findRouterContext(routes, { location, basePath });
+    }
+
+    if (nextContext == null) return;
+    const nextLocationContext = nextContext;
+
+    const nextResources = getResourcesForNextLocation(
+      { route, match, query },
+      nextLocationContext,
+      getResourceStoreContext()
+    );
+
+    batch(() => {
+      cleanExpiredResources(nextResources, nextLocationContext);
+      requestResources(nextResources, nextLocationContext, { prefetch: true });
+      if (onPrefetch) onPrefetch(nextLocationContext);
+    });
+  },
+
   /**
    * Starts listening to browser history and sets the unlisten function in state.
    * Will request route resources on route change.
@@ -153,12 +183,10 @@ const actions: AllRouterActions = {
       } = getState();
 
       const {
-        actions: {
-          cleanExpiredResources,
-          requestResources,
-          getContext: getResourceStoreContext,
-        },
-      } = getResourceStore();
+        cleanExpiredResources,
+        requestResources,
+        getContext: getResourceStoreContext,
+      } = getResourceStore().actions;
 
       const nextContext = findRouterContext(routes, { location, basePath });
       const nextLocationContext = {
@@ -188,7 +216,7 @@ const actions: AllRouterActions = {
           location,
           action,
         });
-        requestResources(nextResources, nextLocationContext);
+        requestResources(nextResources, nextLocationContext, {});
       });
     });
 
