@@ -50,9 +50,11 @@ export const MyRouteComponent = () => {
 };
 ```
 
+## createRouterSelector
+
 If you are worried about `useRouter` re-rendering too much, you can create custom router hooks using selectors that will trigger a re-render only when the selector output changes.  
-To access/manipulate path or query parameters we still suggest to use `usePathParam` or `useQueryParam`, as they provide a simplified interface for that data.
-Also note that this utility will only return state, not actions. To access actions, combine it with [useRouterActions](#userouteractions).
+To access/manipulate path or query parameters we still recommend using `usePathParam` or `useQueryParam`, as they provide a simplified interface for that url data.
+Also note that this utility will only return state, without actions. To access actions, combine it with [useRouterActions](#userouteractions).
 
 ```js
 import { createRouterSelector } from 'react-resource-router';
