@@ -5,6 +5,7 @@ import {
   ResourceStoreContext,
   ResourceStoreData,
   Route,
+  RouterContext,
   Routes,
 } from '../../common/types';
 
@@ -16,4 +17,5 @@ export type RouterProps = PropsWithChildren<{
   resourceData?: ResourceStoreData;
   basePath?: string;
   routes: Routes;
+  onPrefetch?: (routerContext: RouterContext) => void;
 }>;

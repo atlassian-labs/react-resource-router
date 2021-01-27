@@ -76,7 +76,9 @@ export const useResource = <RouteResourceData extends unknown>(
     [key]
   );
   const refresh = useCallback(() => {
-    actions.getResourceFromRemote(resource, routerContext);
+    actions.getResourceFromRemote(resource, routerContext, {
+      prefetch: false,
+    });
   }, [resource, routerContext, actions]);
 
   return { ...slice, update, key, refresh };
