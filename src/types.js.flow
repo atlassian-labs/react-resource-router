@@ -72,7 +72,7 @@ export type RouteResource = {|
   ) => string,
   maxAge: number,
   getData: (
-    routerContext: RouterContext & ResourceFetchContext,
+    routerContext: { ...RouterContext, ...ResourceFetchContext },
     customContext: ResourceStoreContext
   ) => RouteResourcePromise,
 |};
