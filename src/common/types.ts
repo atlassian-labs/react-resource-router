@@ -109,8 +109,10 @@ export type RouteResourceResponse<
     | RouteResourceResponseLoaded<RouteResourceData>
   );
 
+export type RouterDataContext = RouterContext & ResourceFetchContext;
+
 export type RouteResourceGettersArgs = [
-  RouterContext & ResourceFetchContext,
+  RouterDataContext,
   ResourceStoreContext
 ];
 
@@ -122,7 +124,7 @@ export type RouteResource<RouteResourceData = unknown> = {
   ) => string;
   maxAge: number;
   getData: (
-    routerContext: RouterContext & ResourceFetchContext,
+    routerContext: RouterDataContext,
     customContext: ResourceStoreContext
   ) => RouteResourcePromise<RouteResourceData>;
 };
