@@ -42,7 +42,7 @@
   "module": "build/esm/index.js",
   "types": "build/cjs/index.d.ts",
   "engines": {
-    "node": ">=10.0 <15"
+    "node": ">=10.0"
   },
   "scripts": {
     "build": "npm run build:clean && npm run build:types-cjs && npm run build:types-esm && npm run build:cjs && npm run build:esm",
