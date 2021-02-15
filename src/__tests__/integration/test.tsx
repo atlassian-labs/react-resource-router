@@ -4,7 +4,8 @@ import { mount } from 'enzyme';
 import * as historyHelper from 'history';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { Router, RouterActions } from '../../controllers';
+import { Router, RouterActions, StaticRouter } from '../../controllers';
+import { RouteComponent } from '../../ui';
 import { RouterActionsType } from '../../controllers/router-store/types';
 
 const mockLocation = {
@@ -94,5 +95,38 @@ describe('<Router /> integration tests', () => {
     _routerActions.replace('/world');
     await nextTick();
     expect(historyReplaceSpy).toBeCalledWith(`/base/world`);
+  });
+});
+
+describe('<StaticRouter /> integration tests', () => {
+  const basePath = '/base';
+  const route = {
+    path: '/anotherpath',
+    component: () => <>important</>,
+    name: '',
+  };
+
+  it('should match the right route when basePath is set', async () => {
+    const wrapper = mount(
+      <StaticRouter
+        routes={[route]}
+        location={`${basePath}${route.path}`}
+        basePath={basePath}
+      >
+        <RouteComponent />
+      </StaticRouter>
+    );
+
+    expect(wrapper.text()).toBe('important');
+  });
+
+  it('should match the right route when basePath is not set', async () => {
+    const wrapper = mount(
+      <StaticRouter routes={[route]} location={route.path}>
+        <RouteComponent />
+      </StaticRouter>
+    );
+
+    expect(wrapper.text()).toBe('important');
   });
 });

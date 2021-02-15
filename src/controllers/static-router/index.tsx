@@ -17,8 +17,14 @@ export const StaticRouter = ({
   location,
   routes,
   children,
+  basePath,
 }: MemoryRouterProps) => (
-  <MemoryRouter location={location} routes={routes} isStatic>
+  <MemoryRouter
+    location={location}
+    routes={routes}
+    basePath={basePath}
+    isStatic
+  >
     {children}
   </MemoryRouter>
 );
