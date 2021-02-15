@@ -204,6 +204,7 @@ export type RouterProps = {
   routes: Routes,
   children: Node,
   initialRoute?: Route,
+  basePath?: string,
   onPrefetch?: (routerContext: RouterContext) => void,
 };
 
@@ -226,6 +227,7 @@ export type MemoryRouterProps = {
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
   initialRoute?: Route,
+  basePath?: string,
   onPrefetch?: (routerContext: RouterContext) => void,
 };
 
@@ -237,6 +239,7 @@ export type StaticRouterProps = {
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
   initialRoute?: Route,
+  basePath?: string,
 };
 
 export type MatchParams = {
