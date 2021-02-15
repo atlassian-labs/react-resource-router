@@ -70,6 +70,7 @@ describe('resource store', () => {
     match: mockMatch,
     query: {},
   };
+  const mockOptions = {};
   const mockResource = createResource({
     type,
     getKey: () => key,
@@ -97,7 +98,8 @@ describe('resource store', () => {
       it('should return the resolved response', async () => {
         const response = await actions.getResource(
           mockResource,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          mockOptions
         );
 
         expect(response).toEqual({
@@ -114,7 +116,11 @@ describe('resource store', () => {
 
         storeState.setState({ data: oldData });
 
-        await actions.getResource(mockResource, mockRouterStoreContext);
+        await actions.getResource(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
 
         expect(storeState.getState()).toEqual({
           data: {
@@ -139,7 +145,11 @@ describe('resource store', () => {
 
         storeState.setState({ data: oldData });
 
-        await actions.getResource(mockResource, mockRouterStoreContext);
+        await actions.getResource(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
 
         expect(storeState.getState().data[type]).toEqual({
           [key]: {
@@ -156,7 +166,11 @@ describe('resource store', () => {
       it('should call setState the correct number of times with the correct payloads', async () => {
         const spy = jest.spyOn(storeState, 'setState');
 
-        await actions.getResource(mockResource, mockRouterStoreContext);
+        await actions.getResource(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
 
         expect(spy).toBeCalledTimes(2);
         expect(spy).toHaveBeenNthCalledWith(1, {
@@ -201,13 +215,18 @@ describe('resource store', () => {
           maxAge: 30 * 1000,
         };
 
-        await actions.getResource(oldResource, mockRouterStoreContext);
+        await actions.getResource(
+          oldResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
 
         const { data } = storeState.getState().data[type][key];
 
         await actions.getResource(
           newResourceThatWillError,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          mockOptions
         );
 
         expect(storeState.getState().data[type][key].data).toEqual(data);
@@ -234,7 +253,8 @@ describe('resource store', () => {
               ...mockResource,
               maxAge: 0,
             },
-            mockRouterStoreContext
+            mockRouterStoreContext,
+            mockOptions
           );
 
           // resetting the slice
@@ -531,7 +551,11 @@ describe('resource store', () => {
 
       const getDataSpy = jest.spyOn(mockResource, 'getData');
 
-      await actions.getResource(mockResource, mockRouterStoreContext);
+      await actions.getResource(
+        mockResource,
+        mockRouterStoreContext,
+        mockOptions
+      );
 
       expect(getDataSpy).toHaveBeenCalledTimes(0);
     });
@@ -553,7 +577,8 @@ describe('resource store', () => {
 
       const slice = await actions.getResource(
         mockResource,
-        mockRouterStoreContext
+        mockRouterStoreContext,
+        mockOptions
       );
 
       expect(slice.expiresAt === null).toBeFalsy();
@@ -583,7 +608,11 @@ describe('resource store', () => {
         getData: () => resolver(result, 5000),
       };
 
-      actions.getResource(mockResourceWithLongRequest, mockRouterStoreContext);
+      actions.getResource(
+        mockResourceWithLongRequest,
+        mockRouterStoreContext,
+        mockOptions
+      );
 
       const Component = () => {
         const { data, loading } = useResource(mockResource);
@@ -700,7 +729,8 @@ describe('resource store', () => {
 
         const slice = await actions.getResourceFromRemote(
           mockResource,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          mockOptions
         );
 
         expect(slice).toEqual(mockSlice);

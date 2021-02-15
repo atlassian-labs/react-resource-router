@@ -228,7 +228,8 @@ describe('ResourceSubscriber', () => {
 
       expect(getResourceSpy).toHaveBeenCalledWith(
         mockResource,
-        expectedRouterStoreContext
+        expectedRouterStoreContext,
+        { prefetch: false }
       );
     });
   });
