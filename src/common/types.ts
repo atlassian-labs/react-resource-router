@@ -219,23 +219,6 @@ export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
 export type InvariantRoutes = InvariantRoute[];
 export type Routes = Route[];
 
-export type NavigationType = 'container' | 'product';
-
-export type NavigationRenderUpdater = (
-  location: Location,
-  match: Match,
-  route: Route
-) => ReactNode;
-
-export type NavigationStatics = {
-  type: NavigationType;
-  view: (...args: any[]) => string;
-};
-
-export type Navigation = NavigationStatics & {
-  renderNavigationUpdater: NavigationRenderUpdater;
-};
-
 export type LinkElementType = 'a' | 'button';
 
 export type LinkProps = {

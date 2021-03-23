@@ -260,27 +260,6 @@ export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
 
 export type HistoryUpdateType = 'push' | 'replace';
 
-export type NavigationType = 'container' | 'product';
-
-type NavigationRenderUpdater = (
-  location: Location,
-  match: Match,
-  route: Route
-) => Node;
-
-export type NavigationStatics = {
-  [key: string]: any,
-  type: NavigationType,
-  view: (...args: any[]) => string,
-};
-
-export type Navigation = {
-  [key: string]: any,
-  ...NavigationStatics,
-  renderNavigationUpdater: NavigationRenderUpdater,
-  sidebar?: boolean,
-};
-
 export type HistoryBlocker = (
   location: Location,
   action: string
@@ -302,6 +281,7 @@ export type LinkProps = {|
   children: Node,
   target?: '_blank' | '_self' | '_parent' | '_top',
   href?: string,
+  prefetch?: false | 'hover' | 'mount',
   to?: string | Route | Promise<{ default: Route, ... }> | Promise<Route>,
   replace?: boolean,
   type?: 'a' | 'button',
