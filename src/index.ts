@@ -60,6 +60,7 @@ export {
   RouteResourceUpdater,
   RouterContext,
   RouterDataContext,
+  UseResourceHookResponse,
 } from './common/types';
 
 export {
