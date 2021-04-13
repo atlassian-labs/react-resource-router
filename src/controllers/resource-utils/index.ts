@@ -20,11 +20,7 @@ interface CreateResourceSync<T> extends BaseResource {
   maxAge?: number;
 }
 interface CreateResourceAsync<T> extends BaseResource {
-  getDataLoader: (
-    ...args: RouteResourceGettersArgs
-  ) => Promise<{
-    default: GetDataLoader<T>;
-  }>;
+  getDataLoader: GetDataLoader<T>;
   maxAge?: number;
 }
 
