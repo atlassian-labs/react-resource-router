@@ -268,6 +268,7 @@ export type MemoryRouterProps = {
   basePath?: string;
   isStatic?: boolean;
   location?: string;
+  isGlobal?: boolean;
   routes: Routes;
   children: ReactNode;
   resourceData?: ResourceStoreData;
