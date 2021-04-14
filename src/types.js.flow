@@ -204,6 +204,7 @@ export type RouterProps = {
   routes: Routes,
   children: Node,
   initialRoute?: Route,
+  isGlobal?: boolean,
   basePath?: string,
   onPrefetch?: (routerContext: RouterContext) => void,
 };
@@ -221,6 +222,7 @@ export type UniversalRouterProps = {
 
 export type MemoryRouterProps = {
   isStatic?: boolean,
+  isGlobal?: boolean,
   location?: string,
   routes?: Routes,
   children: Node,
