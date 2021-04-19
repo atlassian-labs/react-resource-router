@@ -17,5 +17,6 @@ export type RouterProps = PropsWithChildren<{
   resourceData?: ResourceStoreData;
   basePath?: string;
   routes: Routes;
+  isGlobal?: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
 }>;

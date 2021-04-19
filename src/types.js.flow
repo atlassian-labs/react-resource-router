@@ -204,6 +204,7 @@ export type RouterProps = {
   routes: Routes,
   children: Node,
   initialRoute?: Route,
+  isGlobal?: boolean,
   basePath?: string,
   onPrefetch?: (routerContext: RouterContext) => void,
 };
@@ -221,6 +222,7 @@ export type UniversalRouterProps = {
 
 export type MemoryRouterProps = {
   isStatic?: boolean,
+  isGlobal?: boolean,
   location?: string,
   routes?: Routes,
   children: Node,
@@ -277,7 +279,7 @@ export type RouterActionReplace = (
   state?: any
 ) => void;
 
-export type LinkProps = {|
+export type LinkProps = {
   children: Node,
   target?: '_blank' | '_self' | '_parent' | '_top',
   href?: string,
@@ -288,7 +290,8 @@ export type LinkProps = {|
   onClick?: (e: any) => void,
   params?: MatchParams,
   query?: Query,
-|};
+  ...
+};
 
 export type RouterSubscriberProps = {|
   children: (state: RouterState, actions: RouterActionsType) => Node,
