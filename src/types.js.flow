@@ -279,7 +279,7 @@ export type RouterActionReplace = (
   state?: any
 ) => void;
 
-export type LinkProps = {|
+export type LinkProps = {
   children: Node,
   target?: '_blank' | '_self' | '_parent' | '_top',
   href?: string,
@@ -290,7 +290,8 @@ export type LinkProps = {|
   onClick?: (e: any) => void,
   params?: MatchParams,
   query?: Query,
-|};
+  ...
+};
 
 export type RouterSubscriberProps = {|
   children: (state: RouterState, actions: RouterActionsType) => Node,

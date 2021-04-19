@@ -1,6 +1,12 @@
 /* eslint-disable no-use-before-define */
 
-import { ComponentType, ReactNode, MouseEvent, KeyboardEvent } from 'react';
+import {
+  ComponentType,
+  ReactNode,
+  MouseEvent,
+  KeyboardEvent,
+  AnchorHTMLAttributes,
+} from 'react';
 
 import { History, Location as HistoryLocationShape } from 'history';
 
@@ -221,7 +227,7 @@ export type Routes = Route[];
 
 export type LinkElementType = 'a' | 'button';
 
-export type LinkProps = {
+export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   children: ReactNode;
   target?: '_blank' | '_self' | '_parent' | '_top';
   href?: string;
