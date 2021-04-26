@@ -27,6 +27,7 @@ import {
   setExpiresAt,
   shouldUseCache,
   transformData,
+  generateTimeGuard,
 } from './utils';
 
 const PREFETCH_MAX_AGE = 10000;
@@ -111,6 +112,7 @@ export const actions: Actions = {
     dispatch,
   }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
+    const { prefetch, maxWaitTime } = options;
     const { setResourceState } = actions;
     const { data: resourceStoreData, context } = getState();
     const key = getKey(routerStoreContext, context);
@@ -129,7 +131,7 @@ export const actions: Actions = {
       error: maxAge === 0 ? null : slice.error,
       loading: true,
       promise: getData(
-        { ...routerStoreContext, isPrefetch: !!options.prefetch },
+        { ...routerStoreContext, isPrefetch: !!prefetch },
         context
       ),
     };
@@ -141,7 +143,23 @@ export const actions: Actions = {
     };
 
     try {
-      response.data = await pending.promise;
+      if (maxWaitTime) {
+        const maxWaitTimeGuard = generateTimeGuard(maxWaitTime);
+        const maybeData = await Promise.race([
+          pending.promise,
+          maxWaitTimeGuard.promise,
+        ]);
+
+        if (!maxWaitTimeGuard.isPending) {
+          response.data = null;
+          response.promise = null;
+        } else {
+          maxWaitTimeGuard.timerId && clearTimeout(maxWaitTimeGuard.timerId);
+          response.data = maybeData;
+        }
+      } else {
+        response.data = await pending.promise;
+      }
       response.error = null;
     } catch (e) {
       response.error = e;
@@ -160,7 +178,7 @@ export const actions: Actions = {
    * Request all resources.
    *
    */
-  requestAllResources: routerStoreContext => ({ dispatch }) => {
+  requestAllResources: (routerStoreContext, options) => ({ dispatch }) => {
     const { route } = routerStoreContext || {};
 
     if (!route || !route.resources) {
@@ -169,7 +187,11 @@ export const actions: Actions = {
 
     return Promise.all(
       dispatch(
-        actions.requestResources(route.resources, routerStoreContext, {})
+        actions.requestResources(
+          route.resources,
+          routerStoreContext,
+          options || {}
+        )
       )
     );
   },

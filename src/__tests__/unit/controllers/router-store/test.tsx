@@ -439,11 +439,16 @@ describe('SPA Router store', () => {
       const { route, match, query } = getRouterState();
 
       expect(spy).toBeCalledTimes(1);
-      expect(spy).toBeCalledWith({
-        route,
-        match,
-        query,
-      });
+      expect(spy).toBeCalledWith(
+        {
+          route,
+          match,
+          query,
+        },
+        {
+          maxWaitTime: undefined,
+        }
+      );
     });
   });
 

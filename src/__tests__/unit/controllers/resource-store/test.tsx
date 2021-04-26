@@ -138,6 +138,28 @@ describe('resource store', () => {
         });
       });
 
+      it('should respect max wait time option', async () => {
+        const response = await actions.getResource(
+          createResource({
+            type,
+            getKey: () => key,
+            getData: () => resolver('hello world', 250),
+          }),
+          mockRouterStoreContext,
+          {
+            maxWaitTime: 100,
+          }
+        );
+
+        expect(response).toEqual({
+          data: null,
+          error,
+          loading: false,
+          promise: null,
+          expiresAt,
+        });
+      });
+
       it('should merge new data for the type and into old data for the type', async () => {
         const oldData = {
           [type]: mockKeyedData,

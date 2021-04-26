@@ -73,4 +73,6 @@ const renderToStringWithData = async ({ location }) => {
 };
 ```
 
-Notice that we do not need to provide any `resourceData` object to the `ServerApp`,the `StaticRouter` handles this for us internally.
+Notice that we do not need to provide any `resourceData` object to the `ServerApp`, the `StaticRouter` handles this for us internally.
+
+To prevent slow APIs from causing long renders on the server you can optionally pass in `maxWaitTime` as an option to `StaticRouter.requestResources`. If a route resource does not return within the specified time then its data and promise will be set to null.

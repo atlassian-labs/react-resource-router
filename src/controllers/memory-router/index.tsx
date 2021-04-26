@@ -15,7 +15,7 @@ const getRouterProps = (memoryRouterProps: MemoryRouterProps) => {
     routes,
     resourceData,
     resourceContext,
-  } = memoryRouterProps; 
+  } = memoryRouterProps;
   let routerProps: Partial<RouterProps> = {
     basePath,
     routes,

@@ -66,16 +66,18 @@ type ToAttributes = {
   query?: Query;
 };
 
+type RequestRouteResourcesOptions = {
+  maxWaitTime?: number;
+};
+
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
   bootstrapStoreUniversal: (
     initialState: UniversalRouterContainerProps
   ) => RouterAction;
-  requestRouteResources: () => Action<
-    EntireRouterState,
-    AllRouterActions,
-    Promise<unknown[]>
-  >;
+  requestRouteResources: (
+    options?: RequestRouteResourcesOptions
+  ) => Action<EntireRouterState, AllRouterActions, Promise<unknown[]>>;
   prefetchNextRouteResources: (
     path: Href,
     nextContext: RouterContext | null

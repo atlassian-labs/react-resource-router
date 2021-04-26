@@ -30,6 +30,7 @@ export type ResourceSliceIdentifier = {
 
 type GetResourceOptions = {
   prefetch?: boolean;
+  maxWaitTime?: number;
 };
 
 type ResourceAction<R> = ({
@@ -61,7 +62,8 @@ export type Actions = {
     options: GetResourceOptions
   ) => ResourceAction<Promise<RouteResourceResponse>>;
   requestAllResources: (
-    routerStoreContext: RouterContext
+    routerStoreContext: RouterContext,
+    options?: GetResourceOptions
   ) => ResourceAction<Promise<RouteResourceResponse[]>>;
   cleanExpiredResources: (
     resources: RouteResource[],
