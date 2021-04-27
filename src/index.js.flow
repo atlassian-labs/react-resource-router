@@ -23,6 +23,8 @@ import type {
   RouterSubscriberProps,
   StaticRouterProps,
   CreateRouterContextOptions,
+  RouterActionPush,
+  RouterActionReplace,
 } from './types.js.flow';
 
 export * from './utils.js.flow';
@@ -90,8 +92,10 @@ declare export function usePathParam(
 ];
 
 // Utils
-type WithRouterProps = RouteContext & {|
+export type WithRouterProps = RouteContext & {|
   history: BrowserHistory,
+  push: RouterActionPush,
+  replace: RouterActionReplace,
 |};
 
 declare export function withRouter<
@@ -99,10 +103,7 @@ declare export function withRouter<
   Component: ComponentType<Props>
 >(
   WrappedComponent: Component
-): ComponentType<
-  // $FlowFixMe[deprecated-utility] - $Supertype is deprecated https://github.com/flow-typed/flow-typed/issues/2991
-  $Diff<ElementConfig<$Supertype<Component>>, WithRouterProps>
->;
+): ComponentType<$Diff<ElementConfig<Component>, WithRouterProps>>;
 
 declare export function generatePath(
   pattern: string,
