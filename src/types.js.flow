@@ -2,7 +2,7 @@
 // @flow
 
 import type { Node } from 'react';
-import type { Action, BoundActions } from 'react-sweet-state';
+import type { Action } from 'react-sweet-state';
 
 export type BrowserHistory = any;
 export type MemoryHistory = any;
@@ -242,6 +242,13 @@ export type StaticRouterProps = {
   resourceContext?: ResourceStoreContext,
   initialRoute?: Route,
   basePath?: string,
+};
+
+export type RequestResourcesParams = {
+  location: string,
+  routes: Routes,
+  resourceContext?: ResourceStoreContext,
+  maxWaitTime?: number,
 };
 
 export type MatchParams = {
