@@ -446,7 +446,7 @@ describe('SPA Router store', () => {
           query,
         },
         {
-          maxWaitTime: undefined,
+          timeout: undefined,
         }
       );
     });

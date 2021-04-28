@@ -18,6 +18,7 @@ import {
   getExpiresAt,
   serializeError,
   shouldUseCache,
+  TimeoutError,
 } from '../../../../controllers/resource-store/utils';
 import { createResource } from '../../../../controllers/resource-utils';
 import * as routerStoreModule from '../../../../controllers/router-store';
@@ -147,16 +148,16 @@ describe('resource store', () => {
           }),
           mockRouterStoreContext,
           {
-            maxWaitTime: 100,
+            timeout: 100,
           }
         );
 
         expect(response).toEqual({
           data: null,
-          error,
-          loading: false,
+          error: new TimeoutError(type),
+          loading: true,
           promise: null,
-          expiresAt,
+          expiresAt: expect.any(Number),
         });
       });
 

@@ -7,3 +7,4 @@ export { generateTimeGuard } from './generate-time-guard';
 export { serializeError, deserializeError } from './serialize-error';
 export { transformData } from './transform-data';
 export { routeHasChanged, routeHasResources } from './route-checks';
+export { TimeoutError } from './timeout-error';

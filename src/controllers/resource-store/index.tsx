@@ -28,6 +28,7 @@ import {
   shouldUseCache,
   transformData,
   generateTimeGuard,
+  TimeoutError,
 } from './utils';
 
 const PREFETCH_MAX_AGE = 10000;
@@ -112,7 +113,7 @@ export const actions: Actions = {
     dispatch,
   }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
-    const { prefetch, maxWaitTime } = options;
+    const { prefetch, timeout } = options;
     const { setResourceState } = actions;
     const { data: resourceStoreData, context } = getState();
     const key = getKey(routerStoreContext, context);
@@ -143,29 +144,34 @@ export const actions: Actions = {
     };
 
     try {
-      if (maxWaitTime) {
-        const maxWaitTimeGuard = generateTimeGuard(maxWaitTime);
+      response.error = null;
+
+      if (timeout) {
+        const timeoutGuard = generateTimeGuard(timeout);
         const maybeData = await Promise.race([
           pending.promise,
-          maxWaitTimeGuard.promise,
+          timeoutGuard.promise,
         ]);
 
-        if (!maxWaitTimeGuard.isPending) {
+        if (!timeoutGuard.isPending) {
           response.data = null;
+          response.error = new TimeoutError(type);
+          response.loading = true;
           response.promise = null;
         } else {
-          maxWaitTimeGuard.timerId && clearTimeout(maxWaitTimeGuard.timerId);
+          timeoutGuard.timerId && clearTimeout(timeoutGuard.timerId);
           response.data = maybeData;
+          response.loading = false;
         }
       } else {
         response.data = await pending.promise;
+        response.loading = false;
       }
-      response.error = null;
     } catch (e) {
       response.error = e;
+      response.loading = false;
     }
 
-    response.loading = false;
     response.expiresAt = getExpiresAt(
       options.prefetch && maxAge < PREFETCH_MAX_AGE ? PREFETCH_MAX_AGE : maxAge
     );
@@ -253,10 +259,16 @@ export const actions: Actions = {
     }
     const hydratedData = transformData(
       getNextStateValue<ResourceStoreData>(data, resourceData),
-      ({ error, ...rest }) => ({
-        ...rest,
-        error: !error ? null : deserializeError(error),
-      })
+      ({ error, expiresAt, ...rest }) => {
+        const deserializedError = !error ? null : deserializeError(error);
+        const isTimeoutError = deserializedError?.name === 'TimeoutError';
+
+        return {
+          ...rest,
+          expiresAt: isTimeoutError ? Date.now() - 1 : expiresAt,
+          error,
+        };
+      }
     );
 
     setState({

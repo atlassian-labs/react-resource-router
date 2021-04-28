@@ -121,7 +121,7 @@ describe('<StaticRouter />', () => {
         // @ts-ignore
         routes: mockedRoutes,
         location: '/',
-        maxWaitTime: 350,
+        timeout: 350,
       });
 
       expect(data).toEqual({

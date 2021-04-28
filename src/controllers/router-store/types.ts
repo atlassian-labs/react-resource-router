@@ -67,7 +67,7 @@ type ToAttributes = {
 };
 
 type RequestRouteResourcesOptions = {
-  maxWaitTime?: number;
+  timeout?: number;
 };
 
 type PrivateRouterActions = {

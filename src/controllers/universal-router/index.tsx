@@ -27,7 +27,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
       bootstrapStoreUniversal,
       requestRouteResources,
     } = getRouterStore().actions;
-    const { location, maxWaitTime, ...bootstrapProps } = props;
+    const { location, timeout, ...bootstrapProps } = props;
     const initialEntries = [location];
     const overrides = {
       history: createMemoryHistory({ initialEntries }),
@@ -36,7 +36,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
 
     bootstrapStoreUniversal({ ...bootstrapProps, ...overrides });
 
-    await requestRouteResources({ maxWaitTime });
+    await requestRouteResources({ timeout });
 
     return getResourceStore().actions.getSafeData();
   }

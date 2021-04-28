@@ -23,5 +23,5 @@ export type RequestResourcesParams = {
   location: string;
   routes: Routes;
   resourceContext?: ResourceStoreContext;
-  maxWaitTime?: number;
+  timeout?: number;
 };

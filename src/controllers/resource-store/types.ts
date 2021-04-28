@@ -30,7 +30,7 @@ export type ResourceSliceIdentifier = {
 
 type GetResourceOptions = {
   prefetch?: boolean;
-  maxWaitTime?: number;
+  timeout?: number;
 };
 
 type ResourceAction<R> = ({
