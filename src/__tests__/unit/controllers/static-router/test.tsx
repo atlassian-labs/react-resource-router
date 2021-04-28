@@ -133,7 +133,7 @@ describe('<StaticRouter />', () => {
               name: 'TimeoutError',
               stack: expect.any(String),
             },
-            loading: false,
+            loading: true,
             promise: null,
             expiresAt,
           },

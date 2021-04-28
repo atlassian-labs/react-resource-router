@@ -291,7 +291,7 @@ export const actions: Actions = {
    *
    */
   getSafeData: () => ({ getState }) =>
-    transformData(getState().data, ({ data, key, error }) => ({
+    transformData(getState().data, ({ data, key, error, loading }) => ({
       data,
       key,
       promise: null,
@@ -301,7 +301,7 @@ export const actions: Actions = {
         : serializeError(
             error instanceof Error ? error : new Error(JSON.stringify(error))
           ),
-      loading: false,
+      loading: error instanceof TimeoutError ? loading : false,
     })),
 };
 

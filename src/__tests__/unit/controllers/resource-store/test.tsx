@@ -428,7 +428,7 @@ describe('resource store', () => {
       expect(safeData[type][key].expiresAt).toBeNull();
     });
 
-    it('should set loading to false', () => {
+    it('should set loading to false for completed resource', () => {
       storeState.setState({
         data: {
           [type]: {
@@ -440,6 +440,20 @@ describe('resource store', () => {
       const safeData = actions.getSafeData();
 
       expect(safeData[type][key].loading).toBeFalsy();
+    });
+
+    it('should set loading to true for timed out resource', () => {
+      storeState.setState({
+        data: {
+          [type]: {
+            [key]: { ...slice, error: new TimeoutError(type), loading: true },
+          },
+        },
+      });
+
+      const safeData = actions.getSafeData();
+
+      expect(safeData[type][key].loading).toBeTruthy();
     });
   });
 
