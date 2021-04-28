@@ -128,7 +128,11 @@ describe('<StaticRouter />', () => {
         BYE: {
           key: {
             data: null,
-            error: null,
+            error: {
+              message: 'Resource timed out: BYE',
+              name: 'TimeoutError',
+              stack: expect.any(String),
+            },
             loading: false,
             promise: null,
             expiresAt,
