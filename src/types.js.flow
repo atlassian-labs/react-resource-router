@@ -47,17 +47,19 @@ export type RouteContext = {|
   action: HistoryAction,
 |};
 
-type RouteResourceLoading = boolean;
-type RouteResourceTimestamp = number | null;
+export type RouteResourceLoading = boolean;
+export type RouteResourceTimestamp = number | null;
 export type RouteResourceError = Object | Error | null;
-export type RouteResourceData = Object | null;
-type RouteResourcePromise = Promise<any> | null;
+// Flow can't narrow optional chaining for RouteResourceResponse.data/RouteResourceResponse.promise
+// if the fields are based off RouteResourceData/RouteResourcePromise so we flip the source of truth for these fields
+export type RouteResourceData<T> = $PropertyType<RouteResourceResponse<T>, 'data'>;
+export type RouteResourcePromise<T> = $PropertyType<RouteResourceResponse<T>, 'promise'>;
 
-export type RouteResourceResponse = {|
+export type RouteResourceResponse<T> = {|
   loading: RouteResourceLoading,
   error: RouteResourceError,
-  data: RouteResourceData,
-  promise: RouteResourcePromise,
+  data: T | null,
+  promise: Promise<T> | null,
   expiresAt: RouteResourceTimestamp,
   key: string,
 |};
@@ -65,7 +67,7 @@ export type RouteResourceResponse = {|
 type ResourceFetchContext = { isPrefetch: boolean };
 export type RouterDataContext = { ...RouterContext, ...ResourceFetchContext };
 
-export type RouteResource = {|
+export type RouteResource<T> = {|
   type: string,
   getKey: (
     routerContext: RouterContext,
@@ -75,22 +77,22 @@ export type RouteResource = {|
   getData: (
     routerContext: RouterDataContext,
     customContext: ResourceStoreContext
-  ) => RouteResourcePromise,
+  ) => RouteResourcePromise<T>,
 |};
 
-export type RouteResources = RouteResource[];
+export type RouteResources = RouteResource<mixed>[];
 
 export type ResourceStoreContext = Object;
 
 type RouteResourceDataForType = {
-  [key: string]: RouteResourceResponse,
+  [key: string]: RouteResourceResponse<mixed>,
 };
 
 export type ResourceOptions = {
   routerContext?: RouterContext,
 };
 
-export type RouteResourceUpdater<T: RouteResourceData> = (data: T) => T;
+export type RouteResourceUpdater<T: RouteResourceData<any>> = (data: T) => T;
 
 export type InvariantRoute = {
   path: string,
@@ -124,7 +126,7 @@ export type Route = {
   /**
    * The resources for the route
    */
-  resources?: RouteResource[],
+  resources?: RouteResource<any>[],
 
   // allow for custom route properties
   [key: string]: any,
