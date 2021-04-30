@@ -18,6 +18,7 @@ import {
   getExpiresAt,
   serializeError,
   shouldUseCache,
+  TimeoutError,
 } from '../../../../controllers/resource-store/utils';
 import { createResource } from '../../../../controllers/resource-utils';
 import * as routerStoreModule from '../../../../controllers/router-store';
@@ -135,6 +136,28 @@ describe('resource store', () => {
               },
             },
           },
+        });
+      });
+
+      it('should respect timeout option', async () => {
+        const response = await actions.getResource(
+          createResource({
+            type,
+            getKey: () => key,
+            getData: () => resolver('hello world', 250),
+          }),
+          mockRouterStoreContext,
+          {
+            timeout: 100,
+          }
+        );
+
+        expect(response).toEqual({
+          data: null,
+          error: new TimeoutError(type),
+          loading: true,
+          promise: null,
+          expiresAt: expect.any(Number),
         });
       });
 
@@ -405,7 +428,7 @@ describe('resource store', () => {
       expect(safeData[type][key].expiresAt).toBeNull();
     });
 
-    it('should set loading to false', () => {
+    it('should set loading to false for completed resource', () => {
       storeState.setState({
         data: {
           [type]: {
@@ -417,6 +440,20 @@ describe('resource store', () => {
       const safeData = actions.getSafeData();
 
       expect(safeData[type][key].loading).toBeFalsy();
+    });
+
+    it('should set loading to true for timed out resource', () => {
+      storeState.setState({
+        data: {
+          [type]: {
+            [key]: { ...slice, error: new TimeoutError(type), loading: true },
+          },
+        },
+      });
+
+      const safeData = actions.getSafeData();
+
+      expect(safeData[type][key].loading).toBeTruthy();
     });
   });
 

@@ -23,6 +23,8 @@ import type {
   RouterSubscriberProps,
   StaticRouterProps,
   CreateRouterContextOptions,
+  ResourceStoreData,
+  RequestResourcesParams,
 } from './types.js.flow';
 
 export * from './utils.js.flow';
@@ -39,8 +41,14 @@ declare export function RouterActions(props: {|
 |}): Node;
 
 declare export function Router(props: RouterProps): Node;
-declare export function MemoryRouter(props: MemoryRouterProps): Node;
-declare export function StaticRouter(props: StaticRouterProps): Node;
+declare export var MemoryRouter: {
+  (props: MemoryRouterProps): Node,
+  requestResources: RequestResourcesParams => Promise<ResourceStoreData>,
+};
+declare export var StaticRouter: {
+  (props: StaticRouterProps): Node,
+  requestResources: RequestResourcesParams => Promise<ResourceStoreData>,
+};
 
 declare export function ResourceSubscriber<T>(props: {
   children: (

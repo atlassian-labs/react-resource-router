@@ -27,6 +27,9 @@ import {
   setExpiresAt,
   shouldUseCache,
   transformData,
+  generateTimeGuard,
+  TimeoutError,
+  setSsrDataPromise,
 } from './utils';
 
 const PREFETCH_MAX_AGE = 10000;
@@ -89,7 +92,8 @@ export const actions: Actions = {
 
     if (shouldUseCache(cached)) {
       if (isFromSsr(cached)) {
-        const withExpiresAt = setExpiresAt(cached, maxAge);
+        const withResolvedPromise = setSsrDataPromise(cached);
+        const withExpiresAt = setExpiresAt(withResolvedPromise, maxAge);
 
         dispatch(setResourceState(type, key, withExpiresAt));
 
@@ -111,6 +115,7 @@ export const actions: Actions = {
     dispatch,
   }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
+    const { prefetch, timeout } = options;
     const { setResourceState } = actions;
     const { data: resourceStoreData, context } = getState();
     const key = getKey(routerStoreContext, context);
@@ -129,7 +134,7 @@ export const actions: Actions = {
       error: maxAge === 0 ? null : slice.error,
       loading: true,
       promise: getData(
-        { ...routerStoreContext, isPrefetch: !!options.prefetch },
+        { ...routerStoreContext, isPrefetch: !!prefetch },
         context
       ),
     };
@@ -141,13 +146,34 @@ export const actions: Actions = {
     };
 
     try {
-      response.data = await pending.promise;
       response.error = null;
+
+      if (timeout) {
+        const timeoutGuard = generateTimeGuard(timeout);
+        const maybeData = await Promise.race([
+          pending.promise,
+          timeoutGuard.promise,
+        ]);
+
+        if (!timeoutGuard.isPending) {
+          response.data = null;
+          response.error = new TimeoutError(type);
+          response.loading = true;
+          response.promise = null;
+        } else {
+          timeoutGuard.timerId && clearTimeout(timeoutGuard.timerId);
+          response.data = maybeData;
+          response.loading = false;
+        }
+      } else {
+        response.data = await pending.promise;
+        response.loading = false;
+      }
     } catch (e) {
       response.error = e;
+      response.loading = false;
     }
 
-    response.loading = false;
     response.expiresAt = getExpiresAt(
       options.prefetch && maxAge < PREFETCH_MAX_AGE ? PREFETCH_MAX_AGE : maxAge
     );
@@ -160,7 +186,7 @@ export const actions: Actions = {
    * Request all resources.
    *
    */
-  requestAllResources: routerStoreContext => ({ dispatch }) => {
+  requestAllResources: (routerStoreContext, options) => ({ dispatch }) => {
     const { route } = routerStoreContext || {};
 
     if (!route || !route.resources) {
@@ -169,7 +195,11 @@ export const actions: Actions = {
 
     return Promise.all(
       dispatch(
-        actions.requestResources(route.resources, routerStoreContext, {})
+        actions.requestResources(
+          route.resources,
+          routerStoreContext,
+          options || {}
+        )
       )
     );
   },
@@ -231,10 +261,17 @@ export const actions: Actions = {
     }
     const hydratedData = transformData(
       getNextStateValue<ResourceStoreData>(data, resourceData),
-      ({ error, ...rest }) => ({
-        ...rest,
-        error: !error ? null : deserializeError(error),
-      })
+      ({ error, expiresAt, loading, ...rest }) => {
+        const deserializedError = !error ? null : deserializeError(error);
+        const isTimeoutError = deserializedError?.name === 'TimeoutError';
+
+        return {
+          ...rest,
+          expiresAt: isTimeoutError ? Date.now() - 1 : expiresAt,
+          loading: isTimeoutError ? false : loading,
+          error,
+        };
+      }
     );
 
     setState({
@@ -257,7 +294,7 @@ export const actions: Actions = {
    *
    */
   getSafeData: () => ({ getState }) =>
-    transformData(getState().data, ({ data, key, error }) => ({
+    transformData(getState().data, ({ data, key, error, loading }) => ({
       data,
       key,
       promise: null,
@@ -267,7 +304,7 @@ export const actions: Actions = {
         : serializeError(
             error instanceof Error ? error : new Error(JSON.stringify(error))
           ),
-      loading: false,
+      loading: error instanceof TimeoutError ? loading : false,
     })),
 };
 
