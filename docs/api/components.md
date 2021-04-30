@@ -1,6 +1,6 @@
 ## Router
 
-The `Router` component should ideally wrap your client app as high up in the tree as possible. As soon as it is mounted, it will match the current route and then call all of the matched resources' `getData` methods. Components that are subscribed to these resources either via the [`useResource`](/api/hooks#useresource) hook or [`ResourceSubscriber`](/api/components#resourcesubscriber) will progressively update according to the requests' lifecycles.
+The `Router` component should ideally wrap your client app as high up in the tree as possible. As soon as it is mounted, it will match the current route and then call all of the matched resources' `getData` methods. Components that are subscribed to these resources either via the [`useResource`](./hooks.md#useresource) hook or [`ResourceSubscriber`](./components.md#resourcesubscriber) will progressively update according to the requests' lifecycles.
 
 If you are planning to render your application on the server, we recommend creating a composition boundary between your router and the core of your application, including your `RouteComponent`.
 
