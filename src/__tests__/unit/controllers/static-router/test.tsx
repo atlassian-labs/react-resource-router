@@ -116,7 +116,7 @@ describe('<StaticRouter />', () => {
       });
     });
 
-    it('should respect max wait time when fetching resources', async () => {
+    it('should respect timeout when fetching resources', async () => {
       const data = await StaticRouter.requestResources({
         // @ts-ignore
         routes: mockedRoutes,

@@ -29,6 +29,7 @@ import {
   transformData,
   generateTimeGuard,
   TimeoutError,
+  setSsrDataPromise,
 } from './utils';
 
 const PREFETCH_MAX_AGE = 10000;
@@ -91,7 +92,8 @@ export const actions: Actions = {
 
     if (shouldUseCache(cached)) {
       if (isFromSsr(cached)) {
-        const withExpiresAt = setExpiresAt(cached, maxAge);
+        const withResolvedPromise = setSsrDataPromise(cached);
+        const withExpiresAt = setExpiresAt(withResolvedPromise, maxAge);
 
         dispatch(setResourceState(type, key, withExpiresAt));
 
@@ -259,13 +261,14 @@ export const actions: Actions = {
     }
     const hydratedData = transformData(
       getNextStateValue<ResourceStoreData>(data, resourceData),
-      ({ error, expiresAt, ...rest }) => {
+      ({ error, expiresAt, loading, ...rest }) => {
         const deserializedError = !error ? null : deserializeError(error);
         const isTimeoutError = deserializedError?.name === 'TimeoutError';
 
         return {
           ...rest,
           expiresAt: isTimeoutError ? Date.now() - 1 : expiresAt,
+          loading: isTimeoutError ? false : loading,
           error,
         };
       }

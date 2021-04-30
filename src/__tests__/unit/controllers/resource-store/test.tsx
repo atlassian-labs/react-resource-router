@@ -139,7 +139,7 @@ describe('resource store', () => {
         });
       });
 
-      it('should respect max wait time option', async () => {
+      it('should respect timeout option', async () => {
         const response = await actions.getResource(
           createResource({
             type,
