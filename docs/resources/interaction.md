@@ -1,6 +1,6 @@
 # How to interact with Router Resources
 
-After the Router has mounted, your data has been fetched and your route component has rendered, you may need to interact with your resources in order to keep them up to date or to have them respond to certain user actions. In order to achieve this, in addition to the current resource state, both the [`useResource`](/api/hooks#useresource) hook and [`ResourceSubscriber`](/api/components#resourcesubscriber) provide `update` and `refresh` functions for you to use in your components. Let's take a look at how these work.
+After the Router has mounted, your data has been fetched and your route component has rendered, you may need to interact with your resources in order to keep them up to date or to have them respond to certain user actions. In order to achieve this, in addition to the current resource state, both the [`useResource`](../api/hooks.md#useresource) hook and [`ResourceSubscriber`](../api/components.md#resourcesubscriber) provide `update` and `refresh` functions for you to use in your components. Let's take a look at how these work.
 
 ## Updating
 
@@ -30,7 +30,7 @@ export const UsernameUpdater = ({ newUsername }) => {
 
 ## Refreshing
 
-The refresh function is bound to the resource that you provide to [`useResource`](/api/hooks#useresource) hook or the [`ResourceSubscriber`](/api/components#resourcesubscriber). Calling this function will cause the router to call the `getData` function on your resource, and bypass any `expiresAt` checks.
+The refresh function is bound to the resource that you provide to [`useResource`](../api/hooks.md#useresource) hook or the [`ResourceSubscriber`](../api/components.md#resourcesubscriber). Calling this function will cause the router to call the `getData` function on your resource, and bypass any `expiresAt` checks.
 
 When using the `refresh` function, the resource will always be fetched from remote and the resource state will be updated with any result, including errors.
 
