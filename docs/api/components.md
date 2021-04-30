@@ -221,7 +221,7 @@ export const MyRouteComponent = () => (
 
 ## ResourceSubscriber
 
-The `ResourceSubscriber` is a component that is subscribed to the state of a resource. It can be used to access resource state via render props. We only recommend using this component if you are unable to use the [`useResource`](#useresource) hook.
+The `ResourceSubscriber` is a component that is subscribed to the state of a resource. It can be used to access resource state via render props. We only recommend using this component if you are unable to use the [`useResource`](./hooks.md#useresource) hook.
 
 ### ResourceSubscriber props
 
