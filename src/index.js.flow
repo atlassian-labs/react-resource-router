@@ -50,14 +50,14 @@ declare export var StaticRouter: {
   requestResources: RequestResourcesParams => Promise<ResourceStoreData>,
 };
 
-declare export function ResourceSubscriber(props: {
+declare export function ResourceSubscriber<T>(props: {
   children: (
-    resource: RouteResourceResponse & {
-      update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void,
+    resource: RouteResourceResponse<T> & {
+      update: (getNewData: RouteResourceUpdater<RouteResourceData<T>>) => void,
       refresh: () => void,
     }
   ) => Node,
-  resource: RouteResource,
+  resource: RouteResource<T>,
 }): Node;
 declare export function RouterSubscriber(props: RouterSubscriberProps): Node;
 
@@ -69,12 +69,12 @@ declare export function RouteComponent(): Node;
 
 // hooks
 
-declare export function useResource(
-  resource: RouteResource,
+declare export function useResource<T>(
+  resource: RouteResource<T>,
   options?: ResourceOptions
 ): {|
-  ...RouteResourceResponse,
-  update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void,
+  ...RouteResourceResponse<T>,
+  update: (getNewData: RouteResourceUpdater<T>) => void,
   refresh: () => void,
 |};
 declare export function useRouter(): [RouterState, RouterActionsType];
@@ -128,8 +128,8 @@ declare export function createRouterContext(
  * Utility method to created async versions of getData functions
  *
  */
-type GetDataLoader = () => Promise<{
-  default: $PropertyType<RouteResource, 'getData'>,
+type GetDataLoader<T> = () => Promise<{
+  default: $PropertyType<RouteResource<T>, 'getData'>,
   ...
 }>;
 
@@ -137,15 +137,15 @@ type GetDataLoader = () => Promise<{
  * Utility method to created type safe resources with defaults.
  *
  */
-type CreateResourceArg =
-  | {| ...RouteResource, maxAge?: number |}
+type CreateResourceArg<T> =
+  | {| ...RouteResource<T>, maxAge?: number |}
   | {|
       ...$Diff<
-        RouteResource,
-        {| getData: $ElementType<RouteResource, 'getData'> |}
+        RouteResource<T>,
+        {| getData: $PropertyType<RouteResource<T>, 'getData'> |}
       >,
       maxAge?: number,
-      getDataLoader: GetDataLoader,
+      getDataLoader: GetDataLoader<T>,
     |};
 
-declare export function createResource(args: CreateResourceArg): RouteResource;
+declare export function createResource<T>(args: CreateResourceArg<T>): RouteResource<T>;
