@@ -559,6 +559,7 @@ describe('resource store', () => {
       const { data: hydrated } = storeState.getState();
       const hydratedError = hydrated[type][key].error;
 
+      expect(hydratedError instanceof Error).toBe(true);
       expect(hydratedError.message).toEqual(customErrorProps.message);
       expect(hydratedError.name).toEqual(customErrorProps.name);
       expect(hydratedError.component).toEqual(customErrorProps.component);

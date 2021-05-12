@@ -269,7 +269,7 @@ export const actions: Actions = {
           ...rest,
           expiresAt: isTimeoutError ? Date.now() - 1 : expiresAt,
           loading: isTimeoutError ? false : loading,
-          error,
+          error: deserializedError,
         };
       }
     );
