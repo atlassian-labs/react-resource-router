@@ -41,7 +41,7 @@ import { Circle } from './primitives';
 
 export class Avatar extends Component {
   render() {
-    <ResourceSubscriber>
+    <ResourceSubscriber resource={avatarResource}>
       {({ data, loading }) => <Circle image={loading ? '' : data} />}
     </ResourceSubscriber>;
   }
