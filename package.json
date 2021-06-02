@@ -1,6 +1,6 @@
 {
   "name": "react-resource-router",
-  "version": "0.16.1",
+  "version": "0.17.1",
   "description": "Configuration driven routing solution for React that manages SPA route matching, data fetching and progressive rendering",
   "keywords": [
     "react",
@@ -42,7 +42,7 @@
   "module": "build/esm/index.js",
   "types": "build/cjs/index.d.ts",
   "engines": {
-    "node": ">=10.0 <15"
+    "node": ">=10.0"
   },
   "scripts": {
     "build": "npm run build:clean && npm run build:types-cjs && npm run build:types-esm && npm run build:cjs && npm run build:esm",

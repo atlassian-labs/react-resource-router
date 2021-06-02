@@ -5,18 +5,12 @@ import {
   RouteResourceResponse,
   RouteResourceUpdater,
   RouterContext,
+  UseResourceHookResponse,
 } from '../../../common/types';
 import { useResourceActions, useResourceStore } from '../../resource-store';
 import { useRouterStoreStatic, RouterStore } from '../../router-store';
 import { EntireRouterState, AllRouterActions } from '../../router-store/types';
 import { createHook } from 'react-sweet-state';
-
-type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
-  RouteResourceData
-> & {
-  update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
-  refresh: () => void;
-};
 
 type UseResourceOptions = {
   routerContext?: RouterContext;

@@ -17,8 +17,14 @@ export const StaticRouter = ({
   location,
   routes,
   children,
+  basePath,
 }: MemoryRouterProps) => (
-  <MemoryRouter location={location} routes={routes} isStatic>
+  <MemoryRouter
+    location={location}
+    routes={routes}
+    basePath={basePath}
+    isStatic
+  >
     {children}
   </MemoryRouter>
 );
@@ -30,7 +36,7 @@ export const StaticRouter = ({
  */
 StaticRouter.requestResources = async (props: RequestResourcesParams) => {
   const { bootstrapStore, requestRouteResources } = getRouterStore().actions;
-  const { location, ...bootstrapProps } = props;
+  const { location, timeout, ...bootstrapProps } = props;
   const initialEntries = [location];
   const overrides = {
     history: createMemoryHistory({ initialEntries }),
@@ -40,7 +46,7 @@ StaticRouter.requestResources = async (props: RequestResourcesParams) => {
 
   bootstrapStore({ ...bootstrapProps, ...overrides });
 
-  await requestRouteResources();
+  await requestRouteResources({ timeout });
 
   return getResourceStore().actions.getSafeData();
 };

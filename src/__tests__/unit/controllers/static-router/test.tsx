@@ -116,6 +116,40 @@ describe('<StaticRouter />', () => {
       });
     });
 
+    it('should respect timeout when fetching resources', async () => {
+      const data = await StaticRouter.requestResources({
+        // @ts-ignore
+        routes: mockedRoutes,
+        location: '/',
+        timeout: 350,
+      });
+
+      expect(data).toEqual({
+        BYE: {
+          key: {
+            data: null,
+            error: {
+              message: 'Resource timed out: BYE',
+              name: 'TimeoutError',
+              stack: expect.any(String),
+            },
+            loading: true,
+            promise: null,
+            expiresAt,
+          },
+        },
+        HI: {
+          key: {
+            data: 'hello world',
+            error: null,
+            loading: false,
+            promise: null,
+            expiresAt,
+          },
+        },
+      });
+    });
+
     it('should maintain the pre-requested state in the resource store when mounted', async () => {
       await StaticRouter.requestResources({
         // @ts-ignore

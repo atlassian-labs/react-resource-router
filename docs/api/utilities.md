@@ -1,10 +1,10 @@
 ## createResource
 
-This function is what must be used to create resources for your routes. You can read more about how to create resources [here](/resources/creation).
+This function is what must be used to create resources for your routes. You can read more about how to create resources [here](../resources/creation.md).
 
 ## createBrowserHistory
 
-This function creates a `BrowserHistory` instance. You will need to supply this to your [`Router`](/api/components#router) in your client side code. Note that a single history instance _can_ be shared between routers if you are migrating away from `react-router`.
+This function creates a `BrowserHistory` instance. You will need to supply this to your [`Router`](./components.md#router) in your client side code. Note that a single history instance _can_ be shared between routers if you are migrating away from `react-router`.
 
 ```js
 import {

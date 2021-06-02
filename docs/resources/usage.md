@@ -1,6 +1,6 @@
 # How to use Router Resources in your components
 
-Resources expose properties and functions via the [`useResource`](/api/hooks#useresource) hook or the [`ResourceSubscriber`](/api/components#resourcesubscriber), which allow their current state to be accessed or interacted with in your components. These are
+Resources expose properties and functions via the [`useResource`](../api/hooks.md#useresource) hook or the [`ResourceSubscriber`](../api/components.md#resourcesubscriber), which allow their current state to be accessed or interacted with in your components. These are
 
 | Property  | Type              | Description                                                                             |
 | --------- | ----------------- | --------------------------------------------------------------------------------------- |
@@ -15,7 +15,7 @@ You can use these properties and functions to implement your own customised rend
 
 ## Hook
 
-Using resources via the [`useResource`](/api/hooks#useresource) hook is the **recommended** way to access your current resource state in a component. Here is an example of how you can do that
+Using resources via the [`useResource`](../api/hooks.md#useresource) hook is the **recommended** way to access your current resource state in a component. Here is an example of how you can do that
 
 ```jsx
 import { useResource } from 'react-resource-router';
@@ -32,7 +32,7 @@ export const Avatar = () => {
 
 ## Component
 
-If you are unable to use the [`useResource`](/api/hooks#useresource) hook for whatever reason, you can also use the [`ResourceSubscriber`](/api/components#resourcesubscriber) component which provides your resource state via render props
+If you are unable to use the [`useResource`](../api/hooks.md#useresource) hook for whatever reason, you can also use the [`ResourceSubscriber`](../api/components.md#resourcesubscriber) component which provides your resource state via render props
 
 ```jsx
 import { ResourceSubscriber } from 'react-resource-router';

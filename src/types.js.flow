@@ -2,7 +2,7 @@
 // @flow
 
 import type { Node } from 'react';
-import type { Action, BoundActions } from 'react-sweet-state';
+import type { Action } from 'react-sweet-state';
 
 export type BrowserHistory = any;
 export type MemoryHistory = any;
@@ -47,17 +47,19 @@ export type RouteContext = {|
   action: HistoryAction,
 |};
 
-type RouteResourceLoading = boolean;
-type RouteResourceTimestamp = number | null;
+export type RouteResourceLoading = boolean;
+export type RouteResourceTimestamp = number | null;
 export type RouteResourceError = Object | Error | null;
-export type RouteResourceData = Object | null;
-type RouteResourcePromise = Promise<any> | null;
+// Flow can't narrow optional chaining for RouteResourceResponse.data/RouteResourceResponse.promise
+// if the fields are based off RouteResourceData/RouteResourcePromise so we flip the source of truth for these fields
+export type RouteResourceData<T> = $PropertyType<RouteResourceResponse<T>, 'data'>;
+export type RouteResourcePromise<T> = $PropertyType<RouteResourceResponse<T>, 'promise'>;
 
-export type RouteResourceResponse = {|
+export type RouteResourceResponse<T> = {|
   loading: RouteResourceLoading,
   error: RouteResourceError,
-  data: RouteResourceData,
-  promise: RouteResourcePromise,
+  data: T | null,
+  promise: Promise<T> | null,
   expiresAt: RouteResourceTimestamp,
   key: string,
 |};
@@ -65,7 +67,7 @@ export type RouteResourceResponse = {|
 type ResourceFetchContext = { isPrefetch: boolean };
 export type RouterDataContext = { ...RouterContext, ...ResourceFetchContext };
 
-export type RouteResource = {|
+export type RouteResource<T> = {|
   type: string,
   getKey: (
     routerContext: RouterContext,
@@ -75,22 +77,22 @@ export type RouteResource = {|
   getData: (
     routerContext: RouterDataContext,
     customContext: ResourceStoreContext
-  ) => RouteResourcePromise,
+  ) => RouteResourcePromise<T>,
 |};
 
-export type RouteResources = RouteResource[];
+export type RouteResources = RouteResource<mixed>[];
 
 export type ResourceStoreContext = Object;
 
 type RouteResourceDataForType = {
-  [key: string]: RouteResourceResponse,
+  [key: string]: RouteResourceResponse<mixed>,
 };
 
 export type ResourceOptions = {
   routerContext?: RouterContext,
 };
 
-export type RouteResourceUpdater<T: RouteResourceData> = (data: T) => T;
+export type RouteResourceUpdater<T: RouteResourceData<any>> = (data: T) => T;
 
 export type InvariantRoute = {
   path: string,
@@ -124,7 +126,7 @@ export type Route = {
   /**
    * The resources for the route
    */
-  resources?: RouteResource[],
+  resources?: RouteResource<any>[],
 
   // allow for custom route properties
   [key: string]: any,
@@ -204,6 +206,8 @@ export type RouterProps = {
   routes: Routes,
   children: Node,
   initialRoute?: Route,
+  isGlobal?: boolean,
+  basePath?: string,
   onPrefetch?: (routerContext: RouterContext) => void,
 };
 
@@ -220,12 +224,14 @@ export type UniversalRouterProps = {
 
 export type MemoryRouterProps = {
   isStatic?: boolean,
+  isGlobal?: boolean,
   location?: string,
   routes?: Routes,
   children: Node,
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
   initialRoute?: Route,
+  basePath?: string,
   onPrefetch?: (routerContext: RouterContext) => void,
 };
 
@@ -237,6 +243,14 @@ export type StaticRouterProps = {
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
   initialRoute?: Route,
+  basePath?: string,
+};
+
+export type RequestResourcesParams = {
+  location: string,
+  routes: Routes,
+  resourceContext?: ResourceStoreContext,
+  timeout?: number,
 };
 
 export type MatchParams = {
@@ -257,27 +271,6 @@ export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
 
 export type HistoryUpdateType = 'push' | 'replace';
 
-export type NavigationType = 'container' | 'product';
-
-type NavigationRenderUpdater = (
-  location: Location,
-  match: Match,
-  route: Route
-) => Node;
-
-export type NavigationStatics = {
-  [key: string]: any,
-  type: NavigationType,
-  view: (...args: any[]) => string,
-};
-
-export type Navigation = {
-  [key: string]: any,
-  ...NavigationStatics,
-  renderNavigationUpdater: NavigationRenderUpdater,
-  sidebar?: boolean,
-};
-
 export type HistoryBlocker = (
   location: Location,
   action: string
@@ -295,17 +288,19 @@ export type RouterActionReplace = (
   state?: any
 ) => void;
 
-export type LinkProps = {|
+export type LinkProps = {
   children: Node,
   target?: '_blank' | '_self' | '_parent' | '_top',
   href?: string,
+  prefetch?: false | 'hover' | 'mount',
   to?: string | Route | Promise<{ default: Route, ... }> | Promise<Route>,
   replace?: boolean,
   type?: 'a' | 'button',
   onClick?: (e: any) => void,
   params?: MatchParams,
   query?: Query,
-|};
+  ...
+};
 
 export type RouterSubscriberProps = {|
   children: (state: RouterState, actions: RouterActionsType) => Node,

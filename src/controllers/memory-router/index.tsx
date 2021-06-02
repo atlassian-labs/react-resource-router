@@ -10,6 +10,7 @@ import { MemoryRouterProps } from '../../common/types';
 const getRouterProps = (memoryRouterProps: MemoryRouterProps) => {
   const {
     isStatic = false,
+    isGlobal = true,
     basePath,
     routes,
     resourceData,
@@ -19,6 +20,7 @@ const getRouterProps = (memoryRouterProps: MemoryRouterProps) => {
     basePath,
     routes,
     isStatic,
+    isGlobal,
   };
 
   if (resourceData) {
