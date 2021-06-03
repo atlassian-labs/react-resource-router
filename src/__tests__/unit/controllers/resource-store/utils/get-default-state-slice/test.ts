@@ -11,6 +11,7 @@ describe('get default state slice', () => {
       loading: false,
       promise: null,
       expiresAt: DEFAULT_RESOURCE_MAX_AGE,
+      accessedAt: 0,
     });
   });
 });

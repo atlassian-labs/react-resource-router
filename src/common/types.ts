@@ -89,6 +89,7 @@ export type RouteResourceResponseBase<RouteResourceData> = {
   key?: string;
   promise?: RouteResourcePromise<RouteResourceData>;
   expiresAt: RouteResourceTimestamp;
+  accessedAt: RouteResourceTimestamp;
 };
 
 export type RouteResourceResponseLoading<RouteResourceData> = {
@@ -140,6 +141,7 @@ export type RouteResource<RouteResourceData = unknown> = {
     routerContext: RouterDataContext,
     customContext: ResourceStoreContext
   ) => RouteResourcePromise<RouteResourceData>;
+  maxCache: number;
 };
 
 export type RouteResources = RouteResource[];
