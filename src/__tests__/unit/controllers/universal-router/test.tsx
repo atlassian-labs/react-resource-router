@@ -24,6 +24,7 @@ const mockHistory = {
   location: mockLocation,
 };
 const expiresAt = null;
+const accessedAt = null;
 const unlistenMock = jest.fn();
 const routes: any[] = [];
 
@@ -190,6 +191,7 @@ describe('UniversalRouter', () => {
               loading: false,
               promise: null,
               expiresAt,
+              accessedAt,
             },
           },
           HI: {
@@ -199,6 +201,7 @@ describe('UniversalRouter', () => {
               loading: false,
               promise: null,
               expiresAt,
+              accessedAt,
             },
           },
         });
@@ -219,6 +222,7 @@ describe('UniversalRouter', () => {
               loading: false,
               promise: null,
               expiresAt,
+              accessedAt,
             },
           },
           HI: {
@@ -228,6 +232,7 @@ describe('UniversalRouter', () => {
               loading: false,
               promise: null,
               expiresAt,
+              accessedAt,
             },
           },
         };

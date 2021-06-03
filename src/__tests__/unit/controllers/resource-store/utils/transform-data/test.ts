@@ -6,10 +6,12 @@ describe('transform data', () => {
     const transformFrom = {
       data: { hello: 'world' },
       expiresAt: Infinity,
+      accessedAt: 0,
     };
     const transformTo = {
       data: { goodbye: 'cruel world' },
       expiresAt: 1000,
+      accessedAt: 0,
     };
     const data = {
       type: {
