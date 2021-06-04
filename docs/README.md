@@ -23,7 +23,7 @@ React Resource Router was developed by Atlassian for [Jira](https://www.atlassia
 
 ### Create your resources
 
-Resources describe and provide the data required for your route. This data is safely stored and accessed via the [`useResource`](api/hooks.md#use-resource) hook or [`ResourceSubscriber`](api/components#resourcesubscriber) component.
+Resources describe and provide the data required for your route. This data is safely stored and accessed via the [`useResource`](api/hooks.md#use-resource) hook or [`ResourceSubscriber`](api/components.md#resourcesubscriber) component.
 
 ```js
 import { useResource } from 'react-resource-router';
@@ -61,7 +61,7 @@ export const About = () => {
 
 ### Create your routes
 
-Your [route configuration](router/configuration#how-to-configure-the-router) is the single source of truth for your application's routing concerns.
+Your [route configuration](router/configuration.md#how-to-configure-the-router) is the single source of truth for your application's routing concerns.
 
 ```js
 import { Home, About } from '../components';
@@ -87,7 +87,7 @@ export const appRoutes = [
 
 ### Use the Router
 
-Now that you've set up your resources, components and configuration correctly, all you need to do is mount the [Router](/api/components#router) in your react tree with a [`RouteComponent`](/api/components#routecomponent) as a child. It will do the rest!
+Now that you've set up your resources, components and configuration correctly, all you need to do is mount the [Router](api/components.md#router) in your react tree with a [`RouteComponent`](api/components.md#routecomponent) as a child. It will do the rest!
 
 ```js
 import {
