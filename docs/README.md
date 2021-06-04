@@ -28,11 +28,13 @@ Resources describe and provide the data required for your route. This data is sa
 ```js
 import { createResource } from 'react-resource-router';
 import { fetch } from '../common/utils';
+
 export const homeResource = createResource({
   type: 'HOME',
   getKey: () => 'home-resource-key',
   getData: () => fetch('https://my-api.com/home'),
 });
+
 export const aboutResource = createResource({
   type: 'ABOUT',
   getKey: () => 'about-resource-key',
