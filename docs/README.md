@@ -23,28 +23,7 @@ React Resource Router was developed by Atlassian for [Jira](https://www.atlassia
 
 ### Create your resources
 
-Resources describe and provide the data required for your route. This data is safely stored and accessed via the [`useResource`](/api/hooks#use-resource) hook or [`ResourceSubscriber`](/api/components#resourcesubscriber) component.
-
-```js
-import { createResource } from 'react-resource-router';
-import { fetch } from '../common/utils';
-
-export const homeResource = createResource({
-  type: 'HOME',
-  getKey: () => 'home-resource-key',
-  getData: () => fetch('https://my-api.com/home'),
-});
-
-export const aboutResource = createResource({
-  type: 'ABOUT',
-  getKey: () => 'about-resource-key',
-  getData: () => fetch('https://my-api.com/about'),
-});
-```
-
-### Create your components
-
-These are the React components that get rendered for your routes. As mentioned, they can be wired into the state of your resources via the [`useResource`](/api/hooks#use-resource) hook or [`ResourceSubscriber`](/api/components#resourcesubscriber) component.
+Resources describe and provide the data required for your route. This data is safely stored and accessed via the [`useResource`](api/hooks.md#use-resource) hook or [`ResourceSubscriber`](api/components#resourcesubscriber) component.
 
 ```js
 import { useResource } from 'react-resource-router';
@@ -82,7 +61,7 @@ export const About = () => {
 
 ### Create your routes
 
-Your [route configuration](/router/configuration#how-to-configure-the-router) is the single source of truth for your application's routing concerns.
+Your [route configuration](router/configuration#how-to-configure-the-router) is the single source of truth for your application's routing concerns.
 
 ```js
 import { Home, About } from '../components';
