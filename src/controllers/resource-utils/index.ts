@@ -3,10 +3,7 @@ import {
   RouteResourceDataPayload,
   RouteResourceGettersArgs,
 } from '../../common/types';
-import {
-  DEFAULT_RESOURCE_MAX_AGE,
-  DEFAULT_CACHE_MAX_LIMIT,
-} from '../resource-store/constants';
+import { DEFAULT_RESOURCE_MAX_AGE } from '../resource-store/constants';
 
 /**
  * Utility method to created async versions of getData functions
@@ -21,12 +18,10 @@ type BaseResource = Pick<RouteResource, 'type' | 'getKey'>;
 interface CreateResourceSync<T> extends BaseResource {
   getData: RouteResource<T>['getData'];
   maxAge?: number;
-  maxCache?: number;
 }
 interface CreateResourceAsync<T> extends BaseResource {
   getDataLoader: GetDataLoader<T>;
   maxAge?: number;
-  maxCache?: number;
 }
 
 const handleGetDataLoader = (asyncImport: GetDataLoader<unknown>) => {
@@ -52,9 +47,5 @@ export function createResource(args: any) {
       : args.getData,
     maxAge:
       typeof args.maxAge === 'number' ? args.maxAge : DEFAULT_RESOURCE_MAX_AGE,
-    maxCache:
-      typeof args.maxCache === 'number'
-        ? args.maxCache
-        : DEFAULT_CACHE_MAX_LIMIT,
   };
 }

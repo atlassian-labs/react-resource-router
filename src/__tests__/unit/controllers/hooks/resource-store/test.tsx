@@ -137,7 +137,6 @@ describe('useResource hook', () => {
         ...mockSlice,
         expiresAt: 100,
         data: newData,
-        accessedAt: 0,
       });
     });
 
@@ -163,7 +162,6 @@ describe('useResource hook', () => {
         ...mockSlice,
         expiresAt: 100,
         data: newData,
-        accessedAt: 0,
       });
     });
 

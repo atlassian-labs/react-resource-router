@@ -14,7 +14,6 @@ import {
   State as ResourceStoreState,
 } from '../../../../controllers/resource-store/types';
 import {
-  getAccessedAt,
   getDefaultStateSlice,
   getExpiresAt,
   serializeError,
@@ -29,7 +28,6 @@ jest.mock('../../../../controllers/resource-store/utils', () => ({
   shouldUseCache: jest.fn(),
   getExpiresAt: jest.fn(),
   getDefaultStateSlice: jest.fn(),
-  getAccessedAt: jest.fn(),
 }));
 
 describe('resource store', () => {
@@ -54,7 +52,6 @@ describe('resource store', () => {
   const result = 'result';
   const error = null;
   const expiresAt = 0;
-  const accessedAt = 1;
   const getDataPromise = Promise.resolve(result);
   const mockRoute = {
     name: 'foo',
@@ -87,7 +84,6 @@ describe('resource store', () => {
     beforeEach(() => {
       (shouldUseCache as any).mockImplementation(() => false);
       (getExpiresAt as any).mockImplementation(() => expiresAt);
-      (getAccessedAt as any).mockImplementation(() => accessedAt);
       (getDefaultStateSlice as any).mockImplementation(() => ({
         ...BASE_DEFAULT_STATE_SLICE,
         expiresAt,
@@ -113,7 +109,6 @@ describe('resource store', () => {
           loading: false,
           promise: getDataPromise,
           expiresAt,
-          accessedAt,
         });
       });
 
@@ -138,7 +133,6 @@ describe('resource store', () => {
                 error,
                 promise: getDataPromise,
                 expiresAt,
-                accessedAt,
               },
             },
           },
@@ -164,7 +158,6 @@ describe('resource store', () => {
           loading: true,
           promise: null,
           expiresAt: expect.any(Number),
-          accessedAt: expect.any(Number),
         });
       });
 
@@ -188,7 +181,6 @@ describe('resource store', () => {
             error,
             promise: getDataPromise,
             expiresAt,
-            accessedAt,
           },
           ...mockKeyedData,
         });
@@ -214,7 +206,6 @@ describe('resource store', () => {
                 error,
                 promise: getDataPromise,
                 expiresAt,
-                accessedAt,
               },
             },
           },
@@ -229,7 +220,6 @@ describe('resource store', () => {
                 error,
                 promise: getDataPromise,
                 expiresAt,
-                accessedAt,
               },
             },
           },
@@ -299,7 +289,6 @@ describe('resource store', () => {
                   error: null,
                   loading: true,
                   promise: getDataPromise,
-                  accessedAt,
                 },
               },
             },
@@ -315,7 +304,6 @@ describe('resource store', () => {
                   expiresAt,
                   loading: false,
                   promise: getDataPromise,
-                  accessedAt,
                 },
               },
             },
@@ -369,7 +357,6 @@ describe('resource store', () => {
                 loading: false,
                 promise: resolver('hello world'),
                 expiresAt,
-                accessedAt,
               },
             },
             HI: {
@@ -379,7 +366,6 @@ describe('resource store', () => {
                 loading: false,
                 promise: resolver('goodbye cruel world'),
                 expiresAt,
-                accessedAt,
               },
             },
           },
@@ -502,7 +488,6 @@ describe('resource store', () => {
             loading: false,
             promise: null,
             expiresAt: null,
-            accessedAt,
           },
         },
       };
@@ -525,7 +510,6 @@ describe('resource store', () => {
             loading: false,
             promise: null,
             expiresAt: null,
-            accessedAt: null,
           },
         },
       };
@@ -566,7 +550,6 @@ describe('resource store', () => {
             loading: false,
             promise: null,
             expiresAt: null,
-            accessedAt: null,
           },
         },
       };
@@ -599,7 +582,6 @@ describe('resource store', () => {
               error,
               promise: null,
               expiresAt: null,
-              accessedAt,
             },
           },
         },
@@ -626,7 +608,6 @@ describe('resource store', () => {
               error,
               promise: getDataPromise,
               expiresAt: null,
-              accessedAt,
             },
           },
         },
@@ -643,108 +624,6 @@ describe('resource store', () => {
     });
   });
 
-  describe('when max cache limit is set', () => {
-    const mockSlice = {
-      ...BASE_DEFAULT_STATE_SLICE,
-      expiresAt: 100,
-    };
-
-    const home = 'home';
-    const about = 'about';
-
-    const initialDataForType = {
-      [home]: {
-        ...mockSlice,
-        data: home,
-        accessedAt: 1,
-      },
-      [about]: {
-        ...mockSlice,
-        data: about,
-        accessedAt: 2,
-      },
-    };
-
-    const currentTime = 0;
-    const expiryAge = 1000;
-
-    beforeEach(() => {
-      jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
-      (getDefaultStateSlice as any).mockImplementation(() => mockSlice);
-      (getExpiresAt as any).mockImplementation((age: number) => age);
-      (getAccessedAt as any).mockImplementation(() => 3);
-    });
-    it('should store data in cache along with previous data when max cache limit not reached', async () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            ...initialDataForType,
-          },
-        },
-      });
-      await actions.getResource(
-        {
-          ...mockResource,
-          maxAge: expiryAge,
-          maxCache: 3,
-        },
-        mockRouterStoreContext,
-        mockOptions
-      );
-
-      expect(storeState.getState()).toEqual({
-        data: {
-          [type]: {
-            ...initialDataForType,
-            [key]: {
-              data: result,
-              loading: false,
-              error,
-              promise: getDataPromise,
-              expiresAt: expiryAge,
-              accessedAt: 3,
-            },
-          },
-        },
-      });
-    });
-    it('should delete the least recent key data when cache reaches the max cache limit for the Type', async () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            ...initialDataForType,
-          },
-        },
-      });
-      await actions.getResource(
-        {
-          ...mockResource,
-          maxAge: expiryAge,
-          maxCache: 2,
-        },
-        mockRouterStoreContext,
-        mockOptions
-      );
-      expect(storeState.getState()).toEqual({
-        data: {
-          [type]: {
-            [about]: {
-              ...initialDataForType[about],
-            },
-            [key]: {
-              data: result,
-              loading: false,
-              error,
-              promise: getDataPromise,
-              expiresAt: expiryAge,
-              accessedAt: 3,
-            },
-          },
-        },
-      });
-    });
-  });
-
   describe('useResource', () => {
     it('should render a loading component if using a resource that has not yet been resolved', () => {
       const id = 'test';
@@ -757,7 +636,6 @@ describe('resource store', () => {
               loading: false,
               error: null,
               promise: null,
-              accessedAt,
             },
           },
         },
@@ -804,7 +682,6 @@ describe('resource store', () => {
               error: null,
               promise: null,
               expiresAt,
-              accessedAt,
             },
             foo: {
               data: 'bazqux',
@@ -812,7 +689,6 @@ describe('resource store', () => {
               error: null,
               promise: null,
               expiresAt,
-              accessedAt,
             },
           },
           bar: {
@@ -822,7 +698,6 @@ describe('resource store', () => {
               error: null,
               promise: null,
               expiresAt,
-              accessedAt,
             },
           },
         },
@@ -836,7 +711,6 @@ describe('resource store', () => {
         loading: false,
         promise: null,
         expiresAt,
-        accessedAt,
       });
     });
 
@@ -851,7 +725,6 @@ describe('resource store', () => {
               loading: false,
               error: null,
               promise: null,
-              accessedAt: null,
             },
           },
         },
@@ -884,7 +757,6 @@ describe('resource store', () => {
         ...BASE_DEFAULT_STATE_SLICE,
         loading: true,
         expiresAt,
-        accessedAt,
       };
       beforeEach(() => {
         (getDefaultStateSlice as any).mockImplementation(() => mockSlice);
@@ -928,7 +800,6 @@ describe('resource store', () => {
     beforeEach(() => {
       jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
       (getExpiresAt as any).mockImplementation(() => currentTime);
-      (getAccessedAt as any).mockImplementation(() => currentTime);
       storeState.setState({
         data: {
           expiredResource: {
@@ -938,7 +809,6 @@ describe('resource store', () => {
               error: 'some error',
               promise: getDataPromise,
               expiresAt: 50,
-              accessedAt: 0,
             },
           },
           cachedResource: {
@@ -948,7 +818,6 @@ describe('resource store', () => {
               error: 'some error',
               promise: getDataPromise,
               expiresAt: 200,
-              accessedAt: currentTime,
             },
           },
         },
@@ -976,7 +845,6 @@ describe('resource store', () => {
             error,
             promise: getDataPromise,
             expiresAt: currentTime,
-            accessedAt: 0,
           },
         },
         cachedResource: {
@@ -986,7 +854,6 @@ describe('resource store', () => {
             error: 'some error',
             promise: getDataPromise,
             expiresAt: 200,
-            accessedAt: currentTime,
           },
         },
       });

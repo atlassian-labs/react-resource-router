@@ -37,7 +37,6 @@ const mockResource = {
   getKey: () => 'entry',
   getData: () => Promise.resolve('mock-data'),
   maxAge: 0,
-  maxCache: Infinity,
 };
 
 const historyBuildOptions = {
@@ -159,7 +158,6 @@ describe('<Router /> integration tests', () => {
           key: undefined,
           loading: true,
           promise: null,
-          accessedAt: null,
         },
       },
       HI: {
@@ -170,7 +168,6 @@ describe('<Router /> integration tests', () => {
           key: undefined,
           loading: false,
           promise: null,
-          accessedAt: null,
         },
       },
     });
@@ -208,7 +205,6 @@ describe('<Router /> integration tests', () => {
             key: undefined,
             loading: false,
             promise: expect.any(Promise),
-            accessedAt: expect.any(Number),
           },
         },
         HI: {
@@ -219,7 +215,6 @@ describe('<Router /> integration tests', () => {
             key: undefined,
             loading: false,
             promise: expect.any(Promise),
-            accessedAt: null,
           },
         },
       },

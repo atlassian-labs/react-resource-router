@@ -1,5 +1,4 @@
 export const DEFAULT_RESOURCE_MAX_AGE = 0;
-export const DEFAULT_CACHE_MAX_LIMIT = Infinity;
 
 /**
  * The base defaults which should be fed into any factory that needs to derive other props.

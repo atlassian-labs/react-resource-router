@@ -14,7 +14,6 @@ describe('resource utils', () => {
         getKey: expect.any(Function),
         getData: expect.any(Function),
         maxAge: 0,
-        maxCache: Infinity,
       });
     });
 
@@ -33,7 +32,6 @@ describe('resource utils', () => {
         getKey: expect.any(Function),
         getData: expect.any(Function),
         maxAge: 0,
-        maxCache: Infinity,
       });
 
       await resource.getData(routerContext, {});
@@ -53,25 +51,6 @@ describe('resource utils', () => {
         getKey: expect.any(Function),
         getData: expect.any(Function),
         maxAge: 400,
-        maxCache: Infinity,
-      });
-    });
-
-    it('should return a resource object with a custom maxCache limit', async () => {
-      const resource = createResource({
-        type: 'TEST',
-        getKey: () => '',
-        getData: () => null,
-        maxAge: 0,
-        maxCache: 3,
-      });
-
-      expect(resource).toEqual({
-        type: expect.any(String),
-        getKey: expect.any(Function),
-        getData: expect.any(Function),
-        maxAge: 0,
-        maxCache: 3,
       });
     });
   });
