@@ -27,6 +27,7 @@ describe('ResourceSubscriber', () => {
     loading: false,
     promise: Promise.resolve(),
     expiresAt: 100,
+    accessedAt: 0,
   };
   let resourceStore;
   let storeState: any;

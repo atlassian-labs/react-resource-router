@@ -21,7 +21,9 @@ import {
 } from './types';
 import {
   deserializeError,
+  getAccessedAt,
   getExpiresAt,
+  getLRUResourceKey,
   isFromSsr,
   serializeError,
   setExpiresAt,
@@ -52,6 +54,16 @@ export const actions: Actions = {
       },
     });
   },
+  setResourceStateForType: (type, state) => ({ setState, getState }) => {
+    const { data } = getState();
+
+    setState({
+      data: {
+        ...data,
+        [type]: state,
+      },
+    });
+  },
   /**
    * Update the data property for a resource in the cache.
    *
@@ -70,8 +82,18 @@ export const actions: Actions = {
         ...slice,
         data: getNewSliceData(slice.data),
         expiresAt: getExpiresAt(maxAge),
+        accessedAt: getAccessedAt(),
       })
     );
+  },
+  updateRemoteResourceState: (type, key, state) => ({ dispatch, getState }) => {
+    const {
+      data: { [type]: resourceDataForType },
+    } = getState();
+
+    if (resourceDataForType[key]) {
+      dispatch(actions.setResourceState(type, key, state));
+    }
   },
   /**
    * Get a single resource, either from the cache if it exists and has not expired, or
@@ -82,7 +104,11 @@ export const actions: Actions = {
     dispatch,
   }) => {
     const { type, getKey, maxAge } = resource;
-    const { getResourceFromRemote, setResourceState } = actions;
+    const {
+      getResourceFromRemote,
+      setResourceState,
+      validateLRUCache,
+    } = actions;
     const { data: resourceStoreData, context } = getState();
     const key = getKey(routerStoreContext, context);
     const cached = getSliceForResource(
@@ -100,8 +126,13 @@ export const actions: Actions = {
         return withExpiresAt;
       }
 
+      cached.accessedAt = getAccessedAt();
+      dispatch(setResourceState(type, key, cached));
+
       return cached;
     }
+
+    dispatch(validateLRUCache(resource, key));
 
     return dispatch(
       getResourceFromRemote(resource, routerStoreContext, options)
@@ -116,7 +147,7 @@ export const actions: Actions = {
   }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
     const { prefetch, timeout } = options;
-    const { setResourceState } = actions;
+    const { setResourceState, updateRemoteResourceState } = actions;
     const { data: resourceStoreData, context } = getState();
     const key = getKey(routerStoreContext, context);
     const slice = getSliceForResource(
@@ -137,6 +168,7 @@ export const actions: Actions = {
         { ...routerStoreContext, isPrefetch: !!prefetch },
         context
       ),
+      accessedAt: getAccessedAt(),
     };
 
     dispatch(setResourceState(type, key, pending));
@@ -178,7 +210,9 @@ export const actions: Actions = {
       options.prefetch && maxAge < PREFETCH_MAX_AGE ? PREFETCH_MAX_AGE : maxAge
     );
 
-    dispatch(setResourceState(type, key, response));
+    response.accessedAt = getAccessedAt();
+
+    dispatch(updateRemoteResourceState(type, key, response));
 
     return response;
   },
@@ -226,10 +260,36 @@ export const actions: Actions = {
             data: null,
             error: null,
             expiresAt: getExpiresAt(0),
+            accessedAt: 0,
           })
         );
       }
     });
+  },
+  validateLRUCache: (resource, key) => ({ getState, dispatch }) => {
+    const { type, maxCache } = resource;
+    const {
+      data: { [type]: resourceDataForType },
+    } = getState();
+
+    if (!resourceDataForType) {
+      return;
+    }
+
+    const keyTobeDeleted = getLRUResourceKey(
+      maxCache,
+      resourceDataForType,
+      key
+    );
+    if (!keyTobeDeleted) {
+      return;
+    }
+
+    const {
+      [keyTobeDeleted]: resourceToBeDeleted,
+      ...rest
+    } = resourceDataForType;
+    dispatch(actions.setResourceStateForType(type, rest));
   },
 
   /**
@@ -299,6 +359,7 @@ export const actions: Actions = {
       key,
       promise: null,
       expiresAt: null,
+      accessedAt: null,
       error: !error
         ? null
         : serializeError(
