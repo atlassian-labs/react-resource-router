@@ -20,7 +20,9 @@ import {
   State,
 } from './types';
 import {
+  deleteResourceKey,
   deserializeError,
+  getAccessedAt,
   getExpiresAt,
   isFromSsr,
   serializeError,
@@ -30,28 +32,14 @@ import {
   generateTimeGuard,
   TimeoutError,
   setSsrDataPromise,
+  setResourceState,
+  updateRemoteResourceState,
+  validateLRUCache,
 } from './utils';
 
 const PREFETCH_MAX_AGE = 10000;
 
 export const actions: Actions = {
-  /**
-   * Set the state of a resource in the cache.
-   *
-   */
-  setResourceState: (type, key, state) => ({ setState, getState }) => {
-    const { data } = getState();
-
-    setState({
-      data: {
-        ...data,
-        [type]: {
-          ...(data[type] || {}),
-          [key]: state,
-        },
-      },
-    });
-  },
   /**
    * Update the data property for a resource in the cache.
    *
@@ -66,10 +54,11 @@ export const actions: Actions = {
     const slice = getSliceForResource({ data }, { type, key });
 
     dispatch(
-      actions.setResourceState(type, key, {
+      setResourceState(type, key, {
         ...slice,
         data: getNewSliceData(slice.data),
         expiresAt: getExpiresAt(maxAge),
+        accessedAt: getAccessedAt(),
       })
     );
   },
@@ -82,10 +71,10 @@ export const actions: Actions = {
     dispatch,
   }) => {
     const { type, getKey, maxAge } = resource;
-    const { getResourceFromRemote, setResourceState } = actions;
+    const { getResourceFromRemote } = actions;
     const { data: resourceStoreData, context } = getState();
     const key = getKey(routerStoreContext, context);
-    const cached = getSliceForResource(
+    let cached = getSliceForResource(
       { data: resourceStoreData },
       { type, key }
     );
@@ -93,12 +82,11 @@ export const actions: Actions = {
     if (shouldUseCache(cached)) {
       if (isFromSsr(cached)) {
         const withResolvedPromise = setSsrDataPromise(cached);
-        const withExpiresAt = setExpiresAt(withResolvedPromise, maxAge);
-
-        dispatch(setResourceState(type, key, withExpiresAt));
-
-        return withExpiresAt;
+        cached = setExpiresAt(withResolvedPromise, maxAge);
       }
+
+      cached.accessedAt = getAccessedAt();
+      dispatch(setResourceState(type, key, cached));
 
       return cached;
     }
@@ -116,7 +104,6 @@ export const actions: Actions = {
   }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
     const { prefetch, timeout } = options;
-    const { setResourceState } = actions;
     const { data: resourceStoreData, context } = getState();
     const key = getKey(routerStoreContext, context);
     const slice = getSliceForResource(
@@ -128,6 +115,8 @@ export const actions: Actions = {
       return slice;
     }
 
+    dispatch(validateLRUCache(resource, key));
+
     const pending = {
       ...slice,
       data: maxAge === 0 ? null : slice.data,
@@ -137,6 +126,7 @@ export const actions: Actions = {
         { ...routerStoreContext, isPrefetch: !!prefetch },
         context
       ),
+      accessedAt: getAccessedAt(),
     };
 
     dispatch(setResourceState(type, key, pending));
@@ -178,7 +168,9 @@ export const actions: Actions = {
       options.prefetch && maxAge < PREFETCH_MAX_AGE ? PREFETCH_MAX_AGE : maxAge
     );
 
-    dispatch(setResourceState(type, key, response));
+    response.accessedAt = getAccessedAt();
+
+    dispatch(updateRemoteResourceState(type, key, response));
 
     return response;
   },
@@ -220,18 +212,10 @@ export const actions: Actions = {
       const slice = getSliceForResource({ data }, { type, key });
 
       if (!slice.expiresAt || slice.expiresAt < Date.now()) {
-        dispatch(
-          actions.setResourceState(type, key, {
-            ...slice,
-            data: null,
-            error: null,
-            expiresAt: getExpiresAt(0),
-          })
-        );
+        dispatch(deleteResourceKey(key, type));
       }
     });
   },
-
   /**
    * Requests a specific set of resources.
    */
@@ -299,6 +283,7 @@ export const actions: Actions = {
       key,
       promise: null,
       expiresAt: null,
+      accessedAt: null,
       error: !error
         ? null
         : serializeError(
