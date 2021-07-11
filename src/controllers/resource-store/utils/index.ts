@@ -10,4 +10,9 @@ export { transformData } from './transform-data';
 export { routeHasChanged, routeHasResources } from './route-checks';
 export { TimeoutError } from './timeout-error';
 export { setSsrDataPromise } from './ssr-data-promise';
-export { getLRUResourceKey } from './lru-cache';
+export { validateLRUCache } from './lru-cache';
+export {
+  deleteResourceKey,
+  setResourceState,
+  updateRemoteResourceState,
+} from './manage-resource-state';

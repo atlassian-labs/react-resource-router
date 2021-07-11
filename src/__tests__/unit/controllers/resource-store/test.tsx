@@ -54,7 +54,7 @@ describe('resource store', () => {
   const result = 'result';
   const error = null;
   const expiresAt = 0;
-  const accessedAt = 1;
+  const accessedAt = 100;
   const getDataPromise = Promise.resolve(result);
   const mockRoute = {
     name: 'foo',
@@ -656,23 +656,23 @@ describe('resource store', () => {
       [home]: {
         ...mockSlice,
         data: home,
-        accessedAt: 1,
+        accessedAt: 100,
       },
       [about]: {
         ...mockSlice,
         data: about,
-        accessedAt: 2,
+        accessedAt: 200,
       },
     };
 
-    const currentTime = 0;
+    const currentTime = 500;
     const expiryAge = 1000;
 
     beforeEach(() => {
       jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
       (getDefaultStateSlice as any).mockImplementation(() => mockSlice);
       (getExpiresAt as any).mockImplementation((age: number) => age);
-      (getAccessedAt as any).mockImplementation(() => 3);
+      (getAccessedAt as any).mockImplementation(() => 400);
     });
     it('should store data in cache along with previous data when max cache limit not reached', async () => {
       storeState.setState({
@@ -702,7 +702,7 @@ describe('resource store', () => {
               error,
               promise: getDataPromise,
               expiresAt: expiryAge,
-              accessedAt: 3,
+              accessedAt: 400,
             },
           },
         },
@@ -737,7 +737,7 @@ describe('resource store', () => {
               error,
               promise: getDataPromise,
               expiresAt: expiryAge,
-              accessedAt: 3,
+              accessedAt: 400,
             },
           },
         },
@@ -938,7 +938,7 @@ describe('resource store', () => {
               error: 'some error',
               promise: getDataPromise,
               expiresAt: 50,
-              accessedAt: 0,
+              accessedAt: currentTime,
             },
           },
           cachedResource: {
@@ -969,16 +969,7 @@ describe('resource store', () => {
       const { data } = storeState.getState();
 
       expect(data).toEqual({
-        expiredResource: {
-          expiredResourceKey: {
-            data: null,
-            loading: false,
-            error,
-            promise: getDataPromise,
-            expiresAt: currentTime,
-            accessedAt: 0,
-          },
-        },
+        expiredResource: {},
         cachedResource: {
           cachedResourceKey: {
             data: result,

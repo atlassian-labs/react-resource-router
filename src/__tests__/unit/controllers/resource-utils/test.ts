@@ -1,4 +1,5 @@
 import { createResource } from '../../../../controllers/resource-utils';
+import { DEFAULT_CACHE_MAX_LIMIT } from '../../../../controllers/resource-store/constants';
 
 describe('resource utils', () => {
   describe('createResource', () => {
@@ -14,7 +15,7 @@ describe('resource utils', () => {
         getKey: expect.any(Function),
         getData: expect.any(Function),
         maxAge: 0,
-        maxCache: Infinity,
+        maxCache: DEFAULT_CACHE_MAX_LIMIT,
       });
     });
 
@@ -33,7 +34,7 @@ describe('resource utils', () => {
         getKey: expect.any(Function),
         getData: expect.any(Function),
         maxAge: 0,
-        maxCache: Infinity,
+        maxCache: DEFAULT_CACHE_MAX_LIMIT,
       });
 
       await resource.getData(routerContext, {});
@@ -53,7 +54,7 @@ describe('resource utils', () => {
         getKey: expect.any(Function),
         getData: expect.any(Function),
         maxAge: 400,
-        maxCache: Infinity,
+        maxCache: DEFAULT_CACHE_MAX_LIMIT,
       });
     });
 
