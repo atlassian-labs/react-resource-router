@@ -30,5 +30,5 @@ declare export function mockRouteContextProp(
   key: string,
   mock: { ... }
 ): RouteContext;
-declare export var mockRouteResourceResponse: RouteResourceResponse;
+declare export var mockRouteResourceResponse: RouteResourceResponse<mixed>;
 declare export var mockRoutes: Route[];

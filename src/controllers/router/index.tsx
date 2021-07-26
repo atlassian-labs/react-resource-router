@@ -13,6 +13,7 @@ import { RouterProps } from './types';
 export class Router extends Component<RouterProps> {
   static defaultProps = {
     isStatic: false,
+    isGlobal: true,
     history: DEFAULT_HISTORY,
   };
 
@@ -50,6 +51,7 @@ export class Router extends Component<RouterProps> {
       history,
       initialRoute,
       isStatic,
+      isGlobal,
       basePath,
       resourceContext,
       resourceData,
@@ -66,7 +68,7 @@ export class Router extends Component<RouterProps> {
         resourceContext={resourceContext}
         resourceData={resourceData}
         onPrefetch={onPrefetch}
-        isGlobal
+        isGlobal={isGlobal}
       >
         {children}
       </RouterContainer>

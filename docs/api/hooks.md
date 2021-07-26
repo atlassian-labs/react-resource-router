@@ -31,12 +31,24 @@ export const Feed = () => {
 };
 ```
 
+As well as returning actions that act on the resource (i.e. update and refresh), `useResource` returns four different properties that indicate the state of the resource. These four are `data`, `loading`, `error` and `promise`. `useResource` will return different combinations of these four properties depending on the state of the resource. The table below shows all the possible combinations.
+
+|           state           |    data    | loading |     error     | promise |
+| :-----------------------: | :--------: | :-----: | :-----------: | :-----: |
+|           idle            |    null    |  false  |     null      |  null   |
+|          loading          | null or {} |  true   | null or Error | Promise |
+| loading after ssr timeout |    null    |  true   | TimeoutError  |  null   |
+|     fetch successful      |     {}     |  false  |     null      | Promise |
+|        fetch error        | null or {} |  false  |     Error     | Promise |
+
+It is important to note that loading can be true even when there is an error. In that case, promise will be null because there is no Suspense support on the server. Developers should give priority to loading when deciding between loading or error states for their components. Promises/errors should only ever be thrown on the client
+
 It also acceps some options as second argument to customise the behaviour, like `routerContext`.
-Check out [this section](/resources/usage) for more details on how to use the `useResource` hook.
+Check out [this section](../resources/usage.md) for more details on how to use the `useResource` hook.
 
 ## useRouter
 
-You can use the `useRouter` hook to access current [route context](/api/components#routecomponent-props) as well as [router actions](/api/components#routeractions) if required.
+You can use the `useRouter` hook to access current [route context](./components.md#routecomponent-props) as well as [router actions](./components.md#routeractions) if required.
 
 ```js
 import { useRouter, RouterSubscriber, withRouter } from 'react-resource-router';

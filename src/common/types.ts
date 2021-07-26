@@ -1,6 +1,12 @@
 /* eslint-disable no-use-before-define */
 
-import { ComponentType, ReactNode, MouseEvent, KeyboardEvent } from 'react';
+import {
+  ComponentType,
+  ReactNode,
+  MouseEvent,
+  KeyboardEvent,
+  AnchorHTMLAttributes,
+} from 'react';
 
 import { History, Location as HistoryLocationShape } from 'history';
 
@@ -111,6 +117,13 @@ export type RouteResourceResponse<
 
 export type RouterDataContext = RouterContext & ResourceFetchContext;
 
+export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
+  RouteResourceData
+> & {
+  update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
+  refresh: () => void;
+};
+
 export type RouteResourceGettersArgs = [
   RouterDataContext,
   ResourceStoreContext
@@ -219,26 +232,9 @@ export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
 export type InvariantRoutes = InvariantRoute[];
 export type Routes = Route[];
 
-export type NavigationType = 'container' | 'product';
-
-export type NavigationRenderUpdater = (
-  location: Location,
-  match: Match,
-  route: Route
-) => ReactNode;
-
-export type NavigationStatics = {
-  type: NavigationType;
-  view: (...args: any[]) => string;
-};
-
-export type Navigation = NavigationStatics & {
-  renderNavigationUpdater: NavigationRenderUpdater;
-};
-
 export type LinkElementType = 'a' | 'button';
 
-export type LinkProps = {
+export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   children: ReactNode;
   target?: '_blank' | '_self' | '_parent' | '_top';
   href?: string;
@@ -285,6 +281,7 @@ export type MemoryRouterProps = {
   basePath?: string;
   isStatic?: boolean;
   location?: string;
+  isGlobal?: boolean;
   routes: Routes;
   children: ReactNode;
   resourceData?: ResourceStoreData;

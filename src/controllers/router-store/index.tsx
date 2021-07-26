@@ -126,14 +126,17 @@ const actions: AllRouterActions = {
    * Must be dispatched after setting state with the new route context.
    *
    */
-  requestRouteResources: () => ({ getState }) => {
+  requestRouteResources: (options = {}) => ({ getState }) => {
     const { route, match, query } = getState();
 
-    return getResourceStore().actions.requestAllResources({
-      route,
-      match,
-      query,
-    });
+    return getResourceStore().actions.requestAllResources(
+      {
+        route,
+        match,
+        query,
+      },
+      options
+    );
   },
 
   prefetchNextRouteResources: (path, nextContext) => ({ getState }) => {
