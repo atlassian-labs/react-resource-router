@@ -98,7 +98,7 @@ export type ResourceOptions = {
   routerContext?: RouterContext,
 };
 
-export type RouteResourceUpdater<T: RouteResourceData<any>> = (data: T) => T;
+export type RouteResourceUpdater<T> = (data: RouteResourceData<T>) => RouteResourceData<T>;
 
 export type InvariantRoute = {
   path: string,
