@@ -118,9 +118,9 @@ export type RouteResourceResponse<
 
 export type RouterDataContext = RouterContext & ResourceFetchContext;
 
-export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
+export type UseResourceHookResponse<
   RouteResourceData
-> & {
+> = RouteResourceResponse<RouteResourceData> & {
   update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
   refresh: () => void;
 };

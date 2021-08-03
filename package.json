@@ -36,6 +36,10 @@
     {
       "name": "Dinesh Pandiyan",
       "email": "flexdinesh@gmail.com"
+    },
+    {
+      "name": "Prithveesh Goel",
+      "email": "prithveesh.goel@gmail.com"
     }
   ],
   "main": "build/cjs/index.js",
@@ -52,9 +56,9 @@
     "build:types-cjs": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/cjs && cp src/*.flow build/cjs",
     "build:types-esm": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/esm && cp src/*.flow build/esm",
     "docs": "npx docsify-cli serve docs",
-    "lint": "eslint --ext .ts,.tsx,.js src/",
+    "lint": "eslint --ext .ts,.tsx,.js src/ examples/",
     "lint:deps": "madge -c --extensions ts,tsx src",
-    "lint:fix": "eslint --ext .ts,.tsx,.js src/ --fix",
+    "lint:fix": "eslint --ext .ts,.tsx,.js src/ examples/ --fix",
     "lint:types": "tsc --noEmit && flow --max-warnings=0",
     "lint:types-watch": "tsc --noEmit --watch",
     "prepack": "npm run preversion -s && npm run build -s",

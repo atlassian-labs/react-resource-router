@@ -23,16 +23,14 @@ export const Home = () => {
     <div>
       <h1>Dog Breeds</h1>
       <section>
-        <ul>  
-          {
-            breeds.slice(0, 25).map(breed => (
-              <li key={breed}>
-                <Link to={aboutRoute} query={{ name: breed }}>
-                  {breed}
-                </Link>
-              </li>
-            ))
-          }
+        <ul>
+          {breeds.slice(0, 25).map(breed => (
+            <li key={breed}>
+              <Link to={aboutRoute} query={{ name: breed }}>
+                {breed}
+              </Link>
+            </li>
+          ))}
         </ul>
       </section>
     </div>

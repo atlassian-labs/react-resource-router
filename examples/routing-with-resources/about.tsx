@@ -1,5 +1,10 @@
 import React from 'react';
-import { Link, createResource, useResource, useQueryParam } from 'react-resource-router';
+import {
+  Link,
+  createResource,
+  useResource,
+  useQueryParam,
+} from 'react-resource-router';
 import { homeRoute } from './routes';
 
 export const aboutResource = createResource({
@@ -22,7 +27,7 @@ export const About = () => {
   // eslint-disable-next-line
   const { data, loading, error } = useResource(aboutResource);
   const [breedName] = useQueryParam('name');
-  
+
   return (
     <div>
       <h1>{breedName}</h1>

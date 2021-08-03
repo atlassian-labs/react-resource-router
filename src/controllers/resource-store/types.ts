@@ -9,7 +9,6 @@ import {
   RouteResourceResponse,
   RouteResourceUpdater,
   RouterContext,
-  RouteResourceDataForType,
 } from '../../common/types';
 
 export type State = {
@@ -41,25 +40,11 @@ type ResourceAction<R> = ({
 }: StoreActionApi<State>) => R;
 
 export type Actions = {
-  setResourceState: (
-    type: RouteResource['type'],
-    key: string,
-    state: RouteResourceResponse
-  ) => ResourceAction<void>;
-  setResourceStateForType: (
-    type: RouteResource['type'],
-    state: RouteResourceDataForType
-  ) => ResourceAction<void>;
   updateResourceState: (
     type: RouteResource['type'],
     key: string,
     maxAge: RouteResource['maxAge'],
     getNewSliceData: RouteResourceUpdater
-  ) => ResourceAction<void>;
-  updateRemoteResourceState: (
-    type: RouteResource['type'],
-    key: string,
-    state: RouteResourceResponse
   ) => ResourceAction<void>;
   getResource: (
     resource: RouteResource,
@@ -78,10 +63,6 @@ export type Actions = {
   cleanExpiredResources: (
     resources: RouteResource[],
     routerStoreContext: RouterContext
-  ) => ResourceAction<void>;
-  validateLRUCache: (
-    resource: RouteResource,
-    key: string
   ) => ResourceAction<void>;
   requestResources: (
     resources: RouteResource[],

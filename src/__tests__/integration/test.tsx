@@ -219,7 +219,7 @@ describe('<Router /> integration tests', () => {
             key: undefined,
             loading: false,
             promise: expect.any(Promise),
-            accessedAt: null,
+            accessedAt: expect.any(Number),
           },
         },
       },
