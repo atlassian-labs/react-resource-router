@@ -198,9 +198,6 @@ export type Route = InvariantRoute & {
   /** The component to render on match, typed explicitly */
   component: ComponentType<RouteContext>;
 
-  /** If present, must return true to include the route. */
-  enabled?: () => boolean;
-
   /**
    * Triggered before leaving the route, can trigger full page reload if returns (or resolves) false.
    * Defaults to true.
