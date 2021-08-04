@@ -789,7 +789,8 @@ describe('SPA Router store', () => {
 
   describe('createRouterSelector', () => {
     it('should return selected state', () => {
-      const useRouteName = createRouterSelector(s => s.route.name);
+      const mockSelector = jest.fn().mockImplementation(s => s.route.name);
+      const useRouteName = createRouterSelector(mockSelector);
       const RouteName = () => <>{useRouteName()}</>;
       const route = { path: '', name: 'home', component: () => null };
 
@@ -799,6 +800,31 @@ describe('SPA Router store', () => {
         </MemoryRouter>
       );
 
+      expect(mockSelector).toBeCalledWith(
+        expect.objectContaining({ route }),
+        undefined
+      );
+      expect(wrapper.html()).toEqual('home');
+    });
+
+    it('should pass through single hook argument to selector', () => {
+      const mockSelector = jest.fn().mockImplementation(s => s.route.name);
+      const useRouteName = createRouterSelector(mockSelector);
+      const RouteName = ({ argument }: { argument: unknown }) => (
+        <>{useRouteName(argument)}</>
+      );
+      const route = { path: '', name: 'home', component: () => null };
+
+      const wrapper = mount(
+        <MemoryRouter routes={[route]}>
+          <RouteName argument="bar" />
+        </MemoryRouter>
+      );
+
+      expect(mockSelector).toBeCalledWith(
+        expect.objectContaining({ route }),
+        'bar'
+      );
       expect(wrapper.html()).toEqual('home');
     });
   });
