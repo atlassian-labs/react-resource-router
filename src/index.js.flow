@@ -138,7 +138,7 @@ type GetDataLoader<T> = () => Promise<{
  *
  */
 type CreateResourceArg<T> =
-  | {| ...RouteResource<T>, maxAge?: number |}
+  | {| ...RouteResource<T>, maxAge?: number, maxCache?: number |}
   | {|
       ...$Diff<
         RouteResource<T>,
@@ -146,6 +146,7 @@ type CreateResourceArg<T> =
       >,
       maxAge?: number,
       getDataLoader: GetDataLoader<T>,
+      maxCache?: number,
     |};
 
 declare export function createResource<T>(args: CreateResourceArg<T>): RouteResource<T>;

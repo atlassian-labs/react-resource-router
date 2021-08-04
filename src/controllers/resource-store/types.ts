@@ -40,11 +40,6 @@ type ResourceAction<R> = ({
 }: StoreActionApi<State>) => R;
 
 export type Actions = {
-  setResourceState: (
-    type: RouteResource['type'],
-    key: string,
-    state: RouteResourceResponse
-  ) => ResourceAction<void>;
   updateResourceState: (
     type: RouteResource['type'],
     key: string,

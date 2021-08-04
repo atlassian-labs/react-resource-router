@@ -68,6 +68,7 @@ export type RouteResourceResponse<T> = {|
   promise: Promise<T> | null,
   expiresAt: RouteResourceTimestamp,
   key: string,
+  accessedAt: RouteResourceTimestamp,
 |};
 
 type ResourceFetchContext = { isPrefetch: boolean };
@@ -84,6 +85,7 @@ export type RouteResource<T> = {|
     routerContext: RouterDataContext,
     customContext: ResourceStoreContext
   ) => RouteResourcePromise<T>,
+  maxCache: number,
 |};
 
 export type RouteResources = RouteResource<mixed>[];
