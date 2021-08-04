@@ -426,14 +426,18 @@ export const useRouterStoreStatic = createHook<
 /**
  * Utility to create custom hooks without re-rendering on route change
  */
-export function createRouterSelector<T>(selector: (state: RouterState) => T) {
-  const useHook = createHook<EntireRouterState, AllRouterActions, T>(
+export function createRouterSelector<T, U = void>(
+  selector: (state: RouterState, props: U) => T
+) {
+  const useHook = createHook<EntireRouterState, AllRouterActions, T, U>(
     RouterStore,
     { selector }
   );
 
-  return function useRouterSelector() {
-    return useHook()[0];
+  return function useRouterSelector(
+    ...args: U extends undefined ? [] : [U]
+  ): T {
+    return useHook(...args)[0];
   };
 }
 

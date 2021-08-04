@@ -80,9 +80,9 @@ declare export function useResource<T>(
 declare export function useRouter(): [RouterState, RouterActionsType];
 declare export function useRouterActions(): RouterActionsType;
 declare export function useResourceStoreContext(): ResourceStoreContext;
-declare export function createRouterSelector<T>(
-  selector: (state: RouterState) => T
-): () => T;
+declare export function createRouterSelector<T, U = void>(
+  selector: (state: RouterState, props: U) => T
+): (U) => T;
 
 declare export function useQueryParam(
   paramKey: string
