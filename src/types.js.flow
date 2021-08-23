@@ -52,8 +52,14 @@ export type RouteResourceTimestamp = number | null;
 export type RouteResourceError = Object | Error | null;
 // Flow can't narrow optional chaining for RouteResourceResponse.data/RouteResourceResponse.promise
 // if the fields are based off RouteResourceData/RouteResourcePromise so we flip the source of truth for these fields
-export type RouteResourceData<T> = $PropertyType<RouteResourceResponse<T>, 'data'>;
-export type RouteResourcePromise<T> = $PropertyType<RouteResourceResponse<T>, 'promise'>;
+export type RouteResourceData<T> = $PropertyType<
+  RouteResourceResponse<T>,
+  'data'
+>;
+export type RouteResourcePromise<T> = $PropertyType<
+  RouteResourceResponse<T>,
+  'promise'
+>;
 
 export type RouteResourceResponse<T> = {|
   loading: RouteResourceLoading,
@@ -94,7 +100,7 @@ export type ResourceOptions = {
   routerContext?: RouterContext,
 };
 
-export type RouteResourceUpdater<T: RouteResourceData<any>> = (data: T) => T;
+export type RouteResourceUpdater<T> = (data: RouteResourceData<T>) => RouteResourceData<T>;
 
 export type InvariantRoute = {
   path: string,
@@ -123,8 +129,6 @@ export type Route = {
 
   /** The component to render on match, typed explicitly */
   component: React$ComponentType<RouteContext>,
-  /** If present, must return true to include the route. */
-  enabled?: () => boolean,
   /**
    * The resources for the route
    */
