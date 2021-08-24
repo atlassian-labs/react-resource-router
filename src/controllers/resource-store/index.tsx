@@ -209,9 +209,9 @@ export const actions: Actions = {
     resources.forEach(resource => {
       const { type, getKey } = resource;
       const key = getKey(routerStoreContext, resourceContext);
-      const slice = getSliceForResource({ data }, { type, key });
+      const slice = data[type]?.[key];
 
-      if (!slice.expiresAt || slice.expiresAt < Date.now()) {
+      if (slice && (!slice.expiresAt || slice.expiresAt < Date.now())) {
         dispatch(deleteResourceKey(key, type));
       }
     });
