@@ -72,7 +72,7 @@
     "lodash.debounce": "^4.0.8",
     "lodash.noop": "^3.0.1",
     "path-to-regexp": "^1.7.0",
-    "react-sweet-state": "^2.5.1",
+    "react-sweet-state": "^2.5.2",
     "tslib": "^1.9.3",
     "url-parse": "^1.4.5"
   },
