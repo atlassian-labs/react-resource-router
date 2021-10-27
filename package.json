@@ -74,7 +74,7 @@
     "path-to-regexp": "^1.7.0",
     "react-sweet-state": "^2.5.1",
     "tslib": "^1.9.3",
-    "url-parse": "^1.4.5"
+    "url-parse": "^1.5.3"
   },
   "devDependencies": {
     "@babel/cli": "^7.5.5",
