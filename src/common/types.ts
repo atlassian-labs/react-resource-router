@@ -8,7 +8,7 @@ import {
   AnchorHTMLAttributes,
 } from 'react';
 
-import { History, Location as HistoryLocationShape } from 'history';
+import { History, Location as HistoryLocationShape, LocationState } from 'history';
 
 export type LocationShape = HistoryLocationShape;
 
@@ -16,8 +16,9 @@ export type Href = string;
 
 export type Location = {
   pathname: string;
-  search: string;
-  hash: string;
+  search?: string;
+  hash?: string;
+  state?: LocationState;
 };
 
 export type BrowserHistory = Omit<
@@ -25,8 +26,8 @@ export type BrowserHistory = Omit<
   'location' | 'go' | 'createHref' | 'push' | 'replace'
 > & {
   location: Location;
-  push: (path: string) => void;
-  replace: (path: string) => void;
+  push: (path: string, state?: unknown) => void;
+  replace: (path: string, state?: unknown) => void;
 };
 
 export type MatchParams = {
@@ -109,7 +110,7 @@ export type RouteResourceResponseLoaded<RouteResourceData> = {
 
 export type RouteResourceResponse<
   RouteResourceData = unknown
-> = RouteResourceResponseBase<RouteResourceData> &
+  > = RouteResourceResponseBase<RouteResourceData> &
   (
     | RouteResourceResponseLoading<RouteResourceData>
     | RouteResourceResponseError<RouteResourceData>
@@ -237,7 +238,7 @@ export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   children: ReactNode;
   target?: '_blank' | '_self' | '_parent' | '_top';
   href?: string;
-  to?: string | Route | Promise<{ default: Route } | Route>;
+  to?: string | Route | Location | Promise<{ default: Route }>;
   replace?: boolean;
   type?: 'a' | 'button';
   onClick?: (e: MouseEvent | KeyboardEvent) => void;
@@ -291,6 +292,7 @@ export type GenerateLocationOptions = {
   params?: MatchParams;
   query?: Query;
   basePath?: string;
+  state?: LocationShape;
 };
 
 export type CreateRouterContextOptions = {
