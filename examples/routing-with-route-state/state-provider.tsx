@@ -11,21 +11,19 @@ export const StateProvider = () => {
         <>
             <h1>There is a several variants presented to pass some state options to the next route</h1>
             <button type="button" onClick={() => {
-                push('/consumer', { fromPush: "Aloha from push()" })
+                push('/consumer', { message: "Aloha from push()" })
             }}>Use PUSH method</button>
             <br />
             <button type="button" onClick={() => {
-                replace('/consumer', { fromReplace: "Greatings from replace()" })
+                replace('/consumer', { message: "Greatings from replace()", replaced: true })
             }}>Use REPLACE method</button>
             <br />
             <Link to={{
                 pathname: '/consumer',
-                state: { fromLink: 'Hola! There was a Link!' }
+                state: { message: 'Hola! It was from <Link />' }
             }}>Use LINK component</Link>
             <br />
-            <Link to={{
-                pathname: '/redirector',
-            }}>Use LINK  to REDIRECT component</Link>
+            <Link to="/redirector">Use LINK  to REDIRECT component</Link>
         </>
     );
 };

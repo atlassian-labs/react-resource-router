@@ -47,9 +47,11 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     const validLinkType = getValidLinkType(linkType);
     const [route, setRoute] = useState<Route | Location | undefined>(() => {
       if (to && typeof to !== 'string') {
-        if ('then' in to)
+        if ('then' in to) {
           to.then(r => setRoute('default' in r ? r.default : r));
-        else return to;
+        }
+
+        return to as Route;
       }
     });
 
@@ -101,8 +103,8 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         replace,
         routerActions,
         href: linkDestination,
-        to: route && 'component' in route && [route, { params, query }],
-        state: (route as unknown as Location)?.state
+        to: route && 'component' in route ? [route, { params, query }] : undefined,
+        state: route && 'pathname' in route ? route.state : undefined
       });
 
     const handleMouseEnter = (e: MouseEvent) => {

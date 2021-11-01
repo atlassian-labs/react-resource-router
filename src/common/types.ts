@@ -292,7 +292,7 @@ export type GenerateLocationOptions = {
   params?: MatchParams;
   query?: Query;
   basePath?: string;
-  state?: LocationShape;
+  state?: LocationState;
 };
 
 export type CreateRouterContextOptions = {

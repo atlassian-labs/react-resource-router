@@ -5,15 +5,13 @@ import {
 
 
 export const StateConsumer = () => {
-    const [{ location: { state = {} } }] = useRouter();
-    const { fromPush, fromReplace, fromLink, fromRedirect } = state as any;
+    const [{ location: { state = {} } }, { goBack, push }] = useRouter();
+    const { message, replaced } = state as any;
 
     return (
-        <ul>
-            {fromPush && <li>From push() {fromPush}</li>}
-            {fromReplace && <li>From replace() {fromReplace}</li>}
-            {fromLink && <li>From Link {fromLink}</li>}
-            {fromRedirect && <li>From Redirect {fromRedirect}</li>}
-        </ul>
+        <>
+            <button type="button" onClick={() => replaced ? push('/') : goBack()}>go back</button>
+            <p>{message}</p>
+        </>
     );
 };

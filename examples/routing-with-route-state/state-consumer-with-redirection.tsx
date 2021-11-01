@@ -8,7 +8,7 @@ export const StateConsumerWithRedirection = () => {
     return (
         <Redirect to={{
             pathname: '/consumer',
-            state: { fromRedirect: 'Hola! There was a redirection!' }
+            state: { message: 'Hey! It was from <Redirect />' }
         }} />
     );
 };

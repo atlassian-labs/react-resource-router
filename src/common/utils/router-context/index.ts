@@ -32,8 +32,8 @@ export const findRouterContext = (
   options: FindRouterContextOptions
 ): RouterContext => {
   const { location, basePath = '' } = options;
-  const { pathname, search = '' } = location;
-  const query = qs.parse(search) as Query;
+  const { pathname, search } = location;
+  const query = search ? qs.parse(search) as Query : {};
   const matchedRoute = matchRoute(routes, pathname, query, basePath);
 
   return {

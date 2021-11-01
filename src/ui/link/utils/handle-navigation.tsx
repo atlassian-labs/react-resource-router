@@ -17,7 +17,7 @@ type LinkPressArgs = {
   replace: boolean;
   href: string;
   onClick?: (e: LinkNavigationEvent) => void;
-  to: [Route, any] | false | undefined;
+  to: [Route, any] | undefined;
   state?: LocationState;
 };
 
