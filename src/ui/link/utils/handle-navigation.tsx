@@ -1,5 +1,6 @@
 import { KeyboardEvent, MouseEvent } from 'react';
-import { Route } from '../../../common/types';
+import { LocationState } from 'history';
+import { Route, Location } from '../../../common/types';
 
 import { isKeyboardEvent, isModifiedEvent } from '../../../common/utils/event';
 
@@ -8,20 +9,21 @@ type LinkNavigationEvent = MouseEvent | KeyboardEvent;
 type LinkPressArgs = {
   target?: string;
   routerActions: {
-    push: (href: string) => void;
-    replace: (href: string) => void;
+    push: (href: string, state?: LocationState) => void;
+    replace: (href: string, state?: LocationState) => void;
     pushTo: (route: Route, attributes: any) => void;
     replaceTo: (route: Route, attributes: any) => void;
   };
   replace: boolean;
   href: string;
   onClick?: (e: LinkNavigationEvent) => void;
-  to: [Route, any] | void;
+  to: [Route, any] | undefined;
+  state?: LocationState;
 };
 
 export const handleNavigation = (
   event: any,
-  { onClick, target, replace, routerActions, href, to }: LinkPressArgs
+  { onClick, target, replace, routerActions, href, to, state }: LinkPressArgs
 ): void => {
   if (isKeyboardEvent(event) && event.keyCode !== 13) {
     return;
@@ -41,7 +43,7 @@ export const handleNavigation = (
       method(...to);
     } else {
       const method = replace ? routerActions.replace : routerActions.push;
-      method(href);
+      method(href, state);
     }
   }
 };

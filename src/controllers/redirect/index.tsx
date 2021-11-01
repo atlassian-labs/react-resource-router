@@ -22,6 +22,7 @@ class Redirector extends Component<RedirectorProps> {
     const newPath = typeof to === 'object' ? createPath(to) : to;
     const currentPath = createPath(location);
     const action = push ? actions.push : actions.replace;
+    const state = to && typeof to !== 'string' ? to.state : undefined;
 
     if (currentPath === newPath) {
       if (
@@ -37,7 +38,7 @@ class Redirector extends Component<RedirectorProps> {
       return;
     }
 
-    action(newPath);
+    action(newPath, state);
   }
 
   render() {

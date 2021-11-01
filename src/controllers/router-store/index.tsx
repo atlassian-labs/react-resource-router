@@ -228,12 +228,12 @@ const actions: AllRouterActions = {
     });
   },
 
-  push: path => ({ getState }) => {
+  push: (path, state) => ({ getState }) => {
     const { history, basePath } = getState();
     if (isExternalAbsolutePath(path)) {
       window.location.assign(path as string);
     } else {
-      history.push(getRelativePath(path, basePath) as any);
+      history.push(getRelativePath(path, basePath) as any, state);
     }
   },
 
@@ -247,12 +247,12 @@ const actions: AllRouterActions = {
     history.push(location as any);
   },
 
-  replace: path => ({ getState }) => {
+  replace: (path, state) => ({ getState }) => {
     const { history, basePath } = getState();
     if (isExternalAbsolutePath(path)) {
       window.location.replace(path as string);
     } else {
-      history.replace(getRelativePath(path, basePath) as any);
+      history.replace(getRelativePath(path, basePath) as any, state);
     }
   },
 

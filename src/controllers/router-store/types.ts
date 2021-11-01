@@ -103,9 +103,9 @@ type PrivateRouterActions = {
 };
 
 type PublicRouterActions = {
-  push: (path: Href, state?: any) => RouterAction;
+  push: (path: Href, state?: unknown) => RouterAction;
   pushTo: (route: Route, attributes?: ToAttributes) => RouterAction;
-  replace: (path: Href) => RouterAction;
+  replace: (path: Href, state?: unknown) => RouterAction;
   replaceTo: (route: Route, attributes?: ToAttributes) => RouterAction;
   goBack: () => RouterAction;
   goForward: () => RouterAction;

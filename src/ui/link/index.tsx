@@ -1,3 +1,4 @@
+import React from 'react';
 import { createPath } from 'history';
 import {
   createElement,
@@ -10,7 +11,7 @@ import {
   KeyboardEvent,
 } from 'react';
 
-import { LinkProps, Route } from '../../common/types';
+import { LinkProps, Route, Location } from '../../common/types';
 import {
   createRouterContext,
   generateLocationFromPath,
@@ -44,11 +45,13 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     const prefetchRef = useRef<NodeJS.Timeout>();
 
     const validLinkType = getValidLinkType(linkType);
-    const [route, setRoute] = useState<Route | void>(() => {
+    const [route, setRoute] = useState<Route | Location | undefined>(() => {
       if (to && typeof to !== 'string') {
-        if ('then' in to)
+        if ('then' in to) {
           to.then(r => setRoute('default' in r ? r.default : r));
-        else return to;
+        }
+
+        return to as Route;
       }
     });
 
@@ -57,22 +60,24 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       query,
       basePath: routerActions.getBasePath() as any,
     };
+
     const linkDestination =
       href != null
         ? href
         : typeof to !== 'string'
-        ? (route &&
+          ? (route &&
             createPath(
-              generateLocationFromPath(route.path, routeAttributes)
+              'pathname' in route ? route :
+                generateLocationFromPath(route.path, routeAttributes)
             )) ||
           ''
-        : to;
+          : to;
 
     const triggerPrefetch = useCallback(() => {
       prefetchRef.current = undefined;
 
       // ignore if async route not ready yet
-      if (typeof to !== 'string' && !route) return;
+      if (typeof to !== 'string' && !route || route && 'pathname' in route) return;
 
       const context =
         typeof to !== 'string' && route
@@ -98,7 +103,8 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         replace,
         routerActions,
         href: linkDestination,
-        to: route && [route, { params, query }],
+        to: route && 'component' in route ? [route, { params, query }] : undefined,
+        state: route && 'pathname' in route ? route.state : undefined
       });
 
     const handleMouseEnter = (e: MouseEvent) => {
