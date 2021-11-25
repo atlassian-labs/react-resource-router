@@ -2,6 +2,7 @@ import React from 'react';
 
 import { mount } from 'enzyme';
 import { defaultRegistry } from 'react-sweet-state';
+import { act } from 'react-dom/test-utils';
 
 import { LinkProps } from '../../../../common/types';
 import { Router } from '../../../../controllers/router';
@@ -102,7 +103,9 @@ describe('<Link />', () => {
     const wrapper = mountInRouter('my link', { href: newPath });
     const component = wrapper.find('Link');
 
-    component.simulate('click', baseClickEvent);
+    act(() => {
+      component.simulate('click', baseClickEvent);
+    });
 
     expect(HistoryMock.push).toHaveBeenCalledTimes(1);
     expect(HistoryMock.push).toHaveBeenCalledWith(newPath);
@@ -112,7 +115,9 @@ describe('<Link />', () => {
     const wrapper = mountInRouter('my link', { href: newPath });
     const component = wrapper.find('Link');
 
-    component.simulate('click', baseClickEvent);
+    act(() => {
+      component.simulate('click', baseClickEvent);
+    });
 
     expect(baseClickEvent.preventDefault).toHaveBeenCalledTimes(1);
   });
@@ -125,7 +130,9 @@ describe('<Link />', () => {
     });
     const component = wrapper.find('Link');
 
-    component.simulate('click', baseClickEvent);
+    act(() => {
+      component.simulate('click', baseClickEvent);
+    });
 
     expect(mockOnClick).toHaveBeenCalledTimes(1);
     expect(baseClickEvent.preventDefault).toHaveBeenCalledTimes(1);
@@ -136,7 +143,9 @@ describe('<Link />', () => {
     const wrapper = mountInRouter('my link', { href: newPath, replace: true });
     const component = wrapper.find('Link');
 
-    component.simulate('click', baseClickEvent);
+    act(() => {
+      component.simulate('click', baseClickEvent);
+    });
 
     expect(HistoryMock.replace).toHaveBeenCalledTimes(1);
     expect(HistoryMock.replace).toHaveBeenCalledWith(newPath);
@@ -149,7 +158,9 @@ describe('<Link />', () => {
         const wrapper = mountInRouter('my link', { href: newPath });
         const component = wrapper.find('Link');
 
-        component.simulate('click', { ...baseClickEvent, [modifier]: true });
+        act(() => {
+          component.simulate('click', { ...baseClickEvent, [modifier]: true });
+        });
 
         expect(HistoryMock.push).toHaveBeenCalledTimes(0);
       }
@@ -159,9 +170,11 @@ describe('<Link />', () => {
       const wrapper = mountInRouter('my link', { href: newPath });
       const component = wrapper.find('Link');
 
-      component.simulate('click', {
-        ...baseClickEvent,
-        defaultPrevented: true,
+      act(() => {
+        component.simulate('click', {
+          ...baseClickEvent,
+          defaultPrevented: true,
+        });
       });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(0);
@@ -171,7 +184,9 @@ describe('<Link />', () => {
       const wrapper = mountInRouter('my link', { href: newPath });
       const component = wrapper.find('Link');
 
-      component.simulate('click', { ...baseClickEvent, button: 42 });
+      act(() => {
+        component.simulate('click', { ...baseClickEvent, button: 42 });
+      });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(0);
     });
@@ -183,7 +198,9 @@ describe('<Link />', () => {
       });
       const component = wrapper.find('Link');
 
-      component.simulate('click', baseClickEvent);
+      act(() => {
+        component.simulate('click', baseClickEvent);
+      });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(0);
     });
@@ -224,7 +241,9 @@ describe('<Link />', () => {
       );
       const component = wrapper.find('Link');
 
-      component.simulate('click', baseClickEvent);
+      act(() => {
+        component.simulate('click', baseClickEvent);
+      });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
       expect(HistoryMock.push).toHaveBeenCalledWith({
@@ -243,7 +262,9 @@ describe('<Link />', () => {
       await Promise.resolve();
       const component = wrapper.find('Link');
 
-      component.simulate('click', baseClickEvent);
+      act(() => {
+        component.simulate('click', baseClickEvent);
+      });
 
       expect(wrapper.html()).toEqual(
         '<a href="/my-page/1?foo=bar" target="_self">my link</a>'
@@ -266,10 +287,12 @@ describe('<Link />', () => {
       const wrapper = mountInRouter('my link', { href: newPath });
       const component = wrapper.find('Link');
 
-      component.simulate('click', {
-        ...baseClickEvent,
-        type: 'keypress',
-        keyCode: 13,
+      act(() => {
+        component.simulate('click', {
+          ...baseClickEvent,
+          type: 'keypress',
+          keyCode: 13,
+        });
       });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
@@ -280,10 +303,12 @@ describe('<Link />', () => {
       const wrapper = mountInRouter('my link', { href: newPath });
       const component = wrapper.find('Link');
 
-      component.simulate('click', {
-        ...baseClickEvent,
-        type: 'keypress',
-        keyCode: 10,
+      act(() => {
+        component.simulate('click', {
+          ...baseClickEvent,
+          type: 'keypress',
+          keyCode: 10,
+        });
       });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(0);
