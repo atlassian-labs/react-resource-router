@@ -49,11 +49,7 @@ export const actions: Actions = {
     getState,
     dispatch,
   }) => {
-    const { data: resourceStoreData } = getState();
-    const slice = getSliceForResource(
-      { data: resourceStoreData },
-      { type, key }
-    );
+    const slice = getSliceForResource(getState(), { type, key });
     const data = getNewSliceData(slice.data);
 
     dispatch(
@@ -79,12 +75,9 @@ export const actions: Actions = {
   }) => {
     const { type, getKey, maxAge } = resource;
     const { getResourceFromRemote } = actions;
-    const { data: resourceStoreData, context } = getState();
+    const { context, ...resourceStoreState } = getState();
     const key = getKey(routerStoreContext, context);
-    let cached = getSliceForResource(
-      { data: resourceStoreData },
-      { type, key }
-    );
+    let cached = getSliceForResource(resourceStoreState, { type, key });
 
     if (shouldUseCache(cached)) {
       if (isFromSsr(cached)) {
@@ -111,12 +104,12 @@ export const actions: Actions = {
   }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
     const { prefetch, timeout } = options;
-    const { data: resourceStoreData, context } = getState();
+    const { context, ...resourceStoreState } = getState();
     const key = getKey(routerStoreContext, context);
-    const slice = getSliceForResource(
-      { data: resourceStoreData },
-      { type, key }
-    );
+    const slice = getSliceForResource(resourceStoreState, {
+      type,
+      key,
+    });
 
     if (slice.loading) {
       return slice;
