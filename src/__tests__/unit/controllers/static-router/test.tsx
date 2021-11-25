@@ -57,11 +57,10 @@ describe('<StaticRouter />', () => {
     const result = 'result';
     const resolver = (r: any, d = 0) =>
       new Promise(resolve => setTimeout(() => resolve(r), d));
-    const getDataPromise = Promise.resolve(result);
     const mockResource = {
       type,
       getKey: () => key,
-      getData: () => getDataPromise,
+      getData: () => Promise.resolve(result),
     };
     const mockedRoutes = [
       {

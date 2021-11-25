@@ -11,6 +11,7 @@ import { ResourceStore } from '../../../../../controllers/resource-store';
 import { createResource } from '../../../../../controllers/resource-utils';
 import { getRouterState } from '../../../../../controllers/router-store';
 import { createRouterContext } from '../../../../../common/utils';
+import { getDefaultStateSlice } from '../../../../../controllers/resource-store/utils';
 
 jest.mock('../../../../../controllers/router-store', () => ({
   ...jest.requireActual<any>('../../../../../controllers/router-store'),
@@ -19,16 +20,21 @@ jest.mock('../../../../../controllers/router-store', () => ({
 
 const mockType = 'some-type';
 const mockKey = 'i-am-a-key';
+const mockData = 'my-remote-data';
+const mockResource = createResource({
+  type: mockType,
+  getKey: () => mockKey,
+  getData: () => Promise.resolve(mockData),
+  maxAge: 100,
+});
 const mockSlice = {
-  data: null,
+  data: 'my-initial-data',
   error: null,
   loading: false,
-  key: 'i-am-a-key',
-  promise: Promise.resolve(),
+  key: mockKey,
+  promise: Promise.resolve('my-initial-data'),
   expiresAt: 0,
 };
-const mockData = 'some-data';
-const getDataPromise = Promise.resolve(mockData);
 const mockRoute = {
   name: '',
   path: ':page?',
@@ -41,12 +47,6 @@ const mockMatch = {
   path: ':page?',
   url: '',
 };
-const mockResource = createResource({
-  type: mockType,
-  getKey: () => mockKey,
-  getData: () => getDataPromise,
-  maxAge: 100,
-});
 const mockHydratableState = {
   resourceContext: {
     route: mockRoute,
@@ -102,7 +102,7 @@ describe('useResource hook', () => {
 
           spy(resource);
 
-          return <h1>my test</h1>;
+          return null;
         }}
       </MockComponent>
     );
@@ -124,7 +124,7 @@ describe('useResource hook', () => {
             const resource = useResource(mockResource);
             resourceResponse = resource;
 
-            return <h1>my test</h1>;
+            return null;
           }}
         </MockComponent>
       );
@@ -141,52 +141,55 @@ describe('useResource hook', () => {
       });
     });
 
-    it('should update a resource with the data set to null', () => {
-      const newData = null;
-      let resourceResponse: any;
-      mount(
-        <MockComponent>
-          {() => {
-            const resource = useResource(mockResource);
-            resourceResponse = resource;
+    it.each([null, undefined])(
+      'should delete a resource when updated to %s',
+      newData => {
+        let resourceResponse: any;
+        const wrapper = mount(
+          <MockComponent>
+            {() => {
+              const resource = useResource(mockResource);
+              resourceResponse = resource;
 
-            return <h1>my test</h1>;
-          }}
-        </MockComponent>
-      );
+              return null;
+            }}
+          </MockComponent>
+        );
 
-      act(() => resourceResponse.update(() => newData));
+        act(() => resourceResponse.update(() => newData));
 
-      const storeData = storeState.getState();
+        const storeData = storeState.getState();
+        expect(storeData.data[mockType][mockKey]).toEqual(undefined);
 
-      expect(storeData.data[mockType][mockKey]).toEqual({
-        ...mockSlice,
-        expiresAt: 100,
-        data: newData,
-        accessedAt: 0,
-      });
-    });
+        wrapper.update();
+        expect(resourceResponse).toEqual({
+          ...getDefaultStateSlice(),
+          key: mockKey,
+          refresh: expect.any(Function),
+          update: expect.any(Function),
+        });
+      }
+    );
 
-    it('should call new data getter with current data', () => {
+    it('should call update function with current data', () => {
       const currentData = 'my-current-data';
-      const mockGetData = jest.fn();
+      const updater = jest.fn();
       let resourceResponse: any;
-
       mount(
         <MockComponent>
           {() => {
             const resource = useResource(mockResource);
             resourceResponse = resource;
 
-            return <h1>my test</h1>;
+            return null;
           }}
         </MockComponent>
       );
 
       act(() => resourceResponse.update(() => currentData));
-      act(() => resourceResponse.update(mockGetData));
+      act(() => resourceResponse.update(updater));
 
-      expect(mockGetData).toHaveBeenCalledWith(currentData);
+      expect(updater).toHaveBeenCalledWith(currentData);
     });
   });
 
@@ -202,7 +205,7 @@ describe('useResource hook', () => {
             const resource = useResource(mockResource);
             resourceResponse = resource;
 
-            return <h1>my test</h1>;
+            return null;
           }}
         </MockComponent>
       );
@@ -235,7 +238,7 @@ describe('useResource hook', () => {
             });
             resourceResponse = resource;
 
-            return <h1>my test</h1>;
+            return null;
           }}
         </MockComponent>
       );

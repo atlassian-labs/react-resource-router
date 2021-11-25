@@ -49,17 +49,24 @@ export const actions: Actions = {
     getState,
     dispatch,
   }) => {
-    const { data } = getState();
-
-    const slice = getSliceForResource({ data }, { type, key });
+    const { data: resourceStoreData } = getState();
+    const slice = getSliceForResource(
+      { data: resourceStoreData },
+      { type, key }
+    );
+    const data = getNewSliceData(slice.data);
 
     dispatch(
-      setResourceState(type, key, {
-        ...slice,
-        data: getNewSliceData(slice.data),
-        expiresAt: getExpiresAt(maxAge),
-        accessedAt: getAccessedAt(),
-      })
+      data == null
+        ? deleteResourceKey(key, type)
+        : setResourceState(type, key, {
+            ...slice,
+            data,
+            error: null,
+            promise: Promise.resolve(data),
+            expiresAt: getExpiresAt(maxAge),
+            accessedAt: getAccessedAt(),
+          })
     );
   },
   /**

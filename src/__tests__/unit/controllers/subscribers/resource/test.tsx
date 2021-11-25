@@ -9,23 +9,24 @@ import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../../../common/constants';
 import { ResourceStore } from '../../../../../controllers/resource-store';
 import { createResource } from '../../../../../controllers/resource-utils';
 import { ResourceSubscriber } from '../../../../../controllers/subscribers/resource';
+import { getDefaultStateSlice } from '../../../../../controllers/resource-store/utils';
 
 describe('ResourceSubscriber', () => {
-  const type = 'type';
-  const key = 'key';
-  const result = 'result';
-  const getDataPromise = Promise.resolve(result);
+  const mockType = 'some-type';
+  const mockKey = 'i-am-a-key';
+  const mockData = 'my-remote-data';
   const mockResource = createResource({
-    type,
-    getKey: () => key,
-    getData: () => getDataPromise,
+    type: mockType,
+    getKey: () => mockKey,
+    getData: () => Promise.resolve(mockData),
     maxAge: 100,
   });
   const mockSlice = {
-    data: null,
+    data: 'my-initial-data',
     error: null,
     loading: false,
-    promise: Promise.resolve(),
+    key: mockKey,
+    promise: Promise.resolve('my-initial-data'),
     expiresAt: 100,
     accessedAt: 0,
   };
@@ -50,9 +51,9 @@ describe('ResourceSubscriber', () => {
   it('should render a loading component if using a resource that has not yet been resolved', () => {
     storeState.setState({
       data: {
-        [type]: {
-          [key]: {
-            data: result,
+        [mockType]: {
+          [mockKey]: {
+            data: mockData,
             loading: true,
             error: null,
             promise: null,
@@ -85,9 +86,9 @@ describe('ResourceSubscriber', () => {
   it('should get the slice of data for the type and key', async () => {
     storeState.setState({
       data: {
-        [type]: {
-          [key]: {
-            data: result,
+        [mockType]: {
+          [mockKey]: {
+            data: mockData,
             loading: false,
             error: null,
             promise: null,
@@ -123,8 +124,8 @@ describe('ResourceSubscriber', () => {
       let subscriberUpdate: any;
       storeState.setState({
         data: {
-          [type]: {
-            [key]: mockSlice,
+          [mockType]: {
+            [mockKey]: mockSlice,
           },
         },
       });
@@ -150,48 +151,66 @@ describe('ResourceSubscriber', () => {
 
       const storeData = storeState.getState();
 
-      expect(storeData.data[type][key]).toEqual({
+      expect(storeData.data[mockType][mockKey]).toEqual({
         ...mockSlice,
         data: newData,
       });
     });
 
-    it('should update a resource with the data set to null', () => {
-      const newData = null;
-      let subscriberUpdate: any;
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: mockSlice,
+    it.each([null, undefined])(
+      'should delete a resource when updated to %s',
+      async newData => {
+        let resourceResponse: any;
+        storeState.setState({
+          data: {
+            [mockType]: {
+              [mockKey]: mockSlice,
+            },
           },
-        },
-      });
+        });
+        const wrapper = mount(
+          <ResourceSubscriber resource={mockResource}>
+            {resource => {
+              resourceResponse = resource;
+
+              return null;
+            }}
+          </ResourceSubscriber>
+        );
+
+        act(() => resourceResponse.update(() => newData));
+
+        const storeData = storeState.getState();
+        expect(storeData.data[mockType][mockKey]).toEqual(undefined);
+
+        wrapper.update();
+        expect(resourceResponse).toEqual({
+          ...getDefaultStateSlice(),
+          key: mockKey,
+          refresh: expect.any(Function),
+          update: expect.any(Function),
+        });
+      }
+    );
+
+    it('should call update function with current data', () => {
+      const currentData = 'my-current-data';
+      const updater = jest.fn();
+      let resourceResponse: any;
       mount(
         <ResourceSubscriber resource={mockResource}>
-          {({ data, loading, update }) => {
-            subscriberUpdate = update;
-
-            if (loading) {
-              return <div id="loading" />;
-            }
-
-            if (data) {
-              return <div id="data" />;
-            }
+          {resource => {
+            resourceResponse = resource;
 
             return null;
           }}
         </ResourceSubscriber>
       );
 
-      act(() => subscriberUpdate(() => newData));
+      act(() => resourceResponse.update(() => currentData));
+      act(() => resourceResponse.update(updater));
 
-      const storeData = storeState.getState();
-
-      expect(storeData.data[type][key]).toEqual({
-        ...mockSlice,
-        data: newData,
-      });
+      expect(updater).toHaveBeenCalledWith(currentData);
     });
   });
 
