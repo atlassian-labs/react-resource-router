@@ -106,73 +106,97 @@ export const actions: Actions = {
     const { prefetch, timeout } = options;
     const { context, ...resourceStoreState } = getState();
     const key = getKey(routerStoreContext, context);
-    const slice = getSliceForResource(resourceStoreState, {
+    const originalSlice = getSliceForResource(resourceStoreState, {
       type,
       key,
     });
 
-    if (slice.loading) {
-      return slice;
+    if (originalSlice.loading) {
+      return originalSlice;
     }
 
     dispatch(validateLRUCache(resource, key));
 
-    const pending = {
-      ...slice,
-      data: maxAge === 0 ? null : slice.data,
-      error: maxAge === 0 ? null : slice.error,
+    const promise = getData(
+      { ...routerStoreContext, isPrefetch: !!prefetch },
+      context
+    );
+    const pendingSlice = {
+      ...originalSlice,
+      data: maxAge === 0 ? null : originalSlice.data,
+      error: maxAge === 0 ? null : originalSlice.error,
       loading: true,
-      promise: getData(
-        { ...routerStoreContext, isPrefetch: !!prefetch },
-        context
+      promise,
+      accessedAt: getAccessedAt(),
+    };
+
+    dispatch(setResourceState(type, key, pendingSlice));
+
+    // do not introduce additional awaited function call here, it will cause additional microtasks
+    let resolvedSlice;
+    try {
+      if (timeout) {
+        const timeoutGuard = generateTimeGuard(timeout);
+        const maybeData = await Promise.race([promise, timeoutGuard.promise]);
+
+        if (!timeoutGuard.isPending) {
+          // timeout state intentionally looks like hung loading, with exception of the Error
+          // however promise must be null to avoid actually hanging
+          resolvedSlice = {
+            data: null,
+            error: new TimeoutError(type),
+            loading: true,
+            promise: null,
+          };
+        } else {
+          timeoutGuard.timerId && clearTimeout(timeoutGuard.timerId);
+          resolvedSlice = {
+            data: maybeData,
+            error: null, // previous error is removed
+            loading: false,
+            promise,
+          };
+        }
+      } else {
+        resolvedSlice = {
+          data: await promise,
+          error: null, // previous error is removed
+          loading: false,
+          promise,
+        };
+      }
+    } catch (error) {
+      resolvedSlice = {
+        // previous data is retained
+        promise,
+        error,
+        loading: false,
+      };
+    }
+
+    // do not overwrite a slice that was updated during async
+    const laterSlice = getSliceForResource(getState(), { type, key });
+    if (
+      !(laterSlice.error instanceof TimeoutError) &&
+      laterSlice.promise !== pendingSlice.promise
+    ) {
+      return laterSlice;
+    }
+
+    const finalSlice = {
+      ...pendingSlice,
+      ...resolvedSlice,
+      expiresAt: getExpiresAt(
+        options.prefetch && maxAge < PREFETCH_MAX_AGE
+          ? PREFETCH_MAX_AGE
+          : maxAge
       ),
       accessedAt: getAccessedAt(),
     };
 
-    dispatch(setResourceState(type, key, pending));
+    dispatch(updateRemoteResourceState(type, key, finalSlice));
 
-    const response = {
-      ...pending,
-    };
-
-    try {
-      response.error = null;
-
-      if (timeout) {
-        const timeoutGuard = generateTimeGuard(timeout);
-        const maybeData = await Promise.race([
-          pending.promise,
-          timeoutGuard.promise,
-        ]);
-
-        if (!timeoutGuard.isPending) {
-          response.data = null;
-          response.error = new TimeoutError(type);
-          response.loading = true;
-          response.promise = null;
-        } else {
-          timeoutGuard.timerId && clearTimeout(timeoutGuard.timerId);
-          response.data = maybeData;
-          response.loading = false;
-        }
-      } else {
-        response.data = await pending.promise;
-        response.loading = false;
-      }
-    } catch (e) {
-      response.error = e;
-      response.loading = false;
-    }
-
-    response.expiresAt = getExpiresAt(
-      options.prefetch && maxAge < PREFETCH_MAX_AGE ? PREFETCH_MAX_AGE : maxAge
-    );
-
-    response.accessedAt = getAccessedAt();
-
-    dispatch(updateRemoteResourceState(type, key, response));
-
-    return response;
+    return finalSlice;
   },
   /**
    * Request all resources.
