@@ -388,6 +388,27 @@ describe('resource store', () => {
     });
   });
 
+  describe('requestResources', () => {
+    it('should skip isBrowser resources if isStatic is true', () => {
+      const data = actions.requestResources(
+        [{ ...mockResource, isBrowser: true }],
+        mockRouterStoreContext,
+        { ...mockOptions, isStatic: true }
+      );
+
+      expect(data).toEqual([]);
+    });
+    it('should ignore isBrowser if isStatic is falsey', () => {
+      const data = actions.requestResources(
+        [{ ...mockResource, isBrowser: true }],
+        mockRouterStoreContext,
+        mockOptions
+      );
+
+      expect(data.length).toEqual(1);
+    });
+  });
+
   describe('getSafeData', () => {
     const slice = {
       data: { hello: 'world' },

@@ -41,7 +41,7 @@ import { appRoutes } from './routing';
 
 ## StaticRouter
 
-If you are planning to render your application on the server, you must use the `StaticRouter` in your server side entry. The `StaticRouter` does not require a `history` prop to be provided, instead, you simply need to provide the current `location` as a string. In order to achieve this, we recommend your server side application uses [`jsdom`](https://github.com/jsdom/jsdom).
+If you are planning to render your application on the server, you must use the `StaticRouter` in your server side entry. The `StaticRouter` should only be used on server. It does not require a `history` prop to be provided, instead, you simply need to provide the current `location` as a string. In order to achieve this, we recommend your server side application uses [`jsdom`](https://github.com/jsdom/jsdom).
 
 ```js
 // server-app.js

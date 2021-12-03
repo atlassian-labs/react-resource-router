@@ -142,6 +142,7 @@ export type RouteResource<RouteResourceData = unknown> = {
     customContext: ResourceStoreContext
   ) => RouteResourcePromise<RouteResourceData>;
   maxCache: number;
+  isBrowser: boolean;
 };
 
 export type RouteResources = RouteResource[];

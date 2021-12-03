@@ -227,10 +227,16 @@ export const actions: Actions = {
    */
   requestResources: (resources, routerStoreContext, options) => ({
     dispatch,
-  }) =>
-    resources.map(resource =>
+  }) => {
+    // Filter out isBrowser resources if on server
+    const filteredResources = options.isStatic
+      ? resources.filter(resource => !resource.isBrowser)
+      : resources;
+
+    return filteredResources.map(resource =>
       dispatch(actions.getResource(resource, routerStoreContext, options))
-    ),
+    );
+  },
 
   /**
    * Hydrates the store with state.

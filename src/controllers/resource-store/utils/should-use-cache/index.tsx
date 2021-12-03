@@ -11,8 +11,6 @@ const isFresh = (resource: RouteResourceResponse): boolean => {
   return Date.now() < Number(resource.expiresAt);
 };
 
-const isCached = ({ data, error }: RouteResourceResponse) => data || error;
-
 export const shouldUseCache = (resource: RouteResourceResponse): boolean => {
   if (resource?.error?.name === 'TimeoutError') {
     return false;
@@ -22,7 +20,7 @@ export const shouldUseCache = (resource: RouteResourceResponse): boolean => {
     return true;
   }
 
-  if (isCached(resource) && isFresh(resource)) {
+  if (isFresh(resource)) {
     return true;
   }
 
