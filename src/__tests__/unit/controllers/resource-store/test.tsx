@@ -398,14 +398,34 @@ describe('resource store', () => {
 
       expect(data).toEqual([]);
     });
-    it('should ignore isBrowser if isStatic is falsey', () => {
-      const data = actions.requestResources(
-        [{ ...mockResource, isBrowser: true }],
-        mockRouterStoreContext,
-        mockOptions
+    it('should ignore isBrowser if isStatic is falsey', async () => {
+      (getDefaultStateSlice as any).mockImplementation(() => ({
+        ...BASE_DEFAULT_STATE_SLICE,
+        expiresAt: 1,
+      }));
+
+      await Promise.all(
+        actions.requestResources(
+          [{ ...mockResource, isBrowser: true }],
+          mockRouterStoreContext,
+          mockOptions
+        )
       );
 
-      expect(data.length).toEqual(1);
+      const { data } = storeState.getState();
+
+      expect(data).toEqual({
+        type: {
+          key: {
+            accessedAt: undefined,
+            data: 'result',
+            error: null,
+            expiresAt: undefined,
+            loading: false,
+            promise: expect.any(Promise),
+          },
+        },
+      });
     });
   });
 
