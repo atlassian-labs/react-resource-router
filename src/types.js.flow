@@ -88,7 +88,7 @@ export type RouteResource<T> = {|
     customContext: ResourceStoreContext
   ) => RouteResourcePromise<T>,
   maxCache: number,
-  isBrowser: boolean,
+  isBrowserOnly: boolean,
 |};
 
 export type RouteResources = RouteResource<mixed>[];

@@ -228,9 +228,9 @@ export const actions: Actions = {
   requestResources: (resources, routerStoreContext, options) => ({
     dispatch,
   }) => {
-    // Filter out isBrowser resources if on server
+    // Filter out isBrowserOnly resources if on server
     const filteredResources = options.isStatic
-      ? resources.filter(resource => !resource.isBrowser)
+      ? resources.filter(resource => !resource.isBrowserOnly)
       : resources;
 
     return filteredResources.map(resource =>

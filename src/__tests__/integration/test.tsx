@@ -38,7 +38,7 @@ const mockResource = {
   getData: () => Promise.resolve('mock-data'),
   maxAge: 0,
   maxCache: Infinity,
-  isBrowser: false,
+  isBrowserOnly: false,
 };
 
 const historyBuildOptions = {

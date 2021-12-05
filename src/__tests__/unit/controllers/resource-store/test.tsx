@@ -389,16 +389,16 @@ describe('resource store', () => {
   });
 
   describe('requestResources', () => {
-    it('should skip isBrowser resources if isStatic is true', () => {
+    it('should skip isBrowserOnly resources if isStatic is true', () => {
       const data = actions.requestResources(
-        [{ ...mockResource, isBrowser: true }],
+        [{ ...mockResource, isBrowserOnly: true }],
         mockRouterStoreContext,
         { ...mockOptions, isStatic: true }
       );
 
       expect(data).toEqual([]);
     });
-    it('should ignore isBrowser if isStatic is falsey', async () => {
+    it('should ignore isBrowserOnly if isStatic is falsey', async () => {
       (getDefaultStateSlice as any).mockImplementation(() => ({
         ...BASE_DEFAULT_STATE_SLICE,
         expiresAt: 1,
@@ -406,7 +406,7 @@ describe('resource store', () => {
 
       await Promise.all(
         actions.requestResources(
-          [{ ...mockResource, isBrowser: true }],
+          [{ ...mockResource, isBrowserOnly: true }],
           mockRouterStoreContext,
           mockOptions
         )

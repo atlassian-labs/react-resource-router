@@ -23,13 +23,13 @@ interface CreateResourceSync<T> extends BaseResource {
   getData: RouteResource<T>['getData'];
   maxAge?: number;
   maxCache?: number;
-  isBrowser?: boolean;
+  isBrowserOnly?: boolean;
 }
 interface CreateResourceAsync<T> extends BaseResource {
   getDataLoader: GetDataLoader<T>;
   maxAge?: number;
   maxCache?: number;
-  isBrowser?: boolean;
+  isBrowserOnly?: boolean;
 }
 
 const handleGetDataLoader = (asyncImport: GetDataLoader<unknown>) => {
@@ -59,9 +59,9 @@ export function createResource(args: any) {
       typeof args.maxCache === 'number'
         ? args.maxCache
         : DEFAULT_CACHE_MAX_LIMIT,
-    isBrowser:
-      typeof args.isBrowser === 'boolean'
-        ? args.isBrowser
+    isBrowserOnly:
+      typeof args.isBrowserOnly === 'boolean'
+        ? args.isBrowserOnly
         : DEFAULT_RESOURCE_IS_BROWSER,
   };
 }
