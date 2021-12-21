@@ -1,6 +1,8 @@
-import { Location } from '../../common/types';
+import { Location, MatchParams, Query, Route } from '../../common/types';
 
 export type RedirectProps = {
-  to: Location | string;
+  to: Location | Route | string;
   push?: boolean;
+  params?: MatchParams;
+  query?: Query;
 };

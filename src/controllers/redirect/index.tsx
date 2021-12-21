@@ -6,6 +6,7 @@ import { RouterActionsType, RouterState } from '../router-store/types';
 import { RouterSubscriber } from '../subscribers/route';
 
 import { RedirectProps } from './types';
+import { generateLocationFromPath } from '../../common/utils';
 
 type RedirectorProps = RedirectProps & {
   actions: RouterActionsType;
@@ -18,8 +19,18 @@ class Redirector extends Component<RedirectorProps> {
   };
 
   componentDidMount() {
-    const { to, location, push, actions } = this.props;
-    const newPath = typeof to === 'object' ? createPath(to) : to;
+    const { to, location, push, params, query, actions } = this.props;
+    const routeAttributes = {
+      params,
+      query,
+      basePath: actions.getBasePath() as any,
+    };
+    const newPath =
+      typeof to === 'object'
+        ? 'path' in to
+          ? createPath(generateLocationFromPath(to.path, routeAttributes))
+          : createPath(to)
+        : to;
     const currentPath = createPath(location);
     const action = push ? actions.push : actions.replace;
 
