@@ -280,6 +280,18 @@ export const actions: Actions = {
   },
 
   /**
+   * Clears a resource by resource type and key.
+   */
+  clearResource: (type, key) => ({ getState, dispatch }) => {
+    const { data } = getState();
+    const slice = data[type]?.[key];
+
+    if (slice) {
+      dispatch(deleteResourceKey(key, type));
+    }
+  },
+
+  /**
    * Gets the store's context
    *
    */

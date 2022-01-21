@@ -123,6 +123,7 @@ export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
 > & {
   update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
   refresh: () => void;
+  clear: () => void;
 };
 
 export type RouteResourceGettersArgs = [

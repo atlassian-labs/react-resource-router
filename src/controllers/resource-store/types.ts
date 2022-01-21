@@ -81,4 +81,8 @@ export type Actions = {
     setState,
     getState,
   }: StoreActionApi<State>) => ResourceStoreData;
+  clearResource: (
+    type: RouteResource['type'],
+    key: string
+  ) => ResourceAction<void>;
 };

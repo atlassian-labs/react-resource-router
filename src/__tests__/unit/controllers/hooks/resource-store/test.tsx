@@ -111,6 +111,7 @@ describe('useResource hook', () => {
       ...mockSlice,
       update: expect.any(Function),
       refresh: expect.any(Function),
+      clear: expect.any(Function),
     });
   });
 
@@ -253,6 +254,28 @@ describe('useResource hook', () => {
       expect(storeState.getState().data[mockType]['page2']).toMatchObject({
         data: 'new-data-2',
       });
+    });
+  });
+
+  describe('clear action', () => {
+    it('should clear the resource', () => {
+      let resourceResponse: any;
+      mount(
+        <MockComponent>
+          {() => {
+            const resource = useResource(mockResource);
+            resourceResponse = resource;
+
+            return <h1>my test</h1>;
+          }}
+        </MockComponent>
+      );
+
+      act(() => resourceResponse.clear());
+
+      const storeData = storeState.getState();
+
+      expect(storeData.data[mockType]?.[mockKey]).toEqual(undefined);
     });
   });
 });
