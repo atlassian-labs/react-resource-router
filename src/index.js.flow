@@ -143,7 +143,7 @@ type GetDataLoader<T> = () => Promise<{
  *
  */
 type CreateResourceArg<T> =
-  | {| ...RouteResource<T>, maxAge?: number, maxCache?: number |}
+  | {| ...RouteResource<T>, maxAge?: number, maxCache?: number, isBrowserOnly?: boolean, |}
   | {|
       ...$Diff<
         RouteResource<T>,

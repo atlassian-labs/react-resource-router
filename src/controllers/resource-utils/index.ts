@@ -6,7 +6,7 @@ import {
 import {
   DEFAULT_RESOURCE_MAX_AGE,
   DEFAULT_CACHE_MAX_LIMIT,
-  DEFAULT_RESOURCE_IS_BROWSER,
+  DEFAULT_RESOURCE_BROWSER_ONLY,
 } from '../resource-store/constants';
 
 /**
@@ -62,6 +62,6 @@ export function createResource(args: any) {
     isBrowserOnly:
       typeof args.isBrowserOnly === 'boolean'
         ? args.isBrowserOnly
-        : DEFAULT_RESOURCE_IS_BROWSER,
+        : DEFAULT_RESOURCE_BROWSER_ONLY,
   };
 }
