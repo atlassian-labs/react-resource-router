@@ -65,6 +65,10 @@ export const useResource = <RouteResourceData extends unknown>(
     actions.clearResource(resource.type, key);
   }, [resource, key, actions]);
 
+  const clearAll = useCallback(() => {
+    actions.clearResource(resource.type);
+  }, [resource, actions]);
+
   // we keep route context bound to key, so route context won't refresh
   // unless key changes. This allows refresh to be called on effect cleanup
   // or asynchronously, when route context might already have changed
@@ -79,5 +83,5 @@ export const useResource = <RouteResourceData extends unknown>(
     });
   }, [resource, routerContext, actions]);
 
-  return { ...slice, update, key, refresh, clear };
+  return { ...slice, update, key, refresh, clear, clearAll };
 };

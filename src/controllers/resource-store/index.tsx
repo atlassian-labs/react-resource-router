@@ -20,6 +20,7 @@ import {
   State,
 } from './types';
 import {
+  deleteResource,
   deleteResourceKey,
   deserializeError,
   getAccessedAt,
@@ -281,13 +282,19 @@ export const actions: Actions = {
 
   /**
    * Clears a resource by resource type and key.
+   * If key is not provided, all the keys associated with the type will be deleted.
    */
   clearResource: (type, key) => ({ getState, dispatch }) => {
     const { data } = getState();
-    const slice = data[type]?.[key];
 
-    if (slice) {
-      dispatch(deleteResourceKey(key, type));
+    if (typeof key === 'undefined') {
+      dispatch(deleteResource(type));
+    } else {
+      const slice = data[type]?.[key];
+
+      if (slice) {
+        dispatch(deleteResourceKey(key, type));
+      }
     }
   },
 

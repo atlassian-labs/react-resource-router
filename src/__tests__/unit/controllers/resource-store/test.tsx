@@ -1054,4 +1054,56 @@ describe('resource store', () => {
       });
     });
   });
+
+  describe('clearResource', () => {
+    it('clear the resource of the given type and key', () => {
+      storeState.setState({
+        data: {
+          cachedResource: {
+            cachedResourceKey: {
+              data: result,
+            },
+          },
+        },
+      });
+
+      actions.clearResource('cachedResource', 'cachedResourceKey');
+
+      const { data } = storeState.getState();
+
+      expect(data).toEqual({ cachedResource: {} });
+    });
+
+    it('clear all keys associated with that particular type if key is not provided', () => {
+      storeState.setState({
+        data: {
+          cachedResource: {
+            cachedResourceKey: {
+              data: result,
+            },
+            cachedResourceKeyAlt: {
+              data: result,
+            },
+          },
+          cachedResourceAlt: {
+            cachedResourceKey: {
+              data: result,
+            },
+          },
+        },
+      });
+
+      actions.clearResource('cachedResource');
+
+      const { data } = storeState.getState();
+
+      expect(data).toEqual({
+        cachedResourceAlt: {
+          cachedResourceKey: {
+            data: result,
+          },
+        },
+      });
+    });
+  });
 });

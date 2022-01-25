@@ -81,6 +81,7 @@ declare export function useResource<T>(
   update: (getNewData: RouteResourceUpdater<T>) => void,
   refresh: () => void,
   clear: () => void,
+  clearAll: () => void,
 |};
 declare export function useRouter(): [RouterState, RouterActionsType];
 declare export function useRouterActions(): RouterActionsType;

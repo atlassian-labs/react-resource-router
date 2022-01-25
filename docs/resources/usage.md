@@ -10,6 +10,7 @@ Resources expose properties and functions via the [`useResource`](../api/hooks.m
 | `update`  | `function`        | Allows you to imperatively update the resource's current state bypassing its `maxAge`   |
 | `refresh` | `function`        | Allows you to imperatively refresh the resource's state by calling its `getData` method |
 | `clear`   | `function`        | Allows you to imperatively clear the resource's state                                   |
+| `clearAll`| `function`        | Clears all resource data of the particular type regardless of its keys                  |
 | `key`     | `string`          | Unique key for the resource                                                             |
 
 You can use these properties and functions to implement your own customised render logic inside your resource consuming components.

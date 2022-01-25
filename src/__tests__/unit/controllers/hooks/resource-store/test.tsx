@@ -112,6 +112,7 @@ describe('useResource hook', () => {
       update: expect.any(Function),
       refresh: expect.any(Function),
       clear: expect.any(Function),
+      clearAll: expect.any(Function),
     });
   });
 
@@ -276,6 +277,40 @@ describe('useResource hook', () => {
       const storeData = storeState.getState();
 
       expect(storeData.data[mockType]?.[mockKey]).toEqual(undefined);
+    });
+
+    describe('clearAll action', () => {
+      it('should clear all the resources of the given type', () => {
+        const state = storeState.getState();
+        storeState.setState({
+          ...state,
+          data: {
+            [mockType]: {
+              ...state.data[mockType],
+              [`${mockKey}alt`]: mockSlice,
+            },
+          },
+        });
+
+        let resourceResponse: any;
+
+        mount(
+          <MockComponent>
+            {() => {
+              const resource = useResource(mockResource);
+              resourceResponse = resource;
+
+              return <h1>my test</h1>;
+            }}
+          </MockComponent>
+        );
+
+        act(() => resourceResponse.clearAll());
+
+        const storeData = storeState.getState();
+
+        expect(storeData.data[mockType]).toEqual(undefined);
+      });
     });
   });
 });

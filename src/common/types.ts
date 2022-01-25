@@ -124,6 +124,7 @@ export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
   update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
   refresh: () => void;
   clear: () => void;
+  clearAll: () => void;
 };
 
 export type RouteResourceGettersArgs = [
