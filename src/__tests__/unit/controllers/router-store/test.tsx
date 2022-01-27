@@ -2,6 +2,7 @@ import React from 'react';
 
 import { mount, render } from 'enzyme';
 import * as historyHelper from 'history';
+import * as historyHelper5 from 'history-5';
 import { defaultRegistry } from 'react-sweet-state';
 import { act } from 'react-dom/test-utils';
 
@@ -156,11 +157,103 @@ describe('SPA Router store', () => {
     });
   });
 
-  describe('listening for real history changes', () => {
+  describe('listening for real history changes on history@4', () => {
     let children: any;
 
     beforeEach(() => {
       children = jest.fn().mockReturnValue(null);
+    });
+
+    it('should send location with route change', async () => {
+      mount(
+        <MemoryRouter routes={mockRoutes} location={mockRoutes[0].path}>
+          <RouterSubscriber>{children}</RouterSubscriber>
+        </MemoryRouter>
+      );
+      const { history } = children.mock.calls[0][0];
+
+      await nextTick();
+
+      expect(children.mock.calls[0]).toEqual([
+        expect.objectContaining({
+          routes: mockRoutes,
+          route: mockRoutes[0],
+          action: DEFAULT_ACTION,
+          history: expect.any(Object),
+        }),
+        expect.any(Object),
+      ]);
+
+      const newLocation = {
+        pathname: '/blah',
+        search: '?somequery=value',
+        hash: '#bing',
+      };
+
+      history.push(Object.values(newLocation).join(''));
+
+      await nextTick();
+
+      expect(children.mock.calls[1]).toEqual([
+        expect.objectContaining({
+          routes: mockRoutes,
+          route: mockRoutes[1],
+          action: 'PUSH',
+          history: expect.any(Object),
+        }),
+        expect.any(Object),
+      ]);
+    });
+
+    it('should send correct action key for route changes', async () => {
+      mount(
+        <MemoryRouter routes={mockRoutes}>
+          <RouterSubscriber>{children}</RouterSubscriber>
+        </MemoryRouter>
+      );
+      const { history } = children.mock.calls[0][0];
+
+      expect(children.mock.calls[0]).toEqual([
+        expect.objectContaining({
+          action: DEFAULT_ACTION,
+        }),
+        expect.any(Object),
+      ]);
+
+      history.push('/pathname');
+
+      await nextTick();
+
+      expect(children.mock.calls[1]).toEqual([
+        expect.objectContaining({
+          action: 'PUSH',
+        }),
+        expect.any(Object),
+      ]);
+
+      history.replace('/blah');
+
+      await nextTick();
+
+      expect(children.mock.calls[2]).toEqual([
+        expect.objectContaining({
+          action: 'REPLACE',
+        }),
+        expect.any(Object),
+      ]);
+    });
+  });
+
+  describe.only('listening for real history changes on history@5', () => {
+    let children: any;
+
+    beforeEach(() => {
+      children = jest.fn().mockReturnValue(null);
+
+      jest
+        .spyOn(historyHelper, 'createMemoryHistory')
+        // @ts-ignore
+        .mockImplementation(historyHelper5.createMemoryHistory);
     });
 
     it('should send location with route change', async () => {

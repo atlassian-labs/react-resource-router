@@ -68,7 +68,7 @@
     "preversion": "npm run lint -s && npm run lint:types -s && npm run lint:deps -s && npm run test -s"
   },
   "dependencies": {
-    "history": "4.10.1",
+    "history": "4.10.1||^5.2.0",
     "lodash.debounce": "^4.0.8",
     "lodash.noop": "^3.0.1",
     "path-to-regexp": "^1.7.0",
@@ -120,6 +120,7 @@
     "eslint-plugin-react-hooks": "^4.0.2",
     "flow-bin": "^0.135.0",
     "flow-copy-source": "^2.0.7",
+    "history-5": "npm:history@^5.2.0",
     "jest": "^26.0.1",
     "madge": "^4.0.1",
     "prettier": "^2.0.5",
