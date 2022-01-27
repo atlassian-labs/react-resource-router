@@ -244,7 +244,7 @@ describe('SPA Router store', () => {
     });
   });
 
-  describe.only('listening for real history changes on history@5', () => {
+  describe('listening for real history changes on history@5', () => {
     let children: any;
 
     beforeEach(() => {

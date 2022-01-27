@@ -182,7 +182,7 @@ const actions: AllRouterActions = {
     const stopListening = history.listen(
       (...update: LocationUpateV4 | LocationUpateV5) => {
         const location = update.length === 2 ? update[0] : update[0].location;
-        const action = update.length === 2 ? update[0] : update[0].action;
+        const action = update.length === 2 ? update[1] : update[0].action;
 
         const {
           routes,
