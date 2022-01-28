@@ -23,7 +23,7 @@ class Redirector extends Component<RedirectorProps> {
     const routeAttributes = {
       params,
       query,
-      basePath: actions.getBasePath() as any,
+      basePath: actions.getBasePath(),
     };
     const newPath =
       typeof to === 'object'
