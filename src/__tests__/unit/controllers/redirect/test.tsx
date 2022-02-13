@@ -106,7 +106,7 @@ describe('Redirect', () => {
     [
       'with `query`',
       { name: 'c', path: '/home', query: ['page'] } as Route,
-      { id: '1' },
+      undefined,
       { page: '1' },
       '/home?page=1',
     ],
