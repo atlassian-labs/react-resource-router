@@ -55,7 +55,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     const routeAttributes = {
       params,
       query,
-      basePath: routerActions.getBasePath() as any,
+      basePath: routerActions.getBasePath(),
     };
     const linkDestination =
       href != null
