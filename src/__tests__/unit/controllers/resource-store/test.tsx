@@ -903,6 +903,36 @@ describe('resource store', () => {
         expect(spy).toBeCalledTimes(0);
       });
     });
+
+    it('should set expiresAt to pending state if prefetch', async () => {
+      (getDefaultStateSlice as any).mockImplementation(() => ({
+        ...BASE_DEFAULT_STATE_SLICE,
+      }));
+      (getExpiresAt as any).mockImplementation(() => expiresAt);
+
+      const spy = jest.spyOn(storeState, 'setState');
+
+      await actions.getResourceFromRemote(
+        mockResource,
+        mockRouterStoreContext,
+        { ...mockOptions, prefetch: true }
+      );
+
+      expect(spy).toHaveBeenNthCalledWith(1, {
+        context: {},
+        data: {
+          [type]: {
+            [key]: {
+              ...BASE_DEFAULT_STATE_SLICE,
+              loading: true,
+              accessedAt: undefined,
+              expiresAt,
+              promise: expect.any(Promise),
+            },
+          },
+        },
+      });
+    });
   });
 
   describe('cleanExpiredResources', () => {

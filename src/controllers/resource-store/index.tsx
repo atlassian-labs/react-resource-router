@@ -127,6 +127,12 @@ export const actions: Actions = {
         context
       ),
       accessedAt: getAccessedAt(),
+      // prevent resource from being cleaned prematurely and traigger more network requests.
+      ...(options.prefetch
+        ? {
+            expiresAt: getExpiresAt(PREFETCH_MAX_AGE),
+          }
+        : {}),
     };
 
     dispatch(setResourceState(type, key, pending));
