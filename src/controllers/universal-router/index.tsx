@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 
+import { BrowserHistory } from '../../common/types';
+import { createLocation } from '../../common/utils/create-location';
 import { getRouterState, UniversalRouterContainer } from '../router-store';
 import { UnlistenHistory } from '../router-store/types';
 import { UniversalRouterProps, RequestResourcesParams } from './types';
-import { createMemoryHistory, createLocation } from 'history';
-import { BrowserHistory } from 'src/common/types';
+import { createMemoryHistory } from 'history';
 import { getResourceStore, ResourceContainer } from '../resource-store';
 import { getRouterStore } from '../router-store';
 

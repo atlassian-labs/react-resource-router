@@ -6,7 +6,7 @@ import {
   defaultRegistry,
   batch,
 } from 'react-sweet-state';
-import { parsePath } from 'history';
+import { Action, parsePath, Location } from 'history';
 
 import {
   DEFAULT_ACTION,
@@ -176,52 +176,60 @@ const actions: AllRouterActions = {
   listen: () => ({ getState, setState }) => {
     const { history } = getState();
 
-    const stopListening = history.listen((location, action) => {
-      const {
-        routes,
-        basePath,
-        match: currentMatch,
-        route: currentRoute,
-        query: currentQuery,
-      } = getState();
+    type LocationUpateV4 = [Location, Action];
+    type LocationUpateV5 = [{ location: Location; action: Action }];
 
-      const {
-        cleanExpiredResources,
-        requestResources,
-        getContext: getResourceStoreContext,
-      } = getResourceStore().actions;
+    const stopListening = history.listen(
+      (...update: LocationUpateV4 | LocationUpateV5) => {
+        const location = update.length === 2 ? update[0] : update[0].location;
+        const action = update.length === 2 ? update[1] : update[0].action;
 
-      const nextContext = findRouterContext(routes, { location, basePath });
-      const nextLocationContext = {
-        route: nextContext.route,
-        match: nextContext.match,
-        query: nextContext.query,
-      };
-      const nextResources = getResourcesForNextLocation(
-        {
-          route: currentRoute,
+        const {
+          routes,
+          basePath,
           match: currentMatch,
+          route: currentRoute,
           query: currentQuery,
-        },
-        nextLocationContext,
-        getResourceStoreContext()
-      );
+        } = getState();
 
-      /* Explicitly batch update
-       * as we need resources cleaned + route changed + resource fetch started together
-       * If we do not batch, React might be re-render when route changes but resource
-       * fetching has not started yet, making the app render with data null */
+        const {
+          cleanExpiredResources,
+          requestResources,
+          getContext: getResourceStoreContext,
+        } = getResourceStore().actions;
 
-      batch(() => {
-        cleanExpiredResources(nextResources, nextLocationContext);
-        setState({
-          ...nextContext,
-          location,
-          action,
+        const nextContext = findRouterContext(routes, { location, basePath });
+        const nextLocationContext = {
+          route: nextContext.route,
+          match: nextContext.match,
+          query: nextContext.query,
+        };
+        const nextResources = getResourcesForNextLocation(
+          {
+            route: currentRoute,
+            match: currentMatch,
+            query: currentQuery,
+          },
+          nextLocationContext,
+          getResourceStoreContext()
+        );
+
+        /* Explicitly batch update
+         * as we need resources cleaned + route changed + resource fetch started together
+         * If we do not batch, React might be re-render when route changes but resource
+         * fetching has not started yet, making the app render with data null */
+
+        batch(() => {
+          cleanExpiredResources(nextResources, nextLocationContext);
+          setState({
+            ...nextContext,
+            location,
+            action,
+          });
+          requestResources(nextResources, nextLocationContext, {});
         });
-        requestResources(nextResources, nextLocationContext, {});
-      });
-    });
+      }
+    );
 
     setState({
       unlisten: stopListening,
