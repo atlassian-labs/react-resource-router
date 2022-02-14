@@ -1,7 +1,8 @@
 import React from 'react';
 
-import { createLocation, createMemoryHistory } from 'history';
+import { createMemoryHistory } from 'history';
 
+import { createLocation } from '../../common/utils/create-location';
 import { MemoryRouterProps } from '../../common/types';
 import { MemoryRouter } from '../memory-router';
 import { getResourceStore } from '../resource-store';
