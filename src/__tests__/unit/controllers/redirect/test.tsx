@@ -6,6 +6,7 @@ import { defaultRegistry } from 'react-sweet-state';
 import { Redirect } from '../../../../controllers/redirect';
 import { RedirectProps } from '../../../../controllers/redirect/types';
 import { Router } from '../../../../controllers/router';
+import type { Route } from '../../../../common/types';
 
 const MockLocation = {
   pathname: 'pathname',
@@ -32,6 +33,12 @@ const defaultArgs = {
 };
 
 const mockConsole = { ...global.console, warn: jest.fn() };
+const mockRoute: Route = {
+  name: 'test',
+  component: () => null,
+  path: '/:id',
+  query: ['foo'],
+};
 
 describe('Redirect', () => {
   const mountInRouter = (args: Partial<RedirectProps>) =>
@@ -81,13 +88,54 @@ describe('Redirect', () => {
     expect(MockHistory.push).toHaveBeenCalledWith(to);
   });
 
-  it('should navigate to given route correctly', () => {
-    const to = '/cool-page';
+  it.each([
+    [
+      'with `params` and `query`',
+      { name: 'a', path: '/:id', query: ['foo'] } as Route,
+      { id: '1' },
+      { foo: 'bar' },
+      '/1?foo=bar',
+    ],
+    [
+      'with `params`',
+      { name: 'b', path: '/:id', query: ['foo'] } as Route,
+      { id: '1' },
+      undefined,
+      '/1',
+    ],
+    [
+      'with `query`',
+      { name: 'c', path: '/home', query: ['page'] } as Route,
+      undefined,
+      { page: '1' },
+      '/home?page=1',
+    ],
+    [
+      'without `params` and `query`',
+      { name: 'd', path: '/menu', query: ['page'] } as Route,
+      undefined,
+      undefined,
+      '/menu',
+    ],
+  ])(
+    "doesn't break / throw when rendered with `to` as a Route object, %s",
+    (_, to, params, query, expected) => {
+      expect(() => mountInRouter({ to, params, query })).not.toThrow();
+      expect(MockHistory.push).toHaveBeenCalledWith(expected);
+    }
+  );
 
-    mountInRouter({ to, push: false });
-    expect(MockHistory.replace).toHaveBeenCalledWith(to);
-    expect(MockHistory.push).not.toHaveBeenCalled();
-  });
+  it.each([
+    ['string', '/cool-page', undefined, undefined, '/cool-page'],
+    ['object', mockRoute, { id: '2' }, { foo: 'bar' }, '/2?foo=bar'],
+  ])(
+    'should navigate to given route %s correctly',
+    (_, to, params, query, expected) => {
+      mountInRouter({ to, query, params, push: false });
+      expect(MockHistory.replace).toHaveBeenCalledWith(expected);
+      expect(MockHistory.push).not.toHaveBeenCalled();
+    }
+  );
 
   it('should navigate to absolute URLs', () => {
     jest.spyOn(window.location, 'assign').mockImplementation(() => jest.fn());
@@ -99,19 +147,29 @@ describe('Redirect', () => {
     expect(window.location.assign).toHaveBeenCalledWith(to);
   });
 
-  it('should not redirect if the location is equivalent to current', () => {
-    mountInRouter({ to: 'pathname' });
+  it.each([
+    ['string', 'pathname'],
+    ['object', { name: 'a', path: 'pathname' } as Route],
+  ])(
+    'should not redirect if the given route %s is equivalent to current location',
+    (_, to) => {
+      mountInRouter({ to });
 
-    expect(mockConsole.warn).toHaveBeenCalledWith(expect.any(String));
-    expect(MockHistory.replace).not.toHaveBeenCalled();
-    expect(MockHistory.push).not.toHaveBeenCalled();
-  });
+      expect(mockConsole.warn).toHaveBeenCalledWith(expect.any(String));
+      expect(MockHistory.replace).not.toHaveBeenCalled();
+      expect(MockHistory.push).not.toHaveBeenCalled();
+    }
+  );
 
-  it('should use push history correctly', () => {
-    const to = '/cool-page';
-
-    mountInRouter({ to, push: true });
-    expect(MockHistory.push).toHaveBeenCalledWith(to);
-    expect(MockHistory.replace).not.toHaveBeenCalled();
-  });
+  it.each([
+    ['string', '/cool-page', undefined, '/cool-page'],
+    ['object', mockRoute, { id: '3' }, '/3'],
+  ])(
+    'should use push history correctly with given route %s',
+    (_, to, params, expected) => {
+      mountInRouter({ to, params, push: true });
+      expect(MockHistory.push).toHaveBeenCalledWith(expected);
+      expect(MockHistory.replace).not.toHaveBeenCalled();
+    }
+  );
 });

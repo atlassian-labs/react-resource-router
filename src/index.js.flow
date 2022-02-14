@@ -7,7 +7,9 @@ import type {
   HistoryUpdateType,
   LinkProps,
   Location,
+  MatchParams,
   MemoryRouterProps,
+  Query,
   ResourceOptions,
   ResourceStoreContext,
   Route,
@@ -32,8 +34,10 @@ export * from './types.js.flow';
 
 declare export function Link(props: LinkProps): Node;
 declare export function Redirect(props: {
-  to: Location | string,
+  to: Location | Route | string,
   push?: boolean,
+  params?: MatchParams,
+  query?: Query,
 }): Node;
 
 declare export function RouterActions(props: {|
@@ -82,7 +86,7 @@ declare export function useRouterActions(): RouterActionsType;
 declare export function useResourceStoreContext(): ResourceStoreContext;
 declare export function createRouterSelector<T, U = void>(
   selector: (state: RouterState, props: U) => T
-): (U) => T;
+): U => T;
 
 declare export function useQueryParam(
   paramKey: string
@@ -149,4 +153,6 @@ type CreateResourceArg<T> =
       maxCache?: number,
     |};
 
-declare export function createResource<T>(args: CreateResourceArg<T>): RouteResource<T>;
+declare export function createResource<T>(
+  args: CreateResourceArg<T>
+): RouteResource<T>;
