@@ -16,13 +16,15 @@ export type Location = {|
 
 export type Query = { [string]: string };
 
+export type MatchParams = { [key: string]: string | null | typeof undefined };
+
 export type Match = {|
   /** TODO we are supporting `undefined` here because we are currently using both
    * this version of the `Match` type, and react-routers version (which allows for `undefined`)
    * To fix this we should move `matchPath` to our own util so we can apply our own types, then
    * decide if we want to support undefined types.
    */
-  params: { [string]: string | null | typeof undefined },
+  params: MatchParams,
   query: Query,
   isExact: boolean,
   path: string,
@@ -100,7 +102,9 @@ export type ResourceOptions = {
   routerContext?: RouterContext,
 };
 
-export type RouteResourceUpdater<T> = (data: RouteResourceData<T>) => RouteResourceData<T>;
+export type RouteResourceUpdater<T> = (
+  data: RouteResourceData<T>
+) => RouteResourceData<T>;
 
 export type InvariantRoute = {
   path: string,
@@ -257,10 +261,6 @@ export type RequestResourcesParams = {
   routes: Routes,
   resourceContext?: ResourceStoreContext,
   timeout?: number,
-};
-
-export type MatchParams = {
-  [key: string]: string | null | typeof undefined,
 };
 
 export type ResourceStoreData =
