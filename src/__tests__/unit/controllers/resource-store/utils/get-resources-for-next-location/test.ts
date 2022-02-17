@@ -69,10 +69,12 @@ describe('getResourcesForNextLocation()', () => {
   describe('when the next route does not match the prev route', () => {
     it('should request all resources on the next route', async () => {
       const prevRoute = {
+        name: 'prev-route',
         path: '/prev-route',
         resources: [mockResource],
       };
       const nextRoute = {
+        name: 'next-route',
         path: '/next-route',
         resources: [
           mockResource,

@@ -737,6 +737,7 @@ describe('SPA Router store', () => {
         },
         {
           ...mockRoute,
+          name: 'bar',
           path: '/bar/a',
           component: ComponentB,
           resources: [resourceA, resourceB],
