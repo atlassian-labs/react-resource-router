@@ -19,7 +19,7 @@ describe('routeHasChanged()', () => {
     ).toBeTruthy();
   });
 
-  it('should return false if both the route group and name match', () => {
+  it('should return false if the route name matches', () => {
     expect(routeHasChanged(mockRoute, { ...mockRoute })).toBeFalsy();
   });
 });
