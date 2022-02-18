@@ -3,43 +3,33 @@ import {
   routeHasResources,
 } from '../../../../../../controllers/resource-store/utils/route-checks';
 
+const mockRoute = {
+  name: 'foo',
+  path: '/some-path',
+  component: () => null,
+};
+
 describe('routeHasChanged()', () => {
-  it('should return true if the route objects do not match', () => {
+  it('should return true if the route name does not match', () => {
     expect(
-      routeHasChanged(
-        // @ts-ignore - not providing all properties on mock
-        {
-          path: '/some-path',
-          component: () => null,
-        },
-        {
-          path: '/another-path',
-          component: () => null,
-        }
-      )
+      routeHasChanged(mockRoute, {
+        ...mockRoute,
+        name: 'bar',
+      })
     ).toBeTruthy();
   });
 
-  it('should return true if the prev route is null', () => {
+  it('should return true if the route path does not match', () => {
     expect(
-      routeHasChanged(
-        null,
-        // @ts-ignore - not providing all properties on mock
-        {
-          path: '/another-path',
-          component: () => null,
-        }
-      )
+      routeHasChanged(mockRoute, {
+        ...mockRoute,
+        path: '/bar',
+      })
     ).toBeTruthy();
   });
 
-  it('should return false if the routes match', () => {
-    const route = {
-      path: '/some-path',
-      component: () => null,
-    };
-    // @ts-ignore - not providing all properties on mock
-    expect(routeHasChanged(route, route)).toBeFalsy();
+  it('should return false if the route name matches', () => {
+    expect(routeHasChanged(mockRoute, { ...mockRoute })).toBeFalsy();
   });
 });
 
