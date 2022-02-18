@@ -36,6 +36,18 @@ export const updateRemoteResourceState = (
   }
 };
 
+export const deleteResource = (type: RouteResource['type']) => ({
+  getState,
+  setState,
+}: StoreActionApi<State>) => {
+  const { data } = getState();
+  const { [type]: resourceToBeDeleted, ...rest } = data;
+
+  setState({
+    data: rest,
+  });
+};
+
 export const deleteResourceKey = (
   key: string,
   type: RouteResource['type']

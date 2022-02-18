@@ -123,6 +123,8 @@ export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
 > & {
   update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
   refresh: () => void;
+  clear: () => void;
+  clearAll: () => void;
 };
 
 export type RouteResourceGettersArgs = [
@@ -142,6 +144,7 @@ export type RouteResource<RouteResourceData = unknown> = {
     customContext: ResourceStoreContext
   ) => RouteResourcePromise<RouteResourceData>;
   maxCache: number;
+  isBrowserOnly: boolean;
 };
 
 export type RouteResources = RouteResource[];

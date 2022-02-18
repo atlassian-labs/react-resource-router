@@ -33,19 +33,7 @@ describe('should use cache', () => {
     expect(shouldUseCache(response)).toBeTruthy();
   });
 
-  it('should use cached data if an error was cached and the resource has not expired', () => {
-    const response = {
-      ...mockRouteResourceResponse,
-      expiresAt: 2,
-      error: { bad: true },
-    };
-
-    jest.spyOn(global.Date, 'now').mockReturnValue(1);
-
-    expect(shouldUseCache(response)).toBeTruthy();
-  });
-
-  it('should not use cached data if the the data and error were never cached', () => {
+  it('should use cached data if the data is a falsy primitive type and the resource has not expired', () => {
     const response = {
       ...mockRouteResourceResponse,
       expiresAt: 2,
@@ -55,7 +43,7 @@ describe('should use cache', () => {
 
     jest.spyOn(global.Date, 'now').mockReturnValue(1);
 
-    expect(shouldUseCache(response)).toBeFalsy();
+    expect(shouldUseCache(response)).toBeTruthy();
   });
 
   it('should not use cached data if the resource has expired', () => {

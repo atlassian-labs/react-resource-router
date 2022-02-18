@@ -9,9 +9,10 @@ import { Loading, Error } from './primitives';
 import { FeedList } from './FeedList';
 import { FeedUpdater } from './FeedUpdater';
 import { FeedRefresher } from './FeedRefresher';
+import { FeedClearance } from './FeedCleaner';
 
 export const Feed = () => {
-  const { data, loading, error, update, refresh } = useResource(feedResource);
+  const { data, loading, error, update, refresh, clear } = useResource(feedResource);
 
   if (error) {
     return <Error error={error} />;
@@ -26,6 +27,7 @@ export const Feed = () => {
       <FeedList items={data} />
       <FeedUpdater onUpdate={update} />
       <FeedRefresher onRefresh={refresh} />
+      <FeedClearance onClear={clear} />
     </>
   );
 };
