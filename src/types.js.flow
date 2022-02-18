@@ -109,8 +109,6 @@ export type RouteResourceUpdater<T> = (
 export type InvariantRoute = {
   path: string,
   exact?: boolean,
-  /** Used to prevent transitions between app groups */
-  group?: string,
   /** Unique name for the route */
   name: string,
   /**

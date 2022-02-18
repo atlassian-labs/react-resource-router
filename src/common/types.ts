@@ -175,9 +175,6 @@ export type InvariantRoute = {
   path: string;
   exact?: boolean;
 
-  /** Used to prevent transitions between app groups */
-  group?: string;
-
   /** Unique name for the route */
   name: string;
 
@@ -199,26 +196,6 @@ export type InvariantRoute = {
 export type Route = InvariantRoute & {
   /** The component to render on match, typed explicitly */
   component: ComponentType<RouteContext>;
-
-  /**
-   * Triggered before leaving the route, can trigger full page reload if returns (or resolves) false.
-   * Defaults to true.
-   */
-  canTransitionOut?: (
-    currentRouteMatch: MatchedRoute,
-    nextRouteMatch: MatchedRoute,
-    props: any
-  ) => boolean | Promise<boolean>;
-
-  /**
-   * Triggered before entering the route, can trigger full page reload if returns (or resolves) false.
-   * Defaults to true.
-   */
-  canTransitionIn?: (
-    currentRouteMatch: MatchedRoute,
-    nextRouteMatch: MatchedRoute,
-    props: any
-  ) => boolean | Promise<boolean>;
 
   /**
    * The resources for the route
