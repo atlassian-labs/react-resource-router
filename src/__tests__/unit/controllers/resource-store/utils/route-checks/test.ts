@@ -19,6 +19,15 @@ describe('routeHasChanged()', () => {
     ).toBeTruthy();
   });
 
+  it('should return true if the route path does not match', () => {
+    expect(
+      routeHasChanged(mockRoute, {
+        ...mockRoute,
+        path: '/bar',
+      })
+    ).toBeTruthy();
+  });
+
   it('should return false if the route name matches', () => {
     expect(routeHasChanged(mockRoute, { ...mockRoute })).toBeFalsy();
   });
