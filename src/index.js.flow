@@ -80,6 +80,8 @@ declare export function useResource<T>(
   ...RouteResourceResponse<T>,
   update: (getNewData: RouteResourceUpdater<T>) => void,
   refresh: () => void,
+  clear: () => void,
+  clearAll: () => void,
 |};
 declare export function useRouter(): [RouterState, RouterActionsType];
 declare export function useRouterActions(): RouterActionsType;
@@ -142,7 +144,7 @@ type GetDataLoader<T> = () => Promise<{
  *
  */
 type CreateResourceArg<T> =
-  | {| ...RouteResource<T>, maxAge?: number, maxCache?: number |}
+  | {| ...RouteResource<T>, maxAge?: number, maxCache?: number, isBrowserOnly?: boolean, |}
   | {|
       ...$Diff<
         RouteResource<T>,
@@ -151,6 +153,7 @@ type CreateResourceArg<T> =
       maxAge?: number,
       getDataLoader: GetDataLoader<T>,
       maxCache?: number,
+      isBrowserOnly?: boolean,
     |};
 
 declare export function createResource<T>(

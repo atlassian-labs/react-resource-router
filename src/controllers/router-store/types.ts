@@ -68,6 +68,7 @@ type ToAttributes = {
 
 type RequestRouteResourcesOptions = {
   timeout?: number;
+  isStatic?: boolean;
 };
 
 type PrivateRouterActions = {

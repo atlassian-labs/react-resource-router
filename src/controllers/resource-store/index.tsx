@@ -20,6 +20,7 @@ import {
   State,
 } from './types';
 import {
+  deleteResource,
   deleteResourceKey,
   deserializeError,
   getAccessedAt,
@@ -227,10 +228,16 @@ export const actions: Actions = {
    */
   requestResources: (resources, routerStoreContext, options) => ({
     dispatch,
-  }) =>
-    resources.map(resource =>
+  }) => {
+    // Filter out isBrowserOnly resources if on server
+    const filteredResources = options.isStatic
+      ? resources.filter(resource => !resource.isBrowserOnly)
+      : resources;
+
+    return filteredResources.map(resource =>
       dispatch(actions.getResource(resource, routerStoreContext, options))
-    ),
+    );
+  },
 
   /**
    * Hydrates the store with state.
@@ -271,6 +278,24 @@ export const actions: Actions = {
         resourceContext
       ),
     });
+  },
+
+  /**
+   * Clears a resource by resource type and key.
+   * If key is not provided, all the keys associated with the type will be deleted.
+   */
+  clearResource: (type, key) => ({ getState, dispatch }) => {
+    const { data } = getState();
+
+    if (typeof key === 'undefined') {
+      dispatch(deleteResource(type));
+    } else {
+      const slice = data[type]?.[key];
+
+      if (slice) {
+        dispatch(deleteResourceKey(key, type));
+      }
+    }
   },
 
   /**

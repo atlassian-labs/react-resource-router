@@ -6,6 +6,7 @@ import {
 import {
   DEFAULT_RESOURCE_MAX_AGE,
   DEFAULT_CACHE_MAX_LIMIT,
+  DEFAULT_RESOURCE_BROWSER_ONLY,
 } from '../resource-store/constants';
 
 /**
@@ -22,11 +23,13 @@ interface CreateResourceSync<T> extends BaseResource {
   getData: RouteResource<T>['getData'];
   maxAge?: number;
   maxCache?: number;
+  isBrowserOnly?: boolean;
 }
 interface CreateResourceAsync<T> extends BaseResource {
   getDataLoader: GetDataLoader<T>;
   maxAge?: number;
   maxCache?: number;
+  isBrowserOnly?: boolean;
 }
 
 const handleGetDataLoader = (asyncImport: GetDataLoader<unknown>) => {
@@ -56,5 +59,9 @@ export function createResource(args: any) {
       typeof args.maxCache === 'number'
         ? args.maxCache
         : DEFAULT_CACHE_MAX_LIMIT,
+    isBrowserOnly:
+      typeof args.isBrowserOnly === 'boolean'
+        ? args.isBrowserOnly
+        : DEFAULT_RESOURCE_BROWSER_ONLY,
   };
 }

@@ -31,6 +31,7 @@ export type ResourceSliceIdentifier = {
 type GetResourceOptions = {
   prefetch?: boolean;
   timeout?: number;
+  isStatic?: boolean;
 };
 
 type ResourceAction<R> = ({
@@ -80,4 +81,8 @@ export type Actions = {
     setState,
     getState,
   }: StoreActionApi<State>) => ResourceStoreData;
+  clearResource: (
+    type: RouteResource['type'],
+    key?: string
+  ) => ResourceAction<void>;
 };

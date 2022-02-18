@@ -48,3 +48,22 @@ export const UsernameResetter = ({ newUsername }) => {
   );
 };
 ```
+
+## Clearing
+
+The `clear` method is bound to the resource that you provide to [`useResource`](../api/hooks.md#useresource) hook or the [`ResourceSubscriber`](../api/components.md#resourcesubscriber). Calling this function will clear the resource so that the resource will be fetched from remote next time it's needed.
+
+```js
+import { useResource } from 'react-resource-router';
+import { accountInfoResource } from '../routing/resources';
+
+export const UsernameResetter = ({ newUsername }) => {
+  const { data, clear } = useResource(accountInfoResource);
+
+  return (
+    <button onClick={() => clear()}>
+      Clear your username
+    </button>
+  );
+};
+```

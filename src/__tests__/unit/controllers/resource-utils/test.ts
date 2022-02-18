@@ -16,6 +16,7 @@ describe('resource utils', () => {
         getData: expect.any(Function),
         maxAge: 0,
         maxCache: DEFAULT_CACHE_MAX_LIMIT,
+        isBrowserOnly: false,
       });
     });
 
@@ -35,6 +36,7 @@ describe('resource utils', () => {
         getData: expect.any(Function),
         maxAge: 0,
         maxCache: DEFAULT_CACHE_MAX_LIMIT,
+        isBrowserOnly: false,
       });
 
       await resource.getData(routerContext, {});
@@ -55,6 +57,7 @@ describe('resource utils', () => {
         getData: expect.any(Function),
         maxAge: 400,
         maxCache: DEFAULT_CACHE_MAX_LIMIT,
+        isBrowserOnly: false,
       });
     });
 
@@ -73,6 +76,27 @@ describe('resource utils', () => {
         getData: expect.any(Function),
         maxAge: 0,
         maxCache: 3,
+        isBrowserOnly: false,
+      });
+    });
+
+    it('should return a resource object with a custom isBrowserOnly', async () => {
+      const resource = createResource({
+        type: 'TEST',
+        getKey: () => '',
+        getData: () => null,
+        maxAge: 0,
+        maxCache: 3,
+        isBrowserOnly: true,
+      });
+
+      expect(resource).toEqual({
+        type: expect.any(String),
+        getKey: expect.any(Function),
+        getData: expect.any(Function),
+        maxAge: 0,
+        maxCache: 3,
+        isBrowserOnly: true,
       });
     });
   });
