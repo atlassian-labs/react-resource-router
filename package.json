@@ -97,7 +97,7 @@
     "@types/lodash.noop": "^3.0.6",
     "@types/react": "^16.9.35",
     "@types/react-dom": "^16.9.8",
-    "@types/url-parse": "^1.4.3",
+    "@types/url-parse": "^1.4.8",
     "@typescript-eslint/eslint-plugin": "^2.33.0",
     "@typescript-eslint/parser": "^2.33.0",
     "babel-eslint": "^10.0.2",
