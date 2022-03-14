@@ -1,3 +1,5 @@
+import URL from 'url-parse';
+
 export function parsePath(path: string) {
   const url = new URL(path, 'ws://a.a');
   const isAbsolute = path.startsWith('/');
@@ -7,7 +9,7 @@ export function parsePath(path: string) {
 
   return {
     pathname,
-    search: url.search,
+    search: url.query,
     hash: url.hash,
   };
 }
