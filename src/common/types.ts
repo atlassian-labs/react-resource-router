@@ -149,7 +149,7 @@ export type RouteResource<RouteResourceData = unknown> = {
 
 export type RouteResources = RouteResource[];
 
-export type ResourceStoreContext = any;
+export interface ResourceStoreContext {}
 
 export type RouteResourceDataForType = {
   [index: string]: RouteResourceResponseBase<unknown>;
