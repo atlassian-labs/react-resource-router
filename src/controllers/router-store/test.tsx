@@ -16,6 +16,8 @@ import {
   RouterContainer,
 } from './index';
 
+jest.mock('../../common/utils/is-server-environment');
+
 describe('RouterStore', () => {
   describe.each([
     ['v4', history4],

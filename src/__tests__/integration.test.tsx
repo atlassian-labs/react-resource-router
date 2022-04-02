@@ -10,7 +10,6 @@ import {
   RouteComponent,
   Router,
   RouteResource,
-  StaticRouter,
   useResource,
 } from '../index';
 
@@ -53,7 +52,7 @@ describe('<Router /> client-side integration tests', () => {
       resources: [completedResource, timeoutResource],
     };
 
-    const serverData = await StaticRouter.requestResources({
+    const serverData = await Router.requestResources({
       location,
       routes: [route],
       timeout: 350,
@@ -289,7 +288,7 @@ describe('<Router /> client-side integration tests', () => {
   });
 });
 
-describe('<StaticRouter /> server-side integration tests', () => {
+describe('<Router /> server-side integration tests', () => {
   const route = {
     component: () => <>route component</>,
     name: '',
@@ -302,13 +301,15 @@ describe('<StaticRouter /> server-side integration tests', () => {
 
   it('renders the expected route when basePath is set', async () => {
     const wrapper = mount(
-      <StaticRouter
+      <Router
         basePath="/base-path"
-        location={`/base-path${route.path}`}
+        history={createMemoryHistory({
+          initialEntries: [`/base-path${route.path}`],
+        })}
         routes={[route]}
       >
         <RouteComponent />
-      </StaticRouter>
+      </Router>
     );
 
     expect(wrapper.text()).toBe('route component');
@@ -316,9 +317,14 @@ describe('<StaticRouter /> server-side integration tests', () => {
 
   it('renders the expected route when basePath is not set', async () => {
     const wrapper = mount(
-      <StaticRouter location={route.path} routes={[route]}>
+      <Router
+        history={createMemoryHistory({
+          initialEntries: [route.path],
+        })}
+        routes={[route]}
+      >
         <RouteComponent />
-      </StaticRouter>
+      </Router>
     );
 
     expect(wrapper.text()).toBe('route component');

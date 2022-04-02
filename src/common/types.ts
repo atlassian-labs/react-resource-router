@@ -1,4 +1,4 @@
-import { History, Location as HistoryLocationShape } from 'history';
+import { History as History4, Location as HistoryLocationShape } from 'history';
 import { History as History5 } from 'history-5';
 import {
   ComponentType,
@@ -19,13 +19,15 @@ export type Location = {
 };
 
 export type BrowserHistory = (
-  | Omit<History, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
+  | Omit<History4, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
   | Omit<History5, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
 ) & {
   location: Location;
   push: (path: string | Location) => void;
   replace: (path: string | Location) => void;
 };
+
+export type History = BrowserHistory;
 
 export type MatchParams = {
   [key: string]: string | null | typeof undefined;
@@ -306,17 +308,6 @@ export type HistoryActions = {
   goForward: () => void;
   registerBlock: (blocker: HistoryBlocker) => () => void;
   listen: HistoryListen;
-};
-
-export type MemoryRouterProps = {
-  basePath?: string;
-  isStatic?: boolean;
-  location?: string;
-  isGlobal?: boolean;
-  routes: Routes;
-  children?: ReactNode;
-  resourceData?: ResourceStoreData;
-  resourceContext?: ResourceStoreContext;
 };
 
 export type GenerateLocationOptions = {

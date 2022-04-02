@@ -18,7 +18,6 @@ describe('useRouterActions()', () => {
     expect(routerActions).toMatchInlineSnapshot(`
       Object {
         "bootstrapStore": [Function],
-        "bootstrapStoreUniversal": [Function],
         "getBasePath": [Function],
         "getContext": [Function],
         "goBack": [Function],

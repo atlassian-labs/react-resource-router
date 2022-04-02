@@ -1,10 +1,8 @@
-export { MemoryRouter } from './memory-router';
 export { Redirect } from './redirect';
 export { ResourceSubscriber } from './resource-subscriber';
-export { Router } from './router';
+export { MemoryRouter, Router } from './router';
 export { RouterActions } from './router-actions';
 export { RouterSubscriber } from './router-subscriber';
-export { StaticRouter } from './static-router';
 
 export {
   createResource,

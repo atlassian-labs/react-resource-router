@@ -11,7 +11,6 @@
 * **Router**
 
   - [Configuration](/router/configuration.md)
-  - [Selection](/router/selection.md)
   - [State](/router/state.md)
   - [SSR](/router/ssr.md)
 
