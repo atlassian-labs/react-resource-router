@@ -29,7 +29,7 @@ export const App = () => (
 );
 ```
 
-When however you need to SSR your app, we need pass different props to Router, as `createBrowserHistory` does not really work on server, so we recommend to use `location` instead (or pass your own `MemoryHistory` if needed)
+When you need to SSR your app, we need to pass different props to Router, as `createBrowserHistory` does not really work on server, so we recommend to use `location` instead (or pass your own `MemoryHistory` if needed)
 
 ```js
 // server-app.js
