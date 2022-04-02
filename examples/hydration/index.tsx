@@ -6,7 +6,6 @@ import {
   Router,
   RouteComponent,
   createBrowserHistory,
-  StaticRouter,
 } from 'react-resource-router';
 
 import { homeRoute } from './routes';
@@ -16,9 +15,7 @@ const myHistory = createBrowserHistory();
 const appRoutes = [homeRoute];
 
 const getStateFromServer = async () => {
-  // StaticRouter should only be used on Server!
-  // It's used in Browser in this example for simplicity.
-  const resourceData = await StaticRouter.requestResources({
+  const resourceData = await Router.requestResources({
     location: '/',
     routes: appRoutes,
   });

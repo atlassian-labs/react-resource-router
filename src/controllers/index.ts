@@ -1,7 +1,5 @@
 export { RouterSubscriber, ResourceSubscriber } from './subscribers';
-export { Router } from './router';
-export { MemoryRouter } from './memory-router';
-export { StaticRouter } from './static-router';
+export { Router, MemoryRouter } from './router';
 export { RouterActions } from './router-actions';
 export { Redirect } from './redirect';
 export { withRouter, WithRouter } from './with-router';

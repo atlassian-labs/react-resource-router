@@ -23,7 +23,6 @@ import type {
   RouterState,
   RouterContext,
   RouterSubscriberProps,
-  StaticRouterProps,
   CreateRouterContextOptions,
   ResourceStoreData,
   RequestResourcesParams,
@@ -44,15 +43,12 @@ declare export function RouterActions(props: {|
   children: (actions: RouterActionsType) => Node,
 |}): Node;
 
-declare export function Router(props: RouterProps): Node;
-declare export var MemoryRouter: {
-  (props: MemoryRouterProps): Node,
+declare export var Router: {
+  (props: RouterProps): Node,
   requestResources: RequestResourcesParams => Promise<ResourceStoreData>,
 };
-declare export var StaticRouter: {
-  (props: StaticRouterProps): Node,
-  requestResources: RequestResourcesParams => Promise<ResourceStoreData>,
-};
+
+declare export function MemoryRouter(props: MemoryRouterProps): Node;
 
 declare export function ResourceSubscriber<T>(props: {
   children: (
@@ -144,7 +140,12 @@ type GetDataLoader<T> = () => Promise<{
  *
  */
 type CreateResourceArg<T> =
-  | {| ...RouteResource<T>, maxAge?: number, maxCache?: number, isBrowserOnly?: boolean, |}
+  | {|
+      ...RouteResource<T>,
+      maxAge?: number,
+      maxCache?: number,
+      isBrowserOnly?: boolean,
+    |}
   | {|
       ...$Diff<
         RouteResource<T>,

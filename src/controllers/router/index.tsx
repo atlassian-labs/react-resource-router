@@ -1,77 +1,92 @@
-import React, { Component } from 'react';
+import React, { useMemo, useEffect } from 'react';
+import { createMemoryHistory } from 'history';
 
-import { DEFAULT_HISTORY } from '../../common/constants';
+import { createLocation } from '../../common/utils/create-location';
 import { getRouterState, RouterContainer } from '../router-store';
-import { UnlistenHistory } from '../router-store/types';
+import { getResourceStore, ResourceContainer } from '../resource-store';
+import { getRouterStore } from '../router-store';
 
-import { RouterProps } from './types';
+import {
+  RouterProps,
+  MemoryRouterProps,
+  RequestResourcesParams,
+} from './types';
 
-/**
- * Default prop provider for the RouterContainer.
- *
- */
-export class Router extends Component<RouterProps> {
-  static defaultProps = {
-    isStatic: false,
-    isGlobal: true,
-    history: DEFAULT_HISTORY,
-  };
+const Router = ({
+  basePath,
+  children,
+  initialRoute,
+  isGlobal = true,
+  onPrefetch,
+  resourceContext,
+  resourceData,
+  routes,
+  ...props
+}: RouterProps) => {
+  const history = useMemo(
+    () =>
+      props.history ||
+      createMemoryHistory(
+        props.location ? { initialEntries: [props.location] } : {}
+      ),
+    [props.history, props.location]
+  );
 
-  /**
-   * Keep a copy of the history listener so that we can be sure that
-   * on unmount we call the listener that was in the router store at the
-   * time of mounting.
-   *
-   * This prevents an issue where the wrong listener is removed if the router
-   * is re-mounted.
-   */
-  unlistenHistory: UnlistenHistory | null = null;
+  useEffect(() => {
+    const { unlisten } = getRouterState();
 
-  componentDidMount() {
-    if (!this.props.isStatic) {
-      const state = getRouterState();
-      this.unlistenHistory = state.unlisten;
-    }
-  }
+    return () => {
+      unlisten && unlisten();
+    };
+  }, []);
 
-  /**
-   * Ensures that the router store stops listening to history when the Router
-   * is unmounted.
-   */
-  componentWillUnmount() {
-    if (this.unlistenHistory) {
-      this.unlistenHistory();
-    }
-  }
-
-  render() {
-    const {
-      children,
-      routes,
-      history,
-      initialRoute,
-      isStatic,
-      isGlobal,
-      basePath,
-      resourceContext,
-      resourceData,
-      onPrefetch,
-    } = this.props;
-
-    return (
+  return (
+    <ResourceContainer isGlobal={isGlobal}>
       <RouterContainer
         basePath={basePath}
-        routes={routes}
         history={history}
         initialRoute={initialRoute}
-        isStatic={isStatic}
+        isGlobal={isGlobal}
+        onPrefetch={onPrefetch}
         resourceContext={resourceContext}
         resourceData={resourceData}
-        onPrefetch={onPrefetch}
-        isGlobal={isGlobal}
+        routes={routes}
       >
         {children}
       </RouterContainer>
-    );
-  }
-}
+    </ResourceContainer>
+  );
+};
+
+/**
+ * The entry point for requesting resource data on the server.
+ * Pass the result data into the router as a prop in order to hydrate it.
+ */
+Router.requestResources = async ({
+  location,
+  timeout,
+  history,
+  ...bootstrapProps
+}: RequestResourcesParams) => {
+  const { bootstrapStore, requestRouteResources } = getRouterStore().actions;
+
+  bootstrapStore({
+    ...bootstrapProps,
+    history: history || createMemoryHistory({ initialEntries: [location] }),
+    location: createLocation(location),
+  });
+
+  await requestRouteResources({ timeout });
+
+  return getResourceStore().actions.getSafeData();
+};
+
+Router.addResourcesListener = (fn: (...args: any) => any) =>
+  getResourceStore().storeState.subscribe(fn);
+
+// Expose
+const MemoryRouter = (props: MemoryRouterProps) => (
+  <Router {...props} isGlobal={false} />
+);
+
+export { Router, MemoryRouter };

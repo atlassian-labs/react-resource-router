@@ -146,17 +146,7 @@ export type InvariantRoutes = InvariantRoute[];
 export type Routes = Route[];
 
 type ContainerProps = {|
-  isStatic?: boolean,
   history: BrowserHistory,
-  location?: Location,
-  routes: Routes,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-|};
-
-export type UniversalRouterContainerProps = {|
-  isGlobal?: boolean,
-  history: BrowserHistory | MemoryHistory,
   location?: Location,
   routes: Routes,
   resourceData?: ResourceStoreData,
@@ -175,7 +165,6 @@ type PrivateStateProperties = {|
   routes: Routes,
   history: BrowserHistory,
   unlisten: (() => void) | null,
-  isStatic: boolean,
   shouldUseSuspense: boolean,
 |};
 
@@ -206,59 +195,31 @@ export type RouterActionsType = {|
   getBasePath: () => string,
 |};
 
-// TODO: DRY out all these different router props if possible
 export type RouterProps = {
-  isStatic?: boolean,
-  history?: BrowserHistory,
-  resourceContext?: ResourceStoreContext,
-  resourceData?: ResourceStoreData,
-  routes: Routes,
-  children: Node,
-  initialRoute?: Route,
-  isGlobal?: boolean,
   basePath?: string,
-  onPrefetch?: (routerContext: RouterContext) => void,
-};
-
-export type UniversalRouterProps = {
+  children: Node,
+  history?: BrowserHistory,
+  initialRoute?: Route,
   isGlobal?: boolean,
-  history?: BrowserHistory | MemoryHistory,
+  location?: string,
+  onPrefetch?: (routerContext: RouterContext) => void,
   resourceContext?: ResourceStoreContext,
   resourceData?: ResourceStoreData,
   routes: Routes,
-  children: Node,
-  initialRoute?: Route,
-  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type MemoryRouterProps = {
-  isStatic?: boolean,
-  isGlobal?: boolean,
+  basePath?: string,
   location?: string,
   routes?: Routes,
   children: Node,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-  initialRoute?: Route,
-  basePath?: string,
-  onPrefetch?: (routerContext: RouterContext) => void,
-};
-
-export type StaticRouterProps = {
-  isStatic?: boolean,
-  location?: string,
-  routes: Routes,
-  children: Node,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-  initialRoute?: Route,
-  basePath?: string,
 };
 
 export type RequestResourcesParams = {
+  history?: BrowserHistory,
   location: string,
-  routes: Routes,
   resourceContext?: ResourceStoreContext,
+  routes: Routes,
   timeout?: number,
 };
 
