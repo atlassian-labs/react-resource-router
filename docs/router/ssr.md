@@ -29,16 +29,19 @@ export const App = () => (
 );
 ```
 
-When however you need to SSR your app, we need pass different props to Router, as `createBrowserHistory` does not really work on server, so we recommend to use `location` instead (or pass your own `MemoryHistory` if needed)
+When you need to SSR your app, we need to pass different props to Router, as `createBrowserHistory` does not really work on server, so we recommend to use your own `MemoryHistory`
 
 ```js
 // server-app.js
+import { createMemoryHistory } from 'history';
 import { Router } from 'react-resource-router';
 import { App } from '../components';
 import { routes } from '../routing/routes';
 
 export const ServerApp = ({ location }) => (
-  <Router routes={routes} location={location}>
+  <Router
+    history={createMemoryHistory({ initialEntries: [location]} )}
+    routes={routes}>
     <App />
   </Router>
 );
@@ -53,7 +56,7 @@ import { routes } from '../routing/routes';
 const history = createBrowserHistory();
 
 export const ClientApp = () => (
-  <Router routes={routes} history={history}>
+  <Router history={history} routes={routes}>
     <App />
   </Router>
 );

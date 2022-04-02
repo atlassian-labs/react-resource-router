@@ -33,7 +33,6 @@ import { appRoutes } from './routing';
 | ----------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `routes`          | `Routes[]`                | Your application's routes                                                                                                                     |
 | `history`         | `History`                 | The history instance for the router, if omitted memory history will be used (optional but recommended)                                        |
-| `location`        | `string`                  | If `history` prop is omitted, this configures the initial location for the default memory history (optional, useful for tests and storybooks) |
 | `basePath`        | `string`                  | Base path string that will get prepended to all route paths (optional)                                                                        |
 | `initialRoute`    | `Route`                   | The route your application is initially showing, it's a performance optimisation to avoid route matching cost on initial render(optional)     |
 | `resourceContext` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods (optional)                                 |
