@@ -20,8 +20,6 @@ import {
   State,
 } from './types';
 import {
-  deleteResource,
-  deleteResourceKey,
   deserializeError,
   getAccessedAt,
   getExpiresAt,
@@ -33,8 +31,9 @@ import {
   generateTimeGuard,
   TimeoutError,
   setSsrDataPromise,
+  getResourceState,
   setResourceState,
-  updateRemoteResourceState,
+  deleteResourceState,
   validateLRUCache,
 } from './utils';
 
@@ -177,7 +176,9 @@ export const actions: Actions = {
 
     response.accessedAt = getAccessedAt();
 
-    dispatch(updateRemoteResourceState(type, key, response));
+    if (dispatch(getResourceState(type, key))) {
+      dispatch(setResourceState(type, key, response));
+    }
 
     return response;
   },
@@ -211,15 +212,15 @@ export const actions: Actions = {
     getState,
     dispatch,
   }) => {
-    const { data, context: resourceContext } = getState();
+    const { context: resourceContext } = getState();
 
     resources.forEach(resource => {
       const { type, getKey } = resource;
       const key = getKey(routerStoreContext, resourceContext);
-      const slice = data[type]?.[key];
+      const slice = dispatch(getResourceState(type, key));
 
       if (slice && (!slice.expiresAt || slice.expiresAt < Date.now())) {
-        dispatch(deleteResourceKey(key, type));
+        dispatch(deleteResourceState(type, key));
       }
     });
   },
@@ -284,19 +285,7 @@ export const actions: Actions = {
    * Clears a resource by resource type and key.
    * If key is not provided, all the keys associated with the type will be deleted.
    */
-  clearResource: (type, key) => ({ getState, dispatch }) => {
-    const { data } = getState();
-
-    if (typeof key === 'undefined') {
-      dispatch(deleteResource(type));
-    } else {
-      const slice = data[type]?.[key];
-
-      if (slice) {
-        dispatch(deleteResourceKey(key, type));
-      }
-    }
-  },
+  clearResource: deleteResourceState,
 
   /**
    * Gets the store's context
