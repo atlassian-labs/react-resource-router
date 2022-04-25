@@ -2,6 +2,7 @@ import React from 'react';
 
 import { mount } from 'enzyme';
 import { defaultRegistry } from 'react-sweet-state';
+import { act } from 'react-dom/test-utils';
 
 import { LinkProps } from '../../../../common/types';
 import { Router } from '../../../../controllers/router';
@@ -35,6 +36,15 @@ const baseClickEvent = {
 
 const newPath = '/my-new-path';
 const eventModifiers = [['metaKey'], ['altKey'], ['ctrlKey'], ['shiftKey']];
+
+// https://github.com/facebook/jest/pull/5267#issuecomment-356605468
+const withoutConsoleError = (fn: () => void) => () => {
+  const consoleError = jest
+    .spyOn<Console, 'error'>(console, 'error')
+    .mockImplementation(() => undefined);
+  fn();
+  consoleError.mockRestore();
+};
 
 describe('<Link />', () => {
   const mountInRouter = (
@@ -240,7 +250,7 @@ describe('<Link />', () => {
         params: { id: '1' },
         query: { foo: 'bar' },
       });
-      await Promise.resolve();
+      await act(() => Promise.resolve());
       const component = wrapper.find('Link');
 
       component.simulate('click', baseClickEvent);
@@ -257,7 +267,11 @@ describe('<Link />', () => {
     });
 
     it('should error if required route parameters are missing', () => {
-      expect(() => mountInRouter('my link', { to: route })).toThrow();
+      expect(
+        withoutConsoleError(() => {
+          mountInRouter('my link', { to: route });
+        })
+      ).toThrow();
     });
   });
 
