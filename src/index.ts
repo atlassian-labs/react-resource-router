@@ -18,8 +18,9 @@ export {
   createResource,
   useRouterActions,
   createRouterSelector,
-  WithRouter,
 } from './controllers';
+
+export type { WithRouter } from './controllers';
 
 export { RouteComponent, Link } from './ui';
 
@@ -31,7 +32,7 @@ export {
   findRouterContext,
 } from './common/utils';
 
-export {
+export type {
   BrowserHistory,
   CreateRouterContextOptions,
   FindRouterContextOptions,
@@ -64,7 +65,7 @@ export {
   UseResourceHookResponse,
 } from './common/types';
 
-export {
+export type {
   RouterActionsType,
   RouterActionPush,
   RouterActionReplace,
