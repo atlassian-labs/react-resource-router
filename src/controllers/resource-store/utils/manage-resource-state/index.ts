@@ -1,12 +1,16 @@
 import { StoreActionApi } from 'react-sweet-state';
 
-import { RouteResource, RouteResourceResponse } from '../../../../common/types';
+import {
+  ResourceType,
+  ResourceKey,
+  RouteResourceResponse,
+} from '../../../../common/types';
 
 import { State } from '../../types';
 
 export const setResourceState = (
-  type: RouteResource['type'],
-  key: string,
+  type: ResourceType,
+  key: ResourceKey,
   state: RouteResourceResponse
 ) => ({ setState, getState }: StoreActionApi<State>) => {
   const { data } = getState();
@@ -23,8 +27,8 @@ export const setResourceState = (
 };
 
 export const updateRemoteResourceState = (
-  type: RouteResource['type'],
-  key: string,
+  type: ResourceType,
+  key: ResourceKey,
   state: RouteResourceResponse
 ) => ({ dispatch, getState }: StoreActionApi<State>) => {
   const {
@@ -36,7 +40,7 @@ export const updateRemoteResourceState = (
   }
 };
 
-export const deleteResource = (type: RouteResource['type']) => ({
+export const deleteResource = (type: ResourceType) => ({
   getState,
   setState,
 }: StoreActionApi<State>) => {
@@ -48,10 +52,10 @@ export const deleteResource = (type: RouteResource['type']) => ({
   });
 };
 
-export const deleteResourceKey = (
-  key: string,
-  type: RouteResource['type']
-) => ({ getState, setState }: StoreActionApi<State>) => {
+export const deleteResourceKey = (key: ResourceKey, type: ResourceType) => ({
+  getState,
+  setState,
+}: StoreActionApi<State>) => {
   const { data } = getState();
 
   const {

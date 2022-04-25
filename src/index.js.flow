@@ -15,6 +15,8 @@ import type {
   Route,
   RouteContext,
   RouterActionsType,
+  RouteResourceBase,
+  GetData,
   RouteResource,
   RouteResourceData,
   RouteResourceResponse,
@@ -144,14 +146,17 @@ type GetDataLoader<T> = () => Promise<{
  *
  */
 type CreateResourceArg<T> =
-  | {| ...RouteResource<T>, maxAge?: number, maxCache?: number, isBrowserOnly?: boolean, |}
   | {|
-      ...$Diff<
-        RouteResource<T>,
-        {| getData: $PropertyType<RouteResource<T>, 'getData'> |}
-      >,
+      ...RouteResourceBase,
+      getData: GetData<T>,
       maxAge?: number,
+      maxCache?: number,
+      isBrowserOnly?: boolean,
+    |}
+  | {|
+      ...RouteResourceBase,
       getDataLoader: GetDataLoader<T>,
+      maxAge?: number,
       maxCache?: number,
       isBrowserOnly?: boolean,
     |};
