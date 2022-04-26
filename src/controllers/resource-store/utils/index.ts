@@ -20,3 +20,4 @@ export {
   actionWithDependencies,
   mapActionWithDependencies,
 } from './dependent-resources';
+export { toPromise } from './to-promise';

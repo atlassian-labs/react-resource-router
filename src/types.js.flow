@@ -87,7 +87,7 @@ export type GetKey = (
 export type GetData<T> = (
   routerContext: RouterDataContext,
   customContext: ResourceStoreContext
-) => RouteResourcePromise<T>;
+) => T | Promise<T>;
 
 export type RouteResourceBase = {|
   type: ResourceType,

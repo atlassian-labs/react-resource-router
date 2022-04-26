@@ -23,6 +23,7 @@ import {
 } from '../../../../controllers/resource-store/utils';
 import { createResource } from '../../../../controllers/resource-utils';
 import * as routerStoreModule from '../../../../controllers/router-store';
+import { RouteResourceResponseBase } from '../../../../common/types';
 
 jest.mock('../../../../controllers/resource-store/utils', () => ({
   ...jest.requireActual<any>('../../../../controllers/resource-store/utils'),
@@ -37,22 +38,10 @@ describe('resource store', () => {
   let storeState: any;
   let actions: BoundActions<ResourceStoreState, ResourceStoreActions>;
 
-  beforeEach(() => {
-    resourceStore = getResourceStore();
-    storeState = resourceStore.storeState;
-    actions = resourceStore.actions;
-  });
-
-  afterEach(() => {
-    defaultRegistry.stores.clear();
-    jest.resetAllMocks();
-    jest.restoreAllMocks();
-  });
-
   const type = 'type';
   const key = 'key';
   const result = 'result';
-  const error = null;
+  const error = new Error('something failed');
   const expiresAt = 0;
   const accessedAt = 100;
   const getDataPromise = Promise.resolve(result);
@@ -79,9 +68,40 @@ describe('resource store', () => {
     type,
     getKey: () => key,
     getData: () => getDataPromise,
+    maxAge: Number.MAX_SAFE_INTEGER,
   });
   const resolver = (resolveWith: any, delay = 0) =>
     new Promise(resolve => setTimeout(() => resolve(resolveWith), delay));
+
+  const getResourceSlice = (): Partial<RouteResourceResponseBase<unknown>> =>
+    storeState.getState().data?.type?.key;
+
+  const setResourceSlice = (
+    slice: Partial<RouteResourceResponseBase<unknown>>
+  ) =>
+    storeState.setState({
+      data: {
+        type: {
+          key: slice,
+        },
+      },
+    });
+
+  beforeEach(() => {
+    resourceStore = getResourceStore();
+    storeState = resourceStore.storeState;
+    actions = resourceStore.actions;
+    // @ts-ignore
+    window.featureFlags = {};
+  });
+
+  afterEach(() => {
+    defaultRegistry.stores.clear();
+    jest.resetAllMocks();
+    jest.restoreAllMocks();
+    // @ts-ignore
+    delete window.featureFlags;
+  });
 
   describe('when cached data will not be used', () => {
     beforeEach(() => {
@@ -97,7 +117,7 @@ describe('resource store', () => {
     describe('getResource', () => {
       const otherType = 'foo';
       const mockKeyedData = {
-        bar: { data: 'baz', loading: false, error, promise: null },
+        bar: { data: 'baz', loading: false, error: null, promise: null },
       };
 
       it('should return the resolved response', async () => {
@@ -109,7 +129,7 @@ describe('resource store', () => {
 
         expect(response).toEqual({
           data: result,
-          error,
+          error: null,
           loading: false,
           promise: getDataPromise,
           expiresAt,
@@ -135,36 +155,13 @@ describe('resource store', () => {
               [key]: {
                 data: result,
                 loading: false,
-                error,
+                error: null,
                 promise: getDataPromise,
                 expiresAt,
                 accessedAt,
               },
             },
           },
-        });
-      });
-
-      it('should respect timeout option', async () => {
-        const response = await actions.getResource(
-          createResource({
-            type,
-            getKey: () => key,
-            getData: () => resolver('hello world', 250),
-          }),
-          mockRouterStoreContext,
-          {
-            timeout: 100,
-          }
-        );
-
-        expect(response).toEqual({
-          data: null,
-          error: new TimeoutError(type),
-          loading: true,
-          promise: null,
-          expiresAt: expect.any(Number),
-          accessedAt: expect.any(Number),
         });
       });
 
@@ -185,7 +182,7 @@ describe('resource store', () => {
           [key]: {
             data: result,
             loading: false,
-            error,
+            error: null,
             promise: getDataPromise,
             expiresAt,
             accessedAt,
@@ -211,7 +208,7 @@ describe('resource store', () => {
               [key]: {
                 data: null,
                 loading: true,
-                error,
+                error: null,
                 promise: getDataPromise,
                 expiresAt,
                 accessedAt,
@@ -226,7 +223,7 @@ describe('resource store', () => {
               [key]: {
                 data: result,
                 loading: false,
-                error,
+                error: null,
                 promise: getDataPromise,
                 expiresAt,
                 accessedAt,
@@ -323,6 +320,7 @@ describe('resource store', () => {
         });
       });
     });
+
     describe('requestAllResources', () => {
       const routeWithMockedResources = {
         resources: [
@@ -388,630 +386,930 @@ describe('resource store', () => {
     });
   });
 
-  describe('requestResources', () => {
-    it('should skip isBrowserOnly resources if isStatic is true', () => {
-      const data = actions.requestResources(
-        [{ ...mockResource, isBrowserOnly: true }],
-        mockRouterStoreContext,
-        { ...mockOptions, isStatic: true }
-      );
-
-      expect(data).toEqual([]);
+  describe('actions', () => {
+    beforeEach(() => {
+      (getExpiresAt as any).mockReturnValue(200);
+      (getAccessedAt as any).mockReturnValue(100);
+      (getDefaultStateSlice as any).mockReturnValue(BASE_DEFAULT_STATE_SLICE);
     });
-    it('should ignore isBrowserOnly if isStatic is falsey', async () => {
-      (getDefaultStateSlice as any).mockImplementation(() => ({
-        ...BASE_DEFAULT_STATE_SLICE,
-        expiresAt: 1,
-      }));
 
-      await Promise.all(
-        actions.requestResources(
+    describe('requestResources', () => {
+      it('should skip isBrowserOnly resources if isStatic is true', () => {
+        const data = actions.requestResources(
           [{ ...mockResource, isBrowserOnly: true }],
           mockRouterStoreContext,
-          mockOptions
-        )
-      );
+          { ...mockOptions, isStatic: true }
+        );
 
-      const { data } = storeState.getState();
-
-      expect(data).toEqual({
-        type: {
-          key: {
-            accessedAt: undefined,
-            data: 'result',
-            error: null,
-            expiresAt: undefined,
-            loading: false,
-            promise: expect.any(Promise),
-          },
-        },
-      });
-    });
-  });
-
-  describe('getSafeData', () => {
-    const slice = {
-      data: { hello: 'world' },
-      loading: false,
-      error: null,
-      expiresAt: 14400222,
-    };
-
-    it('should get safe data with properly hydratable errors if error was a string', () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: { ...slice, error: 'I am an error string' },
-          },
-        },
+        expect(data).toEqual([]);
       });
 
-      const safeData = actions.getSafeData();
+      it('should ignore isBrowserOnly if isStatic is falsey', async () => {
+        (getDefaultStateSlice as any).mockImplementation(() => ({
+          ...BASE_DEFAULT_STATE_SLICE,
+          expiresAt: 1,
+        }));
 
-      expect(safeData[type][key].error).toEqual({
-        name: 'Error',
-        message: '"I am an error string"',
-        stack: expect.any(String),
-      });
-    });
+        await Promise.all(
+          actions.requestResources(
+            [{ ...mockResource, isBrowserOnly: true }],
+            mockRouterStoreContext,
+            mockOptions
+          )
+        );
 
-    it('should maintain null errors', () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: { ...slice },
-          },
-        },
-      });
+        const { data } = storeState.getState();
 
-      const safeData = actions.getSafeData();
-
-      expect(safeData[type][key].error).toBeNull();
-    });
-
-    it('should set the expiresAt property to null', () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: { ...slice },
-          },
-        },
-      });
-
-      const safeData = actions.getSafeData();
-
-      expect(safeData[type][key].expiresAt).toBeNull();
-    });
-
-    it('should set loading to false for completed resource', () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: { ...slice, loading: true },
-          },
-        },
-      });
-
-      const safeData = actions.getSafeData();
-
-      expect(safeData[type][key].loading).toBeFalsy();
-    });
-
-    it('should set loading to true for timed out resource', () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: { ...slice, error: new TimeoutError(type), loading: true },
-          },
-        },
-      });
-
-      const safeData = actions.getSafeData();
-
-      expect(safeData[type][key].loading).toBeTruthy();
-    });
-  });
-
-  describe('hydrate', () => {
-    it('should not set either data or context if they are supplied as undefined', () => {
-      const state = { resourceData: undefined, resourceContext: undefined };
-
-      actions.hydrate(state);
-
-      const { context, data } = storeState.getState();
-
-      expect(context).toEqual({});
-      expect(data).toEqual({});
-    });
-
-    it('should set the context if it is provided', () => {
-      const resourceContext = { foo: 'bar' };
-
-      actions.hydrate({ resourceContext });
-
-      const { context } = storeState.getState();
-
-      expect(context).toEqual(resourceContext);
-    });
-
-    it('should set the data if it is provided', () => {
-      const resourceData = {
-        HI: {
-          key: {
-            data: 'hello world',
-            error: null,
-            loading: false,
-            promise: null,
-            expiresAt: null,
-            accessedAt,
-          },
-        },
-      };
-
-      // @ts-ignore mocking resourceData
-      actions.hydrate({ resourceData });
-
-      const { data } = storeState.getState();
-
-      expect(data).toEqual(resourceData);
-    });
-
-    it('should hydrate serialized errors correctly', () => {
-      const message = 'test';
-      const resourceData = {
-        [type]: {
-          [key]: {
-            data: null,
-            error: serializeError(new Error(message)),
-            loading: false,
-            promise: null,
-            expiresAt: null,
-            accessedAt: null,
-          },
-        },
-      };
-
-      actions.hydrate({ resourceData });
-
-      const { data: hydrated } = storeState.getState();
-      const hydratedError = hydrated[type][key].error;
-
-      expect(hydratedError.message).toEqual(message);
-      expect(hydratedError.name).toEqual('Error');
-      expect(hydratedError.stack).toBeDefined();
-    });
-
-    it('should hydrate custom serialized errors correctly', () => {
-      class CustomError extends Error {
-        component: string;
-
-        // @ts-ignore
-        constructor({ name, message, component }) {
-          super(message);
-
-          this.name = name;
-          this.component = component;
-        }
-      }
-
-      const customErrorProps = {
-        name: 'custom',
-        message: 'this is a custom error message',
-        component: 'test.component',
-      };
-      const resourceData = {
-        [type]: {
-          [key]: {
-            data: null,
-            error: serializeError(new CustomError(customErrorProps)),
-            loading: false,
-            promise: null,
-            expiresAt: null,
-            accessedAt: null,
-          },
-        },
-      };
-
-      actions.hydrate({ resourceData });
-
-      const { data: hydrated } = storeState.getState();
-      const hydratedError = hydrated[type][key].error;
-
-      expect(hydratedError instanceof Error).toBe(true);
-      expect(hydratedError.message).toEqual(customErrorProps.message);
-      expect(hydratedError.name).toEqual(customErrorProps.name);
-      expect(hydratedError.component).toEqual(customErrorProps.component);
-      expect(hydratedError.stack).toBeDefined();
-    });
-  });
-
-  describe('when cached data will be used', () => {
-    beforeEach(() => {
-      (shouldUseCache as any).mockImplementation(() => true);
-    });
-
-    it('should not call getData if the cached resource is fresh', async () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: {
-              data: result,
-              loading: false,
-              error,
-              promise: null,
-              expiresAt: null,
-              accessedAt,
-            },
-          },
-        },
-      });
-
-      const getDataSpy = jest.spyOn(mockResource, 'getData');
-
-      await actions.getResource(
-        mockResource,
-        mockRouterStoreContext,
-        mockOptions
-      );
-
-      expect(getDataSpy).toHaveBeenCalledTimes(0);
-    });
-
-    it('should update the slice with an expiresAt value and set this in store state when the slice comes from ssr', async () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: {
-              data: result,
-              loading: false,
-              error,
-              promise: getDataPromise,
-              expiresAt: null,
-              accessedAt,
-            },
-          },
-        },
-      });
-
-      const slice = await actions.getResource(
-        mockResource,
-        mockRouterStoreContext,
-        mockOptions
-      );
-
-      expect(slice.expiresAt === null).toBeFalsy();
-      expect(storeState.getState().expiresAt === null).toBeFalsy();
-    });
-  });
-
-  describe('when max cache limit is set', () => {
-    const mockSlice = {
-      ...BASE_DEFAULT_STATE_SLICE,
-      expiresAt: 100,
-    };
-
-    const home = 'home';
-    const about = 'about';
-
-    const initialDataForType = {
-      [home]: {
-        ...mockSlice,
-        data: home,
-        accessedAt: 100,
-      },
-      [about]: {
-        ...mockSlice,
-        data: about,
-        accessedAt: 200,
-      },
-    };
-
-    const currentTime = 500;
-    const expiryAge = 1000;
-
-    beforeEach(() => {
-      jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
-      (getDefaultStateSlice as any).mockImplementation(() => mockSlice);
-      (getExpiresAt as any).mockImplementation((age: number) => age);
-      (getAccessedAt as any).mockImplementation(() => 400);
-    });
-    it('should store data in cache along with previous data when max cache limit not reached', async () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            ...initialDataForType,
-          },
-        },
-      });
-      await actions.getResource(
-        {
-          ...mockResource,
-          maxAge: expiryAge,
-          maxCache: 3,
-        },
-        mockRouterStoreContext,
-        mockOptions
-      );
-
-      expect(storeState.getState()).toEqual({
-        data: {
-          [type]: {
-            ...initialDataForType,
-            [key]: {
-              data: result,
-              loading: false,
-              error,
-              promise: getDataPromise,
-              expiresAt: expiryAge,
-              accessedAt: 400,
-            },
-          },
-        },
-      });
-    });
-    it('should delete the least recent key data when cache reaches the max cache limit for the Type', async () => {
-      storeState.setState({
-        data: {
-          [type]: {
-            ...initialDataForType,
-          },
-        },
-      });
-      await actions.getResource(
-        {
-          ...mockResource,
-          maxAge: expiryAge,
-          maxCache: 2,
-        },
-        mockRouterStoreContext,
-        mockOptions
-      );
-      expect(storeState.getState()).toEqual({
-        data: {
-          [type]: {
-            [about]: {
-              ...initialDataForType[about],
-            },
-            [key]: {
-              data: result,
-              loading: false,
-              error,
-              promise: getDataPromise,
-              expiresAt: expiryAge,
-              accessedAt: 400,
-            },
-          },
-        },
-      });
-    });
-  });
-
-  describe('useResource', () => {
-    it('should render a loading component if using a resource that has not yet been resolved', () => {
-      const id = 'test';
-
-      storeState.setState({
-        data: {
-          [type]: {
-            [key]: {
-              data: { id },
-              loading: false,
+        expect(data).toEqual({
+          type: {
+            key: {
+              data: 'result',
               error: null,
-              promise: null,
-              accessedAt,
+              expiresAt: 200,
+              accessedAt: 100,
+              loading: false,
+              promise: expect.any(Promise),
             },
           },
-        },
+        });
       });
-
-      const mockResourceWithLongRequest = {
-        ...mockResource,
-        getData: () => resolver(result, 5000),
-      };
-
-      actions.getResource(
-        mockResourceWithLongRequest,
-        mockRouterStoreContext,
-        mockOptions
-      );
-
-      const Component = () => {
-        const { data, loading } = useResource(mockResource);
-
-        if (loading) {
-          return <div id="loading" />;
-        }
-
-        if (data) {
-          return <div id="data" />;
-        }
-
-        return null;
-      };
-      const wrapper = mount(<Component />);
-
-      expect(wrapper.find('#loading')).toHaveLength(1);
-      expect(wrapper.find('#data')).toHaveLength(0);
     });
 
-    it('should select the right resource slice out of the state', () => {
-      const state = {
-        context: {},
-        data: {
-          [type]: {
-            [key]: {
-              data: 'foobar',
-              loading: false,
-              error: null,
-              promise: null,
-              expiresAt,
-              accessedAt,
-            },
-            foo: {
-              data: 'bazqux',
-              loading: false,
-              error: null,
-              promise: null,
-              expiresAt,
-              accessedAt,
-            },
-          },
-          bar: {
-            baz: {
-              data: 'qux',
-              loading: false,
-              error: null,
-              promise: null,
-              expiresAt,
-              accessedAt,
-            },
-          },
-        },
-      };
-      // @ts-ignore mocking resource store state
-      const slice = getSliceForResource(state, { type, key });
-
-      expect(slice).toEqual({
-        data: 'foobar',
-        error: null,
+    describe('getSafeData', () => {
+      const slice = {
+        data: { hello: 'world' },
         loading: false,
-        promise: null,
-        expiresAt,
-        accessedAt,
+        error: null,
+        expiresAt: 14400222,
+      };
+
+      it('should get safe data with properly hydratable errors if error was a string', () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: { ...slice, error: 'I am an error string' },
+            },
+          },
+        });
+
+        const safeData = actions.getSafeData();
+
+        expect(safeData[type][key].error).toEqual({
+          name: 'Error',
+          message: '"I am an error string"',
+          stack: expect.any(String),
+        });
+      });
+
+      it('should maintain null errors', () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: { ...slice },
+            },
+          },
+        });
+
+        const safeData = actions.getSafeData();
+
+        expect(safeData[type][key].error).toBeNull();
+      });
+
+      it('should set the expiresAt property to null', () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: { ...slice },
+            },
+          },
+        });
+
+        const safeData = actions.getSafeData();
+
+        expect(safeData[type][key].expiresAt).toBeNull();
+      });
+
+      it('should set loading to false for completed resource', () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: { ...slice, loading: true },
+            },
+          },
+        });
+
+        const safeData = actions.getSafeData();
+
+        expect(safeData[type][key].loading).toBeFalsy();
+      });
+
+      it('should set loading to true for timed out resource', () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: { ...slice, error: new TimeoutError(type), loading: true },
+            },
+          },
+        });
+
+        const safeData = actions.getSafeData();
+
+        expect(safeData[type][key].loading).toBeTruthy();
       });
     });
 
-    it('should get the slice of data for the type and key', async () => {
-      const id = 'test';
+    describe('hydrate', () => {
+      it('should not set either data or context if they are supplied as undefined', () => {
+        const state = { resourceData: undefined, resourceContext: undefined };
 
-      storeState.setState({
-        data: {
+        actions.hydrate(state);
+
+        const { context, data } = storeState.getState();
+
+        expect(context).toEqual({});
+        expect(data).toEqual({});
+      });
+
+      it('should set the context if it is provided', () => {
+        const resourceContext = { foo: 'bar' };
+
+        actions.hydrate({ resourceContext });
+
+        const { context } = storeState.getState();
+
+        expect(context).toEqual(resourceContext);
+      });
+
+      it('should set the data if it is provided', () => {
+        const resourceData = {
+          HI: {
+            key: {
+              data: 'hello world',
+              error: null,
+              loading: false,
+              promise: null,
+              expiresAt: null,
+              accessedAt,
+            },
+          },
+        };
+
+        // @ts-ignore mocking resourceData
+        actions.hydrate({ resourceData });
+
+        const { data } = storeState.getState();
+
+        expect(data).toEqual(resourceData);
+      });
+
+      it('should hydrate serialized errors correctly', () => {
+        const message = 'test';
+        const resourceData = {
           [type]: {
             [key]: {
-              data: { id },
+              data: null,
+              error: serializeError(new Error(message)),
               loading: false,
-              error: null,
               promise: null,
+              expiresAt: null,
               accessedAt: null,
             },
           },
-        },
+        };
+
+        actions.hydrate({ resourceData });
+
+        const { data: hydrated } = storeState.getState();
+        const hydratedError = hydrated[type][key].error;
+
+        expect(hydratedError.message).toEqual(message);
+        expect(hydratedError.name).toEqual('Error');
+        expect(hydratedError.stack).toBeDefined();
       });
 
-      const Component = () => {
-        const { data, loading } = useResource(mockResource);
+      it('should hydrate custom serialized errors correctly', () => {
+        class CustomError extends Error {
+          component: string;
 
-        if (loading) {
-          return <div id="loading" />;
-        }
-
-        if (data) {
           // @ts-ignore
-          return <div id={data.id} />;
+          constructor({ name, message, component }) {
+            super(message);
+
+            this.name = name;
+            this.component = component;
+          }
         }
 
-        return null;
-      };
-      const wrapper = mount(<Component />);
+        const customErrorProps = {
+          name: 'custom',
+          message: 'this is a custom error message',
+          component: 'test.component',
+        };
+        const resourceData = {
+          [type]: {
+            [key]: {
+              data: null,
+              error: serializeError(new CustomError(customErrorProps)),
+              loading: false,
+              promise: null,
+              expiresAt: null,
+              accessedAt: null,
+            },
+          },
+        };
 
-      expect(wrapper.find('#loading')).toHaveLength(0);
-      expect(wrapper.find(`#${id}`)).toHaveLength(1);
+        actions.hydrate({ resourceData });
+
+        const { data: hydrated } = storeState.getState();
+        const hydratedError = hydrated[type][key].error;
+
+        expect(hydratedError instanceof Error).toBe(true);
+        expect(hydratedError.message).toEqual(customErrorProps.message);
+        expect(hydratedError.name).toEqual(customErrorProps.name);
+        expect(hydratedError.component).toEqual(customErrorProps.component);
+        expect(hydratedError.stack).toBeDefined();
+      });
     });
-  });
 
-  describe('getResourceFromRemote', () => {
-    describe('when the slice in the store is currently loading', () => {
-      const mockSlice = {
-        ...BASE_DEFAULT_STATE_SLICE,
-        loading: true,
-        expiresAt,
-        accessedAt,
-      };
+    describe('when cached data will be used', () => {
       beforeEach(() => {
-        (getDefaultStateSlice as any).mockImplementation(() => mockSlice);
+        (shouldUseCache as any).mockImplementation(() => true);
       });
 
-      it('should return the slice and not modify state', async () => {
-        const spy = jest.spyOn(storeState, 'setState');
+      it('should not call getData if the cached resource is fresh', async () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: {
+                data: result,
+                loading: false,
+                error: null,
+                promise: null,
+                expiresAt: null,
+                accessedAt,
+              },
+            },
+          },
+        });
 
-        const slice = await actions.getResourceFromRemote(
+        const getDataSpy = jest.spyOn(mockResource, 'getData');
+
+        await actions.getResource(
           mockResource,
           mockRouterStoreContext,
           mockOptions
         );
 
-        expect(slice).toEqual(mockSlice);
-        expect(spy).toBeCalledTimes(0);
+        expect(getDataSpy).toHaveBeenCalledTimes(0);
+      });
+
+      it('should update the slice with an expiresAt value and set this in store state when the slice comes from ssr', async () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: {
+                data: result,
+                loading: false,
+                error: null,
+                promise: getDataPromise,
+                expiresAt: null,
+                accessedAt,
+              },
+            },
+          },
+        });
+
+        const slice = await actions.getResource(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
+
+        expect(slice.expiresAt === null).toBeFalsy();
+        expect(storeState.getState().expiresAt === null).toBeFalsy();
       });
     });
 
-    it('should set expiresAt to pending state if prefetch', async () => {
-      (getDefaultStateSlice as any).mockImplementation(() => ({
+    describe('when max cache limit is set', () => {
+      const mockSlice = {
         ...BASE_DEFAULT_STATE_SLICE,
-      }));
-      (getExpiresAt as any).mockImplementation(() => expiresAt);
+        expiresAt: 100,
+      };
 
-      const spy = jest.spyOn(storeState, 'setState');
+      const home = 'home';
+      const about = 'about';
 
-      await actions.getResourceFromRemote(
-        mockResource,
-        mockRouterStoreContext,
-        { ...mockOptions, prefetch: true }
-      );
+      const initialDataForType = {
+        [home]: {
+          ...mockSlice,
+          data: home,
+          accessedAt: 100,
+        },
+        [about]: {
+          ...mockSlice,
+          data: about,
+          accessedAt: 200,
+        },
+      };
 
-      expect(spy).toHaveBeenNthCalledWith(1, {
-        context: {},
-        data: {
-          [type]: {
-            [key]: {
-              ...BASE_DEFAULT_STATE_SLICE,
-              loading: true,
-              accessedAt: undefined,
-              expiresAt,
-              promise: expect.any(Promise),
+      const currentTime = 500;
+      const expiryAge = 1000;
+
+      beforeEach(() => {
+        jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
+        (getDefaultStateSlice as any).mockImplementation(() => mockSlice);
+        (getExpiresAt as any).mockImplementation((age: number) => age);
+        (getAccessedAt as any).mockImplementation(() => 400);
+      });
+
+      it('should store data in cache along with previous data when max cache limit not reached', async () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              ...initialDataForType,
             },
           },
-        },
+        });
+        await actions.getResource(
+          {
+            ...mockResource,
+            maxAge: expiryAge,
+            maxCache: 3,
+          },
+          mockRouterStoreContext,
+          mockOptions
+        );
+
+        expect(storeState.getState()).toEqual({
+          data: {
+            [type]: {
+              ...initialDataForType,
+              [key]: {
+                data: result,
+                loading: false,
+                error: null,
+                promise: getDataPromise,
+                expiresAt: expiryAge,
+                accessedAt: 400,
+              },
+            },
+          },
+        });
+      });
+
+      it('should delete the least recent key data when cache reaches the max cache limit for the Type', async () => {
+        storeState.setState({
+          data: {
+            [type]: {
+              ...initialDataForType,
+            },
+          },
+        });
+        await actions.getResource(
+          {
+            ...mockResource,
+            maxAge: expiryAge,
+            maxCache: 2,
+          },
+          mockRouterStoreContext,
+          mockOptions
+        );
+        expect(storeState.getState()).toEqual({
+          data: {
+            [type]: {
+              [about]: {
+                ...initialDataForType[about],
+              },
+              [key]: {
+                data: result,
+                loading: false,
+                error: null,
+                promise: getDataPromise,
+                expiresAt: expiryAge,
+                accessedAt: 400,
+              },
+            },
+          },
+        });
       });
     });
-  });
 
-  describe('cleanExpiredResources', () => {
-    const currentTime = 100;
+    describe('useResource', () => {
+      it('should render a loading component if using a resource that has not yet been resolved', () => {
+        const id = 'test';
 
-    const expiredResource = {
-      ...mockResource,
-      ...{
-        type: 'expiredResource',
-        getKey: () => 'expiredResourceKey',
-        getData: () => resolver('hello world', 250),
-      },
-    };
-    const cachedResource = {
-      ...mockResource,
-      ...{
-        type: 'cachedResource',
-        getKey: () => 'cachedResourceKey',
-        getData: () => resolver('hello world', 250),
-      },
-    };
-
-    beforeEach(() => {
-      jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
-      (getExpiresAt as any).mockImplementation(() => currentTime);
-      (getAccessedAt as any).mockImplementation(() => currentTime);
-      storeState.setState({
-        data: {
-          expiredResource: {
-            expiredResourceKey: {
-              data: result,
-              loading: false,
-              error: 'some error',
-              promise: getDataPromise,
-              expiresAt: 50,
-              accessedAt: currentTime,
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: {
+                data: { id },
+                loading: false,
+                error: null,
+                promise: null,
+                accessedAt,
+              },
             },
           },
+        });
+
+        const mockResourceWithLongRequest = {
+          ...mockResource,
+          getData: () => resolver(result, 5000),
+        };
+
+        actions.getResource(
+          mockResourceWithLongRequest,
+          mockRouterStoreContext,
+          mockOptions
+        );
+
+        const Component = () => {
+          const { data, loading } = useResource(mockResource);
+
+          if (loading) {
+            return <div id="loading" />;
+          }
+
+          if (data) {
+            return <div id="data" />;
+          }
+
+          return null;
+        };
+        const wrapper = mount(<Component />);
+
+        expect(wrapper.find('#loading')).toHaveLength(1);
+        expect(wrapper.find('#data')).toHaveLength(0);
+      });
+
+      it('should select the right resource slice out of the state', () => {
+        const state = {
+          context: {},
+          data: {
+            [type]: {
+              [key]: {
+                data: 'foobar',
+                loading: false,
+                error: null,
+                promise: null,
+                expiresAt,
+                accessedAt,
+              },
+              foo: {
+                data: 'bazqux',
+                loading: false,
+                error: null,
+                promise: null,
+                expiresAt,
+                accessedAt,
+              },
+            },
+            bar: {
+              baz: {
+                data: 'qux',
+                loading: false,
+                error: null,
+                promise: null,
+                expiresAt,
+                accessedAt,
+              },
+            },
+          },
+        };
+        // @ts-ignore mocking resource store state
+        const slice = getSliceForResource(state, { type, key });
+
+        expect(slice).toEqual({
+          data: 'foobar',
+          error: null,
+          loading: false,
+          promise: null,
+          expiresAt,
+          accessedAt,
+        });
+      });
+
+      it('should get the slice of data for the type and key', async () => {
+        const id = 'test';
+
+        storeState.setState({
+          data: {
+            [type]: {
+              [key]: {
+                data: { id },
+                loading: false,
+                error: null,
+                promise: null,
+                accessedAt: null,
+              },
+            },
+          },
+        });
+
+        const Component = () => {
+          const { data, loading } = useResource(mockResource);
+
+          if (loading) {
+            return <div id="loading" />;
+          }
+
+          if (data) {
+            // @ts-ignore
+            return <div id={data.id} />;
+          }
+
+          return null;
+        };
+        const wrapper = mount(<Component />);
+
+        expect(wrapper.find('#loading')).toHaveLength(0);
+        expect(wrapper.find(`#${id}`)).toHaveLength(1);
+      });
+    });
+
+    describe('getResourceFromRemote', () => {
+      describe('where already loading', () => {
+        it('should not change state and return the previous slice', async () => {
+          const getData = jest.fn();
+          setResourceSlice({
+            loading: true,
+            data: 'data1',
+            error,
+            promise: Promise.resolve('data1'),
+            accessedAt: 0,
+            expiresAt: 0,
+          });
+          const pending = actions.getResourceFromRemote(
+            { ...mockResource, getData },
+            mockRouterStoreContext,
+            mockOptions
+          );
+
+          expect(getData).not.toBeCalled();
+          expect(getAccessedAt).not.toBeCalled();
+          expect(getExpiresAt).not.toBeCalled();
+          const slice = getResourceSlice();
+          expect(slice).toEqual(
+            expect.objectContaining({
+              loading: true,
+              data: 'data1',
+              error,
+              promise: expect.any(Promise),
+              accessedAt: 0,
+              expiresAt: 0,
+            })
+          );
+          await expect(slice.promise).resolves.toEqual('data1');
+
+          const returnValue = await pending;
+
+          expect(getAccessedAt).not.toBeCalled();
+          expect(getExpiresAt).not.toBeCalled();
+          expect(returnValue).toEqual(slice);
+        });
+      });
+
+      describe('where getData() synchronously returns previous data', () => {
+        it('should not change state but should set accessedAt and expiresAt', async () => {
+          const data = {};
+          const getData = jest.fn().mockReturnValue(data);
+          setResourceSlice({
+            loading: false,
+            data: data,
+            error,
+            promise: Promise.resolve(data),
+            accessedAt: 0,
+            expiresAt: 0,
+          });
+          const pending = actions.getResourceFromRemote(
+            { ...mockResource, getData },
+            mockRouterStoreContext,
+            mockOptions
+          );
+
+          expect(getData).toBeCalled();
+          expect(getAccessedAt).toBeCalledTimes(1);
+          expect(getExpiresAt).toBeCalledTimes(1);
+          const slice1 = getResourceSlice();
+          expect(slice1).toEqual(
+            expect.objectContaining({
+              loading: false,
+              data,
+              error,
+              accessedAt: 100,
+              expiresAt: 200,
+            })
+          );
+
+          await expect(slice1.promise).resolves.toEqual(data);
+          const returnValue = await pending;
+
+          expect(getAccessedAt).toBeCalledTimes(1);
+          expect(getExpiresAt).toBeCalledTimes(1);
+          const slice2 = getResourceSlice();
+          expect(returnValue).toEqual(slice2);
+        });
+      });
+
+      describe('where getData() synchronously returns new data', () => {
+        it.each([false, true])(
+          'should enter loading state with promise resolving new data (prefetch=%s)',
+          async prefetch => {
+            const getData = jest.fn().mockReturnValue('data2');
+            setResourceSlice({
+              loading: false,
+              data: 'data1',
+              error,
+              promise: Promise.resolve('data1'),
+              accessedAt: 0,
+              expiresAt: 0,
+            });
+            const pending = actions.getResourceFromRemote(
+              { ...mockResource, getData },
+              mockRouterStoreContext,
+              { ...mockOptions, prefetch }
+            );
+
+            expect(getData).toBeCalled();
+            expect(getAccessedAt).toBeCalledTimes(1);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
+            const slice1 = getResourceSlice();
+            expect(slice1).toEqual(
+              expect.objectContaining({
+                loading: true,
+                data: 'data1',
+                error,
+                promise: expect.any(Promise),
+                accessedAt: 100,
+                expiresAt: prefetch ? 200 : 0,
+              })
+            );
+
+            await expect(slice1.promise).resolves.toEqual('data2');
+            const returnValue = await pending;
+
+            expect(getAccessedAt).toBeCalledTimes(2);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
+            const slice2 = getResourceSlice();
+            expect(returnValue).toEqual(slice2);
+            expect(slice2).toEqual(
+              expect.objectContaining({
+                loading: false,
+                data: 'data2',
+                error: null,
+                promise: slice1.promise,
+                accessedAt: 100,
+                expiresAt: 200,
+              })
+            );
+          }
+        );
+      });
+
+      describe('where getData() returns resolving promise', () => {
+        it.each([
+          [false, ''],
+          [false, 'w/ timeout'],
+          [true, ''],
+          [true, 'w/ timeout'],
+        ])(
+          'should enter loading state with promise resolving new data (prefetch=%s, timeout=%s)',
+          async (prefetch, timeout) => {
+            const getData = jest.fn().mockReturnValue(Promise.resolve('data2'));
+            setResourceSlice({
+              loading: false,
+              data: 'data1',
+              error,
+              promise: Promise.resolve('data1'),
+              accessedAt: 0,
+              expiresAt: 0,
+            });
+            const pending = actions.getResourceFromRemote(
+              { ...mockResource, getData },
+              mockRouterStoreContext,
+              { ...mockOptions, prefetch, timeout: timeout ? 100 : 0 }
+            );
+
+            expect(getData).toBeCalled();
+            expect(getAccessedAt).toBeCalledTimes(1);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
+            const slice1 = getResourceSlice();
+            expect(slice1).toEqual(
+              expect.objectContaining({
+                loading: true,
+                data: 'data1',
+                error,
+                promise: expect.any(Promise),
+                accessedAt: 100,
+                expiresAt: prefetch ? 200 : 0,
+              })
+            );
+
+            await expect(slice1.promise).resolves.toEqual('data2');
+            const returnValue = await pending;
+
+            expect(getAccessedAt).toBeCalledTimes(2);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
+            const slice2 = getResourceSlice();
+            expect(returnValue).toEqual(slice2);
+            expect(slice2).toEqual(
+              expect.objectContaining({
+                loading: false,
+                data: 'data2',
+                error: null,
+                promise: slice1.promise,
+                accessedAt: 100,
+                expiresAt: 200,
+              })
+            );
+          }
+        );
+      });
+
+      describe('where getData() returns rejecting promise', () => {
+        it.each([
+          [false, ''],
+          [false, 'w/timeout'],
+          [true, ''],
+          [true, 'w/timeout'],
+        ])(
+          'should enter loading state with promise rejecting error and preserve existing data on loaded (prefetch=%s, %s)',
+          async (prefetch, timeout) => {
+            const getData = jest.fn().mockReturnValue(Promise.reject(error));
+            setResourceSlice({
+              loading: false,
+              data: 'data1',
+              error: null,
+              promise: Promise.resolve('data1'),
+              accessedAt: 0,
+              expiresAt: 0,
+            });
+            const pending = actions.getResourceFromRemote(
+              { ...mockResource, getData },
+              mockRouterStoreContext,
+              { ...mockOptions, prefetch, timeout: timeout ? 100 : 0 }
+            );
+
+            expect(getData).toBeCalled();
+            expect(getAccessedAt).toBeCalledTimes(1);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
+            const slice1 = getResourceSlice();
+            expect(slice1).toEqual(
+              expect.objectContaining({
+                loading: true,
+                data: 'data1',
+                error: null,
+                promise: expect.any(Promise),
+                accessedAt: 100,
+                expiresAt: prefetch ? 200 : 0,
+              })
+            );
+
+            await expect(slice1.promise).rejects.toEqual(error);
+            const returnValue = await pending;
+
+            expect(getAccessedAt).toBeCalledTimes(2);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
+            const slice2 = getResourceSlice();
+            expect(returnValue).toEqual(slice2);
+            expect(slice2).toEqual(
+              expect.objectContaining({
+                loading: false,
+                data: 'data1',
+                error,
+                promise: slice1.promise,
+                accessedAt: 100,
+                expiresAt: 200,
+              })
+            );
+          }
+        );
+      });
+
+      describe('where getData() times out', () => {
+        it.each([false, true])(
+          'should enter loading state with promise rejecting TimeoutError and preserve existing data on loaded (prefetch=%s, w/ timeout)',
+          async prefetch => {
+            const getData = jest
+              .fn()
+              .mockImplementation(() => resolver('data2', 250));
+            setResourceSlice({
+              loading: false,
+              data: 'data1',
+              error: null,
+              promise: Promise.resolve('data1'),
+              accessedAt: 0,
+              expiresAt: 0,
+            });
+            const pending = actions.getResourceFromRemote(
+              { ...mockResource, getData },
+              mockRouterStoreContext,
+              { ...mockOptions, prefetch, timeout: 100 }
+            );
+
+            expect(getData).toBeCalled();
+            expect(getAccessedAt).toBeCalledTimes(1);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
+            const slice1 = getResourceSlice();
+            expect(slice1).toEqual(
+              expect.objectContaining({
+                loading: true,
+                data: 'data1',
+                error: null,
+                promise: expect.any(Promise),
+                accessedAt: 100,
+                expiresAt: prefetch ? 200 : 0,
+              })
+            );
+
+            await expect(slice1.promise).rejects.toEqual(
+              expect.any(TimeoutError)
+            );
+            const returnValue = await pending;
+
+            expect(getAccessedAt).toBeCalledTimes(2);
+            expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
+            const slice2 = getResourceSlice();
+            expect(returnValue).toEqual(slice2);
+            expect(slice2).toEqual(
+              expect.objectContaining({
+                loading: true,
+                data: 'data1',
+                error: expect.any(TimeoutError),
+                promise: null,
+                accessedAt: 100,
+                expiresAt: 200,
+              })
+            );
+          }
+        );
+      });
+    });
+
+    describe('cleanExpiredResources', () => {
+      const currentTime = 100;
+
+      const expiredResource = {
+        ...mockResource,
+        ...{
+          type: 'expiredResource',
+          getKey: () => 'expiredResourceKey',
+          getData: () => resolver('hello world', 250),
+        },
+      };
+      const cachedResource = {
+        ...mockResource,
+        ...{
+          type: 'cachedResource',
+          getKey: () => 'cachedResourceKey',
+          getData: () => resolver('hello world', 250),
+        },
+      };
+
+      beforeEach(() => {
+        jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
+        (getExpiresAt as any).mockImplementation(() => currentTime);
+        (getAccessedAt as any).mockImplementation(() => currentTime);
+        storeState.setState({
+          data: {
+            expiredResource: {
+              expiredResourceKey: {
+                data: result,
+                loading: false,
+                error: 'some error',
+                promise: getDataPromise,
+                expiresAt: 50,
+                accessedAt: currentTime,
+              },
+            },
+            cachedResource: {
+              cachedResourceKey: {
+                data: result,
+                loading: false,
+                error: 'some error',
+                promise: getDataPromise,
+                expiresAt: 200,
+                accessedAt: currentTime,
+              },
+            },
+          },
+        });
+      });
+
+      afterEach(() => {
+        jest.clearAllMocks();
+      });
+
+      it('should delete the resource slice for expired resources', () => {
+        actions.cleanExpiredResources(
+          [expiredResource, cachedResource],
+          mockRouterStoreContext
+        );
+
+        const { data } = storeState.getState();
+
+        expect(data).toEqual({
+          expiredResource: {},
           cachedResource: {
             cachedResourceKey: {
               data: result,
@@ -1022,107 +1320,334 @@ describe('resource store', () => {
               accessedAt: currentTime,
             },
           },
-        },
+        });
       });
     });
 
-    afterEach(() => {
-      jest.clearAllMocks();
-    });
-
-    it('should clear the data for expired resources', () => {
-      actions.cleanExpiredResources([expiredResource, cachedResource], {
-        route: mockRoute,
-        match: mockMatch,
-        query: {},
-      });
-
-      const { data } = storeState.getState();
-
-      expect(data).toEqual({
-        expiredResource: {},
-        cachedResource: {
-          cachedResourceKey: {
-            data: result,
-            loading: false,
-            error: 'some error',
-            promise: getDataPromise,
-            expiresAt: 200,
-            accessedAt: currentTime,
-          },
-        },
-      });
-    });
-  });
-
-  describe('clearResource', () => {
-    it('should clear the resource of the given resource and context', () => {
-      storeState.setState({
-        data: {
-          cachedResource: {
-            cachedResourceKey: {
-              data: result,
+    describe('clearResource', () => {
+      it('should delete the slice of the given resource and context', () => {
+        storeState.setState({
+          data: {
+            cachedResource: {
+              cachedResourceKey: {
+                data: result,
+              },
             },
           },
-        },
+        });
+
+        const cachedResource = {
+          ...mockResource,
+          ...{
+            type: 'cachedResource',
+            getKey: () => 'cachedResourceKey',
+          },
+        };
+
+        actions.clearResource(cachedResource, mockRouterStoreContext);
+
+        const { data } = storeState.getState();
+
+        expect(data).toEqual({ cachedResource: {} });
       });
 
-      const cachedResource = {
-        ...mockResource,
-        ...{
-          type: 'cachedResource',
-          getKey: () => 'cachedResourceKey',
-        },
-      };
-
-      actions.clearResource(cachedResource, {
-        route: mockRoute,
-        match: mockMatch,
-        query: {},
-      });
-
-      const { data } = storeState.getState();
-
-      expect(data).toEqual({ cachedResource: {} });
-    });
-
-    it('should clear all keys associated with that particular resource if context is omitted', () => {
-      storeState.setState({
-        data: {
-          cachedResource: {
-            cachedResourceKey: {
-              data: result,
+      it('should delete slices for all keys associated with that particular resource if context is omitted', () => {
+        storeState.setState({
+          data: {
+            cachedResource: {
+              cachedResourceKey: {
+                data: result,
+              },
+              cachedResourceKeyAlt: {
+                data: result,
+              },
             },
-            cachedResourceKeyAlt: {
-              data: result,
+            cachedResourceAlt: {
+              cachedResourceKey: {
+                data: result,
+              },
             },
           },
+        });
+
+        const cachedResource = {
+          ...mockResource,
+          ...{
+            type: 'cachedResource',
+            getKey: () => 'cachedResourceKey',
+          },
+        };
+
+        actions.clearResource(cachedResource);
+
+        const { data } = storeState.getState();
+
+        expect(data).toEqual({
           cachedResourceAlt: {
             cachedResourceKey: {
               data: result,
             },
           },
-        },
+        });
+      });
+    });
+  });
+
+  describe('consistency of promise and data under race conditions', () => {
+    beforeEach(() => {
+      (getExpiresAt as any).mockReturnValue(200);
+      (getAccessedAt as any).mockReturnValue(100);
+      (getDefaultStateSlice as any).mockReturnValue(BASE_DEFAULT_STATE_SLICE);
+      setResourceSlice({
+        loading: false,
+        data: 'data1',
+        error,
+        promise: Promise.resolve('data1'),
+      });
+    });
+
+    describe('when update occurs outside loading', () => {
+      it('should clear error and set promise on update', async () => {
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreContext,
+          () => 'data2'
+        );
+
+        const slice = getResourceSlice();
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'data2',
+            error: null,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(slice.promise).resolves.toEqual('data2');
       });
 
-      const cachedResource = {
-        ...mockResource,
-        ...{
-          type: 'cachedResource',
-          getKey: () => 'cachedResourceKey',
-        },
-      };
+      it('should set promise when loading but keep data (assume not expired)', async () => {
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreContext,
+          () => 'data2'
+        );
+        actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
 
-      actions.clearResource(cachedResource);
+        const slice = getResourceSlice();
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: true,
+            data: 'data2',
+            error: null,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(slice.promise).resolves.toEqual('result');
+      });
 
-      const { data } = storeState.getState();
+      it('should set new data and on loaded', async () => {
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreContext,
+          () => 'data2'
+        );
+        const returnValue = await actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
 
-      expect(data).toEqual({
-        cachedResourceAlt: {
-          cachedResourceKey: {
-            data: result,
-          },
-        },
+        const slice = getResourceSlice();
+        expect(returnValue).toEqual(slice);
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'result',
+            error: null,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(slice.promise).resolves.toEqual('result');
+      });
+    });
+
+    describe('when update occurs during loading', () => {
+      it('should set promise on loading but retain data and error (assume not expired)', async () => {
+        actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
+
+        const slice = getResourceSlice();
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: true,
+            data: 'data1',
+            error,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(slice.promise).resolves.toEqual('result');
+      });
+
+      it('should clear error on update but retain promise', async () => {
+        actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreContext,
+          () => 'data2'
+        );
+
+        const slice = getResourceSlice();
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: true,
+            data: 'data2',
+            error: null,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(slice.promise).resolves.toEqual('result');
+      });
+
+      it('should set new data on loaded', async () => {
+        const pending = actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreContext,
+          () => 'data2'
+        );
+        const returnValue = await pending;
+
+        const slice = getResourceSlice();
+        expect(returnValue).toEqual(slice);
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'result',
+            error: null,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(slice.promise).resolves.toEqual('result');
+      });
+
+      it('should retain updated data and set error on failed', async () => {
+        const rejection = new Error('failing');
+        const pending = actions.getResourceFromRemote(
+          { ...mockResource, getData: () => Promise.reject(rejection) },
+          mockRouterStoreContext,
+          mockOptions
+        );
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreContext,
+          () => 'data2'
+        );
+        const returnValue = await pending;
+
+        const slice = getResourceSlice();
+        expect(returnValue).toEqual(slice);
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'data2',
+            error: rejection,
+          })
+        );
+        await expect(slice.promise).rejects.toEqual(rejection);
+      });
+    });
+
+    describe('when clear occurs during loading', () => {
+      it('should set promise on loading but retain data and error (assume not expired)', async () => {
+        actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
+
+        const slice = getResourceSlice();
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: true,
+            data: 'data1',
+            error,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(slice.promise).resolves.toEqual('result');
+      });
+
+      it('should delete resource state on clear', async () => {
+        actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
+        actions.clearResource(mockResource, mockRouterStoreContext);
+
+        const slice = getResourceSlice();
+        expect(slice).not.toBeDefined();
+      });
+
+      it('should not reinstate resource slice on loaded', async () => {
+        const pending = actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreContext,
+          mockOptions
+        );
+        actions.clearResource(mockResource, mockRouterStoreContext);
+        const returnValue = await pending;
+
+        const slice = getResourceSlice();
+        expect(slice).not.toBeDefined();
+        expect(returnValue).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'result',
+            error: null,
+            promise: expect.any(Promise),
+          })
+        );
+        await expect(returnValue.promise).resolves.toEqual('result');
+      });
+
+      it('should not reinstate resource slice on failed', async () => {
+        const rejection = new Error('failing');
+        const pending = actions.getResourceFromRemote(
+          { ...mockResource, getData: () => Promise.reject(rejection) },
+          mockRouterStoreContext,
+          mockOptions
+        );
+        actions.clearResource(mockResource, mockRouterStoreContext);
+        const returnValue = await pending;
+
+        const slice = getResourceSlice();
+        expect(slice).not.toBeDefined();
+        expect(returnValue).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: null,
+            error: rejection,
+          })
+        );
+
+        await expect(returnValue.promise).rejects.toEqual(rejection);
       });
     });
   });

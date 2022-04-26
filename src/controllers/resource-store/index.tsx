@@ -11,8 +11,11 @@ import {
   ResourceStoreData,
   RouterContext,
   RouteResource,
+  EmptyObject,
+  RouteResourceAsyncResult,
   RouteResourceResponse,
   RouteResourceUpdater,
+  RouteResourceSyncResult,
 } from '../../common/types';
 
 import { getResourceStoreContext, getSliceForResource } from './selectors';
@@ -42,6 +45,7 @@ import {
   validateLRUCache,
   actionWithDependencies,
   mapActionWithDependencies,
+  toPromise,
 } from './utils';
 
 const PREFETCH_MAX_AGE = 10000;
@@ -81,15 +85,28 @@ export const privateActions = {
       type,
       key,
     });
+    const data = getNewSliceData(prevSlice.data);
+    const changes: RouteResourceSyncResult<unknown> = prevSlice.loading
+      ? {
+          data,
+          error: null,
+          loading: true,
+          // promise: existing value retained
+        }
+      : {
+          data,
+          error: null,
+          loading: false,
+          promise: Promise.resolve(data),
+        };
 
-    dispatch(
-      setResourceState(type, key, {
-        ...prevSlice,
-        data: getNewSliceData(prevSlice.data),
-        expiresAt: getExpiresAt(maxAge),
-        accessedAt: getAccessedAt(),
-      })
-    );
+    const newSlice = {
+      ...prevSlice,
+      ...changes,
+      expiresAt: getExpiresAt(maxAge),
+      accessedAt: getAccessedAt(),
+    };
+    dispatch(setResourceState(type, key, newSlice));
   },
 
   /**
@@ -100,7 +117,7 @@ export const privateActions = {
     resource: RouteResource,
     routerStoreContext: RouterContext,
     options: GetResourceOptions
-  ): ResourceAction<Promise<RouteResourceResponse>> => async ({
+  ): ResourceAction<Promise<RouteResourceResponse>> => ({
     getState,
     dispatch,
   }) => {
@@ -118,7 +135,7 @@ export const privateActions = {
       cached.accessedAt = getAccessedAt();
       dispatch(setResourceState(type, key, cached));
 
-      return cached;
+      return Promise.resolve(cached);
     }
 
     return dispatch(
@@ -129,7 +146,6 @@ export const privateActions = {
       )
     );
   },
-
   /**
    * Request a single resource and update the resource cache.
    */
@@ -157,70 +173,96 @@ export const privateActions = {
 
     dispatch(validateLRUCache(resource, key));
 
-    const pendingSlice = {
-      ...prevSlice,
-      data: maxAge === 0 ? null : prevSlice.data,
-      error: maxAge === 0 ? null : prevSlice.error,
-      loading: true,
-      promise: getData(
-        { ...routerStoreContext, isPrefetch: !!prefetch },
-        context
-      ),
-      accessedAt: getAccessedAt(),
-      // prevent resource from being cleaned prematurely and traigger more network requests.
-      ...(options.prefetch
-        ? {
-            expiresAt: getExpiresAt(PREFETCH_MAX_AGE),
-          }
-        : {}),
-    };
-
-    dispatch(setResourceState(type, key, pendingSlice));
-
-    const response = {
-      ...pendingSlice,
-    };
-
-    try {
-      response.error = null;
-
-      if (timeout) {
-        const timeoutGuard = generateTimeGuard(timeout);
-        const maybeData = await Promise.race([
-          pendingSlice.promise,
-          timeoutGuard.promise,
-        ]);
-
-        if (!timeoutGuard.isPending) {
-          response.data = null;
-          response.error = new TimeoutError(type);
-          response.loading = true;
-          response.promise = null;
-        } else {
-          timeoutGuard.timerId && clearTimeout(timeoutGuard.timerId);
-          response.data = maybeData;
-          response.loading = false;
-        }
-      } else {
-        response.data = await pendingSlice.promise;
-        response.loading = false;
-      }
-    } catch (e) {
-      response.error = e;
-      response.loading = false;
-    }
-
-    response.expiresAt = getExpiresAt(
-      options.prefetch && maxAge < PREFETCH_MAX_AGE ? PREFETCH_MAX_AGE : maxAge
+    const promiseOrData = getData(
+      {
+        ...routerStoreContext,
+        isPrefetch: !!prefetch,
+      },
+      context
     );
 
-    response.accessedAt = getAccessedAt();
+    let resolvedSlice: EmptyObject | RouteResourceAsyncResult<unknown>;
 
-    if (dispatch(getResourceState(type, key))) {
-      dispatch(setResourceState(type, key, response));
+    if (promiseOrData === prevSlice.data) {
+      // same data (by reference) means nothing has changed and we can avoid loading state
+      resolvedSlice = {};
+    } else {
+      // ensure the promise includes any timeout error
+      const timeoutGuard = timeout ? generateTimeGuard(timeout) : null;
+      const promise = timeout
+        ? Promise.race([promiseOrData, timeoutGuard?.promise]).then(
+            maybeData => {
+              if (timeoutGuard && !timeoutGuard.isPending) {
+                throw new TimeoutError(type);
+              }
+              timeoutGuard?.timerId && clearTimeout(timeoutGuard.timerId);
+
+              return maybeData;
+            }
+          )
+        : toPromise(promiseOrData);
+
+      // enter loading state
+      dispatch(
+        setResourceState(type, key, {
+          ...prevSlice,
+          data: maxAge === 0 ? null : prevSlice.data,
+          error: maxAge === 0 ? null : prevSlice.error,
+          loading: true,
+          promise,
+          accessedAt: getAccessedAt(),
+          // prevent resource from being cleaned prematurely and trigger more network requests.
+          expiresAt: options.prefetch
+            ? getExpiresAt(PREFETCH_MAX_AGE)
+            : prevSlice.expiresAt,
+        })
+      );
+
+      // in case another action occurred while loading promise may not be the one we started with
+      // we need to re-assign promise consistent with error/data that we are assigning here
+      try {
+        const data = await promise;
+        resolvedSlice = {
+          data,
+          error: null, // any existing error is cleared
+          loading: false,
+          promise,
+        };
+      } catch (error) {
+        if (error instanceof TimeoutError) {
+          resolvedSlice = {
+            // data: do not replace existing data
+            error,
+            loading: true, // this condition cannot recover so must only be present in static/server router
+            promise: null, // special case for timeout
+          };
+        } else {
+          resolvedSlice = {
+            // data: do not replace existing data
+            error,
+            loading: false,
+            promise,
+          };
+        }
+      }
     }
 
-    return response;
+    const finalSlice = {
+      ...getSliceForResource(getState(), { type, key }), // ensure most recent data when error occurs
+      ...resolvedSlice,
+      accessedAt: getAccessedAt(),
+      expiresAt: getExpiresAt(
+        options.prefetch && maxAge < PREFETCH_MAX_AGE
+          ? PREFETCH_MAX_AGE
+          : maxAge
+      ),
+    };
+
+    if (dispatch(getResourceState(type, key))) {
+      dispatch(setResourceState(type, key, finalSlice));
+    }
+
+    return finalSlice;
   },
 };
 
