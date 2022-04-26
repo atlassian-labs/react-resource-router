@@ -28,7 +28,7 @@ export type ResourceSliceIdentifier = {
   key: string;
 };
 
-type GetResourceOptions = {
+export type GetResourceOptions = {
   prefetch?: boolean;
   timeout?: number;
   isStatic?: boolean;
