@@ -1,7 +1,7 @@
 import {
+  ResourceType,
   RouteResource,
   RouteResourceDataPayload,
-  RouteResourceGettersArgs,
 } from '../../common/types';
 import {
   DEFAULT_RESOURCE_MAX_AGE,
@@ -17,51 +17,42 @@ type GetDataLoader<T> = () => Promise<{
   default: RouteResource<T>['getData'];
 }>;
 
-type BaseResource = Pick<RouteResource, 'type' | 'getKey'>;
-
-interface CreateResourceSync<T> extends BaseResource {
-  getData: RouteResource<T>['getData'];
-  maxAge?: number;
-  maxCache?: number;
-  isBrowserOnly?: boolean;
-}
-interface CreateResourceAsync<T> extends BaseResource {
-  getDataLoader: GetDataLoader<T>;
-  maxAge?: number;
-  maxCache?: number;
-  isBrowserOnly?: boolean;
-}
-
-const handleGetDataLoader = (asyncImport: GetDataLoader<unknown>) => {
-  return async (...args: RouteResourceGettersArgs) => {
-    const { default: getDataFn } = await asyncImport();
-
-    return getDataFn(...args);
+export type CreateResourceArgBase = Pick<RouteResource, 'type' | 'getKey'> &
+  Partial<Pick<RouteResource, 'maxAge' | 'maxCache' | 'isBrowserOnly'>> & {
+    depends?: ResourceType[];
   };
+
+export type CreateResourceArgSync<T> = CreateResourceArgBase & {
+  getData: RouteResource<T>['getData'];
 };
 
-export function createResource<T extends unknown = RouteResourceDataPayload>(
-  args: CreateResourceSync<T>
-): RouteResource<T>;
-export function createResource<T extends unknown = RouteResourceDataPayload>(
-  args: CreateResourceAsync<T>
-): RouteResource<T>;
-export function createResource(args: any) {
-  return {
-    type: args.type,
-    getKey: args.getKey,
-    getData: args.getDataLoader
-      ? handleGetDataLoader(args.getDataLoader)
-      : args.getData,
-    maxAge:
-      typeof args.maxAge === 'number' ? args.maxAge : DEFAULT_RESOURCE_MAX_AGE,
-    maxCache:
-      typeof args.maxCache === 'number'
-        ? args.maxCache
-        : DEFAULT_CACHE_MAX_LIMIT,
-    isBrowserOnly:
-      typeof args.isBrowserOnly === 'boolean'
-        ? args.isBrowserOnly
-        : DEFAULT_RESOURCE_BROWSER_ONLY,
-  };
-}
+export type CreateResourceArgAsync<T> = CreateResourceArgBase & {
+  getDataLoader: GetDataLoader<T>;
+};
+
+const handleGetDataLoader = <T>(asyncImport: GetDataLoader<T>) => async (
+  ...args: Parameters<RouteResource<T>['getData']>
+) => {
+  const { default: getDataFn } = await asyncImport();
+
+  return getDataFn(...args);
+};
+
+export const createResource = <T extends unknown = RouteResourceDataPayload>(
+  arg: CreateResourceArgSync<T> | CreateResourceArgAsync<T>
+): RouteResource<T> => ({
+  type: arg.type,
+  getKey: arg.getKey,
+  getData:
+    (arg as CreateResourceArgSync<T>).getData ??
+    handleGetDataLoader<T>((arg as CreateResourceArgAsync<T>).getDataLoader),
+  maxAge:
+    typeof arg.maxAge === 'number' ? arg.maxAge : DEFAULT_RESOURCE_MAX_AGE,
+  maxCache:
+    typeof arg.maxCache === 'number' ? arg.maxCache : DEFAULT_CACHE_MAX_LIMIT,
+  isBrowserOnly:
+    typeof arg.isBrowserOnly === 'boolean'
+      ? arg.isBrowserOnly
+      : DEFAULT_RESOURCE_BROWSER_ONLY,
+  depends: arg.depends ?? null,
+});

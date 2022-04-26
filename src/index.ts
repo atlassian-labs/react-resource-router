@@ -15,12 +15,18 @@ export {
   useQueryParam,
   usePathParam,
   useResourceStoreContext,
+  ResourceDependencyError,
   createResource,
   useRouterActions,
   createRouterSelector,
 } from './controllers';
 
-export type { WithRouter } from './controllers';
+export type {
+  WithRouter,
+  CreateResourceArgBase,
+  CreateResourceArgSync,
+  CreateResourceArgAsync,
+} from './controllers';
 
 export { RouteComponent, Link } from './ui';
 

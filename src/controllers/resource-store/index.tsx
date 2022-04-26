@@ -43,10 +43,15 @@ import {
   setResourceState,
   deleteResourceState,
   validateLRUCache,
+  ResourceDependencyError,
   actionWithDependencies,
   mapActionWithDependencies,
+  executeForDependents,
+  getDependencies,
   toPromise,
 } from './utils';
+
+export { ResourceDependencyError };
 
 const PREFETCH_MAX_AGE = 10000;
 
@@ -64,6 +69,11 @@ export const privateActions = {
     if (routerStoreContext) {
       const key = getKey(routerStoreContext, context);
       dispatch(deleteResourceState(type, key));
+      dispatch(
+        executeForDependents(resource, dependentResource =>
+          privateActions.clearResource(dependentResource, routerStoreContext)
+        )
+      );
     } else {
       dispatch(deleteResourceState(type));
     }
@@ -107,6 +117,19 @@ export const privateActions = {
       accessedAt: getAccessedAt(),
     };
     dispatch(setResourceState(type, key, newSlice));
+
+    // trigger dependent resources on change
+    if (newSlice.data !== prevSlice.data) {
+      dispatch(
+        executeForDependents(resource, dependentResource =>
+          privateActions.getResourceFromRemote(
+            dependentResource,
+            routerStoreContext,
+            {}
+          )
+        )
+      );
+    }
   },
 
   /**
@@ -146,6 +169,7 @@ export const privateActions = {
       )
     );
   },
+
   /**
    * Request a single resource and update the resource cache.
    */
@@ -173,13 +197,20 @@ export const privateActions = {
 
     dispatch(validateLRUCache(resource, key));
 
-    const promiseOrData = getData(
-      {
-        ...routerStoreContext,
-        isPrefetch: !!prefetch,
-      },
-      context
-    );
+    // hard errors in dependencies or getData are converted into softer async error
+    let promiseOrData;
+    try {
+      promiseOrData = getData(
+        {
+          ...routerStoreContext,
+          isPrefetch: !!prefetch,
+          dependencies: dispatch(getDependencies(resource, routerStoreContext)),
+        },
+        context
+      );
+    } catch (error) {
+      promiseOrData = Promise.reject(error);
+    }
 
     let resolvedSlice: EmptyObject | RouteResourceAsyncResult<unknown>;
 
@@ -216,6 +247,17 @@ export const privateActions = {
             ? getExpiresAt(PREFETCH_MAX_AGE)
             : prevSlice.expiresAt,
         })
+      );
+
+      // trigger dependent resources to also load
+      dispatch(
+        executeForDependents(resource, dependentResource =>
+          privateActions.getResourceFromRemote(
+            dependentResource,
+            routerStoreContext,
+            options
+          )
+        )
       );
 
       // in case another action occurred while loading promise may not be the one we started with
@@ -307,7 +349,7 @@ export const actions: Actions = {
     routerStoreContext: RouterContext,
     ...args
   ) =>
-    actionWithDependencies<Promise<RouteResourceResponse<unknown>>>(
+    actionWithDependencies<Promise<RouteResourceResponse>>(
       routerStoreContext.route.resources,
       resource,
       privateActions.getResource(resource, routerStoreContext, ...args)
@@ -322,7 +364,7 @@ export const actions: Actions = {
     routerStoreContext: RouterContext,
     ...args
   ) =>
-    actionWithDependencies<Promise<RouteResourceResponse<unknown>>>(
+    actionWithDependencies<Promise<RouteResourceResponse>>(
       routerStoreContext.route.resources,
       resource,
       privateActions.getResourceFromRemote(
@@ -382,7 +424,7 @@ export const actions: Actions = {
       ? ({ isBrowserOnly }: RouteResource) => !isBrowserOnly
       : () => true;
 
-    return mapActionWithDependencies<Promise<RouteResourceResponse<unknown>>>(
+    return mapActionWithDependencies<Promise<RouteResourceResponse>>(
       routerStoreContext.route.resources?.filter(predicate),
       resources.filter(predicate),
       resource =>
@@ -458,6 +500,7 @@ export const ResourceStore = createStore<State, Actions>({
   initialState: {
     data: {},
     context: {},
+    executing: null,
   },
   actions,
   name: 'router-resources',
@@ -481,7 +524,7 @@ export const ResourceActions = createSubscriber<State, Actions, void>(
 export const ResourceSubscriber = createSubscriber<
   State,
   Actions,
-  RouteResourceResponse<unknown>,
+  RouteResourceResponse,
   { resourceType: string; resourceKey: string }
 >(ResourceStore, {
   displayName: 'ResourceSelectorSubscriber',
@@ -499,7 +542,7 @@ export const getResourceStore = () =>
 export const useResourceStore = createHook<
   State,
   Actions,
-  RouteResourceResponse<unknown>,
+  RouteResourceResponse,
   ResourceSliceIdentifier
 >(ResourceStore, {
   selector: getSliceForResource,

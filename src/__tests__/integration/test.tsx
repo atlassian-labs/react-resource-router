@@ -39,6 +39,7 @@ const mockResource = {
   maxAge: 0,
   maxCache: Infinity,
   isBrowserOnly: false,
+  depends: null,
 };
 
 const historyBuildOptions = {
@@ -224,6 +225,7 @@ describe('<Router /> integration tests', () => {
           },
         },
       },
+      executing: null,
     });
   });
 });

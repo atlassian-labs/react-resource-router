@@ -13,8 +13,16 @@ export {
   useQueryParam,
   usePathParam,
 } from './hooks';
-export { useResourceStoreContext } from './resource-store';
+export {
+  useResourceStoreContext,
+  ResourceDependencyError,
+} from './resource-store';
 export { createResource } from './resource-utils';
+export type {
+  CreateResourceArgBase,
+  CreateResourceArgSync,
+  CreateResourceArgAsync,
+} from './resource-utils';
 export {
   RouteResourceEnabledSubscriber,
   createRouterSelector,

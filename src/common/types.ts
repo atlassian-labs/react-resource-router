@@ -152,7 +152,10 @@ export type RouteResourceResponse<
     | RouteResourceResponseLoaded<RouteResourceData>
   );
 
-export type RouterDataContext = RouterContext & ResourceFetchContext;
+export type RouterDataContext = RouterContext & {
+  isPrefetch: boolean;
+  dependencies: ResourceDependencies;
+};
 
 export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
   RouteResourceData
@@ -163,15 +166,10 @@ export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
   clearAll: () => void;
 };
 
-export type RouteResourceGettersArgs = [
-  RouterDataContext,
-  ResourceStoreContext
-];
-
 export type ResourceType = string;
 export type ResourceKey = string;
 
-export type RouteResource<RouteResourceData extends unknown = unknown> = {
+export type RouteResource<T extends unknown = unknown> = {
   type: ResourceType;
   getKey: (
     routerContext: RouterContext,
@@ -181,9 +179,10 @@ export type RouteResource<RouteResourceData extends unknown = unknown> = {
   getData: (
     routerContext: RouterDataContext,
     customContext: ResourceStoreContext
-  ) => RouteResourceData | Promise<RouteResourceData>;
+  ) => T | Promise<T>;
   maxCache: number;
   isBrowserOnly: boolean;
+  depends: ResourceType[] | null;
 };
 
 export type RouteResources = RouteResource[];
@@ -204,8 +203,8 @@ export type RouterContext = {
   query: Query;
 };
 
-export type ResourceFetchContext = {
-  isPrefetch: boolean;
+export type ResourceDependencies = {
+  [type: string]: RouteResourceResponse;
 };
 
 /**

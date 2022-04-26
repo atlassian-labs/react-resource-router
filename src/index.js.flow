@@ -15,6 +15,7 @@ import type {
   Route,
   RouteContext,
   RouterActionsType,
+  ResourceType,
   RouteResourceBase,
   GetData,
   RouteResource,
@@ -88,6 +89,7 @@ declare export function useResource<T>(
 declare export function useRouter(): [RouterState, RouterActionsType];
 declare export function useRouterActions(): RouterActionsType;
 declare export function useResourceStoreContext(): ResourceStoreContext;
+declare export class ResourceDependencyError extends Error {}
 declare export function createRouterSelector<T, U = void>(
   selector: (state: RouterState, props: U) => T
 ): U => T;
@@ -145,21 +147,27 @@ type GetDataLoader<T> = () => Promise<{
  * Utility method to created type safe resources with defaults.
  *
  */
-type CreateResourceArg<T> =
-  | {|
-      ...RouteResourceBase,
-      getData: GetData<T>,
-      maxAge?: number,
-      maxCache?: number,
-      isBrowserOnly?: boolean,
-    |}
-  | {|
-      ...RouteResourceBase,
-      getDataLoader: GetDataLoader<T>,
-      maxAge?: number,
-      maxCache?: number,
-      isBrowserOnly?: boolean,
-    |};
+export type CreateResourceArgBase = {|
+  ...RouteResourceBase,
+  maxAge?: number,
+  maxCache?: number,
+  isBrowserOnly?: boolean,
+  depends?: ResourceType[],
+|};
+
+export type CreateResourceArgSync<T> = {|
+  ...CreateResourceArgBase,
+  getData: GetData<T>,
+|};
+
+export type CreateResourceArgAsync<T> = {|
+  ...CreateResourceArgBase,
+  getDataLoader: GetDataLoader<T>,
+|};
+
+export type CreateResourceArg<T> =
+  | CreateResourceArgSync<T>
+  | CreateResourceArgAsync<T>;
 
 declare export function createResource<T>(
   args: CreateResourceArg<T>
