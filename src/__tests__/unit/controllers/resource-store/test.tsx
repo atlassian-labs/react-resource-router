@@ -1056,7 +1056,7 @@ describe('resource store', () => {
   });
 
   describe('clearResource', () => {
-    it('clear the resource of the given resource and context', () => {
+    it('should clear the resource of the given resource and context', () => {
       storeState.setState({
         data: {
           cachedResource: {
@@ -1086,7 +1086,7 @@ describe('resource store', () => {
       expect(data).toEqual({ cachedResource: {} });
     });
 
-    it('clear all keys associated with that particular resource if context is omitted', () => {
+    it('should clear all keys associated with that particular resource if context is omitted', () => {
       storeState.setState({
         data: {
           cachedResource: {
