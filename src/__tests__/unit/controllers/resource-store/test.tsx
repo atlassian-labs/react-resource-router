@@ -1056,7 +1056,7 @@ describe('resource store', () => {
   });
 
   describe('clearResource', () => {
-    it('clear the resource of the given type and key', () => {
+    it('clear the resource of the given resource and context', () => {
       storeState.setState({
         data: {
           cachedResource: {
@@ -1067,14 +1067,26 @@ describe('resource store', () => {
         },
       });
 
-      actions.clearResource('cachedResource', 'cachedResourceKey');
+      const cachedResource = {
+        ...mockResource,
+        ...{
+          type: 'cachedResource',
+          getKey: () => 'cachedResourceKey',
+        },
+      };
+
+      actions.clearResource(cachedResource, {
+        route: mockRoute,
+        match: mockMatch,
+        query: {},
+      });
 
       const { data } = storeState.getState();
 
       expect(data).toEqual({ cachedResource: {} });
     });
 
-    it('clear all keys associated with that particular type if key is not provided', () => {
+    it('clear all keys associated with that particular resource if context is omitted', () => {
       storeState.setState({
         data: {
           cachedResource: {
@@ -1093,7 +1105,15 @@ describe('resource store', () => {
         },
       });
 
-      actions.clearResource('cachedResource');
+      const cachedResource = {
+        ...mockResource,
+        ...{
+          type: 'cachedResource',
+          getKey: () => 'cachedResourceKey',
+        },
+      };
+
+      actions.clearResource(cachedResource);
 
       const { data } = storeState.getState();
 

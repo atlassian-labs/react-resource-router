@@ -45,13 +45,17 @@ export const actions: Actions = {
    *
    * Also resets the expiresAt based on maxAge
    */
-  updateResourceState: (type, key, maxAge, getNewSliceData) => ({
+  updateResourceState: (resource, routerStoreContext, getNewSliceData) => ({
     getState,
     dispatch,
   }) => {
-    const { data } = getState();
-
-    const slice = getSliceForResource({ data }, { type, key });
+    const { type, getKey, maxAge } = resource;
+    const { context, ...resourceStoreState } = getState();
+    const key = getKey(routerStoreContext, context);
+    const slice = getSliceForResource(resourceStoreState, {
+      type,
+      key,
+    });
 
     dispatch(
       setResourceState(type, key, {
@@ -72,12 +76,9 @@ export const actions: Actions = {
   }) => {
     const { type, getKey, maxAge } = resource;
     const { getResourceFromRemote } = actions;
-    const { data: resourceStoreData, context } = getState();
+    const { context, ...resourceStoreState } = getState();
     const key = getKey(routerStoreContext, context);
-    let cached = getSliceForResource(
-      { data: resourceStoreData },
-      { type, key }
-    );
+    let cached = getSliceForResource(resourceStoreState, { type, key });
 
     if (shouldUseCache(cached)) {
       if (isFromSsr(cached)) {
@@ -104,12 +105,12 @@ export const actions: Actions = {
   }): Promise<RouteResourceResponse<unknown>> => {
     const { type, getKey, getData, maxAge } = resource;
     const { prefetch, timeout } = options;
-    const { data: resourceStoreData, context } = getState();
+    const { context, ...resourceStoreState } = getState();
     const key = getKey(routerStoreContext, context);
-    const slice = getSliceForResource(
-      { data: resourceStoreData },
-      { type, key }
-    );
+    const slice = getSliceForResource(resourceStoreState, {
+      type,
+      key,
+    });
 
     if (slice.loading) {
       return slice;
@@ -282,10 +283,19 @@ export const actions: Actions = {
   },
 
   /**
-   * Clears a resource by resource type and key.
-   * If key is not provided, all the keys associated with the type will be deleted.
+   * Clears a resource for the current key, or where context is not provided all keys.
    */
-  clearResource: deleteResourceState,
+  clearResource: (resource, routerStoreContext) => ({ getState, dispatch }) => {
+    const { type, getKey } = resource;
+    const { context } = getState();
+
+    if (routerStoreContext) {
+      const key = getKey(routerStoreContext, context);
+      dispatch(deleteResourceState(type, key));
+    } else {
+      dispatch(deleteResourceState(type));
+    }
+  },
 
   /**
    * Gets the store's context
