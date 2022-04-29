@@ -4,11 +4,14 @@ import { mount } from 'enzyme';
 import * as historyHelper from 'history';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { Router, RouterActions, StaticRouter } from '../../controllers';
-import { RouteComponent } from '../../ui';
-import { RouterActionsType } from '../../controllers/router-store/types';
 import { mockRoute } from '../../common/mocks';
+import { isServerEnvironment } from '../../common/utils/is-server-environment';
+import { Router, RouterActions } from '../../controllers';
 import { ResourceStore } from '../../controllers/resource-store';
+import type { RouterActionsType } from '../../controllers/router-store/types';
+import { RouteComponent } from '../../ui';
+
+jest.mock('../../common/utils/is-server-environment');
 
 const mockLocation = {
   pathname: '/projects/123/board/456',
@@ -57,6 +60,7 @@ describe('<Router /> integration tests', () => {
     history = historyHelper.createMemoryHistory(historyBuildOptions);
     historyPushSpy = jest.spyOn(history, 'push');
     historyReplaceSpy = jest.spyOn(history, 'replace');
+    (isServerEnvironment as any).mockReturnValue(false);
   });
 
   afterEach(() => {
@@ -137,8 +141,7 @@ describe('<Router /> integration tests', () => {
       },
     ];
 
-    const serverData = await StaticRouter.requestResources({
-      // @ts-ignore
+    const serverData = await Router.requestResources({
       routes: mockedRoutes,
       location: mockLocation.pathname,
       timeout: 350,
@@ -228,7 +231,7 @@ describe('<Router /> integration tests', () => {
   });
 });
 
-describe('<StaticRouter /> integration tests', () => {
+describe('<Router /> SSR-like integration tests', () => {
   const basePath = '/base';
   const route = {
     path: '/anotherpath',
@@ -238,13 +241,13 @@ describe('<StaticRouter /> integration tests', () => {
 
   it('should match the right route when basePath is set', async () => {
     const wrapper = mount(
-      <StaticRouter
+      <Router
         routes={[route]}
         location={`${basePath}${route.path}`}
         basePath={basePath}
       >
         <RouteComponent />
-      </StaticRouter>
+      </Router>
     );
 
     expect(wrapper.text()).toBe('important');
@@ -252,9 +255,9 @@ describe('<StaticRouter /> integration tests', () => {
 
   it('should match the right route when basePath is not set', async () => {
     const wrapper = mount(
-      <StaticRouter routes={[route]} location={route.path}>
+      <Router routes={[route]} location={route.path}>
         <RouteComponent />
-      </StaticRouter>
+      </Router>
     );
 
     expect(wrapper.text()).toBe('important');

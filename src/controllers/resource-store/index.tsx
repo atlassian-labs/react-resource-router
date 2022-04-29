@@ -11,6 +11,7 @@ import {
   ResourceStoreData,
   RouteResourceResponse,
 } from '../../common/types';
+import { isServerEnvironment } from '../../common/utils';
 
 import { getResourceStoreContext, getSliceForResource } from './selectors';
 import {
@@ -230,7 +231,7 @@ export const actions: Actions = {
     dispatch,
   }) => {
     // Filter out isBrowserOnly resources if on server
-    const filteredResources = options.isStatic
+    const filteredResources = isServerEnvironment()
       ? resources.filter(resource => !resource.isBrowserOnly)
       : resources;
 

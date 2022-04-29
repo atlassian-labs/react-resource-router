@@ -10,13 +10,27 @@ import {
 } from '../../common/types';
 
 export type RouterProps = PropsWithChildren<{
-  isStatic: boolean;
-  history: BrowserHistory;
+  basePath?: string;
+  history?: BrowserHistory;
   initialRoute?: Route;
+  isGlobal?: boolean;
+  location?: string;
+  onPrefetch?: (routerContext: RouterContext) => void;
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
-  basePath?: string;
   routes: Routes;
-  isGlobal?: boolean;
-  onPrefetch?: (routerContext: RouterContext) => void;
 }>;
+
+export type MemoryRouterProps = PropsWithChildren<{
+  basePath?: string;
+  location?: string;
+  routes: Routes;
+}>;
+
+export type RequestResourcesParams = {
+  history?: BrowserHistory;
+  location: string;
+  resourceContext?: ResourceStoreContext;
+  routes: Routes;
+  timeout?: number;
+};

@@ -256,17 +256,6 @@ export type HistoryActions = {
   listen: HistoryListen;
 };
 
-export type MemoryRouterProps = {
-  basePath?: string;
-  isStatic?: boolean;
-  location?: string;
-  isGlobal?: boolean;
-  routes: Routes;
-  children: ReactNode;
-  resourceData?: ResourceStoreData;
-  resourceContext?: ResourceStoreContext;
-};
-
 export type GenerateLocationOptions = {
   params?: MatchParams;
   query?: Query;

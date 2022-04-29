@@ -29,43 +29,16 @@ import { appRoutes } from './routing';
 
 ### Router props
 
-| prop              | type                      | description                                                                                        |
-| ----------------- | ------------------------- | -------------------------------------------------------------------------------------------------- |
-| `routes`          | `Routes[]`                | Your application's routes                                                                          |
-| `initialRoute`    | `Route`                   | The route your application is initially showing                                                    |
-| `history`         | `History`                 | The history instance for the router                                                                |
-| `basePath`        | `string`                  | Base path string that will get prepended to all route paths                                        |
-| `resourceContext` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods |
-| `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount          |
-| `onPrefetch`      | `function(RouterContext)` | Called when prefetch is triggered from a Link                                                      |
-
-## StaticRouter
-
-If you are planning to render your application on the server, you must use the `StaticRouter` in your server side entry. The `StaticRouter` should only be used on server as it omits all browser-only resources. It does not require a `history` prop to be provided, instead, you simply need to provide the current `location` as a string. In order to achieve this, we recommend your server side application uses [`jsdom`](https://github.com/jsdom/jsdom).
-
-```js
-// server-app.js
-import { StaticRouter } from 'react-resource-router';
-import { App } from '../components';
-import { appRoutes } from '../routing';
-
-const { pathname, search } = window.location;
-const location = `${pathname}${search}`;
-
-export const ServerApp = () => (
-  <StaticRouter routes={appRoutes} location={location}>
-    <App />
-  </StaticRouter>
-);
-```
-
-### StaticRouter props
-
-| prop       | type       | description                                                 |
-| ---------- | ---------- | ----------------------------------------------------------- |
-| `routes`   | `Routes[]` | Your application's routes                                   |
-| `location` | `string`   | The string representation of the app's current location     |
-| `basePath` | `string`   | Base path string that will get prepended to all route paths |
+| prop              | type                      | description                                                                                                                                   |
+| ----------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `routes`          | `Routes[]`                | Your application's routes                                                                                                                     |
+| `history`         | `History`                 | The history instance for the router, if omitted memory history will be used (optional but recommended)                                        |
+| `location`        | `string`                  | If `history` prop is omitted, this configures the initial location for the default memory history (optional, useful for tests and storybooks) |
+| `basePath`        | `string`                  | Base path string that will get prepended to all route paths (optional)                                                                        |
+| `initialRoute`    | `Route`                   | The route your application is initially showing, it's a performance optimisation to avoid route matching cost on initial render(optional)     |
+| `resourceContext` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods (optional)                                 |
+| `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount (optional)                                          |
+| `onPrefetch`      | `function(RouterContext)` | Called when prefetch is triggered from a Link (optional)                                                                                      |
 
 ## MemoryRouter
 
@@ -73,28 +46,7 @@ The `MemoryRouter` component can be used for your application's unit tests.
 
 ```js
 it('should send right props after render with routes', () => {
-  mount(
-    <MemoryRouter routes={[mockRoutes[0]]}>
-      <RouterSubscriber>
-        {({ history, location, routes, route, match, query }) => {
-          expect(history).toEqual(mockHistory);
-          expect(location).toEqual(mockLocation);
-          expect(routes).toEqual(routes);
-          expect(route).toEqual(
-            expect.objectContaining({
-              path: `/pathname`,
-            })
-          );
-          expect(match).toBeTruthy();
-          expect(query).toEqual({
-            foo: 'bar',
-          });
-
-          return <div>I am a subscriber</div>;
-        }}
-      </RouterSubscriber>
-    </MemoryRouter>
-  );
+  render(<MemoryRouter routes={[mockRoutes[0]]}>{/* ... */}</MemoryRouter>);
 });
 ```
 
@@ -102,9 +54,9 @@ it('should send right props after render with routes', () => {
 
 | prop       | type       | description                                                 |
 | ---------- | ---------- | ----------------------------------------------------------- |
-| `routes`   | `Routes[]` | Your application's routes                                   |
-| `location` | `string`   | The string representation of the app's current location     |
 | `basePath` | `string`   | Base path string that will get prepended to all route paths |
+| `location` | `string`   | The string representation of the app's current location     |
+| `routes`   | `Routes[]` | Your application's routes                                   |
 
 ## Link component
 

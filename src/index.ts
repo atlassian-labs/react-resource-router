@@ -3,7 +3,6 @@ export { createBrowserHistory, createMemoryHistory } from 'history';
 export {
   Router,
   MemoryRouter,
-  StaticRouter,
   RouterSubscriber,
   RouteResourceEnabledSubscriber,
   Redirect,
@@ -48,7 +47,6 @@ export type {
   MatchParams,
   MatchedInvariantRoute,
   MatchedRoute,
-  MemoryRouterProps,
   Query,
   ResourceStoreContext,
   ResourceStoreData,

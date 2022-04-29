@@ -9,7 +9,7 @@ export function parsePath(path: string) {
 
   return {
     pathname,
-    search: url.query,
+    search: (url.query as any) as string,
     hash: url.hash,
   };
 }

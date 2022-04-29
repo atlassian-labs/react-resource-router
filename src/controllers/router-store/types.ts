@@ -20,62 +20,52 @@ import {
 import { MemoryHistory, UnregisterCallback } from 'history';
 
 type PublicStateProperties = {
+  action: HistoryAction;
   basePath: string;
   location: Location;
+  match: Match;
   query: Query;
   route: Route;
-  match: Match;
-  action: HistoryAction;
 };
 
 export type UnlistenHistory = () => void;
 
 type PrivateStateProperties = {
-  routes: Routes;
   history: BrowserHistory;
-  unlisten: UnlistenHistory | null;
-  isStatic: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
+  routes: Routes;
+  unlisten: UnlistenHistory | null;
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
 
 export type ContainerProps = {
-  isStatic?: boolean;
+  basePath?: string;
   history: BrowserHistory | MemoryHistory;
   initialRoute?: Route;
+  isGlobal?: boolean;
   location?: Location;
-  basePath?: string;
-  routes: Routes;
-  resourceData?: ResourceStoreData;
-  resourceContext?: ResourceStoreContext;
   onPrefetch?: (routerContext: RouterContext) => void;
+  resourceContext?: ResourceStoreContext;
+  resourceData?: ResourceStoreData;
+  routes: Routes;
 };
-
-export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
-  ContainerProps,
-  'isStatic'
->;
 
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
 
 export type HistoryUpdateType = 'push' | 'replace';
 
 type ToAttributes = {
-  params?: MatchParams;
   query?: Query;
+  params?: MatchParams;
 };
 
 type RequestRouteResourcesOptions = {
   timeout?: number;
-  isStatic?: boolean;
 };
 
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
-  bootstrapStoreUniversal: (
-    initialState: UniversalRouterContainerProps
-  ) => RouterAction;
   requestRouteResources: (
     options?: RequestRouteResourcesOptions
   ) => Action<EntireRouterState, AllRouterActions, Promise<unknown[]>>;
