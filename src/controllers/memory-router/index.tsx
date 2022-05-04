@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
 import { createMemoryHistory, MemoryHistoryBuildOptions } from 'history';
 
@@ -40,18 +40,29 @@ const getRouterProps = (memoryRouterProps: MemoryRouterProps) => {
  */
 export const MemoryRouter = (props: MemoryRouterProps) => {
   const { location, children } = props;
-  const config: MemoryHistoryBuildOptions = {};
 
-  if (location) {
-    config.initialEntries = [location];
+  const newGetHistory = () =>
+    createMemoryHistory({
+      initialEntries: location !== undefined ? [location] : undefined,
+    });
+
+  const historyState = useRef({
+    getHistory: newGetHistory,
+    location,
+  });
+
+  if (historyState.current.location !== location) {
+    historyState.current.getHistory = newGetHistory;
   }
 
-  const history = createMemoryHistory(config);
   const routerProps = getRouterProps(props);
 
   return (
     // @ts-ignore suppress history will be overwritten warning
-    <Router history={history} {...(routerProps as RouterProps)}>
+    <Router
+      history={historyState.current.getHistory()}
+      {...(routerProps as RouterProps)}
+    >
       {children}
     </Router>
   );
