@@ -47,8 +47,10 @@ import { Router, createBrowserHistory } from 'react-resource-router';
 import { App } from '../components';
 import { routes } from '../routing/routes';
 
+const history = createBrowserHistory();
+
 export const ClientApp = () => (
-  <Router routes={routes} history={createBrowserHistory()}>
+  <Router routes={routes} history={history}>
     <App />
   </Router>
 );
