@@ -194,8 +194,10 @@ import {
 import { StaticNavigation } from '../components';
 import { routes } from '../routing';
 
+const history = createBrowserHistory();
+
 export const App = () => (
-  <Router history={createBrowserHistory} routes={routes}>
+  <Router history={history} routes={routes}>
     <StaticNavigation />
     <RouteComponent />
   </Router>

@@ -118,8 +118,10 @@ import {
 } from 'react-resource-router';
 import { appRoutes } from './routing/routes';
 
+const history = createBrowserHistory();
+
 const App = () => (
-  <Router routes={appRoutes} history={createBrowserHistory()}>
+  <Router routes={appRoutes} history={history}>
     <RouteComponent />
   </Router>
 );
