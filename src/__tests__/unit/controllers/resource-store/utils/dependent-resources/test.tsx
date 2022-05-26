@@ -48,6 +48,9 @@ describe('dependent resources', () => {
   const resourceY = toResource('y', ['x', 'y']); // depends on self too
   const resourceZ = toResource('z', ['x', 'y']);
 
+  const resourceM = toResource('m');
+  const resourceN = toResource('n', ['m']);
+
   const createApi = (state: Partial<State>) => {
     const currentState: Partial<State> = state;
     const api: StoreActionApi<State> = {
@@ -160,7 +163,7 @@ describe('dependent resources', () => {
 
       expect(
         executeTuples(
-          [resourceA, resourceB, resourceX, resourceY],
+          [resourceX, resourceY, resourceZ],
           [[resourceY, action]]
         )(mockApi)
       ).toEqual([1]);
@@ -170,6 +173,7 @@ describe('dependent resources', () => {
         executing: [
           [resourceX, null],
           [resourceY, action],
+          [resourceZ, null],
         ],
       });
       expect(mockApi.dispatch).toHaveBeenCalledTimes(1);
@@ -183,7 +187,7 @@ describe('dependent resources', () => {
 
       expect(
         executeTuples(
-          [resourceA, resourceB, resourceX, resourceY],
+          [resourceX, resourceY, resourceZ],
           [[resourceX, action]]
         )(mockApi)
       ).toEqual([1]);
@@ -193,6 +197,39 @@ describe('dependent resources', () => {
         executing: [
           [resourceX, action],
           [resourceY, null],
+          [resourceZ, null],
+        ],
+      });
+      expect(mockApi.dispatch).toHaveBeenCalledTimes(1);
+      expect(action).toBeCalledTimes(1);
+      expect(mockApi.setState).toHaveBeenNthCalledWith(2, { executing: null });
+    });
+
+    it('should construct the smallest executing state of only directly related resources', () => {
+      const mockApi = createApi({ executing: null });
+      const action = jest.fn().mockReturnValue(1);
+
+      expect(
+        executeTuples(
+          [
+            resourceA,
+            resourceB,
+            resourceX,
+            resourceY,
+            resourceZ,
+            resourceM,
+            resourceN,
+          ],
+          [[resourceX, action]]
+        )(mockApi)
+      ).toEqual([1]);
+
+      expect(mockApi.setState).toBeCalledTimes(2);
+      expect(mockApi.setState).toHaveBeenNthCalledWith(1, {
+        executing: [
+          [resourceX, action],
+          [resourceY, null],
+          [resourceZ, null],
         ],
       });
       expect(mockApi.dispatch).toHaveBeenCalledTimes(1);
@@ -208,6 +245,7 @@ describe('dependent resources', () => {
           executing: [
             [resourceX, action1],
             [resourceY, action2],
+            [resourceZ, action2],
           ],
         });
 
@@ -216,7 +254,15 @@ describe('dependent resources', () => {
 
       expect(
         executeTuples(
-          [resourceA, resourceB, resourceX, resourceY],
+          [
+            resourceA,
+            resourceB,
+            resourceX,
+            resourceY,
+            resourceZ,
+            resourceM,
+            resourceN,
+          ],
           [[resourceX, action1]]
         )(mockApi)
       ).toEqual([1]);
@@ -226,17 +272,19 @@ describe('dependent resources', () => {
         executing: [
           [resourceX, action1],
           [resourceY, null],
+          [resourceZ, null],
         ],
       });
       expect(mockApi.setState).toHaveBeenNthCalledWith(2, {
         executing: [
           [resourceX, action1],
           [resourceY, action2],
+          [resourceZ, action2],
         ],
       });
-      expect(mockApi.dispatch).toHaveBeenCalledTimes(2);
+      expect(mockApi.dispatch).toHaveBeenCalledTimes(3);
       expect(action1).toBeCalledTimes(1);
-      expect(action2).toBeCalledTimes(1);
+      expect(action2).toBeCalledTimes(2);
       expect(mockApi.setState).toHaveBeenNthCalledWith(3, { executing: null });
     });
 
@@ -256,7 +304,7 @@ describe('dependent resources', () => {
 
       expect(() =>
         executeTuples(
-          [resourceA, resourceB, resourceX, resourceY],
+          [resourceA, resourceB, resourceX, resourceY, resourceM, resourceN],
           [[resourceX, action1]]
         )(mockApi)
       ).toThrow('execution reached an inconsistent state');
@@ -291,7 +339,7 @@ describe('dependent resources', () => {
 
       expect(
         executeTuples(
-          [resourceA, resourceB, resourceX, resourceY],
+          [resourceA, resourceB, resourceX, resourceY, resourceM, resourceN],
           [
             [resourceA, action],
             [resourceX, action],
@@ -299,7 +347,7 @@ describe('dependent resources', () => {
             [resourceY, action],
           ]
         )(mockApi)
-      ).toEqual([1, 3, 2, 4]);
+      ).toEqual([3, 1, 4, 2]);
     });
   });
 

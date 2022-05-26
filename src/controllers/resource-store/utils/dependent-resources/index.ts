@@ -44,47 +44,75 @@ export const executeTuples = <R>(
     throw new Error('execution is already in progress');
   }
 
-  // we cannot execute dependencies without route resources, regardless of whether tuple resource specifies dependency
-  const hasExecutableDependency =
+  // check if there are resources and if so if there are any resources with dependencies
+  const hasDependentResources =
     routeResources?.some(({ depends }) => depends?.length) ?? false;
 
-  // optimise for no dependencies
-  if (!hasExecutableDependency) {
+  if (!hasDependentResources) {
     return tuples.map(([, action]) => dispatch(action));
   }
 
-  // find all the resources on the route that have dependencies or are depended upon
-  // this potentially larger than needed since it is not specific to the resource being
-  // executed but its cheaper than analysing dependencies properly
-  // removing duplicates is not essential but helps debugging
-  const interdependentRouteResourceTypes = routeResources!
-    .reduceRight(
-      (acc, { type, depends }) => (depends ? [...acc, type, ...depends] : acc),
+  // some resources might not be listed on the route resources so must be dispatched separate from executing state
+  const listedTuples = tuples.filter(([resource]) =>
+    routeResources?.some(matchType(resource))
+  );
+  if (listedTuples.length === 0) {
+    return tuples.map(([, action]) => dispatch(action));
+  }
+
+  // accumulate the dependency types for all executing resources
+  // find downstream resources that may also execute and include their dependencies too
+  // include the resource type as well in the list
+  // we don't validate that these are legal dependencies
+  const [dependentTypes] = routeResources!
+    .reduce(
+      (acc, { type, depends }) => {
+        const [dependencies, executableTypes] = acc;
+        const isExecutable =
+          executableTypes.includes(type) ||
+          !!depends?.some(dependency => executableTypes.includes(dependency));
+
+        return isExecutable
+          ? [
+              depends ? [...dependencies, ...depends, type] : dependencies,
+              [...executableTypes, type],
+            ]
+          : acc;
+      },
+      [[] as ResourceType[], listedTuples.map(([{ type }]) => type)]
+    )
+    .filter((v, i, a) => a.indexOf(v) === i);
+
+  // resources that are completely independent are preferable to be dispatched separate from executing state
+  const dependentTuples = listedTuples.filter(([{ type }]) =>
+    dependentTypes.includes(type)
+  );
+  if (dependentTuples.length === 0) {
+    return tuples.map(([, action]) => dispatch(action));
+  }
+
+  // additionally find all direct dependencies of these executing or possibly executing resources
+  // we don't validate that these are legal dependencies
+  const dependentAndDependencyTypes = routeResources!
+    .filter(({ type }) => dependentTypes.includes(type))
+    .reduce(
+      (acc, { type, depends }) =>
+        depends ? [...acc, ...depends, type] : [...acc, type],
       [] as ResourceType[]
     )
     .filter((v, i, a) => a.indexOf(v) === i);
 
-  // simply dispatch actions for independent resources
-  const independentTuples = tuples.filter(
-    ([{ type }]) => !interdependentRouteResourceTypes?.includes(type)
-  );
-  const independentResults = independentTuples.map(([, action]) =>
-    dispatch(action)
-  );
-
-  // complete without entering executing state where possible
-  if (independentTuples.length === tuples.length) {
-    return independentResults;
-  }
-
-  // setup executing tuples in route resource order just for the interdependent resources
+  // setup executing tuples in route resource order
   // this state allows actions to call executeForDependents() to influence actions that follow
-  // we don't include independent resources to help debugging routes with many resources but sparse dependencies
-  // the list includes non-executing resources so that getDependencies() may validate without needing route resources
-  // we use the resource definition of the given tuple where present otherwise use the definition from route resource
-  const executingTuples: ExecutionMaybeTuple[] = routeResources!
-    .filter(({ type }) => interdependentRouteResourceTypes.includes(type))
-    .map(resource => tuples.find(matchType(resource)) ?? [resource, null]);
+  // the list includes dependency resources so that getDependencies() may validate without needing route resources
+  // we use the resource definition of the given tuple where present or otherwise the definition from route resources
+  const executingTuples = routeResources!
+    .filter(({ type }) => dependentAndDependencyTypes.includes(type))
+    .map(
+      resource =>
+        tuples.find(matchType(resource)) ??
+        ([resource, null] as ExecutionMaybeTuple)
+    );
 
   setState({ executing: executingTuples });
 
@@ -103,13 +131,12 @@ export const executeTuples = <R>(
 
   setState({ executing: null });
 
-  // combine results
-  const allTuples = [...independentTuples, ...executingTuples];
-  const allResults = [...independentResults, ...executedResults];
+  // pick existing execution result or dispatch any remaining independent actions
+  return tuples.map(([resource, action]) => {
+    const index = executingTuples.findIndex(matchType(resource));
 
-  return tuples.map(
-    ([resource]) => allResults[allTuples.findIndex(matchType(resource))]
-  );
+    return index < 0 ? dispatch(action) : executedResults[index];
+  });
 };
 
 export const actionWithDependencies = <R extends unknown>(
