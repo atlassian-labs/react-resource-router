@@ -117,7 +117,7 @@ export const privateActions = {
     resource: RouteResource,
     routerStoreContext: RouterContext,
     options: GetResourceOptions
-  ): ResourceAction<Promise<RouteResourceResponse>> => ({
+  ): ResourceAction<Promise<RouteResourceResponse>> => async ({
     getState,
     dispatch,
   }) => {
@@ -135,7 +135,7 @@ export const privateActions = {
       cached.accessedAt = getAccessedAt();
       dispatch(setResourceState(type, key, cached));
 
-      return Promise.resolve(cached);
+      return cached;
     }
 
     return dispatch(
