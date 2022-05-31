@@ -1,5 +1,5 @@
 import { StoreActionApi } from 'react-sweet-state';
-import { deleteResourceKey } from '../manage-resource-state';
+import { deleteResourceState } from '../manage-resource-state';
 import { State } from '../../types';
 
 import {
@@ -80,5 +80,5 @@ export const validateLRUCache = (resource: RouteResource, key: string) => ({
   if (!keyTobeDeleted) {
     return;
   }
-  dispatch(deleteResourceKey(keyTobeDeleted, type));
+  dispatch(deleteResourceState(type, keyTobeDeleted));
 };

@@ -1,41 +1,62 @@
 import { getLRUResourceKey } from '../../../../../../controllers/resource-store/utils/lru-cache';
-import { RouteResourceDataForType } from '../../../../../../common/types';
+import {
+  RouteResourceDataForType,
+  RouteResourceResponseBase,
+  RouteResourceTimestamp,
+} from '../../../../../../common/types';
+
+const mock = <T>({
+  data,
+  accessedAt,
+  expiresAt,
+}: {
+  data: T;
+  accessedAt: RouteResourceTimestamp;
+  expiresAt: RouteResourceTimestamp;
+}): RouteResourceResponseBase<T> => ({
+  loading: false,
+  error: null,
+  data,
+  promise: Promise.resolve(data),
+  accessedAt,
+  expiresAt,
+});
 
 describe('lru-cache', () => {
   const resourceDataForTypeWithExpiredKeys: RouteResourceDataForType = {
-    home: {
+    home: mock({
       data: 'home',
       accessedAt: 2500,
       expiresAt: 5000,
-    },
-    about: {
+    }),
+    about: mock({
       data: 'about',
       accessedAt: 500,
       expiresAt: 1000,
-    },
-    shop: {
+    }),
+    shop: mock({
       data: 'shop',
       accessedAt: 2500,
       expiresAt: 3000,
-    },
+    }),
   };
 
   const resourceDataForTypeWithNoExpiredKeys: RouteResourceDataForType = {
-    home: {
+    home: mock({
       data: 'home',
       accessedAt: 2400,
       expiresAt: 5000,
-    },
-    about: {
+    }),
+    about: mock({
       data: 'about',
       accessedAt: 2600,
       expiresAt: 3500,
-    },
-    shop: {
+    }),
+    shop: mock({
       data: 'shop',
       accessedAt: 2500,
       expiresAt: 3000,
-    },
+    }),
   };
 
   const currentTime = 2000;

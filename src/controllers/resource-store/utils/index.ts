@@ -12,8 +12,12 @@ export { TimeoutError } from './timeout-error';
 export { setSsrDataPromise } from './ssr-data-promise';
 export { validateLRUCache } from './lru-cache';
 export {
-  deleteResource,
-  deleteResourceKey,
+  deleteResourceState,
+  getResourceState,
   setResourceState,
-  updateRemoteResourceState,
 } from './manage-resource-state';
+export {
+  actionWithDependencies,
+  mapActionWithDependencies,
+} from './dependent-resources';
+export { toPromise } from './to-promise';

@@ -1,6 +1,6 @@
 /* eslint-disable no-use-before-define */
 
-import { StoreActionApi } from 'react-sweet-state';
+import { Action, StoreActionApi } from 'react-sweet-state';
 
 import {
   ResourceStoreContext,
@@ -28,23 +28,22 @@ export type ResourceSliceIdentifier = {
   key: string;
 };
 
-type GetResourceOptions = {
+export type GetResourceOptions = {
   prefetch?: boolean;
   timeout?: number;
   isStatic?: boolean;
 };
 
-type ResourceAction<R> = ({
-  getState,
-  setState,
-  dispatch,
-}: StoreActionApi<State>) => R;
+export type ResourceAction<T> = Action<State, void, T>;
 
 export type Actions = {
+  clearResource: (
+    resource: RouteResource,
+    routerStoreContext?: RouterContext
+  ) => ResourceAction<void>;
   updateResourceState: (
-    type: RouteResource['type'],
-    key: string,
-    maxAge: RouteResource['maxAge'],
+    resource: RouteResource,
+    routerStoreContext: RouterContext,
     getNewSliceData: RouteResourceUpdater
   ) => ResourceAction<void>;
   getResource: (
@@ -81,8 +80,4 @@ export type Actions = {
     setState,
     getState,
   }: StoreActionApi<State>) => ResourceStoreData;
-  clearResource: (
-    type: RouteResource['type'],
-    key?: string
-  ) => ResourceAction<void>;
 };
