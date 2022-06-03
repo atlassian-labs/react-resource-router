@@ -76,18 +76,54 @@ export type RouteResourceError = Record<string, any> | Error;
 
 export type RouteResourceDataPayload = Record<string, any>;
 
-export type RouteResourcePromise<T> = Promise<T> | null;
-
 export type RouteResourceUpdater<RouteResourceData = unknown> = (
   data: RouteResourceData
 ) => RouteResourceData;
 
+export type EmptyObject = {
+  [K in any]: never;
+};
+
+export type RouteResourceSyncResult<RouteResourceData> =
+  | {
+      data: RouteResourceData;
+      error: null;
+      loading: true;
+      // promise: existing value retained
+    }
+  | {
+      data: RouteResourceData;
+      error: null;
+      loading: false;
+      promise: Promise<RouteResourceData>;
+    };
+
+export type RouteResourceAsyncResult<RouteResourceData> =
+  | {
+      data: RouteResourceData;
+      error: null;
+      loading: false;
+      promise: Promise<RouteResourceData>;
+    }
+  | {
+      // data: existing value retained
+      error: RouteResourceError;
+      loading: false;
+      promise: Promise<RouteResourceData>;
+    }
+  | {
+      // data: existing value retained
+      error: RouteResourceError;
+      loading: true;
+      promise: null;
+    };
+
 export type RouteResourceResponseBase<RouteResourceData> = {
-  loading?: RouteResourceLoading;
-  error?: RouteResourceError | null;
-  data?: RouteResourceData;
   key?: string;
-  promise?: RouteResourcePromise<RouteResourceData>;
+  loading: RouteResourceLoading;
+  error: RouteResourceError | null;
+  data: RouteResourceData | null;
+  promise: Promise<RouteResourceData> | null;
   expiresAt: RouteResourceTimestamp;
   accessedAt: RouteResourceTimestamp;
 };
@@ -132,17 +168,20 @@ export type RouteResourceGettersArgs = [
   ResourceStoreContext
 ];
 
-export type RouteResource<RouteResourceData = unknown> = {
-  type: string;
+export type ResourceType = string;
+export type ResourceKey = string;
+
+export type RouteResource<RouteResourceData extends unknown = unknown> = {
+  type: ResourceType;
   getKey: (
     routerContext: RouterContext,
     customContext: ResourceStoreContext
-  ) => string;
+  ) => ResourceKey;
   maxAge: number;
   getData: (
     routerContext: RouterDataContext,
     customContext: ResourceStoreContext
-  ) => RouteResourcePromise<RouteResourceData>;
+  ) => RouteResourceData | Promise<RouteResourceData>;
   maxCache: number;
   isBrowserOnly: boolean;
 };
@@ -152,11 +191,11 @@ export type RouteResources = RouteResource[];
 export interface ResourceStoreContext {}
 
 export type RouteResourceDataForType = {
-  [index: string]: RouteResourceResponseBase<unknown>;
+  [key: string]: RouteResourceResponseBase<unknown>;
 };
 
 export type ResourceStoreData = {
-  [index: string]: RouteResourceDataForType;
+  [type: string]: RouteResourceDataForType;
 };
 
 export type RouterContext = {

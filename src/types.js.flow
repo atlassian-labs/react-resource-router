@@ -76,19 +76,30 @@ export type RouteResourceResponse<T> = {|
 type ResourceFetchContext = { isPrefetch: boolean };
 export type RouterDataContext = { ...RouterContext, ...ResourceFetchContext };
 
-export type RouteResource<T> = {|
-  type: string,
-  getKey: (
-    routerContext: RouterContext,
-    customContext: ResourceStoreContext
-  ) => string,
+export type ResourceType = string;
+export type ResourceKey = string;
+
+export type GetKey = (
+  routerContext: RouterContext,
+  customContext: ResourceStoreContext
+) => ResourceKey;
+
+export type GetData<T> = (
+  routerContext: RouterDataContext,
+  customContext: ResourceStoreContext
+) => T | Promise<T>;
+
+export type RouteResourceBase = {|
+  type: ResourceType,
+  getKey: GetKey,
   maxAge: number,
-  getData: (
-    routerContext: RouterDataContext,
-    customContext: ResourceStoreContext
-  ) => RouteResourcePromise<T>,
   maxCache: number,
   isBrowserOnly: boolean,
+|};
+
+export type RouteResource<T> = {|
+  ...RouteResourceBase,
+  getData: GetData<T>,
 |};
 
 export type RouteResources = RouteResource<mixed>[];
