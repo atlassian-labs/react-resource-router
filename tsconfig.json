@@ -10,7 +10,6 @@
     "preserveConstEnums": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "typeRoots": ["./node_modules/@types", "types"],
     "baseUrl": ".",
     "paths": {
       "react-resource-router": ["src"]

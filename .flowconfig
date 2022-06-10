@@ -1,4 +1,8 @@
 [ignore]
+# these 'resolve' package that these packages depend on throws a flow error
+<PROJECT_ROOT>/node_modules/jest-resolve/*
+<PROJECT_ROOT>/node_modules/eslint-plugin-import/*
+<PROJECT_ROOT>/node_modules/eslint-import-resolver-node/*
 
 [include]
 <PROJECT_ROOT>/src/*.flow
