@@ -2,7 +2,8 @@ node_modules
 build
 dist
 coverage
-yarn.lock   
+yarn.lock
+.parcel-cache
 
 # misc
 .local
