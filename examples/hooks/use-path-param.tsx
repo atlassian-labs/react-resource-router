@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, usePathParam } from 'react-resource-router';
+import { Link, usePathParam } from '../../src';
 
 const randomStr = (length: number) => {
   let result = '';

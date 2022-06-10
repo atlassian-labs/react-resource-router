@@ -62,7 +62,7 @@
     "lint:types": "tsc --noEmit && flow --max-warnings=0",
     "lint:types-watch": "tsc --noEmit --watch",
     "prepack": "npm run preversion -s && npm run build -s",
-    "start": "parcel",
+    "start": "parcel serve examples/basic-routing/index.html examples/hooks/index.html examples/hydration/index.html examples/index.html examples/routing-with-resources/index.html",
     "test": "jest",
     "test:watch": "jest --watch",
     "preversion": "npm run lint -s && npm run lint:types -s && npm run lint:deps -s && npm run test -s"

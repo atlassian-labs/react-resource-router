@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link, createResource, useResource } from 'react-resource-router';
+import { Link, createResource, useResource } from '../../src';
 import { aboutRoute } from './routes';
 
 export const homeResource = createResource({

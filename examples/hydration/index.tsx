@@ -7,7 +7,7 @@ import {
   RouteComponent,
   createBrowserHistory,
   StaticRouter,
-} from 'react-resource-router';
+} from '../../src';
 
 import { homeRoute } from './routes';
 

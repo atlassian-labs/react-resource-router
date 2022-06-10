@@ -6,7 +6,7 @@ import {
   RouteComponent,
   createBrowserHistory,
   createRouterSelector,
-} from 'react-resource-router';
+} from '../../src';
 
 import Home from './home';
 import QueryParamExample from './use-query-param';

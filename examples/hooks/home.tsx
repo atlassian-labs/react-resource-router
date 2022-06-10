@@ -1,5 +1,5 @@
 import React from 'react';
-import { Link } from 'react-resource-router';
+import { Link } from '../../src';
 
 const Home = () => {
   return (

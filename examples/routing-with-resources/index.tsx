@@ -1,11 +1,7 @@
 import React from 'react';
 import ReactDOM from 'react-dom';
 
-import {
-  Router,
-  RouteComponent,
-  createBrowserHistory,
-} from 'react-resource-router';
+import { Router, RouteComponent, createBrowserHistory } from '../../src';
 
 import { homeRoute, aboutRoute } from './routes';
 
