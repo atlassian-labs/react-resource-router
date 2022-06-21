@@ -73,11 +73,18 @@ export type RouteResourceResponse<T> = {|
   accessedAt: RouteResourceTimestamp,
 |};
 
-type ResourceFetchContext = { isPrefetch: boolean };
-export type RouterDataContext = { ...RouterContext, ...ResourceFetchContext };
-
 export type ResourceType = string;
 export type ResourceKey = string;
+
+type ResourceDependencies = {
+  [ResourceType]: RouteResourceResponse<mixed>,
+};
+
+export type RouterDataContext = {
+  ...RouterContext,
+  isPrefetch: boolean,
+  dependencies: ResourceDependencies,
+};
 
 export type GetKey = (
   routerContext: RouterContext,
@@ -95,6 +102,7 @@ export type RouteResourceBase = {|
   maxAge: number,
   maxCache: number,
   isBrowserOnly: boolean,
+  depends: ResourceType[] | null,
 |};
 
 export type RouteResource<T> = {|

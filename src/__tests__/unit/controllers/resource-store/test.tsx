@@ -6,7 +6,10 @@ import { mount } from 'enzyme';
 import { BoundActions, defaultRegistry } from 'react-sweet-state';
 
 import { useResource } from '../../../../controllers/hooks';
-import { getResourceStore } from '../../../../controllers/resource-store';
+import {
+  getResourceStore,
+  ResourceDependencyError,
+} from '../../../../controllers/resource-store';
 import { BASE_DEFAULT_STATE_SLICE } from '../../../../controllers/resource-store/constants';
 import { getSliceForResource } from '../../../../controllers/resource-store/selectors';
 import {
@@ -23,7 +26,10 @@ import {
 } from '../../../../controllers/resource-store/utils';
 import { createResource } from '../../../../controllers/resource-utils';
 import * as routerStoreModule from '../../../../controllers/router-store';
-import { RouteResourceResponseBase } from '../../../../common/types';
+import {
+  ResourceType,
+  RouteResourceResponseBase,
+} from '../../../../common/types';
 
 jest.mock('../../../../controllers/resource-store/utils', () => ({
   ...jest.requireActual<any>('../../../../controllers/resource-store/utils'),
@@ -73,17 +79,18 @@ describe('resource store', () => {
   const resolver = (resolveWith: any, delay = 0) =>
     new Promise(resolve => setTimeout(() => resolve(resolveWith), delay));
 
-  const getResourceSlice = (): Partial<RouteResourceResponseBase<unknown>> =>
-    storeState.getState().data?.type?.key;
+  const getResourceSlice = (
+    t: ResourceType
+  ): Partial<RouteResourceResponseBase<unknown>> =>
+    storeState.getState().data?.[t]?.key;
 
   const setResourceSlice = (
+    t: ResourceType,
     slice: Partial<RouteResourceResponseBase<unknown>>
   ) =>
-    storeState.setState({
-      data: {
-        type: {
-          key: slice,
-        },
+    Object.assign(storeState.getState().data, {
+      [t]: {
+        key: slice,
       },
     });
 
@@ -215,6 +222,7 @@ describe('resource store', () => {
               },
             },
           },
+          executing: null,
         });
         expect(spy).toHaveBeenNthCalledWith(2, {
           context: {},
@@ -230,6 +238,7 @@ describe('resource store', () => {
               },
             },
           },
+          executing: null,
         });
       });
 
@@ -381,6 +390,7 @@ describe('resource store', () => {
               },
             },
           },
+          executing: null,
         });
       });
     });
@@ -931,7 +941,7 @@ describe('resource store', () => {
       describe('where already loading', () => {
         it('should not change state and return the previous slice', async () => {
           const getData = jest.fn();
-          setResourceSlice({
+          setResourceSlice(type, {
             loading: true,
             data: 'data1',
             error,
@@ -948,7 +958,7 @@ describe('resource store', () => {
           expect(getData).not.toBeCalled();
           expect(getAccessedAt).not.toBeCalled();
           expect(getExpiresAt).not.toBeCalled();
-          const slice = getResourceSlice();
+          const slice = getResourceSlice(type);
           expect(slice).toEqual(
             expect.objectContaining({
               loading: true,
@@ -973,9 +983,9 @@ describe('resource store', () => {
         it('should not change state but should set accessedAt and expiresAt', async () => {
           const data = {};
           const getData = jest.fn().mockReturnValue(data);
-          setResourceSlice({
+          setResourceSlice(type, {
             loading: false,
-            data: data,
+            data,
             error,
             promise: Promise.resolve(data),
             accessedAt: 0,
@@ -990,7 +1000,7 @@ describe('resource store', () => {
           expect(getData).toBeCalled();
           expect(getAccessedAt).toBeCalledTimes(1);
           expect(getExpiresAt).toBeCalledTimes(1);
-          const slice1 = getResourceSlice();
+          const slice1 = getResourceSlice(type);
           expect(slice1).toEqual(
             expect.objectContaining({
               loading: false,
@@ -1006,7 +1016,7 @@ describe('resource store', () => {
 
           expect(getAccessedAt).toBeCalledTimes(1);
           expect(getExpiresAt).toBeCalledTimes(1);
-          const slice2 = getResourceSlice();
+          const slice2 = getResourceSlice(type);
           expect(returnValue).toEqual(slice2);
         });
       });
@@ -1016,7 +1026,7 @@ describe('resource store', () => {
           'should enter loading state with promise resolving new data (prefetch=%s)',
           async prefetch => {
             const getData = jest.fn().mockReturnValue('data2');
-            setResourceSlice({
+            setResourceSlice(type, {
               loading: false,
               data: 'data1',
               error,
@@ -1033,7 +1043,7 @@ describe('resource store', () => {
             expect(getData).toBeCalled();
             expect(getAccessedAt).toBeCalledTimes(1);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
-            const slice1 = getResourceSlice();
+            const slice1 = getResourceSlice(type);
             expect(slice1).toEqual(
               expect.objectContaining({
                 loading: true,
@@ -1050,7 +1060,7 @@ describe('resource store', () => {
 
             expect(getAccessedAt).toBeCalledTimes(2);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
-            const slice2 = getResourceSlice();
+            const slice2 = getResourceSlice(type);
             expect(returnValue).toEqual(slice2);
             expect(slice2).toEqual(
               expect.objectContaining({
@@ -1076,7 +1086,7 @@ describe('resource store', () => {
           'should enter loading state with promise resolving new data (prefetch=%s, timeout=%s)',
           async (prefetch, timeout) => {
             const getData = jest.fn().mockReturnValue(Promise.resolve('data2'));
-            setResourceSlice({
+            setResourceSlice(type, {
               loading: false,
               data: 'data1',
               error,
@@ -1093,7 +1103,7 @@ describe('resource store', () => {
             expect(getData).toBeCalled();
             expect(getAccessedAt).toBeCalledTimes(1);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
-            const slice1 = getResourceSlice();
+            const slice1 = getResourceSlice(type);
             expect(slice1).toEqual(
               expect.objectContaining({
                 loading: true,
@@ -1110,7 +1120,7 @@ describe('resource store', () => {
 
             expect(getAccessedAt).toBeCalledTimes(2);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
-            const slice2 = getResourceSlice();
+            const slice2 = getResourceSlice(type);
             expect(returnValue).toEqual(slice2);
             expect(slice2).toEqual(
               expect.objectContaining({
@@ -1136,7 +1146,7 @@ describe('resource store', () => {
           'should enter loading state with promise rejecting error and preserve existing data on loaded (prefetch=%s, %s)',
           async (prefetch, timeout) => {
             const getData = jest.fn().mockReturnValue(Promise.reject(error));
-            setResourceSlice({
+            setResourceSlice(type, {
               loading: false,
               data: 'data1',
               error: null,
@@ -1153,7 +1163,7 @@ describe('resource store', () => {
             expect(getData).toBeCalled();
             expect(getAccessedAt).toBeCalledTimes(1);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
-            const slice1 = getResourceSlice();
+            const slice1 = getResourceSlice(type);
             expect(slice1).toEqual(
               expect.objectContaining({
                 loading: true,
@@ -1170,7 +1180,7 @@ describe('resource store', () => {
 
             expect(getAccessedAt).toBeCalledTimes(2);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
-            const slice2 = getResourceSlice();
+            const slice2 = getResourceSlice(type);
             expect(returnValue).toEqual(slice2);
             expect(slice2).toEqual(
               expect.objectContaining({
@@ -1193,7 +1203,7 @@ describe('resource store', () => {
             const getData = jest
               .fn()
               .mockImplementation(() => resolver('data2', 250));
-            setResourceSlice({
+            setResourceSlice(type, {
               loading: false,
               data: 'data1',
               error: null,
@@ -1210,7 +1220,7 @@ describe('resource store', () => {
             expect(getData).toBeCalled();
             expect(getAccessedAt).toBeCalledTimes(1);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 1 : 0);
-            const slice1 = getResourceSlice();
+            const slice1 = getResourceSlice(type);
             expect(slice1).toEqual(
               expect.objectContaining({
                 loading: true,
@@ -1229,7 +1239,7 @@ describe('resource store', () => {
 
             expect(getAccessedAt).toBeCalledTimes(2);
             expect(getExpiresAt).toBeCalledTimes(prefetch ? 2 : 1);
-            const slice2 = getResourceSlice();
+            const slice2 = getResourceSlice(type);
             expect(returnValue).toEqual(slice2);
             expect(slice2).toEqual(
               expect.objectContaining({
@@ -1294,10 +1304,6 @@ describe('resource store', () => {
             },
           },
         });
-      });
-
-      afterEach(() => {
-        jest.clearAllMocks();
       });
 
       it('should delete the resource slice for expired resources', () => {
@@ -1398,7 +1404,7 @@ describe('resource store', () => {
       (getExpiresAt as any).mockReturnValue(200);
       (getAccessedAt as any).mockReturnValue(100);
       (getDefaultStateSlice as any).mockReturnValue(BASE_DEFAULT_STATE_SLICE);
-      setResourceSlice({
+      setResourceSlice(type, {
         loading: false,
         data: 'data1',
         error,
@@ -1414,7 +1420,7 @@ describe('resource store', () => {
           () => 'data2'
         );
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).toEqual(
           expect.objectContaining({
             loading: false,
@@ -1438,7 +1444,7 @@ describe('resource store', () => {
           mockOptions
         );
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).toEqual(
           expect.objectContaining({
             loading: true,
@@ -1462,7 +1468,7 @@ describe('resource store', () => {
           mockOptions
         );
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(returnValue).toEqual(slice);
         expect(slice).toEqual(
           expect.objectContaining({
@@ -1484,7 +1490,7 @@ describe('resource store', () => {
           mockOptions
         );
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).toEqual(
           expect.objectContaining({
             loading: true,
@@ -1508,7 +1514,7 @@ describe('resource store', () => {
           () => 'data2'
         );
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).toEqual(
           expect.objectContaining({
             loading: true,
@@ -1533,7 +1539,7 @@ describe('resource store', () => {
         );
         const returnValue = await pending;
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(returnValue).toEqual(slice);
         expect(slice).toEqual(
           expect.objectContaining({
@@ -1560,7 +1566,7 @@ describe('resource store', () => {
         );
         const returnValue = await pending;
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(returnValue).toEqual(slice);
         expect(slice).toEqual(
           expect.objectContaining({
@@ -1581,7 +1587,7 @@ describe('resource store', () => {
           mockOptions
         );
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).toEqual(
           expect.objectContaining({
             loading: true,
@@ -1601,7 +1607,7 @@ describe('resource store', () => {
         );
         actions.clearResource(mockResource, mockRouterStoreContext);
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).not.toBeDefined();
       });
 
@@ -1614,7 +1620,7 @@ describe('resource store', () => {
         actions.clearResource(mockResource, mockRouterStoreContext);
         const returnValue = await pending;
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).not.toBeDefined();
         expect(returnValue).toEqual(
           expect.objectContaining({
@@ -1637,7 +1643,7 @@ describe('resource store', () => {
         actions.clearResource(mockResource, mockRouterStoreContext);
         const returnValue = await pending;
 
-        const slice = getResourceSlice();
+        const slice = getResourceSlice(type);
         expect(slice).not.toBeDefined();
         expect(returnValue).toEqual(
           expect.objectContaining({
@@ -1648,6 +1654,537 @@ describe('resource store', () => {
         );
 
         await expect(returnValue.promise).rejects.toEqual(rejection);
+      });
+    });
+  });
+
+  describe('dependent resources', () => {
+    beforeEach(() => {
+      (getExpiresAt as any).mockReturnValue(200);
+      (getAccessedAt as any).mockReturnValue(100);
+      (getDefaultStateSlice as any).mockReturnValue(BASE_DEFAULT_STATE_SLICE);
+    });
+
+    beforeEach(() => {
+      setResourceSlice(mockResource.type, {
+        loading: false,
+        data: 'data1',
+        error,
+        promise: Promise.resolve('data1'),
+      });
+      setResourceSlice(mockDependentResource.type, {
+        loading: false,
+        data: 'data2',
+        error,
+        promise: Promise.resolve('data2'),
+      });
+    });
+
+    const mockDependentResource = createResource({
+      ...mockResource,
+      type: 'dependent',
+      depends: [type],
+    });
+    const mockRouterStoreDependentContext = {
+      ...mockRouterStoreContext,
+      route: {
+        ...mockRoute,
+        resources: [mockResource, mockDependentResource],
+      },
+    };
+    const mockRouterStoreNoResourcesContext = {
+      ...mockRouterStoreContext,
+      route: {
+        ...mockRoute,
+        resources: [],
+      },
+    };
+
+    describe('actions on an independent resource where present on on the route', () => {
+      it.each([
+        [
+          'request',
+          () =>
+            actions.requestResources(
+              [mockResource],
+              mockRouterStoreContext,
+              {}
+            ),
+        ] as const,
+        [
+          'clear',
+          () => actions.clearResource(mockResource, mockRouterStoreContext),
+        ] as const,
+        [
+          'update',
+          () =>
+            actions.updateResourceState(
+              mockResource,
+              mockRouterStoreContext,
+              () => 'data2'
+            ),
+        ] as const,
+        [
+          'refresh',
+          () =>
+            actions.getResourceFromRemote(
+              mockResource,
+              mockRouterStoreContext,
+              {}
+            ),
+        ] as const,
+      ])('%s should operate outside of executing state', (_label, action) => {
+        const setState = jest.spyOn(storeState, 'setState');
+        expect(action).not.toThrow();
+        expect(setState).not.toHaveBeenNthCalledWith(
+          1,
+          expect.objectContaining({
+            executing: expect.any(Array),
+          })
+        );
+      });
+    });
+
+    describe('actions on dependent resource where present on the route', () => {
+      it.each([
+        [
+          'request',
+          () =>
+            actions.requestResources(
+              [mockDependentResource],
+              mockRouterStoreDependentContext,
+              {}
+            ),
+        ] as const,
+        [
+          'clear',
+          () =>
+            actions.clearResource(
+              mockDependentResource,
+              mockRouterStoreDependentContext
+            ),
+        ] as const,
+        [
+          'update',
+          () =>
+            actions.updateResourceState(
+              mockDependentResource,
+              mockRouterStoreDependentContext,
+              () => 'data2'
+            ),
+        ] as const,
+        [
+          'refresh',
+          () =>
+            actions.getResourceFromRemote(
+              mockDependentResource,
+              mockRouterStoreDependentContext,
+              {}
+            ),
+        ] as const,
+      ])('%s should operate with executing state', (_label, action) => {
+        const setState = jest.spyOn(storeState, 'setState');
+        expect(action).not.toThrow();
+        expect(setState).toHaveBeenNthCalledWith(
+          1,
+          expect.objectContaining({
+            executing: expect.any(Array),
+          })
+        );
+      });
+
+      it.each([
+        [
+          'request',
+          () =>
+            actions.requestResources(
+              [mockDependentResource],
+              mockRouterStoreDependentContext,
+              {}
+            ),
+        ],
+        [
+          'refresh',
+          () =>
+            actions.getResourceFromRemote(
+              mockDependentResource,
+              mockRouterStoreDependentContext,
+              {}
+            ),
+        ],
+      ])(
+        '%s should request dependent resource but not dependency resource',
+        (_label, action) => {
+          const spy1 = jest.spyOn(mockResource, 'getData');
+          const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+          expect(action).not.toThrow();
+
+          const slice = getResourceSlice(type);
+          expect(slice.loading).toBe(false);
+
+          expect(spy1).not.toBeCalled();
+          expect(spy2).toHaveBeenCalledWith(
+            {
+              dependencies: {
+                type: slice,
+              },
+              isPrefetch: false,
+              ...mockRouterStoreDependentContext,
+            },
+            {}
+          );
+        }
+      );
+
+      it('clear should not clear dependency resource', () => {
+        actions.clearResource(
+          mockDependentResource,
+          mockRouterStoreDependentContext
+        );
+
+        expect(getResourceSlice(mockResource.type)).toBeDefined();
+        expect(getResourceSlice(mockDependentResource.type)).toBeUndefined();
+      });
+
+      it('update should not request dependency resource', () => {
+        const spy1 = jest.spyOn(mockResource, 'getData');
+        const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+        actions.updateResourceState(
+          mockDependentResource,
+          mockRouterStoreDependentContext,
+          () => 'data3'
+        );
+
+        const slice = getResourceSlice(mockDependentResource.type);
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'data3',
+          })
+        );
+
+        expect(spy1).not.toBeCalled();
+        expect(spy2).not.toBeCalled();
+      });
+    });
+
+    describe('actions on dependent resource where omitted from on the route', () => {
+      it.each([
+        [
+          'request',
+          () =>
+            actions.requestResources(
+              [mockDependentResource],
+              mockRouterStoreNoResourcesContext,
+              {}
+            ),
+        ] as const,
+        [
+          'clear',
+          () =>
+            actions.clearResource(
+              mockDependentResource,
+              mockRouterStoreContext
+            ),
+        ] as const,
+        [
+          'update',
+          () =>
+            actions.updateResourceState(
+              mockDependentResource,
+              mockRouterStoreNoResourcesContext,
+              () => 'data2'
+            ),
+        ] as const,
+        [
+          'refresh',
+          () =>
+            actions.getResourceFromRemote(
+              mockDependentResource,
+              mockRouterStoreNoResourcesContext,
+              {}
+            ),
+        ] as const,
+      ])('%s should operate outside of executing state', (_label, action) => {
+        const setState = jest.spyOn(storeState, 'setState');
+        expect(action).not.toThrow();
+        expect(setState).not.toHaveBeenNthCalledWith(
+          1,
+          expect.objectContaining({
+            executing: expect.any(Array),
+          })
+        );
+      });
+
+      it.each([
+        [
+          'request',
+          () =>
+            actions.requestResources(
+              [mockDependentResource],
+              mockRouterStoreNoResourcesContext,
+              {}
+            ),
+        ] as const,
+        [
+          'refresh',
+          () =>
+            actions.getResourceFromRemote(
+              mockDependentResource,
+              mockRouterStoreNoResourcesContext,
+              {}
+            ),
+        ] as const,
+      ])(
+        '%s should fail with ResourceDependencyError',
+        async (_label, action) => {
+          setResourceSlice(mockDependentResource.type, {
+            loading: false,
+            data: 'data1',
+            error: null,
+            promise: Promise.resolve('data1'),
+            accessedAt: 0,
+            expiresAt: 0,
+          });
+
+          const pending = action();
+          const [firstValue] = await Promise.all(
+            Array.isArray(pending) ? pending : [pending]
+          );
+
+          const slice = getResourceSlice(mockDependentResource.type);
+          expect(firstValue).toEqual(slice);
+          expect(slice).toEqual(
+            expect.objectContaining({
+              loading: false,
+              data: 'data1',
+              error: expect.any(ResourceDependencyError),
+            })
+          );
+          await expect(slice.promise).rejects.toEqual(
+            expect.any(ResourceDependencyError)
+          );
+        }
+      );
+    });
+
+    describe('actions on depended resource where there is dependent resource on the route', () => {
+      const mockRequestAction = () =>
+        actions.requestResources(
+          [mockResource],
+          mockRouterStoreDependentContext,
+          {}
+        );
+      const mockRefreshAction = () =>
+        actions.getResourceFromRemote(
+          mockResource,
+          mockRouterStoreDependentContext,
+          {}
+        );
+
+      it.each([
+        ['request', mockRequestAction] as const,
+        [
+          'clear',
+          () =>
+            actions.clearResource(
+              mockResource,
+              mockRouterStoreDependentContext
+            ),
+        ] as const,
+        [
+          'update',
+          () =>
+            actions.updateResourceState(
+              mockResource,
+              mockRouterStoreDependentContext,
+              () => 'data2'
+            ),
+        ] as const,
+        ['refresh', mockRefreshAction] as const,
+      ])('%s should operate with executing state', (_label, action) => {
+        const setState = jest.spyOn(storeState, 'setState');
+        expect(action).not.toThrow();
+        expect(setState).toHaveBeenNthCalledWith(
+          1,
+          expect.objectContaining({
+            executing: expect.any(Array),
+          })
+        );
+        expect(setState).toHaveBeenLastCalledWith(
+          expect.objectContaining({
+            executing: null,
+          })
+        );
+      });
+
+      it.each([
+        ['request', mockRequestAction],
+        ['refresh', mockRefreshAction],
+      ])(
+        '%s returning promise should request dependent resource with dependency loading',
+        (_label, action) => {
+          const spy1 = jest
+            .spyOn(mockResource, 'getData')
+            .mockReturnValue(Promise.resolve('data1'));
+          const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+          expect(action).not.toThrow();
+
+          const slice = getResourceSlice(type);
+          expect(slice.loading).toBe(true);
+
+          expect(spy1).toHaveBeenCalledWith(
+            {
+              dependencies: {},
+              isPrefetch: false,
+              ...mockRouterStoreDependentContext,
+            },
+            {}
+          );
+          expect(spy2).toHaveBeenCalledWith(
+            {
+              dependencies: {
+                type: slice,
+              },
+              isPrefetch: false,
+              ...mockRouterStoreDependentContext,
+            },
+            {}
+          );
+        }
+      );
+
+      it.each([
+        ['request', mockRequestAction],
+        ['refresh', mockRefreshAction],
+      ])(
+        '%s returning new value should request dependent resource with dependency loading',
+        (_label, action) => {
+          const spy1 = jest
+            .spyOn(mockResource, 'getData')
+            .mockReturnValue('data2');
+          const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+          expect(action).not.toThrow();
+
+          const slice = getResourceSlice(type);
+          expect(slice.loading).toBe(true);
+
+          expect(spy1).toHaveBeenCalledWith(
+            {
+              dependencies: {},
+              isPrefetch: false,
+              ...mockRouterStoreDependentContext,
+            },
+            {}
+          );
+          expect(spy2).toHaveBeenCalledWith(
+            {
+              dependencies: {
+                type: slice,
+              },
+              isPrefetch: false,
+              ...mockRouterStoreDependentContext,
+            },
+            {}
+          );
+        }
+      );
+
+      it.each([
+        ['request', mockRequestAction],
+        ['refresh', mockRefreshAction],
+      ])(
+        '%s returning prev value should not request dependent resource',
+        (_label, action) => {
+          const spy1 = jest
+            .spyOn(mockResource, 'getData')
+            .mockReturnValue('data1');
+          const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+          expect(action).not.toThrow();
+
+          const slice = getResourceSlice(type);
+          expect(slice.loading).toBe(false);
+
+          expect(spy1).toHaveBeenCalledWith(
+            {
+              dependencies: {},
+              isPrefetch: false,
+              ...mockRouterStoreDependentContext,
+            },
+            {}
+          );
+          expect(spy2).not.toHaveBeenCalled();
+        }
+      );
+
+      it('clear should clear dependent resource', () => {
+        const spy1 = jest.spyOn(mockResource, 'getData');
+        const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+        actions.clearResource(mockResource, mockRouterStoreDependentContext);
+
+        expect(getResourceSlice(mockResource.type)).toBeUndefined();
+        expect(getResourceSlice(mockDependentResource.type)).toBeUndefined();
+        expect(spy1).not.toBeCalled();
+        expect(spy2).not.toBeCalled();
+      });
+
+      it('update new value should request dependent resource with dependency not loading', () => {
+        const spy1 = jest.spyOn(mockResource, 'getData');
+        const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreDependentContext,
+          () => 'data3'
+        );
+
+        const slice = getResourceSlice(mockResource.type);
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'data3',
+          })
+        );
+
+        expect(spy1).not.toBeCalled();
+        expect(spy2).toHaveBeenCalledWith(
+          {
+            dependencies: {
+              type: slice,
+            },
+            isPrefetch: false,
+            ...mockRouterStoreDependentContext,
+          },
+          {}
+        );
+      });
+
+      it('update prev value should request dependent resource with dependency not loading', () => {
+        const spy1 = jest.spyOn(mockResource, 'getData');
+        const spy2 = jest.spyOn(mockDependentResource, 'getData');
+
+        actions.updateResourceState(
+          mockResource,
+          mockRouterStoreDependentContext,
+          () => 'data1'
+        );
+
+        const slice = getResourceSlice(mockResource.type);
+        expect(slice).toEqual(
+          expect.objectContaining({
+            loading: false,
+            data: 'data1',
+          })
+        );
+
+        expect(spy1).not.toBeCalled();
+        expect(spy2).not.toBeCalled();
       });
     });
   });

@@ -17,7 +17,10 @@ export {
   setResourceState,
 } from './manage-resource-state';
 export {
+  ResourceDependencyError,
   actionWithDependencies,
   mapActionWithDependencies,
+  executeForDependents,
+  getDependencies,
 } from './dependent-resources';
 export { toPromise } from './to-promise';
