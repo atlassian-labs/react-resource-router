@@ -18,7 +18,7 @@ const methodsPlaceholders = {
   block: () => noop,
 };
 
-const getLocation = () => {
+const getLocation = (): Location => {
   // todo - don't force non-optional search and hash
   const { pathname = '', search = '', hash = '' } =
     (hasWindow() && window.location) || {};
@@ -107,15 +107,15 @@ export const createLegacyHistory = (): BrowserHistory => {
     },
     ...(hasWindow()
       ? {
-          push: (path: string) => window.location.assign(path),
-          replace: (path: string) =>
-            window.history.replaceState({}, document.title, path),
-          goBack: () => window.history.back(),
-          goForward: () => window.history.forward(),
-          listen: createLegacyListener(updateExposedLocation),
-          block: () => noop,
-          createHref: (location: Location) => createPath(location),
-        }
+        push: (path: string) => window.location.assign(path),
+        replace: (path: string) =>
+          window.history.replaceState({}, document.title, path),
+        goBack: () => window.history.back(),
+        goForward: () => window.history.forward(),
+        listen: createLegacyListener(updateExposedLocation),
+        block: () => noop,
+        createHref: (location: Location) => createPath(location),
+      }
       : methodsPlaceholders),
   };
 };

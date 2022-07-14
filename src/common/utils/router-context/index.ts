@@ -33,7 +33,7 @@ export const findRouterContext = (
 ): RouterContext => {
   const { location, basePath = '' } = options;
   const { pathname, search } = location;
-  const query = qs.parse(search) as Query;
+  const query = search ? qs.parse(search) as Query : {};
   const matchedRoute = matchRoute(routes, pathname, query, basePath);
 
   return {
