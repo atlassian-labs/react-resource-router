@@ -22,7 +22,6 @@ export {
 } from './controllers';
 
 export type {
-  WithRouter,
   CreateResourceArgBase,
   CreateResourceArgSync,
   CreateResourceArgAsync,
