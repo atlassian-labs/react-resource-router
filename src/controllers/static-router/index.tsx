@@ -7,6 +7,7 @@ import { MemoryRouterProps } from '../../common/types';
 import { MemoryRouter } from '../memory-router';
 import { getResourceStore } from '../resource-store';
 import { getRouterStore } from '../router-store';
+import type { State } from '../resource-store/types';
 
 import { RequestResourcesParams } from './types';
 
@@ -52,5 +53,8 @@ StaticRouter.requestResources = async (props: RequestResourcesParams) => {
   return getResourceStore().actions.getSafeData();
 };
 
-StaticRouter.addResourcesListener = (fn: (...args: any) => any) =>
-  getResourceStore().storeState.subscribe(fn);
+StaticRouter.addResourcesListener = (fn: (nextState: State) => void) => {
+  const { storeState } = getResourceStore();
+
+  return storeState.subscribe(() => fn(storeState.getState()));
+};
