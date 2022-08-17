@@ -7,7 +7,6 @@ import { defaultRegistry } from 'react-sweet-state';
 import { DEFAULT_ACTION, DEFAULT_ROUTE } from '../../../../common/constants';
 import { Router } from '../../../../controllers/router';
 import { withRouter } from '../../../../controllers/with-router';
-import { RouterSubscriber } from '../../../../controllers/subscribers/route';
 
 const waitALilBit = () => new Promise(resolve => setTimeout(resolve));
 
@@ -21,9 +20,10 @@ describe('withRouter', () => {
     defaultRegistry.stores.clear();
   });
 
-  test('should pass original props to the wrapped component', () => {
+  test('should pass original props to the wrapped component and set displayName', () => {
     const wrapper = mount(<ComponentWithRouter foo={'bar'} />);
     expect(wrapper.find(ComponentToBeWrapped).prop('foo')).toEqual('bar');
+    expect(wrapper.find('withRouter(ComponentToBeWrapped)')).toHaveLength(1);
   });
 
   test('should provide match, route, location and history props to the wrapped component', () => {
@@ -151,16 +151,5 @@ describe('withRouter', () => {
         query: expect.any(Object),
       })
     );
-  });
-
-  test('should set a displayName to the wrapped component', () => {
-    const wrapper = mount(<ComponentWithRouter foo={'bar'} />);
-    expect(wrapper.find('withRouter(ComponentToBeWrapped)')).toHaveLength(1);
-  });
-
-  test('should render a RouterSubscriber', () => {
-    const wrapper = mount(<ComponentWithRouter foo={'bar'} />);
-
-    expect(wrapper.find(RouterSubscriber)).toHaveLength(1);
   });
 });

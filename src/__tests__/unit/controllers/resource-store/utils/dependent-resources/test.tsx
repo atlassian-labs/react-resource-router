@@ -57,7 +57,7 @@ describe('dependent resources', () => {
       getState: jest.fn(() => currentState) as () => State,
       setState: jest.fn(v => {
         Object.assign(currentState, v);
-      }) as (state: Partial<State>) => undefined,
+      }) as (s: Partial<State>) => undefined,
       dispatch: jest.fn(action => action(api, {})),
     };
 

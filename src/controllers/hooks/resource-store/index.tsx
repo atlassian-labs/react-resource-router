@@ -43,6 +43,7 @@ export const useResource = <RouteResourceData extends unknown>(
     [resource, actions]
   );
 
+  // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
   const key = useKey(options?.routerContext!)[0];
   const [slice] = useResourceStore({
     type: resource.type,
@@ -53,6 +54,7 @@ export const useResource = <RouteResourceData extends unknown>(
   // unless key changes. This allows refresh to be called on effect cleanup
   // or asynchronously, when route context might already have changed
   const routerContext = useMemo(
+    // eslint-disable-next-line @typescript-eslint/no-non-null-asserted-optional-chain
     () => options?.routerContext! || getRouterContext(),
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [key]

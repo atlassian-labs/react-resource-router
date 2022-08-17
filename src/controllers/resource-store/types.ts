@@ -25,6 +25,7 @@ export type HydratableState = {
   resourceContext?: ResourceStoreContext;
 };
 
+// eslint-disable-next-line @typescript-eslint/ban-types
 export type ContainerProps = {};
 
 export type ResourceSliceIdentifier = {

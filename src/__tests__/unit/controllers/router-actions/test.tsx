@@ -31,6 +31,7 @@ describe('Router Actions Component', () => {
   const { location } = window;
 
   beforeAll(() => {
+    // @ts-ignore
     delete window.location;
     // @ts-ignore
     window.location = {};

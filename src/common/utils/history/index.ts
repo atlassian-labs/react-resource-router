@@ -20,8 +20,11 @@ const methodsPlaceholders = {
 
 const getLocation = () => {
   // todo - don't force non-optional search and hash
-  const { pathname = '', search = '', hash = '' } =
-    (hasWindow() && window.location) || {};
+  const {
+    pathname = '',
+    search = '',
+    hash = '',
+  } = (hasWindow() && window.location) || {};
 
   return { pathname, search, hash };
 };

@@ -128,10 +128,12 @@ export type RouteResourceResponseBase<RouteResourceData> = {
   accessedAt: RouteResourceTimestamp;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type RouteResourceResponseLoading<RouteResourceData> = {
   loading: true;
 };
 
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
 export type RouteResourceResponseError<RouteResourceData> = {
   loading: false;
   error: RouteResourceError;
@@ -143,28 +145,26 @@ export type RouteResourceResponseLoaded<RouteResourceData> = {
   data: RouteResourceData;
 };
 
-export type RouteResourceResponse<
-  RouteResourceData = unknown
-> = RouteResourceResponseBase<RouteResourceData> &
-  (
-    | RouteResourceResponseLoading<RouteResourceData>
-    | RouteResourceResponseError<RouteResourceData>
-    | RouteResourceResponseLoaded<RouteResourceData>
-  );
+export type RouteResourceResponse<RouteResourceData = unknown> =
+  RouteResourceResponseBase<RouteResourceData> &
+    (
+      | RouteResourceResponseLoading<RouteResourceData>
+      | RouteResourceResponseError<RouteResourceData>
+      | RouteResourceResponseLoaded<RouteResourceData>
+    );
 
 export type RouterDataContext = RouterContext & {
   isPrefetch: boolean;
   dependencies: ResourceDependencies;
 };
 
-export type UseResourceHookResponse<RouteResourceData> = RouteResourceResponse<
-  RouteResourceData
-> & {
-  update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
-  refresh: () => void;
-  clear: () => void;
-  clearAll: () => void;
-};
+export type UseResourceHookResponse<RouteResourceData> =
+  RouteResourceResponse<RouteResourceData> & {
+    update: (getNewData: RouteResourceUpdater<RouteResourceData>) => void;
+    refresh: () => void;
+    clear: () => void;
+    clearAll: () => void;
+  };
 
 export type ResourceType = string;
 export type ResourceKey = string;
@@ -282,7 +282,7 @@ export type HistoryLocation = {
 };
 
 export type HistoryListen = (
-  arg0: (arg0: HistoryLocation, arg1: HistoryAction) => void
+  arg0: (location: HistoryLocation, action: HistoryAction) => void
 ) => () => void;
 
 export type HistoryActions = {

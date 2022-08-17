@@ -63,22 +63,25 @@ export const getLRUResourceKey = (
   }, resourceDataKeys[0]);
 };
 
-export const validateLRUCache = (resource: RouteResource, key: string) => ({
-  getState,
-  dispatch,
-}: StoreActionApi<State>) => {
-  const { type, maxCache } = resource;
-  const {
-    data: { [type]: resourceDataForType },
-  } = getState();
+export const validateLRUCache =
+  (resource: RouteResource, key: string) =>
+  ({ getState, dispatch }: StoreActionApi<State>) => {
+    const { type, maxCache } = resource;
+    const {
+      data: { [type]: resourceDataForType },
+    } = getState();
 
-  if (!resourceDataForType) {
-    return;
-  }
+    if (!resourceDataForType) {
+      return;
+    }
 
-  const keyTobeDeleted = getLRUResourceKey(maxCache, resourceDataForType, key);
-  if (!keyTobeDeleted) {
-    return;
-  }
-  dispatch(deleteResourceState(type, keyTobeDeleted));
-};
+    const keyTobeDeleted = getLRUResourceKey(
+      maxCache,
+      resourceDataForType,
+      key
+    );
+    if (!keyTobeDeleted) {
+      return;
+    }
+    dispatch(deleteResourceState(type, keyTobeDeleted));
+  };

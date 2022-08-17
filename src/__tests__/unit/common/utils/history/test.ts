@@ -95,6 +95,7 @@ describe('createLegacyHistory', () => {
     beforeEach(() => {
       holdWindowLocation = window.location;
       const { assign, ...rest } = window.location;
+      // @ts-ignore
       delete window.location;
 
       Object.defineProperty(window, 'location', {
@@ -111,6 +112,7 @@ describe('createLegacyHistory', () => {
 
     afterEach(() => {
       // ensure no mocks leak to other tests
+      // @ts-ignore
       delete window.location;
       window.location = holdWindowLocation;
     });

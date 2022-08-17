@@ -30,13 +30,13 @@ export type CreateResourceArgAsync<T> = CreateResourceArgBase & {
   getDataLoader: GetDataLoader<T>;
 };
 
-const handleGetDataLoader = <T>(asyncImport: GetDataLoader<T>) => async (
-  ...args: Parameters<RouteResource<T>['getData']>
-) => {
-  const { default: getDataFn } = await asyncImport();
+const handleGetDataLoader =
+  <T>(asyncImport: GetDataLoader<T>) =>
+  async (...args: Parameters<RouteResource<T>['getData']>) => {
+    const { default: getDataFn } = await asyncImport();
 
-  return getDataFn(...args);
-};
+    return getDataFn(...args);
+  };
 
 export const createResource = <T extends unknown = RouteResourceDataPayload>(
   arg: CreateResourceArgSync<T> | CreateResourceArgAsync<T>
