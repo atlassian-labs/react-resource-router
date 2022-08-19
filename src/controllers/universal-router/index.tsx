@@ -24,10 +24,8 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
    * TODO: return type
    */
   static async requestResources(props: RequestResourcesParams) {
-    const {
-      bootstrapStoreUniversal,
-      requestRouteResources,
-    } = getRouterStore().actions;
+    const { bootstrapStoreUniversal, requestRouteResources } =
+      getRouterStore().actions;
     const { location, timeout, ...bootstrapProps } = props;
     const initialEntries = [location];
     const overrides = {

@@ -54,6 +54,7 @@ describe('Redirect', () => {
   const { location } = window;
 
   beforeAll(() => {
+    // @ts-ignore
     delete window.location;
     // @ts-ignore
     window.location = {};

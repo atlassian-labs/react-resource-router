@@ -57,6 +57,7 @@ describe('SPA Router store', () => {
   const { location } = window;
 
   beforeAll(() => {
+    // @ts-ignore
     delete window.location;
     // @ts-ignore
     window.location = {};
@@ -765,6 +766,8 @@ describe('SPA Router store', () => {
       expect(dataA1 === dataA2).toBeFalsy();
       expect(componentRenderStates).toEqual([
         'loading:A',
+        `data:${dataA1}`,
+        // re-render
         `data:${dataA1}`,
         'loading:B',
         `data:${dataA2}`,

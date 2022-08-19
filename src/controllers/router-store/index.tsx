@@ -60,292 +60,337 @@ const actions: AllRouterActions = {
    * Bootstraps the store with initial data.
    *
    */
-  bootstrapStore: props => ({ setState, dispatch }) => {
-    const {
-      resourceContext,
-      resourceData,
-      basePath = '',
-      routes,
-      initialRoute,
-      ...initialProps
-    } = props;
-    const { history, isStatic } = initialProps;
-    const routerContext = findRouterContext(
-      initialRoute ? [initialRoute] : routes,
-      { location: history.location, basePath }
-    );
+  bootstrapStore:
+    props =>
+    ({ setState, dispatch }) => {
+      const {
+        resourceContext,
+        resourceData,
+        basePath = '',
+        routes,
+        initialRoute,
+        ...initialProps
+      } = props;
+      const { history, isStatic } = initialProps;
+      const routerContext = findRouterContext(
+        initialRoute ? [initialRoute] : routes,
+        { location: history.location, basePath }
+      );
 
-    setState({
-      ...initialProps,
-      ...routerContext,
-      basePath,
-      routes,
-      location: history.location,
-      action: history.action,
-    });
-    getResourceStore().actions.hydrate({ resourceContext, resourceData });
+      setState({
+        ...initialProps,
+        ...routerContext,
+        basePath,
+        routes,
+        location: history.location,
+        action: history.action,
+      });
+      getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
-    if (!isStatic) {
-      dispatch(actions.listen());
-    }
-  },
+      if (!isStatic) {
+        dispatch(actions.listen());
+      }
+    },
 
   /**
    * Duplicate method that uses isServerEnvironment instead of removed isStatic prop
    * internally. We can remove this when UniversalRouter replaces Router completely.
    */
-  bootstrapStoreUniversal: props => ({ setState, dispatch }) => {
-    const {
-      resourceContext,
-      resourceData,
-      basePath = '',
-      ...initialProps
-    } = props;
-    const { history, routes } = initialProps;
-    const routerContext = findRouterContext(routes, {
-      location: history.location,
-      basePath,
-    });
+  bootstrapStoreUniversal:
+    props =>
+    ({ setState, dispatch }) => {
+      const {
+        resourceContext,
+        resourceData,
+        basePath = '',
+        ...initialProps
+      } = props;
+      const { history, routes } = initialProps;
+      const routerContext = findRouterContext(routes, {
+        location: history.location,
+        basePath,
+      });
 
-    setState({
-      ...initialProps,
-      ...routerContext,
-      basePath,
-      location: history.location,
-      action: history.action,
-    });
-    getResourceStore().actions.hydrate({ resourceContext, resourceData });
+      setState({
+        ...initialProps,
+        ...routerContext,
+        basePath,
+        location: history.location,
+        action: history.action,
+      });
+      getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
-    if (!isServerEnvironment()) {
-      dispatch(actions.listen());
-    }
-  },
+      if (!isServerEnvironment()) {
+        dispatch(actions.listen());
+      }
+    },
 
   /**
    * Uses the resource store to request resources for the route.
    * Must be dispatched after setting state with the new route context.
    *
    */
-  requestRouteResources: (options = {}) => ({ getState }) => {
-    const { route, match, query } = getState();
+  requestRouteResources:
+    (options = {}) =>
+    ({ getState }) => {
+      const { route, match, query } = getState();
 
-    return getResourceStore().actions.requestAllResources(
-      {
-        route,
-        match,
-        query,
-      },
-      options
-    );
-  },
+      return getResourceStore().actions.requestAllResources(
+        {
+          route,
+          match,
+          query,
+        },
+        options
+      );
+    },
 
-  prefetchNextRouteResources: (path, nextContext) => ({ getState }) => {
-    const { routes, basePath, onPrefetch, route, match, query } = getState();
-    const {
-      cleanExpiredResources,
-      requestResources,
-      getContext: getResourceStoreContext,
-    } = getResourceStore().actions;
+  prefetchNextRouteResources:
+    (path, nextContext) =>
+    ({ getState }) => {
+      const { routes, basePath, onPrefetch, route, match, query } = getState();
+      const {
+        cleanExpiredResources,
+        requestResources,
+        getContext: getResourceStoreContext,
+      } = getResourceStore().actions;
 
-    if (!nextContext && !isExternalAbsolutePath(path)) {
-      const location = parsePath(getRelativePath(path, basePath) as any);
-      nextContext = findRouterContext(routes, { location, basePath });
-    }
+      if (!nextContext && !isExternalAbsolutePath(path)) {
+        const location = parsePath(getRelativePath(path, basePath) as any);
+        nextContext = findRouterContext(routes, { location, basePath });
+      }
 
-    if (nextContext == null) return;
-    const nextLocationContext = nextContext;
+      if (nextContext == null) return;
+      const nextLocationContext = nextContext;
 
-    const nextResources = getResourcesForNextLocation(
-      { route, match, query },
-      nextLocationContext,
-      getResourceStoreContext()
-    );
+      const nextResources = getResourcesForNextLocation(
+        { route, match, query },
+        nextLocationContext,
+        getResourceStoreContext()
+      );
 
-    batch(() => {
-      cleanExpiredResources(nextResources, nextLocationContext);
-      requestResources(nextResources, nextLocationContext, { prefetch: true });
-      if (onPrefetch) onPrefetch(nextLocationContext);
-    });
-  },
+      batch(() => {
+        cleanExpiredResources(nextResources, nextLocationContext);
+        requestResources(nextResources, nextLocationContext, {
+          prefetch: true,
+        });
+        if (onPrefetch) onPrefetch(nextLocationContext);
+      });
+    },
 
   /**
    * Starts listening to browser history and sets the unlisten function in state.
    * Will request route resources on route change.
    *
    */
-  listen: () => ({ getState, setState }) => {
-    const { history } = getState();
+  listen:
+    () =>
+    ({ getState, setState }) => {
+      const { history } = getState();
 
-    type LocationUpateV4 = [Location, Action];
-    type LocationUpateV5 = [{ location: Location; action: Action }];
+      type LocationUpateV4 = [Location, Action];
+      type LocationUpateV5 = [{ location: Location; action: Action }];
 
-    const stopListening = history.listen(
-      (...update: LocationUpateV4 | LocationUpateV5) => {
-        const location = update.length === 2 ? update[0] : update[0].location;
-        const action = update.length === 2 ? update[1] : update[0].action;
+      const stopListening = history.listen(
+        (...update: LocationUpateV4 | LocationUpateV5) => {
+          const location = update.length === 2 ? update[0] : update[0].location;
+          const action = update.length === 2 ? update[1] : update[0].action;
 
-        const {
-          routes,
-          basePath,
-          match: currentMatch,
-          route: currentRoute,
-          query: currentQuery,
-        } = getState();
-
-        const {
-          cleanExpiredResources,
-          requestResources,
-          getContext: getResourceStoreContext,
-        } = getResourceStore().actions;
-
-        const nextContext = findRouterContext(routes, { location, basePath });
-        const nextLocationContext = {
-          route: nextContext.route,
-          match: nextContext.match,
-          query: nextContext.query,
-        };
-        const nextResources = getResourcesForNextLocation(
-          {
-            route: currentRoute,
+          const {
+            routes,
+            basePath,
             match: currentMatch,
+            route: currentRoute,
             query: currentQuery,
-          },
-          nextLocationContext,
-          getResourceStoreContext()
-        );
+          } = getState();
 
-        /* Explicitly batch update
-         * as we need resources cleaned + route changed + resource fetch started together
-         * If we do not batch, React might be re-render when route changes but resource
-         * fetching has not started yet, making the app render with data null */
+          const {
+            cleanExpiredResources,
+            requestResources,
+            getContext: getResourceStoreContext,
+          } = getResourceStore().actions;
 
-        batch(() => {
-          cleanExpiredResources(nextResources, nextLocationContext);
-          setState({
-            ...nextContext,
-            location,
-            action,
+          const nextContext = findRouterContext(routes, { location, basePath });
+          const nextLocationContext = {
+            route: nextContext.route,
+            match: nextContext.match,
+            query: nextContext.query,
+          };
+          const nextResources = getResourcesForNextLocation(
+            {
+              route: currentRoute,
+              match: currentMatch,
+              query: currentQuery,
+            },
+            nextLocationContext,
+            getResourceStoreContext()
+          );
+
+          /* Explicitly batch update
+           * as we need resources cleaned + route changed + resource fetch started together
+           * If we do not batch, React might be re-render when route changes but resource
+           * fetching has not started yet, making the app render with data null */
+
+          batch(() => {
+            cleanExpiredResources(nextResources, nextLocationContext);
+            setState({
+              ...nextContext,
+              location,
+              action,
+            });
+            requestResources(nextResources, nextLocationContext, {});
           });
-          requestResources(nextResources, nextLocationContext, {});
-        });
+        }
+      );
+
+      setState({
+        unlisten: stopListening,
+      });
+    },
+
+  push:
+    path =>
+    ({ getState }) => {
+      const { history, basePath } = getState();
+      if (isExternalAbsolutePath(path)) {
+        window.location.assign(path as string);
+      } else {
+        history.push(getRelativePath(path, basePath) as any);
       }
-    );
+    },
 
-    setState({
-      unlisten: stopListening,
-    });
-  },
+  pushTo:
+    (route, attributes = {}) =>
+    ({ getState }) => {
+      const { history, basePath } = getState();
+      const location = generateLocationFromPath(route.path, {
+        ...attributes,
+        basePath,
+      });
+      warmupMatchRouteCache(
+        route,
+        location.pathname,
+        attributes.query,
+        basePath
+      );
+      history.push(location as any);
+    },
 
-  push: path => ({ getState }) => {
-    const { history, basePath } = getState();
-    if (isExternalAbsolutePath(path)) {
-      window.location.assign(path as string);
-    } else {
-      history.push(getRelativePath(path, basePath) as any);
-    }
-  },
+  replace:
+    path =>
+    ({ getState }) => {
+      const { history, basePath } = getState();
+      if (isExternalAbsolutePath(path)) {
+        window.location.replace(path as string);
+      } else {
+        history.replace(getRelativePath(path, basePath) as any);
+      }
+    },
 
-  pushTo: (route, attributes = {}) => ({ getState }) => {
-    const { history, basePath } = getState();
-    const location = generateLocationFromPath(route.path, {
-      ...attributes,
-      basePath,
-    });
-    warmupMatchRouteCache(route, location.pathname, attributes.query, basePath);
-    history.push(location as any);
-  },
+  replaceTo:
+    (route, attributes = {}) =>
+    ({ getState }) => {
+      const { history, basePath } = getState();
+      const location = generateLocationFromPath(route.path, {
+        ...attributes,
+        basePath,
+      });
+      warmupMatchRouteCache(
+        route,
+        location.pathname,
+        attributes.query,
+        basePath
+      );
+      history.replace(location as any);
+    },
 
-  replace: path => ({ getState }) => {
-    const { history, basePath } = getState();
-    if (isExternalAbsolutePath(path)) {
-      window.location.replace(path as string);
-    } else {
-      history.replace(getRelativePath(path, basePath) as any);
-    }
-  },
+  goBack:
+    () =>
+    ({ getState }) => {
+      const { history } = getState();
 
-  replaceTo: (route, attributes = {}) => ({ getState }) => {
-    const { history, basePath } = getState();
-    const location = generateLocationFromPath(route.path, {
-      ...attributes,
-      basePath,
-    });
-    warmupMatchRouteCache(route, location.pathname, attributes.query, basePath);
-    history.replace(location as any);
-  },
+      history.goBack();
+    },
 
-  goBack: () => ({ getState }) => {
-    const { history } = getState();
+  goForward:
+    () =>
+    ({ getState }) => {
+      const { history } = getState();
 
-    history.goBack();
-  },
+      history.goForward();
+    },
 
-  goForward: () => ({ getState }) => {
-    const { history } = getState();
+  registerBlock:
+    blocker =>
+    ({ getState }) => {
+      const { history } = getState();
 
-    history.goForward();
-  },
+      return history.block(blocker);
+    },
 
-  registerBlock: blocker => ({ getState }) => {
-    const { history } = getState();
+  getContext:
+    () =>
+    ({ getState }) => {
+      const { query, route, match } = getState();
 
-    return history.block(blocker);
-  },
+      return { query, route, match };
+    },
 
-  getContext: () => ({ getState }) => {
-    const { query, route, match } = getState();
+  getBasePath:
+    () =>
+    ({ getState }) => {
+      const { basePath } = getState();
 
-    return { query, route, match };
-  },
+      return basePath;
+    },
 
-  getBasePath: () => ({ getState }) => {
-    const { basePath } = getState();
+  updateQueryParam:
+    (params, updateType = 'push') =>
+    ({ getState }) => {
+      const { query: existingQueryParams, history, location } = getState();
+      const updatedQueryParams = { ...existingQueryParams, ...params };
+      // remove undefined keys
+      Object.keys(updatedQueryParams).forEach(
+        key =>
+          updatedQueryParams[key] === undefined &&
+          delete updatedQueryParams[key]
+      );
+      const existingPath = updateQueryParams(location, existingQueryParams);
+      const updatedPath = updateQueryParams(
+        location,
+        updatedQueryParams as Query
+      );
 
-    return basePath;
-  },
+      if (updatedPath !== existingPath) {
+        history[updateType](updatedPath);
+      }
+    },
 
-  updateQueryParam: (params, updateType = 'push') => ({ getState }) => {
-    const { query: existingQueryParams, history, location } = getState();
-    const updatedQueryParams = { ...existingQueryParams, ...params };
-    // remove undefined keys
-    Object.keys(updatedQueryParams).forEach(
-      key =>
-        updatedQueryParams[key] === undefined && delete updatedQueryParams[key]
-    );
-    const existingPath = updateQueryParams(location, existingQueryParams);
-    const updatedPath = updateQueryParams(
-      location,
-      updatedQueryParams as Query
-    );
+  updatePathParam:
+    (params, updateType = 'push') =>
+    ({ getState }) => {
+      const {
+        history,
+        location,
+        route: { path },
+        match: { params: existingPathParams },
+        basePath,
+      } = getState();
+      const pathWithBasePath = basePath + path;
+      const updatedPathParams = { ...existingPathParams, ...params };
+      const updatedPath = generatePathUsingPathParams(
+        pathWithBasePath,
+        updatedPathParams
+      );
+      const updatedLocation = { ...location, pathname: updatedPath };
 
-    if (updatedPath !== existingPath) {
-      history[updateType](updatedPath);
-    }
-  },
+      const existingRelativePath = getRelativeURLFromLocation(location);
+      const updatedRelativePath = getRelativeURLFromLocation(updatedLocation);
 
-  updatePathParam: (params, updateType = 'push') => ({ getState }) => {
-    const {
-      history,
-      location,
-      route: { path },
-      match: { params: existingPathParams },
-      basePath,
-    } = getState();
-    const pathWithBasePath = basePath + path;
-    const updatedPathParams = { ...existingPathParams, ...params };
-    const updatedPath = generatePathUsingPathParams(
-      pathWithBasePath,
-      updatedPathParams
-    );
-    const updatedLocation = { ...location, pathname: updatedPath };
-
-    const existingRelativePath = getRelativeURLFromLocation(location);
-    const updatedRelativePath = getRelativeURLFromLocation(updatedLocation);
-
-    if (updatedRelativePath !== existingRelativePath) {
-      history[updateType](updatedRelativePath);
-    }
-  },
+      if (updatedRelativePath !== existingRelativePath) {
+        history[updateType](updatedRelativePath);
+      }
+    },
 };
 
 type State = EntireRouterState;
@@ -362,10 +407,12 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
   RouterStore,
   {
     displayName: 'RouterContainer',
-    onInit: () => ({ dispatch }, props) => {
-      dispatch(actions.bootstrapStore(props));
-      !props.isStatic && dispatch(actions.requestRouteResources());
-    },
+    onInit:
+      () =>
+      ({ dispatch }, props) => {
+        dispatch(actions.bootstrapStore(props));
+        !props.isStatic && dispatch(actions.requestRouteResources());
+      },
     onCleanup: () => () => {
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
@@ -383,10 +430,12 @@ export const UniversalRouterContainer = createContainer<
   UniversalRouterContainerProps
 >(RouterStore, {
   displayName: 'UniversalRouterContainer',
-  onInit: () => ({ dispatch }, props) => {
-    dispatch(actions.bootstrapStoreUniversal(props));
-    !isServerEnvironment() && dispatch(actions.requestRouteResources());
-  },
+  onInit:
+    () =>
+    ({ dispatch }, props) => {
+      dispatch(actions.bootstrapStoreUniversal(props));
+      !isServerEnvironment() && dispatch(actions.requestRouteResources());
+    },
   onCleanup: () => () => {
     if (process.env.NODE_ENV === 'development') {
       // eslint-disable-next-line no-console
@@ -401,12 +450,7 @@ export const RouterSubscriber = createSubscriber<State, Actions>(RouterStore, {
   displayName: 'BaseRouterSubscriber',
 });
 
-export const RouterActionsSubscriber = createSubscriber<
-  State,
-  Actions,
-  void,
-  {}
->(RouterStore, {
+export const RouterActionsSubscriber = createSubscriber(RouterStore, {
   displayName: 'RouterActionsSubscriber',
   selector: null,
 });
