@@ -3,7 +3,7 @@ import React, { ComponentType } from 'react';
 import { BrowserHistory, RouteContext } from '../../common/types';
 import { RouterSubscriber } from '../subscribers/route';
 
-export type WithRouter = RouteContext & { history: BrowserHistory };
+type WithRouter = RouteContext & { history: BrowserHistory };
 
 const getWrappedComponentDisplayName = (
   component: ComponentType<any>
