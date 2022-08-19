@@ -5,7 +5,6 @@ export { StaticRouter } from './static-router';
 export { RouterActions } from './router-actions';
 export { Redirect } from './redirect';
 export { withRouter } from './with-router';
-export type { WithRouter } from './with-router';
 export {
   useResource,
   useRouter,

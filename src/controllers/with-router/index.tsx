@@ -3,7 +3,7 @@ import React, { ComponentType } from 'react';
 import { BrowserHistory, RouteContext } from '../../common/types';
 import { RouterSubscriber } from '../subscribers/route';
 
-export type WithRouter = RouteContext & { history: BrowserHistory };
+type WithRouter = RouteContext & { history: BrowserHistory };
 
 const getWrappedComponentDisplayName = (
   component: ComponentType<any>
@@ -27,7 +27,7 @@ export const withRouter = <P extends Record<string, any>>(
 ) => {
   const displayName = getWrappedComponentDisplayName(WrappedComponent);
   const Component = WrappedComponent as ComponentType<WithRouter & P>;
-  const ComponentWithRouter = (props: WithRouter & P) => (
+  const ComponentWithRouter = (props: P) => (
     <RouterSubscriber>
       {(
         // @ts-ignore access private `history` store property
