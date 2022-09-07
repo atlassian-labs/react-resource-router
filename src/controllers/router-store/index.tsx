@@ -309,7 +309,13 @@ const actions: AllRouterActions = {
     ({ getState }) => {
       const { history } = getState();
 
-      history.goBack();
+      if ('goBack' in history) {
+        history.goBack();
+      } else if ('back' in history) {
+        history.back();
+      } else {
+        throw new Error('History does not support goBack');
+      }
     },
 
   goForward:
@@ -317,7 +323,13 @@ const actions: AllRouterActions = {
     ({ getState }) => {
       const { history } = getState();
 
-      history.goForward();
+      if ('goForward' in history) {
+        history.goForward();
+      } else if ('forward' in history) {
+        history.forward();
+      } else {
+        throw new Error('History does not support goForward');
+      }
     },
 
   registerBlock:
