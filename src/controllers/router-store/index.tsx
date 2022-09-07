@@ -309,6 +309,7 @@ const actions: AllRouterActions = {
     ({ getState }) => {
       const { history } = getState();
 
+      // history@4 uses goBack(), history@5 uses back()
       if ('goBack' in history) {
         history.goBack();
       } else if ('back' in history) {
@@ -323,6 +324,7 @@ const actions: AllRouterActions = {
     ({ getState }) => {
       const { history } = getState();
 
+      // history@4 uses goForward(), history@5 uses forward()
       if ('goForward' in history) {
         history.goForward();
       } else if ('forward' in history) {
