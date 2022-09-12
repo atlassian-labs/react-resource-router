@@ -234,6 +234,11 @@ export type InvariantRoute = {
   query?: string[];
 };
 
+/**
+ * Custom additional attributes that may be present in each route definition.
+ */
+interface AdditionalRouteAttributes {}
+
 export type Route = InvariantRoute & {
   /** The component to render on match, typed explicitly */
   component: ComponentType<RouteContext>;
@@ -242,7 +247,7 @@ export type Route = InvariantRoute & {
    * The resources for the route
    */
   resources?: RouteResources;
-};
+} & AdditionalRouteAttributes;
 
 export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
 
