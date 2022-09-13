@@ -138,7 +138,11 @@ describe('createLegacyHistory', () => {
     it('should go back in history via history', () => {
       const history = createLegacyHistory();
       window.history.back = jest.fn();
-      history.goBack();
+      if ('goBack' in history) {
+        history.goBack();
+      } else {
+        throw new Error('goBack was expected but not found');
+      }
       expect(window.history.back).toHaveBeenCalled();
     });
   });
@@ -147,7 +151,11 @@ describe('createLegacyHistory', () => {
     it('should go forward in history via history', () => {
       const history = createLegacyHistory();
       window.history.forward = jest.fn();
-      history.goForward();
+      if ('goForward' in history) {
+        history.goForward();
+      } else {
+        throw new Error('goForward was expected but not found');
+      }
       expect(window.history.forward).toHaveBeenCalled();
     });
   });

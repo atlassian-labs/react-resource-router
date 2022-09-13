@@ -9,6 +9,7 @@ import {
 } from 'react';
 
 import { History, Location as HistoryLocationShape } from 'history';
+import { History as History5 } from 'history-5';
 
 export type LocationShape = HistoryLocationShape;
 
@@ -20,10 +21,10 @@ export type Location = {
   hash: string;
 };
 
-export type BrowserHistory = Omit<
-  History,
-  'location' | 'go' | 'createHref' | 'push' | 'replace'
-> & {
+export type BrowserHistory = (
+  | Omit<History, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
+  | Omit<History5, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
+) & {
   location: Location;
   push: (path: string) => void;
   replace: (path: string) => void;
