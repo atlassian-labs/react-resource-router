@@ -19,7 +19,7 @@ const App = () => {
       routes={appRoutes}
       history={myHistory}
       basePath="/routing-with-resources"
-      onPrefetch={({ route }) => console.log('Prefetcing route', route.name)}
+      onPrefetch={({ route }) => console.log('Prefetching route', route.name)}
     >
       <RouteComponent />
     </Router>

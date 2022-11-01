@@ -17,6 +17,7 @@ export type UniversalRouterProps = {
   routes: Routes;
   children: ReactNode;
   onPrefetch?: (routerContext: RouterContext) => void;
+  prefetchDelay?: number;
 };
 
 export type RequestResourcesParams = {

@@ -8,6 +8,7 @@ import {
   useState,
   MouseEvent,
   KeyboardEvent,
+  FocusEvent,
 } from 'react';
 
 import { LinkProps, Route } from '../../common/types';
@@ -15,11 +16,9 @@ import {
   createRouterContext,
   generateLocationFromPath,
 } from '../../common/utils';
-import { useRouterStoreStatic } from '../../controllers/router-store';
+import { useRouterStore } from '../../controllers/router-store';
 
 import { getValidLinkType, handleNavigation } from './utils';
-
-const PREFETCH_DELAY = 300;
 
 const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
   (
@@ -32,6 +31,9 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       onClick = undefined,
       onMouseEnter = undefined,
       onMouseLeave = undefined,
+      onMouseDown = undefined,
+      onFocus = undefined,
+      onBlur = undefined,
       type: linkType = 'a',
       params,
       query,
@@ -40,8 +42,9 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     },
     ref
   ) => {
-    const routerActions = useRouterStoreStatic()[1];
+    const [routerState, routerActions] = useRouterStore();
     const prefetchRef = useRef<NodeJS.Timeout>();
+    const prefetchDelay = routerState.prefetchDelay;
 
     const validLinkType = getValidLinkType(linkType);
     const [route, setRoute] = useState<Route | void>(() => {
@@ -83,13 +86,24 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [route, linkDestination, routerActions]);
 
-    useEffect(() => {
-      let timeout: NodeJS.Timeout;
-      if (prefetch === 'mount')
-        timeout = setTimeout(triggerPrefetch, PREFETCH_DELAY);
+    const schedulePrefetch = useCallback(() => {
+      prefetchRef.current = setTimeout(triggerPrefetch, prefetchDelay);
+    }, [triggerPrefetch, prefetchDelay]);
 
-      return () => clearTimeout(timeout);
-    }, [prefetch, triggerPrefetch]);
+    const cancelPrefetch = useCallback(() => {
+      if (prefetchRef.current) {
+        clearTimeout(prefetchRef.current);
+        prefetchRef.current = undefined;
+      }
+    }, []);
+
+    useEffect(() => {
+      if (prefetch === 'mount') {
+        schedulePrefetch();
+      }
+
+      return cancelPrefetch;
+    }, [prefetch, schedulePrefetch, cancelPrefetch]);
 
     const handleLinkPress = (e: MouseEvent | KeyboardEvent) =>
       handleNavigation(e, {
@@ -102,18 +116,39 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       });
 
     const handleMouseEnter = (e: MouseEvent) => {
-      if (prefetch === 'hover') {
-        prefetchRef.current = setTimeout(triggerPrefetch, PREFETCH_DELAY);
+      if (prefetch === 'hover' || prefetch === 'interaction') {
+        schedulePrefetch();
       }
       onMouseEnter && onMouseEnter(e);
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
-      if (prefetch === 'hover' && prefetchRef.current) {
-        clearTimeout(prefetchRef.current);
-        prefetchRef.current = undefined;
+      if (prefetch === 'hover' || prefetch === 'interaction') {
+        cancelPrefetch();
       }
       onMouseLeave && onMouseLeave(e);
+    };
+
+    const handleFocus = (e: FocusEvent<HTMLAnchorElement>) => {
+      if (prefetch === 'interaction') {
+        schedulePrefetch();
+      }
+      onFocus && onFocus(e);
+    };
+
+    const handleBlur = (e: FocusEvent<HTMLAnchorElement>) => {
+      if (prefetch === 'interaction') {
+        cancelPrefetch();
+      }
+      onBlur && onBlur(e);
+    };
+
+    const handleMouseDown = (e: MouseEvent) => {
+      if (prefetch === 'interaction') {
+        cancelPrefetch();
+        triggerPrefetch();
+      }
+      onMouseDown && onMouseDown(e);
     };
 
     return createElement(
@@ -126,6 +161,9 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         onKeyDown: handleLinkPress,
         onMouseEnter: handleMouseEnter,
         onMouseLeave: handleMouseLeave,
+        onFocus: handleFocus,
+        onBlur: handleBlur,
+        onMouseDown: handleMouseDown,
         ref,
       },
       children
