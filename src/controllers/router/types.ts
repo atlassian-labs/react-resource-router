@@ -19,5 +19,4 @@ export type RouterProps = PropsWithChildren<{
   routes: Routes;
   isGlobal?: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
-  prefetchDelay?: number;
 }>;
