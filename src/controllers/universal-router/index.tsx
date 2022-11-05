@@ -80,7 +80,6 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
       resourceData,
       isGlobal,
       onPrefetch,
-      prefetchDelay,
     } = this.props;
 
     return (
@@ -91,7 +90,6 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
         resourceData={resourceData}
         isGlobal={isGlobal}
         onPrefetch={onPrefetch}
-        prefetchDelay={prefetchDelay}
       >
         <ResourceContainer isGlobal={isGlobal}>{children}</ResourceContainer>
       </UniversalRouterContainer>

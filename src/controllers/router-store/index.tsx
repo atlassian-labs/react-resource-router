@@ -12,7 +12,6 @@ import {
   DEFAULT_ACTION,
   DEFAULT_HISTORY,
   DEFAULT_MATCH,
-  DEFAULT_PREFETCH_DELAY,
   DEFAULT_ROUTE,
 } from '../../common/constants';
 import {
@@ -54,7 +53,6 @@ export const INITIAL_STATE: EntireRouterState = {
   basePath: '',
   isStatic: false,
   onPrefetch: undefined,
-  prefetchDelay: DEFAULT_PREFETCH_DELAY,
 };
 
 const actions: AllRouterActions = {

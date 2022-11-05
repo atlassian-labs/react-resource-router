@@ -28,5 +28,3 @@ export const NOOP_HISTORY = {
 };
 
 export const DEFAULT_ACTION = 'POP';
-
-export const DEFAULT_PREFETCH_DELAY = 300;

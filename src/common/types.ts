@@ -267,12 +267,12 @@ export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   onClick?: (e: MouseEvent | KeyboardEvent) => void;
   onMouseEnter?: (e: MouseEvent) => void;
   onMouseLeave?: (e: MouseEvent) => void;
-  onMouseDown?: (e: MouseEvent) => void;
+  onPointerDown?: (e: PointerEvent) => void;
   onFocus?: (e: FocusEvent) => void;
   onBlur?: (e: FocusEvent) => void;
   params?: MatchParams;
   query?: Query;
-  prefetch?: false | 'hover' | 'mount' | 'interaction';
+  prefetch?: false | 'hover' | 'mount';
 };
 
 export type HistoryBlocker = (

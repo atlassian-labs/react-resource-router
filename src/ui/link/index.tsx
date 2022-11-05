@@ -16,9 +16,11 @@ import {
   createRouterContext,
   generateLocationFromPath,
 } from '../../common/utils';
-import { useRouterStore } from '../../controllers/router-store';
+import { useRouterStoreStatic } from '../../controllers/router-store';
 
 import { getValidLinkType, handleNavigation } from './utils';
+
+const PREFETCH_DELAY = 225;
 
 const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
   (
@@ -31,7 +33,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       onClick = undefined,
       onMouseEnter = undefined,
       onMouseLeave = undefined,
-      onMouseDown = undefined,
+      onPointerDown = undefined,
       onFocus = undefined,
       onBlur = undefined,
       type: linkType = 'a',
@@ -42,9 +44,8 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     },
     ref
   ) => {
-    const [routerState, routerActions] = useRouterStore();
+    const routerActions = useRouterStoreStatic()[1];
     const prefetchRef = useRef<NodeJS.Timeout>();
-    const prefetchDelay = routerState.prefetchDelay;
 
     const validLinkType = getValidLinkType(linkType);
     const [route, setRoute] = useState<Route | void>(() => {
@@ -87,8 +88,8 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     }, [route, linkDestination, routerActions]);
 
     const schedulePrefetch = useCallback(() => {
-      prefetchRef.current = setTimeout(triggerPrefetch, prefetchDelay);
-    }, [triggerPrefetch, prefetchDelay]);
+      prefetchRef.current = setTimeout(triggerPrefetch, PREFETCH_DELAY);
+    }, [triggerPrefetch]);
 
     const cancelPrefetch = useCallback(() => {
       if (prefetchRef.current) {
@@ -116,39 +117,39 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       });
 
     const handleMouseEnter = (e: MouseEvent) => {
-      if (prefetch === 'hover' || prefetch === 'interaction') {
+      if (prefetch === 'hover') {
         schedulePrefetch();
       }
       onMouseEnter && onMouseEnter(e);
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
-      if (prefetch === 'hover' || prefetch === 'interaction') {
+      if (prefetch === 'hover') {
         cancelPrefetch();
       }
       onMouseLeave && onMouseLeave(e);
     };
 
     const handleFocus = (e: FocusEvent<HTMLAnchorElement>) => {
-      if (prefetch === 'interaction') {
+      if (prefetch === 'hover') {
         schedulePrefetch();
       }
       onFocus && onFocus(e);
     };
 
     const handleBlur = (e: FocusEvent<HTMLAnchorElement>) => {
-      if (prefetch === 'interaction') {
+      if (prefetch === 'hover') {
         cancelPrefetch();
       }
       onBlur && onBlur(e);
     };
 
-    const handleMouseDown = (e: MouseEvent) => {
-      if (prefetch === 'interaction') {
+    const handlePointerDown = (e: PointerEvent) => {
+      if (prefetch === 'hover') {
         cancelPrefetch();
         triggerPrefetch();
       }
-      onMouseDown && onMouseDown(e);
+      onPointerDown && onPointerDown(e);
     };
 
     return createElement(
@@ -163,7 +164,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         onMouseLeave: handleMouseLeave,
         onFocus: handleFocus,
         onBlur: handleBlur,
-        onMouseDown: handleMouseDown,
+        onPointerDown: handlePointerDown,
         ref,
       },
       children

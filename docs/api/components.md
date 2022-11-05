@@ -38,7 +38,8 @@ import { appRoutes } from './routing';
 | `resourceContext` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods |
 | `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount          |
 | `onPrefetch`      | `function(RouterContext)` | Called when prefetch is triggered from a Link                                                      |
-| `prefetchDelay`   | `number`                  | Delay in milliseconds before prefetch is triggered from a Link. Default is `300`.                  |
+
+|
 
 ## StaticRouter
 
@@ -127,17 +128,17 @@ export const LinkExample = ({ href = '/' }) => {
 
 ### Link props
 
-| prop       | type                                           | description                                                                                                 |
-| ---------- | ---------------------------------------------- | ----------------------------------------------------------------------------------------------------------- |
-| `target`   | `string`                                       | `<a>`tag target attribute                                                                                   |
-| `replace`  | `boolean`                                      | Determines if `history.replace` should be called instead of `history.push`                                  |
-| `href`     | `string`                                       | The path to navigate to                                                                                     |
-| `to`       | `string` or `Route` or `Promise<Route>`        | Links to supplied route                                                                                     |
-| `onClick`  | `function`                                     | The function to call when the component is clicked                                                          |
-| `type`     | `string`                                       | The tag type to render, `a` and `button` are supported                                                      |
-| `params`   | `{ [key]: string }`                            | Used with `to` to generate correct path url                                                                 |
-| `query`    | `{ [key]: string }`                            | Used with `to` to generate correct query string url                                                         |
-| `prefetch` | `false` or `hover` or `interaction` or `mount` | Used to start prefetching router resources. `interaction` includes `hover`, `focus` and `mouseDown` events. |
+| prop       | type                                    | description                                                                |
+| ---------- | --------------------------------------- | -------------------------------------------------------------------------- |
+| `target`   | `string`                                | `<a>`tag target attribute                                                  |
+| `replace`  | `boolean`                               | Determines if `history.replace` should be called instead of `history.push` |
+| `href`     | `string`                                | The path to navigate to                                                    |
+| `to`       | `string` or `Route` or `Promise<Route>` | Links to supplied route                                                    |
+| `onClick`  | `function`                              | The function to call when the component is clicked                         |
+| `type`     | `string`                                | The tag type to render, `a` and `button` are supported                     |
+| `params`   | `{ [key]: string }`                     | Used with `to` to generate correct path url                                |
+| `query`    | `{ [key]: string }`                     | Used with `to` to generate correct query string url                        |
+| `prefetch` | `false` or `hover` or `mount`           | Used to start prefetching router resources                                 |
 
 ## Redirect
 

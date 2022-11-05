@@ -36,7 +36,6 @@ type PrivateStateProperties = {
   unlisten: UnlistenHistory | null;
   isStatic: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
-  prefetchDelay: number;
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
@@ -51,7 +50,6 @@ export type ContainerProps = {
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
   onPrefetch?: (routerContext: RouterContext) => void;
-  prefetchDelay?: number;
 };
 
 export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
