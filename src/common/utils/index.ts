@@ -8,3 +8,4 @@ export { generateLocationFromPath } from './generate-location';
 export { createLegacyHistory } from './history';
 export { isServerEnvironment } from './is-server-environment';
 export { findRouterContext, createRouterContext } from './router-context';
+export { useTimeout } from './use-timeout';

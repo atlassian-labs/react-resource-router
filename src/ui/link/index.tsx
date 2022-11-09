@@ -4,7 +4,6 @@ import {
   forwardRef,
   useCallback,
   useEffect,
-  useRef,
   useState,
   MouseEvent,
   KeyboardEvent,
@@ -12,6 +11,7 @@ import {
 } from 'react';
 
 import { LinkProps, Route } from '../../common/types';
+import { useTimeout } from '../../common/utils';
 import {
   createRouterContext,
   generateLocationFromPath,
@@ -45,7 +45,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     ref
   ) => {
     const routerActions = useRouterStoreStatic()[1];
-    const prefetchRef = useRef<NodeJS.Timeout>();
+    const { schedule, cancel } = useTimeout(PREFETCH_DELAY);
 
     const validLinkType = getValidLinkType(linkType);
     const [route, setRoute] = useState<Route | void>(() => {
@@ -73,8 +73,6 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         : to;
 
     const triggerPrefetch = useCallback(() => {
-      prefetchRef.current = undefined;
-
       // ignore if async route not ready yet
       if (typeof to !== 'string' && !route) return;
 
@@ -87,24 +85,13 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [route, linkDestination, routerActions]);
 
-    const schedulePrefetch = useCallback(() => {
-      prefetchRef.current = setTimeout(triggerPrefetch, PREFETCH_DELAY);
-    }, [triggerPrefetch]);
-
-    const cancelPrefetch = useCallback(() => {
-      if (prefetchRef.current) {
-        clearTimeout(prefetchRef.current);
-        prefetchRef.current = undefined;
-      }
-    }, []);
-
     useEffect(() => {
       if (prefetch === 'mount') {
-        schedulePrefetch();
+        schedule(triggerPrefetch);
       }
 
-      return cancelPrefetch;
-    }, [prefetch, schedulePrefetch, cancelPrefetch]);
+      return cancel;
+    }, [prefetch, schedule, cancel, triggerPrefetch]);
 
     const handleLinkPress = (e: MouseEvent | KeyboardEvent) =>
       handleNavigation(e, {
@@ -118,35 +105,35 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
 
     const handleMouseEnter = (e: MouseEvent) => {
       if (prefetch === 'hover') {
-        schedulePrefetch();
+        schedule(triggerPrefetch);
       }
       onMouseEnter && onMouseEnter(e);
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
       if (prefetch === 'hover') {
-        cancelPrefetch();
+        cancel();
       }
       onMouseLeave && onMouseLeave(e);
     };
 
     const handleFocus = (e: FocusEvent<HTMLAnchorElement>) => {
       if (prefetch === 'hover') {
-        schedulePrefetch();
+        schedule(triggerPrefetch);
       }
       onFocus && onFocus(e);
     };
 
     const handleBlur = (e: FocusEvent<HTMLAnchorElement>) => {
       if (prefetch === 'hover') {
-        cancelPrefetch();
+        cancel();
       }
       onBlur && onBlur(e);
     };
 
     const handlePointerDown = (e: PointerEvent) => {
       if (prefetch === 'hover') {
-        cancelPrefetch();
+        cancel();
         triggerPrefetch();
       }
       onPointerDown && onPointerDown(e);
