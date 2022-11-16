@@ -4,13 +4,14 @@ import {
   forwardRef,
   useCallback,
   useEffect,
-  useRef,
   useState,
   MouseEvent,
   KeyboardEvent,
+  FocusEvent,
 } from 'react';
 
 import { LinkProps, Route } from '../../common/types';
+import { useTimeout } from '../../common/utils';
 import {
   createRouterContext,
   generateLocationFromPath,
@@ -19,7 +20,7 @@ import { useRouterStoreStatic } from '../../controllers/router-store';
 
 import { getValidLinkType, handleNavigation } from './utils';
 
-const PREFETCH_DELAY = 300;
+const PREFETCH_DELAY = 225;
 
 const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
   (
@@ -32,6 +33,9 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       onClick = undefined,
       onMouseEnter = undefined,
       onMouseLeave = undefined,
+      onPointerDown = undefined,
+      onFocus = undefined,
+      onBlur = undefined,
       type: linkType = 'a',
       params,
       query,
@@ -41,7 +45,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     ref
   ) => {
     const routerActions = useRouterStoreStatic()[1];
-    const prefetchRef = useRef<NodeJS.Timeout>();
+    const { schedule, cancel } = useTimeout(PREFETCH_DELAY);
 
     const validLinkType = getValidLinkType(linkType);
     const [route, setRoute] = useState<Route | void>(() => {
@@ -69,8 +73,6 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         : to;
 
     const triggerPrefetch = useCallback(() => {
-      prefetchRef.current = undefined;
-
       // ignore if async route not ready yet
       if (typeof to !== 'string' && !route) return;
 
@@ -84,12 +86,12 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     }, [route, linkDestination, routerActions]);
 
     useEffect(() => {
-      let timeout: NodeJS.Timeout;
-      if (prefetch === 'mount')
-        timeout = setTimeout(triggerPrefetch, PREFETCH_DELAY);
+      if (prefetch === 'mount') {
+        schedule(triggerPrefetch);
+      }
 
-      return () => clearTimeout(timeout);
-    }, [prefetch, triggerPrefetch]);
+      return cancel;
+    }, [prefetch, schedule, cancel, triggerPrefetch]);
 
     const handleLinkPress = (e: MouseEvent | KeyboardEvent) =>
       handleNavigation(e, {
@@ -103,17 +105,38 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
 
     const handleMouseEnter = (e: MouseEvent) => {
       if (prefetch === 'hover') {
-        prefetchRef.current = setTimeout(triggerPrefetch, PREFETCH_DELAY);
+        schedule(triggerPrefetch);
       }
       onMouseEnter && onMouseEnter(e);
     };
 
     const handleMouseLeave = (e: MouseEvent) => {
-      if (prefetch === 'hover' && prefetchRef.current) {
-        clearTimeout(prefetchRef.current);
-        prefetchRef.current = undefined;
+      if (prefetch === 'hover') {
+        cancel();
       }
       onMouseLeave && onMouseLeave(e);
+    };
+
+    const handleFocus = (e: FocusEvent<HTMLAnchorElement>) => {
+      if (prefetch === 'hover') {
+        schedule(triggerPrefetch);
+      }
+      onFocus && onFocus(e);
+    };
+
+    const handleBlur = (e: FocusEvent<HTMLAnchorElement>) => {
+      if (prefetch === 'hover') {
+        cancel();
+      }
+      onBlur && onBlur(e);
+    };
+
+    const handlePointerDown = (e: PointerEvent) => {
+      if (prefetch === 'hover') {
+        cancel();
+        triggerPrefetch();
+      }
+      onPointerDown && onPointerDown(e);
     };
 
     return createElement(
@@ -126,6 +149,9 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         onKeyDown: handleLinkPress,
         onMouseEnter: handleMouseEnter,
         onMouseLeave: handleMouseLeave,
+        onFocus: handleFocus,
+        onBlur: handleBlur,
+        onPointerDown: handlePointerDown,
         ref,
       },
       children
