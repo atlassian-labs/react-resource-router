@@ -110,9 +110,16 @@ export const createLegacyHistory = (): BrowserHistory => {
     },
     ...(hasWindow()
       ? {
-          push: (path: string) => window.location.assign(path),
-          replace: (path: string) =>
-            window.history.replaceState({}, document.title, path),
+          push: (path: string | Location) =>
+            window.location.assign(
+              typeof path === 'string' ? path : createPath(path || {})
+            ),
+          replace: (path: string | Location) =>
+            window.history.replaceState(
+              {},
+              document.title,
+              typeof path === 'string' ? path : createPath(path || {})
+            ),
           goBack: () => window.history.back(),
           goForward: () => window.history.forward(),
           listen: createLegacyListener(updateExposedLocation),

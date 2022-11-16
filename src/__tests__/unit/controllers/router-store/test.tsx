@@ -369,6 +369,23 @@ describe('SPA Router store', () => {
         expect(mockHistory.push).toBeCalledWith('/board/123');
       });
 
+      it('should push a relative path a Location object is pushed', () => {
+        mount(
+          <MemoryRouter routes={[]}>
+            <RouterSubscriber>{children}</RouterSubscriber>
+          </MemoryRouter>
+        );
+        const { actions } = getRouterStore();
+
+        actions.push({ pathname: '/board/123', search: '', hash: '' });
+
+        expect(mockHistory.push).toBeCalledWith({
+          pathname: '/board/123',
+          search: '',
+          hash: '',
+        });
+      });
+
       it('should call window.location.assign with the absolute URL if it is on a different domain', () => {
         jest
           .spyOn(window.location, 'assign')

@@ -26,8 +26,8 @@ export type BrowserHistory = (
   | Omit<History5, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
 ) & {
   location: Location;
-  push: (path: string) => void;
-  replace: (path: string) => void;
+  push: (path: string | Location) => void;
+  replace: (path: string | Location) => void;
 };
 
 export type MatchParams = {

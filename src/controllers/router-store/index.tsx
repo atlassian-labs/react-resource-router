@@ -255,7 +255,7 @@ const actions: AllRouterActions = {
       if (isExternalAbsolutePath(path)) {
         window.location.assign(path as string);
       } else {
-        history.push(getRelativePath(path, basePath) as any);
+        history.push(getRelativePath(path, basePath));
       }
     },
 
