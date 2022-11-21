@@ -256,9 +256,9 @@ By using either of these you will gain access to the following actions
 
 | prop            | type       | arguments                                                | description                                                                                           |
 | --------------- | ---------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `push`          | `function` | `path: Href, state?: any`                                | Calls `history.push` with the supplied args                                                           |
+| `push`          | `function` | `path: Href | Location, state?: any`                     | Calls `history.push` with the supplied args                                                           |
 | `pushTo`        | `function` | `route: Route, attributes?: { params?: {}, query?: {} }` | Calls `history.push` generating the path from supplied route and attributes                           |
-| `replace`       | `function` | `path: Href, state?: any`                                | Calls `history.replace` with the supplied args                                                        |
+| `replace`       | `function` | `path: Href | Location, state?: any`                     | Calls `history.replace` with the supplied args                                                        |
 | `replaceTo`     | `function` | `route: Route, attributes?: { params?: {}, query?: {} }` | Calls `history.replace` generating the path from supplied route and attributes                        |
 | `goBack`        | `function` |                                                          | Goes to the previous route in history                                                                 |
 | `goForward`     | `function` |                                                          | Goes to the next route in history                                                                     |

@@ -215,9 +215,9 @@ export type RouterAction = Action<EntireRouterState, ContainerProps, *>;
 type UnregisterCallback = () => void;
 
 export type RouterActionsType = {|
-  push: (path: Href, state?: any) => void,
+  push: (path: Href | Location, state?: any) => void,
   pushTo: (route: Route, attributes: ToAttributes) => void,
-  replace: (path: Href, state?: any) => void,
+  replace: (path: Href | Location, state?: any) => void,
   replaceTo: (route: Route, attributes: ToAttributes) => void,
   goBack: () => void,
   goForward: () => void,

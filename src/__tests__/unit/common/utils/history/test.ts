@@ -117,20 +117,51 @@ describe('createLegacyHistory', () => {
       window.location = holdWindowLocation;
     });
 
+    it('should not throw when null', () => {
+      const history = createLegacyHistory();
+      history.push(null as any);
+      expect(spy).toHaveBeenCalledWith('/');
+    })
+
     it('should change location via page reload', async () => {
       const history = createLegacyHistory();
       history.push('/foo');
 
       expect(spy).toHaveBeenCalledWith('/foo');
     });
+
+    it('should change location if a Location object is received', async () => {
+      const history = createLegacyHistory();
+      history.push({ pathname: '/other', search: '?param=1', hash: '' });
+
+      expect(spy).toHaveBeenCalledWith('/other?param=1');
+    });
   });
 
   describe('replace()', () => {
+    it('should not throw when null', () => {
+      window.history.replaceState = jest.fn();
+      const history = createLegacyHistory();
+      history.replace(null as any);
+      expect(window.history.replaceState).toHaveBeenCalledWith({}, '', '/');
+    })
+
     it('should replace location via history', () => {
       window.history.replaceState = jest.fn();
       const history = createLegacyHistory();
       history.replace('/baz');
       expect(window.history.replaceState).toHaveBeenCalledWith({}, '', '/baz');
+    });
+
+    it('should replace location if a Location object is received', async () => {
+      window.history.replaceState = jest.fn();
+      const history = createLegacyHistory();
+      history.replace({ pathname: '/other', search: '?param=1', hash: '' });
+      expect(window.history.replaceState).toHaveBeenCalledWith(
+        {},
+        '',
+        '/other?param=1'
+      );
     });
   });
 
