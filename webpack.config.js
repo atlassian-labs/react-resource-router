@@ -30,8 +30,10 @@ module.exports = {
   entry: generateExampleEntries(),
 
   devServer: {
-    contentBase: path.resolve(__dirname, 'examples'),
-    publicPath: '/',
+    static: {
+      directory: path.resolve(__dirname, 'examples'),
+      publicPath: '/',
+    },
   },
 
   output: {
