@@ -38,6 +38,7 @@ export {
 } from './common/utils';
 
 export type {
+  AdditionalRouteAttributes,
   BrowserHistory,
   CreateRouterContextOptions,
   FindRouterContextOptions,

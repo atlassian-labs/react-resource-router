@@ -238,7 +238,7 @@ export type InvariantRoute = {
 /**
  * Custom additional attributes that may be present in each route definition.
  */
-interface AdditionalRouteAttributes {}
+export interface AdditionalRouteAttributes {}
 
 export type Route = InvariantRoute & {
   /** The component to render on match, typed explicitly */
