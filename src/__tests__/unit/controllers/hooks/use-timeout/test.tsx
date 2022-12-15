@@ -1,6 +1,6 @@
-import { shallow } from 'enzyme';
 import React from 'react';
-import { useTimeout } from '../../../../../common/utils';
+import { shallow } from 'enzyme';
+import { useTimeout } from '../../../../../controllers/hooks';
 
 const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
 const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');

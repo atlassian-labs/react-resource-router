@@ -11,12 +11,12 @@ import {
 } from 'react';
 
 import { LinkProps, Route } from '../../common/types';
-import { useTimeout } from '../../common/utils';
 import {
   createRouterContext,
   generateLocationFromPath,
 } from '../../common/utils';
 import { useRouterStoreStatic } from '../../controllers/router-store';
+import { useTimeout } from '../../controllers/hooks/use-timeout';
 
 import { getValidLinkType, handleNavigation } from './utils';
 

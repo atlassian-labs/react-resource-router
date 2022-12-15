@@ -5,3 +5,4 @@ export {
   useQueryParam,
   usePathParam,
 } from './router-store';
+export { useTimeout } from './use-timeout';
