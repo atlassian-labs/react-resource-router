@@ -9,7 +9,7 @@ import {
 import {
   ResourceType,
   RouteResource,
-  RouteResourceResponseBase,
+  RouteResourceResponse,
 } from '../../../../../../common/types';
 import { State } from '../../../../../../controllers/resource-store/types';
 import { createResource } from '../../../../../../controllers/resource-utils';
@@ -454,8 +454,8 @@ describe('dependent resources', () => {
   });
 
   describe('getDependencies', () => {
-    const slice1 = { data: 1 } as RouteResourceResponseBase<number>;
-    const slice2 = { data: 2 } as RouteResourceResponseBase<number>;
+    const slice1 = { data: 1 } as RouteResourceResponse<number>;
+    const slice2 = { data: 2 } as RouteResourceResponse<number>;
 
     it('should return empty object where given resource has no dependencies', () => {
       const mockApi = createApi({ executing: [] });
@@ -463,14 +463,16 @@ describe('dependent resources', () => {
       expect(
         getDependencies(
           { depends: null } as RouteResource,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          {}
         )(mockApi)
       ).toEqual({});
 
       expect(
         getDependencies(
           { depends: [] as ResourceType[] } as RouteResource,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          {}
         )(mockApi)
       ).toEqual({});
 
@@ -481,7 +483,7 @@ describe('dependent resources', () => {
       const mockApi = createApi({ executing: null });
 
       expect(() =>
-        getDependencies(resourceY, mockRouterStoreContext)(mockApi)
+        getDependencies(resourceY, mockRouterStoreContext, {})(mockApi)
       ).toThrow(
         new ResourceDependencyError(
           'Missing resource: "y" has dependencies so must not be missing'
@@ -500,7 +502,7 @@ describe('dependent resources', () => {
       });
 
       expect(() =>
-        getDependencies(resourceZ, mockRouterStoreContext)(mockApi)
+        getDependencies(resourceZ, mockRouterStoreContext, {})(mockApi)
       ).toThrow(
         new ResourceDependencyError(
           'Missing resource: "z" has dependencies so must not be missing'
@@ -525,7 +527,8 @@ describe('dependent resources', () => {
       expect(() =>
         getDependencies(
           { ...resourceY, depends: ['a', 'b'] } as RouteResource,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          {}
         )(mockApi)
       ).toThrow(
         new ResourceDependencyError(
@@ -536,7 +539,8 @@ describe('dependent resources', () => {
       expect(() =>
         getDependencies(
           { ...resourceY, depends: ['a', 'x'] } as RouteResource,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          {}
         )(mockApi)
       ).toThrow(
         new ResourceDependencyError(
@@ -547,7 +551,8 @@ describe('dependent resources', () => {
       expect(() =>
         getDependencies(
           { ...resourceY, depends: ['y', 'b'] } as RouteResource,
-          mockRouterStoreContext
+          mockRouterStoreContext,
+          {}
         )(mockApi)
       ).toThrow(
         new ResourceDependencyError(
@@ -573,7 +578,7 @@ describe('dependent resources', () => {
       });
 
       expect(
-        getDependencies(resourceZ, mockRouterStoreContext)(mockApi)
+        getDependencies(resourceZ, mockRouterStoreContext, {})(mockApi)
       ).toEqual({
         x: slice1,
         y: slice2,
@@ -596,7 +601,7 @@ describe('dependent resources', () => {
       });
 
       expect(
-        getDependencies(resourceY, mockRouterStoreContext)(mockApi)
+        getDependencies(resourceY, mockRouterStoreContext, {})(mockApi)
       ).toEqual({
         x: slice1,
         y: slice2,
@@ -619,7 +624,7 @@ describe('dependent resources', () => {
       });
 
       expect(() =>
-        getDependencies(resourceY, mockRouterStoreContext)(mockApi)
+        getDependencies(resourceY, mockRouterStoreContext, {})(mockApi)
       ).toThrow(
         new ResourceDependencyError(
           'Illegal dependency: "y" depends "x" so "x" must precede "y"'

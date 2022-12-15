@@ -226,6 +226,7 @@ describe('<Router /> integration tests', () => {
         },
       },
       executing: null,
+      prefetching: null,
     });
   });
 });

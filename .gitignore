@@ -9,3 +9,4 @@ yarn.lock
 .idea
 .vscode
 src/webpack/__tests__/__fixtures__/webpack/output
+.DS_Store

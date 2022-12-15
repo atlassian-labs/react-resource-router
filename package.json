@@ -50,9 +50,9 @@
   },
   "scripts": {
     "build": "npm run build:clean && npm run build:types-cjs && npm run build:types-esm && npm run build:cjs && npm run build:esm",
-    "build:cjs": "babel src --out-dir build/cjs --extensions \".ts,.tsx\" --source-maps inline --ignore src/__tests__ --presets @babel/env",
+    "build:cjs": "babel src --out-dir build/cjs --extensions \".ts,.tsx\" --ignore src/__tests__ --presets @babel/env",
     "build:clean": "rm -rf ./build",
-    "build:esm": "babel src --out-dir build/esm --extensions \".ts,.tsx\" --source-maps inline --ignore src/__tests__",
+    "build:esm": "babel src --out-dir build/esm --extensions \".ts,.tsx\" --ignore src/__tests__",
     "build:types-cjs": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/cjs && cp src/*.flow build/cjs",
     "build:types-esm": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/esm && cp src/*.flow build/esm",
     "docs": "npx docsify-cli serve docs",

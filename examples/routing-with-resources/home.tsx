@@ -26,7 +26,7 @@ export const Home = () => {
         <ul>
           {breeds.slice(0, 25).map(breed => (
             <li key={breed}>
-              <Link to={aboutRoute} query={{ name: breed }}>
+              <Link to={aboutRoute} query={{ name: breed }} prefetch="hover">
                 {breed}
               </Link>
             </li>

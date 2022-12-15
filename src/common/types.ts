@@ -119,7 +119,7 @@ export type RouteResourceAsyncResult<RouteResourceData> =
       promise: null;
     };
 
-export type RouteResourceResponseBase<RouteResourceData> = {
+type RouteResourceResponseBase<RouteResourceData> = {
   key?: string;
   loading: RouteResourceLoading;
   error: RouteResourceError | null;
@@ -127,6 +127,14 @@ export type RouteResourceResponseBase<RouteResourceData> = {
   promise: Promise<RouteResourceData> | null;
   expiresAt: RouteResourceTimestamp;
   accessedAt: RouteResourceTimestamp;
+};
+
+// eslint-disable-next-line @typescript-eslint/no-unused-vars
+export type RouteResourceResponseInitial<RouteResourceData> = {
+  loading: false;
+  error: null;
+  data: null;
+  promise: null;
 };
 
 // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -149,6 +157,7 @@ export type RouteResourceResponseLoaded<RouteResourceData> = {
 export type RouteResourceResponse<RouteResourceData = unknown> =
   RouteResourceResponseBase<RouteResourceData> &
     (
+      | RouteResourceResponseInitial<RouteResourceData>
       | RouteResourceResponseLoading<RouteResourceData>
       | RouteResourceResponseError<RouteResourceData>
       | RouteResourceResponseLoaded<RouteResourceData>
@@ -190,13 +199,12 @@ export type RouteResources = RouteResource[];
 
 export interface ResourceStoreContext {}
 
-export type RouteResourceDataForType = {
-  [key: string]: RouteResourceResponseBase<unknown>;
-};
+export type RouteResourceDataForType = Record<
+  string,
+  RouteResourceResponse<unknown>
+>;
 
-export type ResourceStoreData = {
-  [type: string]: RouteResourceDataForType;
-};
+export type ResourceStoreData = Record<string, RouteResourceDataForType>;
 
 export type RouterContext = {
   route: Route;
@@ -205,7 +213,7 @@ export type RouterContext = {
 };
 
 export type ResourceDependencies = {
-  [type: string]: RouteResourceResponse;
+  [type: string]: RouteResourceResponse | undefined;
 };
 
 /**

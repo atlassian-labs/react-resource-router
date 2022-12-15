@@ -1,6 +1,7 @@
 export const DEFAULT_RESOURCE_MAX_AGE = 0;
 export const DEFAULT_CACHE_MAX_LIMIT = 100;
 export const DEFAULT_RESOURCE_BROWSER_ONLY = false;
+export const DEFAULT_PREFETCH_MAX_AGE = 10 * 1000;
 
 /**
  * The base defaults which should be fed into any factory that needs to derive other props.
