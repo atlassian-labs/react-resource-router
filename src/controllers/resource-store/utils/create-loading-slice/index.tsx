@@ -47,7 +47,11 @@ export function createLoadingSlice({
   // ensure the promise includes any timeout error
   const timeoutGuard = timeout ? generateTimeGuard(timeout) : null;
 
-  const data = promiseOrData instanceof Promise ? undefined : promiseOrData;
+  // check if getData was sync, by looking for a Promise-like shape
+  const data =
+    typeof (promiseOrData as any)?.then === 'function'
+      ? undefined
+      : promiseOrData;
   const promise = timeout
     ? Promise.race([promiseOrData, timeoutGuard?.promise]).then(maybeData => {
         if (timeoutGuard && !timeoutGuard.isPending) {
