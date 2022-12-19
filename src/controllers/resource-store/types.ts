@@ -13,11 +13,17 @@ import {
 
 export type ExecutionTuple = [RouteResource, ResourceAction<any>];
 export type ExecutionMaybeTuple = [RouteResource, ResourceAction<any> | null];
+export type PrefetchSlice = {
+  promise: Promise<unknown>;
+  data: unknown;
+  expiresAt: number;
+};
 
 export type State = {
   data: ResourceStoreData;
   context: ResourceStoreContext;
   executing: ExecutionMaybeTuple[] | null;
+  prefetching: Record<string, Record<string, PrefetchSlice | undefined>> | null;
 };
 
 export type HydratableState = {
@@ -74,6 +80,11 @@ export type Actions = {
     routerStoreContext: RouterContext,
     options: GetResourceOptions
   ) => ResourceAction<Promise<RouteResourceResponse>[]>;
+  prefetchResources: (
+    resources: RouteResource[],
+    routerStoreContext: RouterContext,
+    options: GetResourceOptions
+  ) => ResourceAction<Promise<void>[]>;
   hydrate: (
     state: HydratableState
   ) => ({ getState, setState }: StoreActionApi<State>) => void;

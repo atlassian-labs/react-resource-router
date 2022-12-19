@@ -1,13 +1,13 @@
 import {
   ResourceStoreData,
-  RouteResourceResponseBase,
+  RouteResourceResponse,
 } from '../../../../common/types';
 
 export const transformData = (
   data: ResourceStoreData,
   transformer: (
-    slice: RouteResourceResponseBase<unknown>
-  ) => RouteResourceResponseBase<unknown>
+    slice: RouteResourceResponse<unknown>
+  ) => RouteResourceResponse<unknown>
 ) =>
   Object.keys(data).reduce((acc: ResourceStoreData, type: string) => {
     if (!acc[type]) {

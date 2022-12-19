@@ -121,7 +121,7 @@ describe('createLegacyHistory', () => {
       const history = createLegacyHistory();
       history.push(null as any);
       expect(spy).toHaveBeenCalledWith('/');
-    })
+    });
 
     it('should change location via page reload', async () => {
       const history = createLegacyHistory();
@@ -144,7 +144,7 @@ describe('createLegacyHistory', () => {
       const history = createLegacyHistory();
       history.replace(null as any);
       expect(window.history.replaceState).toHaveBeenCalledWith({}, '', '/');
-    })
+    });
 
     it('should replace location via history', () => {
       window.history.replaceState = jest.fn();

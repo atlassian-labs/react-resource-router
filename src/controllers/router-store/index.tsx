@@ -149,11 +149,8 @@ const actions: AllRouterActions = {
     (path, nextContext) =>
     ({ getState }) => {
       const { routes, basePath, onPrefetch, route, match, query } = getState();
-      const {
-        cleanExpiredResources,
-        requestResources,
-        getContext: getResourceStoreContext,
-      } = getResourceStore().actions;
+      const { prefetchResources, getContext: getResourceStoreContext } =
+        getResourceStore().actions;
 
       if (!nextContext && !isExternalAbsolutePath(path)) {
         const location = parsePath(getRelativePath(path, basePath) as any);
@@ -170,10 +167,7 @@ const actions: AllRouterActions = {
       );
 
       batch(() => {
-        cleanExpiredResources(nextResources, nextLocationContext);
-        requestResources(nextResources, nextLocationContext, {
-          prefetch: true,
-        });
+        prefetchResources(nextResources, nextLocationContext, {});
         if (onPrefetch) onPrefetch(nextLocationContext);
       });
     },

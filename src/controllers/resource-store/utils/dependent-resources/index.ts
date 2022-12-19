@@ -8,8 +8,10 @@ import {
   ExecutionTuple,
   ExecutionMaybeTuple,
   ResourceAction,
+  GetResourceOptions,
 } from '../../types';
-import { getSliceForResource } from '../../selectors';
+import { getDefaultStateSlice } from '../get-default-state-slice';
+import { getPrefetchSlice, getResourceState } from '../manage-resource-state';
 
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
 const fromEntries =
@@ -67,7 +69,7 @@ export const executeTuples =
     // include the resource type as well in the list
     // we don't validate that these are legal dependencies
     const [dependentTypes] = routeResources!
-      .reduce(
+      .reduce<[ResourceType[], string[]]>(
         (acc, { type, depends }) => {
           const [dependencies, executableTypes] = acc;
           const isExecutable =
@@ -81,7 +83,7 @@ export const executeTuples =
               ]
             : acc;
         },
-        [[] as ResourceType[], listedTuples.map(([{ type }]) => type)]
+        [[], listedTuples.map(([{ type }]) => type)]
       )
       .filter((v, i, a) => a.indexOf(v) === i);
 
@@ -192,9 +194,10 @@ export const executeForDependents =
 export const getDependencies =
   (
     resource: RouteResource,
-    routerStoreContext: RouterContext
+    routerStoreContext: RouterContext,
+    options: GetResourceOptions
   ): ResourceAction<ResourceDependencies> =>
-  ({ getState }) => {
+  ({ getState, dispatch }) => {
     const { type, depends } = resource;
 
     // optimise the case of no dependencies
@@ -202,11 +205,7 @@ export const getDependencies =
       return {};
     }
 
-    const {
-      executing: tuples,
-      data,
-      context: resourceStoreContext,
-    } = getState();
+    const { executing: tuples, context: resourceStoreContext } = getState();
 
     // dependent resource cannot be called outside execution state
     // find the given resource type in the currently executing tuples
@@ -241,19 +240,28 @@ export const getDependencies =
     });
 
     return fromEntries(
-      dependencyIndexTuples.map(([dependency, index]) => {
-        const [{ getKey }] = tuples![index];
+      dependencyIndexTuples.map(([dependencyType, index]) => {
+        const { getKey } = tuples![index]![0];
+        const key = getKey(routerStoreContext, resourceStoreContext);
+        let slice =
+          dispatch(getResourceState(dependencyType, key)) ||
+          getDefaultStateSlice();
 
-        return [
-          dependency,
-          getSliceForResource(
-            { data },
-            {
-              type: dependency,
-              key: getKey(routerStoreContext, resourceStoreContext),
-            }
-          ),
-        ];
+        // when prefetching we provide only the promise to dependands
+        const prefetchSlice = options.prefetch
+          ? dispatch(getPrefetchSlice(dependencyType, key))
+          : undefined;
+        if (prefetchSlice) {
+          slice = {
+            ...slice,
+            // not spreading prefetchSlice to persist previous slice data
+            promise: prefetchSlice.promise,
+            expiresAt: prefetchSlice.expiresAt,
+            loading: true,
+          };
+        }
+
+        return [dependencyType, slice];
       })
     );
   };

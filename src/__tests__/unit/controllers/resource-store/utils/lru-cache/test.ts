@@ -1,7 +1,7 @@
 import { getLRUResourceKey } from '../../../../../../controllers/resource-store/utils/lru-cache';
 import {
   RouteResourceDataForType,
-  RouteResourceResponseBase,
+  RouteResourceResponse,
   RouteResourceTimestamp,
 } from '../../../../../../common/types';
 
@@ -13,7 +13,7 @@ const mock = <T>({
   data: T;
   accessedAt: RouteResourceTimestamp;
   expiresAt: RouteResourceTimestamp;
-}): RouteResourceResponseBase<T> => ({
+}): RouteResourceResponse<T> => ({
   loading: false,
   error: null,
   data,

@@ -36,7 +36,6 @@ import {
   setExpiresAt,
   shouldUseCache,
   transformData,
-  generateTimeGuard,
   TimeoutError,
   setSsrDataPromise,
   getResourceState,
@@ -48,12 +47,13 @@ import {
   mapActionWithDependencies,
   executeForDependents,
   getDependencies,
-  toPromise,
+  getDefaultStateSlice,
+  getPrefetchSlice,
+  setPrefetchSlice,
+  createLoadingSlice,
 } from './utils';
 
 export { ResourceDependencyError };
-
-const PREFETCH_MAX_AGE = 10000;
 
 export const privateActions = {
   /**
@@ -148,11 +148,11 @@ export const privateActions = {
     ): ResourceAction<Promise<RouteResourceResponse>> =>
     async ({ getState, dispatch }) => {
       const { type, getKey, maxAge } = resource;
-      const { context, ...resourceStoreState } = getState();
+      const { context } = getState();
       const key = getKey(routerStoreContext, context);
-      let cached = getSliceForResource(resourceStoreState, { type, key });
+      let cached = dispatch(getResourceState(type, key));
 
-      if (shouldUseCache(cached)) {
+      if (cached && shouldUseCache(cached)) {
         if (isFromSsr(cached)) {
           const withResolvedPromise = setSsrDataPromise(cached);
           cached = setExpiresAt(withResolvedPromise, maxAge);
@@ -183,14 +183,11 @@ export const privateActions = {
       options: GetResourceOptions
     ): ResourceAction<Promise<RouteResourceResponse<unknown>>> =>
     async ({ getState, dispatch }) => {
-      const { type, getKey, getData, maxAge } = resource;
-      const { prefetch, timeout } = options;
-      const { context, ...resourceStoreState } = getState();
+      const { type, getKey, maxAge } = resource;
+      const { context } = getState();
       const key = getKey(routerStoreContext, context);
-      const prevSlice = getSliceForResource(resourceStoreState, {
-        type,
-        key,
-      });
+      const prevSlice =
+        dispatch(getResourceState(type, key)) || getDefaultStateSlice();
 
       // abort request if already in flight
       if (prevSlice.loading) {
@@ -199,57 +196,32 @@ export const privateActions = {
 
       dispatch(validateLRUCache(resource, key));
 
-      // hard errors in dependencies or getData are converted into softer async error
-      let promiseOrData;
-      try {
-        promiseOrData = getData(
-          {
-            ...routerStoreContext,
-            isPrefetch: !!prefetch,
-            dependencies: dispatch(
-              getDependencies(resource, routerStoreContext)
-            ),
-          },
-          context
-        );
-      } catch (error) {
-        promiseOrData = Promise.reject(error);
-      }
+      const loadingSlice =
+        dispatch(getPrefetchSlice(type, key)) ||
+        createLoadingSlice({
+          context,
+          dependencies: () =>
+            dispatch(getDependencies(resource, routerStoreContext, options)),
+          options,
+          resource,
+          routerStoreContext,
+        });
 
       let resolvedSlice: EmptyObject | RouteResourceAsyncResult<unknown>;
 
-      if (promiseOrData === prevSlice.data) {
+      if (loadingSlice.data === prevSlice.data) {
         // same data (by reference) means nothing has changed and we can avoid loading state
         resolvedSlice = {};
       } else {
-        // ensure the promise includes any timeout error
-        const timeoutGuard = timeout ? generateTimeGuard(timeout) : null;
-        const promise = timeout
-          ? Promise.race([promiseOrData, timeoutGuard?.promise]).then(
-              maybeData => {
-                if (timeoutGuard && !timeoutGuard.isPending) {
-                  throw new TimeoutError(type);
-                }
-                timeoutGuard?.timerId && clearTimeout(timeoutGuard.timerId);
-
-                return maybeData;
-              }
-            )
-          : toPromise(promiseOrData);
-
         // enter loading state
         dispatch(
           setResourceState(type, key, {
             ...prevSlice,
+            ...loadingSlice,
             data: maxAge === 0 ? null : prevSlice.data,
             error: maxAge === 0 ? null : prevSlice.error,
             loading: true,
-            promise,
             accessedAt: getAccessedAt(),
-            // prevent resource from being cleaned prematurely and trigger more network requests.
-            expiresAt: options.prefetch
-              ? getExpiresAt(PREFETCH_MAX_AGE)
-              : prevSlice.expiresAt,
           })
         );
 
@@ -267,12 +239,12 @@ export const privateActions = {
         // in case another action occurred while loading promise may not be the one we started with
         // we need to re-assign promise consistent with error/data that we are assigning here
         try {
-          const data = await promise;
+          const data = loadingSlice.data ?? (await loadingSlice.promise);
           resolvedSlice = {
             data,
             error: null, // any existing error is cleared
             loading: false,
-            promise,
+            promise: loadingSlice.promise,
           };
         } catch (error) {
           if (error instanceof TimeoutError) {
@@ -288,28 +260,67 @@ export const privateActions = {
               // @ts-ignore
               error,
               loading: false,
-              promise,
+              promise: loadingSlice.promise,
             };
           }
         }
       }
 
+      // ensure most recent data when return occurs
+      const recentSlice = dispatch(getResourceState(type, key));
       const finalSlice = {
-        ...getSliceForResource(getState(), { type, key }), // ensure most recent data when error occurs
+        ...(recentSlice || prevSlice),
         ...resolvedSlice,
         accessedAt: getAccessedAt(),
-        expiresAt: getExpiresAt(
-          options.prefetch && maxAge < PREFETCH_MAX_AGE
-            ? PREFETCH_MAX_AGE
-            : maxAge
-        ),
+        expiresAt: getExpiresAt(maxAge),
       };
 
-      if (dispatch(getResourceState(type, key))) {
+      // protect against race conditions: if resources get cleared while await happens, we discard the result
+      if (recentSlice || loadingSlice.data !== undefined) {
         dispatch(setResourceState(type, key, finalSlice));
       }
 
       return finalSlice;
+    },
+
+  /**
+   * Prefetch a single resource and store in the prefetch cache.
+   */
+  prefetchResourceFromRemote:
+    (
+      resource: RouteResource,
+      routerStoreContext: RouterContext,
+      options: GetResourceOptions
+    ): ResourceAction<Promise<void>> =>
+    async ({ getState, dispatch }) => {
+      const { type, getKey } = resource;
+      const { context } = getState();
+      const key = getKey(routerStoreContext, context);
+
+      const loadingSlice =
+        dispatch(getPrefetchSlice(type, key)) ||
+        createLoadingSlice({
+          context,
+          dependencies: () =>
+            dispatch(getDependencies(resource, routerStoreContext, options)),
+          options,
+          resource,
+          routerStoreContext,
+        });
+
+      // save deferred value to be used also by dependants
+      dispatch(setPrefetchSlice(type, key, loadingSlice));
+
+      // trigger dependent resources to also prefetch
+      dispatch(
+        executeForDependents(resource, dependentResource =>
+          privateActions.prefetchResourceFromRemote(
+            dependentResource,
+            routerStoreContext,
+            options
+          )
+        )
+      );
     },
 };
 
@@ -439,6 +450,20 @@ export const actions: Actions = {
   },
 
   /**
+   * Prefetch a specific set of resources.
+   */
+  prefetchResources: (resources, routerStoreContext, options) =>
+    mapActionWithDependencies<Promise<void>>(
+      routerStoreContext.route.resources,
+      resources,
+      resource =>
+        privateActions.prefetchResourceFromRemote(
+          resource,
+          routerStoreContext,
+          { ...options, prefetch: true }
+        )
+    ),
+  /**
    * Hydrates the store with state.
    * Will not override pre-hydrated state.
    */
@@ -514,6 +539,7 @@ export const ResourceStore = createStore<State, Actions>({
     data: {},
     context: {},
     executing: null,
+    prefetching: null,
   },
   actions,
   name: 'router-resources',

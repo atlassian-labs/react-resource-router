@@ -11,10 +11,13 @@ export { routeHasChanged, routeHasResources } from './route-checks';
 export { TimeoutError } from './timeout-error';
 export { setSsrDataPromise } from './ssr-data-promise';
 export { validateLRUCache } from './lru-cache';
+export { createLoadingSlice } from './create-loading-slice';
 export {
   deleteResourceState,
   getResourceState,
   setResourceState,
+  getPrefetchSlice,
+  setPrefetchSlice,
 } from './manage-resource-state';
 export {
   ResourceDependencyError,
@@ -23,4 +26,3 @@ export {
   executeForDependents,
   getDependencies,
 } from './dependent-resources';
-export { toPromise } from './to-promise';

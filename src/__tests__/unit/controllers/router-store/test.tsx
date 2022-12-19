@@ -653,7 +653,7 @@ describe('SPA Router store', () => {
               return <div>{props.error}</div>;
             }
 
-            return <div>{props.data.toString()}</div>;
+            return <div>{props.data?.toString()}</div>;
           }}
         </ResourceSubscriber>
       );
