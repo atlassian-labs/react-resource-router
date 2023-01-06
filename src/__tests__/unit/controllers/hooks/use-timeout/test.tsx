@@ -2,9 +2,6 @@ import React from 'react';
 import { shallow } from 'enzyme';
 import { useTimeout } from '../../../../../controllers/hooks';
 
-const setTimeoutSpy = jest.spyOn(global, 'setTimeout');
-const clearTimeoutSpy = jest.spyOn(global, 'clearTimeout');
-
 const DEFAULT_DELAY = 1000;
 
 const TestComponent = ({
@@ -25,58 +22,65 @@ const TestComponent = ({
 };
 
 describe('useTimeout', () => {
-  const mockCallback = jest.fn();
-
   beforeEach(() => {
-    mockCallback.mockClear();
-    setTimeoutSpy.mockClear();
-    clearTimeoutSpy.mockClear();
+    jest.useFakeTimers();
   });
 
   afterEach(() => {
+    jest.restoreAllMocks();
     jest.useRealTimers();
   });
 
   it('calls setTimeout on schedule()', () => {
-    const wrapper = shallow(<TestComponent callback={mockCallback} />);
+    const setTimeout = jest.spyOn(global, 'setTimeout');
+    const wrapper = shallow(<TestComponent callback={jest.fn()} />);
+
     wrapper.find('#schedule').simulate('click');
-    expect(setTimeoutSpy).toHaveBeenCalledTimes(1);
+
+    expect(setTimeout).toHaveBeenCalledTimes(1);
   });
 
   it('calls clearTimeout on cancel()', () => {
-    const wrapper = shallow(<TestComponent callback={mockCallback} />);
+    const clearTimeout = jest.spyOn(global, 'clearTimeout');
+    const wrapper = shallow(<TestComponent callback={jest.fn()} />);
+
     wrapper.find('#cancel').simulate('click');
-    expect(clearTimeoutSpy).toHaveBeenCalledTimes(1);
+
+    expect(clearTimeout).toHaveBeenCalledTimes(1);
   });
 
   it('schedules a callback to be fired', () => {
-    jest.useFakeTimers();
-    const wrapper = shallow(<TestComponent callback={mockCallback} />);
+    const callback = jest.fn();
+    const wrapper = shallow(<TestComponent callback={callback} />);
+
     wrapper.find('#schedule').simulate('click');
     jest.runOnlyPendingTimers();
-    expect(mockCallback).toHaveBeenCalledTimes(1);
+
+    expect(callback).toHaveBeenCalledTimes(1);
   });
 
   it('cancels a scheduled callback', () => {
-    jest.useFakeTimers();
-    const wrapper = shallow(<TestComponent callback={mockCallback} />);
+    const callback = jest.fn();
+    const wrapper = shallow(<TestComponent callback={callback} />);
+
     wrapper.find('#schedule').simulate('click');
     wrapper.find('#cancel').simulate('click');
     jest.runAllTimers();
-    expect(mockCallback).not.toHaveBeenCalled();
+
+    expect(callback).not.toHaveBeenCalled();
   });
 
   it('cancels a previously scheduled callback when schedule is called again', () => {
-    const mockCallback2 = jest.fn();
-    jest.useFakeTimers();
-    const wrapper = shallow(<TestComponent callback={mockCallback} />);
-    wrapper.find('#schedule').simulate('click');
-    wrapper.setProps({ callback: mockCallback2 });
-    wrapper.find('#schedule').simulate('click');
+    const callback1 = jest.fn();
+    const callback2 = jest.fn();
+    const wrapper = shallow(<TestComponent callback={callback1} />);
 
+    wrapper.find('#schedule').simulate('click');
+    wrapper.setProps({ callback: callback2 });
+    wrapper.find('#schedule').simulate('click');
     jest.runAllTimers();
 
-    expect(mockCallback).not.toHaveBeenCalled();
-    expect(mockCallback2).toHaveBeenCalledTimes(1);
+    expect(callback1).not.toHaveBeenCalled();
+    expect(callback2).toHaveBeenCalledTimes(1);
   });
 });
