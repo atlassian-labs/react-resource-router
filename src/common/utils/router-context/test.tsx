@@ -17,7 +17,7 @@ const mockLocation = {
   hash: '',
 };
 
-describe('Router findRouterContext util', () => {
+describe('findRouterContext()', () => {
   it('should return the route match', () => {
     const context = findRouterContext(mockRoutes, { location: mockLocation });
 
@@ -50,7 +50,7 @@ describe('Router findRouterContext util', () => {
   });
 });
 
-describe('Router createRouterContext util', () => {
+describe('createRouterContext()', () => {
   it('should return the context for provided route', () => {
     const route = {
       path: '/foo/:page',

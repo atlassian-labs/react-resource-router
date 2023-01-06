@@ -6,7 +6,8 @@ import {
   RouteResourceUpdater,
   RouterContext,
 } from '../../common/types';
-import { useResource } from '../hooks';
+
+import { useResource } from '../use-resource';
 
 type Props<T> = {
   children: (

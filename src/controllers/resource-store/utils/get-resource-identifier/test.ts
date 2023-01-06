@@ -30,7 +30,7 @@ const mockRouterStoreContext = {
 
 const mockResourceStoreContext = { foo: 'bar' };
 
-describe('getResourceIdentifier', () => {
+describe('getResourceIdentifier()', () => {
   it('should return the type and key as a concatenated string', () => {
     expect(
       getResourceIdentifier(
@@ -42,7 +42,7 @@ describe('getResourceIdentifier', () => {
   });
 });
 
-describe('getResourceIdentifiers', () => {
+describe('getResourceIdentifiers()', () => {
   it('should create an array of resource identifiers for the provided resources', () => {
     const mockResource2 = createResource({
       type: 'mockResource2',

@@ -3,15 +3,15 @@ import * as historyHelper from 'history';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { mockRoute } from '../../common/mocks';
-import { ResourceStore } from '../../controllers/resource-store';
+import { mockRoute } from '../common/mocks';
+import { ResourceStore } from '../controllers/resource-store';
 import {
   RouteComponent,
   Router,
   RouterActions,
   RouterActionsType,
   StaticRouter,
-} from '../../index';
+} from '../index';
 
 const mockLocation = {
   pathname: '/projects/123/board/456',

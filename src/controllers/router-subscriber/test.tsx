@@ -37,7 +37,10 @@ describe('<RouterSubscriber />', () => {
   });
 
   it('should not call listen if container is static', () => {
-    const { listen } = renderRouterSubscriber({ isStatic: true, unlisten: () => null });
+    const { listen } = renderRouterSubscriber({
+      isStatic: true,
+      unlisten: () => null,
+    });
 
     expect(listen).not.toHaveBeenCalled();
   });

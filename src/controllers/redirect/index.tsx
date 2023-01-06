@@ -4,9 +4,8 @@ import React, { Component } from 'react';
 import { Location, MatchParams, Query, Route } from '../../common/types';
 import { generateLocationFromPath } from '../../common/utils';
 
-import { useRouter } from '../hooks';
-
 import { RouterActionsType, RouterState } from '../router-store/types';
+import { useRouter } from '../use-router';
 
 export type RedirectProps = {
   to: Location | Route | string;

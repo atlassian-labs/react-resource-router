@@ -65,42 +65,40 @@ describe('getLRUResourceKey()', () => {
     jest.spyOn(global.Date, 'now').mockReturnValue(currentTime);
   });
 
-  describe('getLRUResourceKey', () => {
-    it('should return null if max cache is equal to Infinity', () => {
-      const key = getLRUResourceKey(
-        Infinity,
-        resourceDataForTypeWithExpiredKeys,
-        'home'
-      );
-      expect(key).toBeNull();
-    });
+  it('should return null if max cache is equal to Infinity', () => {
+    const key = getLRUResourceKey(
+      Infinity,
+      resourceDataForTypeWithExpiredKeys,
+      'home'
+    );
+    expect(key).toBeNull();
+  });
 
-    it('should return null if max cache is less than 1', () => {
-      const key = getLRUResourceKey(
-        0,
-        resourceDataForTypeWithExpiredKeys,
-        'home'
-      );
-      expect(key).toBeNull();
-    });
+  it('should return null if max cache is less than 1', () => {
+    const key = getLRUResourceKey(
+      0,
+      resourceDataForTypeWithExpiredKeys,
+      'home'
+    );
+    expect(key).toBeNull();
+  });
 
-    it('should return expired key if keys for a type are less than the max cache value', () => {
-      const key = getLRUResourceKey(
-        2,
-        resourceDataForTypeWithExpiredKeys,
-        'home'
-      );
-      expect(key).toEqual('about');
-    });
+  it('should return expired key if keys for a type are less than the max cache value', () => {
+    const key = getLRUResourceKey(
+      2,
+      resourceDataForTypeWithExpiredKeys,
+      'home'
+    );
+    expect(key).toEqual('about');
+  });
 
-    it('should return the least recent key which is not equal to the current key if max cache is attained for a type', () => {
-      expect(
-        getLRUResourceKey(2, resourceDataForTypeWithNoExpiredKeys, 'home')
-      ).toEqual('home');
+  it('should return the least recent key which is not equal to the current key if max cache is attained for a type', () => {
+    expect(
+      getLRUResourceKey(2, resourceDataForTypeWithNoExpiredKeys, 'home')
+    ).toEqual('home');
 
-      expect(
-        getLRUResourceKey(2, resourceDataForTypeWithNoExpiredKeys, 'shop')
-      ).toEqual('home');
-    });
+    expect(
+      getLRUResourceKey(2, resourceDataForTypeWithNoExpiredKeys, 'shop')
+    ).toEqual('home');
   });
 });

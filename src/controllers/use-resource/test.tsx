@@ -1,21 +1,18 @@
-/* eslint-disable prefer-destructuring */
-import React from 'react';
-
 import { mount } from 'enzyme';
+import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../../../common/constants';
-import { useResource } from '../../../../../controllers/hooks/resource-store';
-import {
-  createResource,
-  ResourceStore,
-} from '../../../../../controllers/resource-store';
-import { getRouterState } from '../../../../../controllers/router-store';
-import { createRouterContext } from '../../../../../common/utils';
+import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../common/constants';
+import { createRouterContext } from '../../common/utils';
 
-jest.mock('../../../../../controllers/router-store', () => ({
-  ...jest.requireActual<any>('../../../../../controllers/router-store'),
+import { createResource, ResourceStore } from '../resource-store';
+import { getRouterState } from '../router-store';
+
+import { useResource } from './index';
+
+jest.mock('../router-store', () => ({
+  ...jest.requireActual<any>('../router-store'),
   getRouterState: jest.fn(),
 }));
 
@@ -36,6 +33,7 @@ const mockRoute = {
   path: ':page?',
   component: () => null,
 };
+
 const mockMatch = {
   params: {},
   query: {},
@@ -43,12 +41,14 @@ const mockMatch = {
   path: ':page?',
   url: '',
 };
+
 const mockResource = createResource({
   type: mockType,
   getKey: () => mockKey,
   getData: () => getDataPromise,
   maxAge: 100,
 });
+
 const mockHydratableState = {
   resourceContext: {
     route: mockRoute,
@@ -72,14 +72,13 @@ const mockRouterContext = {
   query: {},
 };
 
-describe('useResource hook', () => {
+describe('useResource()', () => {
   let resourceStore;
   let storeState: any;
   let actions: any;
   const spy = jest.fn();
 
   beforeEach(() => {
-    // @ts-ignore
     resourceStore = defaultRegistry.getStore(ResourceStore);
     storeState = resourceStore.storeState;
     actions = resourceStore.actions;
@@ -125,8 +124,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const resource = useResource(mockResource);
-            resourceResponse = resource;
+            resourceResponse = useResource(mockResource);
 
             return <h1>my test</h1>;
           }}
@@ -151,8 +149,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const resource = useResource(mockResource);
-            resourceResponse = resource;
+            resourceResponse = useResource(mockResource);
 
             return <h1>my test</h1>;
           }}
@@ -179,8 +176,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const resource = useResource(mockResource);
-            resourceResponse = resource;
+            resourceResponse = useResource(mockResource);
 
             return <h1>my test</h1>;
           }}
@@ -203,8 +199,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const resource = useResource(mockResource);
-            resourceResponse = resource;
+            resourceResponse = useResource(mockResource);
 
             return <h1>my test</h1>;
           }}
@@ -232,12 +227,11 @@ describe('useResource hook', () => {
       const wrapper = mount(
         <MockComponent page="page1">
           {({ page }: { page: string }) => {
-            const resource = useResource(mockRes, {
+            resourceResponse = useResource(mockRes, {
               routerContext: createRouterContext(mockRoute, {
                 params: { page },
               }),
             });
-            resourceResponse = resource;
 
             return <h1>my test</h1>;
           }}
@@ -266,8 +260,7 @@ describe('useResource hook', () => {
       mount(
         <MockComponent>
           {() => {
-            const resource = useResource(mockResource);
-            resourceResponse = resource;
+            resourceResponse = useResource(mockResource);
 
             return <h1>my test</h1>;
           }}
@@ -299,8 +292,7 @@ describe('useResource hook', () => {
         mount(
           <MockComponent>
             {() => {
-              const resource = useResource(mockResource);
-              resourceResponse = resource;
+              resourceResponse = useResource(mockResource);
 
               return <h1>my test</h1>;
             }}

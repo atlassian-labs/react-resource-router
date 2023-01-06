@@ -9,7 +9,7 @@ import { withRouter } from './index';
 
 const waitALilBit = () => new Promise(resolve => setTimeout(resolve));
 
-describe('withRouter', () => {
+describe('withRouter()', () => {
   const ComponentToBeWrapped = (props: any) => (
     <div> deep component {props.foo} </div>
   );
