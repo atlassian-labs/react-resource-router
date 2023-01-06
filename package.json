@@ -45,14 +45,11 @@
   "main": "build/cjs/index.js",
   "module": "build/esm/index.js",
   "types": "build/cjs/index.d.ts",
-  "engines": {
-    "node": ">=10.0"
-  },
   "scripts": {
     "build": "npm run build:clean && npm run build:types-cjs && npm run build:types-esm && npm run build:cjs && npm run build:esm",
-    "build:cjs": "babel src --out-dir build/cjs --extensions \".ts,.tsx\" --ignore src/__tests__ --presets @babel/env",
+    "build:cjs": "babel src --out-dir build/cjs --extensions \".ts,.tsx\" --presets @babel/env",
     "build:clean": "rm -rf ./build",
-    "build:esm": "babel src --out-dir build/esm --extensions \".ts,.tsx\" --ignore src/__tests__",
+    "build:esm": "babel src --out-dir build/esm --extensions \".ts,.tsx\"",
     "build:types-cjs": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/cjs && cp src/*.flow build/cjs",
     "build:types-esm": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/esm && cp src/*.flow build/esm",
     "docs": "npx docsify-cli serve docs",
@@ -138,5 +135,8 @@
     "history": "^4 || ^5",
     "react": "^16.8.0",
     "react-dom": "^16.8.0"
+  },
+  "engines": {
+    "node": ">=10.0"
   }
 }
