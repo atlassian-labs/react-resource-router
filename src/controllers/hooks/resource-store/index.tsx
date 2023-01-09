@@ -8,7 +8,7 @@ import {
   UseResourceHookResponse,
 } from '../../../common/types';
 import { useResourceActions, useResourceStore } from '../../resource-store';
-import { useRouterStoreStatic, RouterStore } from '../../router-store';
+import { RouterStore, useRouterStoreActions } from '../../router-store';
 import { EntireRouterState, AllRouterActions } from '../../router-store/types';
 import { createHook } from 'react-sweet-state';
 
@@ -21,7 +21,7 @@ export const useResource = <RouteResourceData extends unknown>(
   options?: UseResourceOptions
 ): UseResourceHookResponse<RouteResourceData> => {
   const [, actions] = useResourceActions();
-  const [, { getContext: getRouterContext }] = useRouterStoreStatic();
+  const [, { getContext: getRouterContext }] = useRouterStoreActions();
 
   // Dynamically generate a router subscriber based on the resource:
   // makes the component re-render only when key changes instead of

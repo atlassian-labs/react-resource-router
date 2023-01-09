@@ -4,9 +4,10 @@ import { mount } from 'enzyme';
 import { defaultRegistry } from 'react-sweet-state';
 import { act } from 'react-dom/test-utils';
 
-import { LinkProps } from '../../../../common/types';
-import { Router } from '../../../../controllers/router';
-import Link from '../../../../ui/link';
+import { LinkProps } from '../../common/types';
+import { Router } from '../../controllers/router';
+
+import Link from './index';
 
 const MockLocation = {
   pathname: 'pathname',
@@ -53,7 +54,7 @@ describe('<Link />', () => {
     basePath = ''
   ) =>
     mount(
-      // @ts-ignore
+      // @ts-expect-error
       <Router history={HistoryMock} routes={[]} basePath={basePath}>
         <Link {...props}>{children}</Link>
       </Router>
@@ -83,7 +84,7 @@ describe('<Link />', () => {
   it('should pass props to the child element', () => {
     const wrapper = mountInRouter('my link', {
       ...defaultProps,
-      // @ts-ignore
+      // @ts-expect-error
       'data-qa': '.my-test-class',
     });
     const component = wrapper.find('a');
@@ -101,7 +102,7 @@ describe('<Link />', () => {
   });
 
   it('should render as an anchor if the type prop is neither `a` nor `button`', () => {
-    // @ts-ignore
+    // @ts-expect-error
     const wrapper = mountInRouter('my link', { type: 'somethingwrong' });
     const component = wrapper.find('a');
 
@@ -308,7 +309,6 @@ describe('<Link />', () => {
     it('should add style to button when creating `button`', () => {
       const wrapper = mountInRouter('my link', {
         type: 'button',
-        // @ts-ignore
         style: { color: 'yellow' },
       });
       const component = wrapper.find('button');
@@ -318,7 +318,6 @@ describe('<Link />', () => {
     it('should add style to anchor when creating `a`', () => {
       const wrapper = mountInRouter('my link', {
         to: 'abc',
-        // @ts-ignore
         style: { color: 'yellow' },
       });
       const anchor = wrapper.find('a');

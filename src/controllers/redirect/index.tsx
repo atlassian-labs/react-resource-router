@@ -1,12 +1,19 @@
+import { createPath } from 'history';
 import React, { Component } from 'react';
 
-import { createPath } from 'history';
+import { Location, MatchParams, Query, Route } from '../../common/types';
+import { generateLocationFromPath } from '../../common/utils';
+
+import { useRouter } from '../hooks';
 
 import { RouterActionsType, RouterState } from '../router-store/types';
-import { RouterSubscriber } from '../subscribers/route';
 
-import { RedirectProps } from './types';
-import { generateLocationFromPath } from '../../common/utils';
+export type RedirectProps = {
+  to: Location | Route | string;
+  push?: boolean;
+  params?: MatchParams;
+  query?: Query;
+};
 
 type RedirectorProps = RedirectProps & {
   actions: RouterActionsType;
@@ -56,10 +63,8 @@ class Redirector extends Component<RedirectorProps> {
   }
 }
 
-export const Redirect = (props: RedirectProps) => (
-  <RouterSubscriber>
-    {({ location }, actions) => (
-      <Redirector actions={actions} location={location} {...props} />
-    )}
-  </RouterSubscriber>
-);
+export const Redirect = (props: RedirectProps) => {
+  const [{ location }, actions] = useRouter();
+
+  return <Redirector actions={actions} location={location} {...props} />;
+};

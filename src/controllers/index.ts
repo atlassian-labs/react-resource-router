@@ -1,10 +1,3 @@
-export { RouterSubscriber, ResourceSubscriber } from './subscribers';
-export { Router } from './router';
-export { MemoryRouter } from './memory-router';
-export { StaticRouter } from './static-router';
-export { RouterActions } from './router-actions';
-export { Redirect } from './redirect';
-export { withRouter } from './with-router';
 export {
   useResource,
   useRouter,
@@ -13,6 +6,15 @@ export {
   usePathParam,
   useTimeout,
 } from './hooks';
+
+export { Router } from './router';
+export { RouterActions } from './router-actions';
+export { RouterSubscriber } from './router-subscriber';
+export { MemoryRouter } from './memory-router';
+export { Redirect } from './redirect';
+export { ResourceSubscriber } from './resource-subscriber';
+export { StaticRouter } from './static-router';
+
 export {
   createResource,
   useResourceStoreContext,
@@ -23,7 +25,10 @@ export type {
   CreateResourceArgSync,
   CreateResourceArgAsync,
 } from './resource-store';
+
 export {
   RouteResourceEnabledSubscriber,
   createRouterSelector,
 } from './router-store';
+
+export { withRouter } from './with-router';

@@ -1,8 +1,7 @@
+import { mount } from 'enzyme';
 import React from 'react';
 
-import { mount } from 'enzyme';
-
-import { Router } from '../../../../controllers/router';
+import { Router } from './index';
 
 const MockLocation = {
   pathname: 'pathname',

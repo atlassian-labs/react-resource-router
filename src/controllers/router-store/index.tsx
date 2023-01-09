@@ -454,15 +454,6 @@ export const UniversalRouterContainer = createContainer<
   },
 });
 
-export const RouterSubscriber = createSubscriber<State, Actions>(RouterStore, {
-  displayName: 'BaseRouterSubscriber',
-});
-
-export const RouterActionsSubscriber = createSubscriber(RouterStore, {
-  displayName: 'RouterActionsSubscriber',
-  selector: null,
-});
-
 export const RouteResourceEnabledSubscriber = createSubscriber<
   State,
   Actions,
@@ -475,7 +466,7 @@ export const useRouterStore = createHook<EntireRouterState, AllRouterActions>(
   RouterStore
 );
 
-export const useRouterStoreStatic = createHook<
+export const useRouterStoreActions = createHook<
   EntireRouterState,
   AllRouterActions,
   void

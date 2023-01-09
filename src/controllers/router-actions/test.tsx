@@ -1,17 +1,17 @@
-import React from 'react';
-
 import { render } from 'enzyme';
 import noop from 'lodash.noop';
+import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { Router } from '../../../../controllers';
-import { RouterActions } from '../../../../controllers/router-actions';
+import { Router } from '../router';
+import { RouterActions } from './index';
 
 const MockLocation = {
   pathname: 'pathname',
   search: 'search',
   hash: 'hash',
 };
+
 const HistoryMock = {
   push: jest.fn(),
   replace: jest.fn(),
@@ -23,7 +23,7 @@ const HistoryMock = {
   _history: jest.fn(),
 };
 
-describe('Router Actions Component', () => {
+describe('<RouterActions />', () => {
   window.history.replaceState = jest.fn();
   window.history.back = jest.fn();
   window.history.forward = jest.fn();

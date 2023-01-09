@@ -2,7 +2,7 @@ import React from 'react';
 import { createHook } from 'react-sweet-state';
 import {
   useRouterStore,
-  useRouterStoreStatic,
+  useRouterStoreActions,
   RouterStore,
 } from '../../router-store';
 import {
@@ -26,7 +26,7 @@ export const useRouter = (): [RouterState, RouterActionsType] => {
  * Hook for accessing the public router store without re-rendering on route change
  */
 export const useRouterActions = (): RouterActionsType => {
-  const [, allActions] = useRouterStoreStatic();
+  const [, allActions] = useRouterStoreActions();
 
   return allActions;
 };
