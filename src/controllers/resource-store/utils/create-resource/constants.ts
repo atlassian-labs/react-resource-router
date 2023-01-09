@@ -1,0 +1,3 @@
+export const DEFAULT_CACHE_MAX_LIMIT = 100;
+export const DEFAULT_RESOURCE_BROWSER_ONLY = false;
+export const DEFAULT_RESOURCE_MAX_AGE = 0;

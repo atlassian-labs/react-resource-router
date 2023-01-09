@@ -11,7 +11,6 @@ import { routeHasChanged, routeHasResources } from '../route-checks';
 
 /**
  * Gets the requestable resources for the next location.
- *
  */
 export const getResourcesForNextLocation = (
   prevRouterStoreContext: RouterContext,

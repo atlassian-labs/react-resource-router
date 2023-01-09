@@ -6,8 +6,10 @@ import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../../../common/constants';
-import { ResourceStore } from '../../../../../controllers/resource-store';
-import { createResource } from '../../../../../controllers/resource-utils';
+import {
+  createResource,
+  ResourceStore,
+} from '../../../../../controllers/resource-store';
 import { ResourceSubscriber } from '../../../../../controllers/subscribers/resource';
 
 describe('ResourceSubscriber', () => {

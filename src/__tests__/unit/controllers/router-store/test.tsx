@@ -9,8 +9,10 @@ import { act } from 'react-dom/test-utils';
 import { DEFAULT_ACTION } from '../../../../common/constants';
 import { mockRoute } from '../../../../common/mocks';
 import { MemoryRouter } from '../../../../controllers/memory-router';
-import { getResourceStore } from '../../../../controllers/resource-store';
-import { createResource } from '../../../../controllers/resource-utils';
+import {
+  createResource,
+  getResourceStore,
+} from '../../../../controllers/resource-store';
 import {
   createRouterSelector,
   getRouterState,

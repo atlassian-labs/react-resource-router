@@ -7,8 +7,10 @@ import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../../../common/constants';
 import { useResource } from '../../../../../controllers/hooks/resource-store';
-import { ResourceStore } from '../../../../../controllers/resource-store';
-import { createResource } from '../../../../../controllers/resource-utils';
+import {
+  createResource,
+  ResourceStore,
+} from '../../../../../controllers/resource-store';
 import { getRouterState } from '../../../../../controllers/router-store';
 import { createRouterContext } from '../../../../../common/utils';
 

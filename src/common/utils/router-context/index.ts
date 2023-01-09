@@ -9,8 +9,8 @@ import {
   CreateRouterContextOptions,
   FindRouterContextOptions,
 } from '../../types';
+import { generatePath } from '../generate-path';
 import matchRoute from '../match-route';
-import generatePath from '../generate-path';
 
 export const createRouterContext = (
   route: Route,

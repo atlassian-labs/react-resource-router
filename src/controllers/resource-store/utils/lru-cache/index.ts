@@ -1,11 +1,13 @@
 import { StoreActionApi } from 'react-sweet-state';
-import { deleteResourceState } from '../manage-resource-state';
-import { State } from '../../types';
 
 import {
   RouteResource,
   RouteResourceDataForType,
 } from '../../../../common/types';
+
+import { State } from '../../types';
+
+import { deleteResourceState } from '../manage-resource-state';
 
 export const getExpiredResourceDataKeys = (
   routeResourceDataForType: RouteResourceDataForType,
