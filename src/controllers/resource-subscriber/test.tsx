@@ -1,28 +1,27 @@
-/* eslint-disable prefer-destructuring */
-import React from 'react';
-
 import { mount } from 'enzyme';
+import React from 'react';
 import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../../../common/constants';
-import {
-  createResource,
-  ResourceStore,
-} from '../../../../../controllers/resource-store';
-import { ResourceSubscriber } from '../../../../../controllers/subscribers/resource';
+import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../common/constants';
 
-describe('ResourceSubscriber', () => {
+import { createResource, ResourceStore } from '../resource-store';
+
+import { ResourceSubscriber } from './index';
+
+describe('<ResourceSubscriber />', () => {
   const type = 'type';
   const key = 'key';
   const result = 'result';
   const getDataPromise = Promise.resolve(result);
+
   const mockResource = createResource({
     type,
     getKey: () => key,
     getData: () => getDataPromise,
     maxAge: 100,
   });
+
   const mockSlice = {
     data: null,
     error: null,
@@ -31,6 +30,7 @@ describe('ResourceSubscriber', () => {
     expiresAt: 100,
     accessedAt: 0,
   };
+
   let resourceStore;
   let storeState: any;
   let actions: any;
@@ -43,6 +43,7 @@ describe('ResourceSubscriber', () => {
 
     jest.spyOn(global.Date, 'now').mockReturnValue(0);
   });
+
   afterEach(() => {
     defaultRegistry.stores.clear();
     jest.resetAllMocks();
@@ -113,6 +114,7 @@ describe('ResourceSubscriber', () => {
         }}
       </ResourceSubscriber>
     );
+
     const wrapper = mount(<Component />);
 
     expect(wrapper.find('#loading')).toHaveLength(0);

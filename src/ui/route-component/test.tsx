@@ -1,9 +1,9 @@
+import { mount } from 'enzyme';
 import React from 'react';
 
-import { mount } from 'enzyme';
+import { Router } from '../../controllers';
 
-import { Router } from '../../../../controllers/router';
-import { RouteComponent } from '../../../../ui/route-component';
+import { RouteComponent } from './index';
 
 const MockComponent = () => <div>My component</div>;
 
@@ -35,7 +35,7 @@ const routes = [
 describe('<Route />', () => {
   it('renders a the route component', () => {
     const wrapper = mount(
-      // @ts-ignore
+      // @ts-expect-error
       <Router routes={routes} history={HistoryMock}>
         <RouteComponent />
       </Router>

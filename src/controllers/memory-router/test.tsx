@@ -1,10 +1,9 @@
-import React from 'react';
-
 import { mount } from 'enzyme';
+import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { MemoryRouter } from '../../../../controllers/memory-router';
-import { getRouterState } from '../../../../controllers/router-store';
+import { getRouterState } from '../router-store';
+import { MemoryRouter } from './index';
 
 describe('<MemoryRouter />', () => {
   afterEach(() => {

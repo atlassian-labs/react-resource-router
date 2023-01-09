@@ -1,18 +1,21 @@
-import React from 'react';
-
 import { mount } from 'enzyme';
 import * as historyHelper from 'history';
-import { mockRoute } from '../../../../common/mocks';
-import { UniversalRouter as Router } from '../../../../controllers/universal-router';
-import { RouterSubscriber } from '../../../../controllers/subscribers/route';
-import { getResourceStore } from '../../../../controllers/resource-store';
-import { isServerEnvironment } from '../../../../common/utils';
+import React from 'react';
+
+import { mockRoute } from '../../common/mocks';
+import { isServerEnvironment } from '../../common/utils';
+
+import { getResourceStore } from '../resource-store';
+import { RouterSubscriber } from '../router-subscriber';
+
+import { UniversalRouter as Router } from './index';
 
 const mockLocation = {
   pathname: '/pathname',
   search: '?foo=bar',
   hash: '#hash',
 };
+
 const mockHistory = {
   push: jest.fn(),
   replace: jest.fn(),
@@ -23,17 +26,18 @@ const mockHistory = {
   createHref: jest.fn(),
   location: mockLocation,
 };
+
 const expiresAt = null;
 const accessedAt = null;
 const unlistenMock = jest.fn();
 const routes: any[] = [];
 
-jest.mock('../../../../common/utils', () => ({
-  ...jest.requireActual<any>('../../../../common/utils'),
+jest.mock('../../common/utils', () => ({
+  ...jest.requireActual<any>('../../common/utils'),
   isServerEnvironment: jest.fn(),
 }));
 
-describe('UniversalRouter', () => {
+describe('<UniversalRouter />', () => {
   describe('Browser environment', () => {
     beforeEach(() => {
       (isServerEnvironment as any).mockImplementation(() => false);

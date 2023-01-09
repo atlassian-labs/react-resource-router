@@ -1,19 +1,19 @@
-import React from 'react';
-
 import { mount } from 'enzyme';
 import * as historyHelper from 'history';
+import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { mockRoute } from '../../../../common/mocks';
-import { getResourceStore } from '../../../../controllers/resource-store';
-import { StaticRouter } from '../../../../controllers/static-router';
-import { RouterSubscriber } from '../../../../controllers/subscribers/route';
+import { mockRoute } from '../../common/mocks';
+import { getResourceStore } from '../resource-store';
+import { RouterSubscriber } from '../router-subscriber';
+import { StaticRouter } from './index';
 
 const mockLocation = {
   pathname: '/pathname',
   search: '?foo=bar',
   hash: '#hash',
 };
+
 const mockHistory = {
   push: jest.fn(),
   replace: jest.fn(),
@@ -24,6 +24,7 @@ const mockHistory = {
   createHref: jest.fn(),
   location: mockLocation,
 };
+
 const expiresAt = null;
 
 describe('<StaticRouter />', () => {

@@ -5,8 +5,8 @@ import {
   RouteResourceResponse,
   RouteResourceUpdater,
   RouterContext,
-} from '../../../common/types';
-import { useResource } from '../../hooks/resource-store';
+} from '../../common/types';
+import { useResource } from '../hooks';
 
 type Props<T> = {
   children: (

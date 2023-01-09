@@ -15,8 +15,8 @@ import {
   createRouterContext,
   generateLocationFromPath,
 } from '../../common/utils';
-import { useRouterStoreStatic } from '../../controllers/router-store';
-import { useTimeout } from '../../controllers/hooks/use-timeout';
+import { useTimeout } from '../../controllers';
+import { useRouterStoreActions } from '../../controllers/router-store';
 
 import { getValidLinkType, handleNavigation } from './utils';
 
@@ -44,7 +44,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     },
     ref
   ) => {
-    const routerActions = useRouterStoreStatic()[1];
+    const [, routerActions] = useRouterStoreActions();
     const { schedule, cancel } = useTimeout(PREFETCH_DELAY);
 
     const validLinkType = getValidLinkType(linkType);

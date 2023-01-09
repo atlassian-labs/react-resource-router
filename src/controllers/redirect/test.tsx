@@ -1,12 +1,11 @@
-import React from 'react';
-
 import { mount } from 'enzyme';
+import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { Redirect } from '../../../../controllers/redirect';
-import { RedirectProps } from '../../../../controllers/redirect/types';
-import { Router } from '../../../../controllers/router';
-import type { Route } from '../../../../common/types';
+import type { Route } from '../../common/types';
+import { Router } from '../router';
+
+import { Redirect, RedirectProps } from './index';
 
 const MockLocation = {
   pathname: 'pathname',
@@ -40,10 +39,10 @@ const mockRoute: Route = {
   query: ['foo'],
 };
 
-describe('Redirect', () => {
+describe('<Redirect />', () => {
   const mountInRouter = (args: Partial<RedirectProps>) =>
     mount(
-      // @ts-ignore
+      // @ts-expect-error
       <Router history={MockHistory} routes={[]}>
         <Redirect {...defaultArgs} {...args} />
       </Router>
@@ -54,9 +53,9 @@ describe('Redirect', () => {
   const { location } = window;
 
   beforeAll(() => {
-    // @ts-ignore
+    // @ts-expect-error
     delete window.location;
-    // @ts-ignore
+    // @ts-expect-error
     window.location = {};
     Object.defineProperties(window.location, {
       assign: { value: jest.fn() },
