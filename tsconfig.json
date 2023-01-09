@@ -1,22 +1,21 @@
 {
   "compilerOptions": {
-    "target": "esnext",
-    "module": "esnext",
+    "baseUrl": ".",
     "declaration": true,
-    "outDir": "lib",
     "esModuleInterop": true,
-    "moduleResolution": "node",
-    "strict": true,
-    "skipLibCheck": true,
-    "preserveConstEnums": true,
     "isolatedModules": true,
     "jsx": "preserve",
-    "typeRoots": ["./node_modules/@types", "types"],
-    "baseUrl": ".",
+    "module": "esnext",
+    "moduleResolution": "node",
     "paths": {
       "react-resource-router": ["src"]
-    }
+    },
+    "preserveConstEnums": true,
+    "skipLibCheck": true,
+    "strict": true,
+    "target": "esnext",
+    "typeRoots": ["./node_modules/@types", "types"],
   },
-  "include": ["src/**/*", "examples/**/*"],
+  "include": ["examples/**/*", "src/**/*"],
   "exclude": ["**/*.js.flow"]
 }
