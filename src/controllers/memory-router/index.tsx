@@ -1,57 +1,73 @@
-import React from 'react';
+import React, { useRef } from 'react';
 
-import { createMemoryHistory, MemoryHistoryBuildOptions } from 'history';
+import { createMemoryHistory } from 'history';
 
 import { Router } from '../router';
-import { RouterProps } from '../router/types';
 
 import { MemoryRouterProps } from '../../common/types';
 
-const getRouterProps = (memoryRouterProps: MemoryRouterProps) => {
-  const {
-    isStatic = false,
-    isGlobal = true,
-    basePath,
-    routes,
-    resourceData,
-    resourceContext,
-  } = memoryRouterProps;
-  let routerProps: Partial<RouterProps> = {
-    basePath,
-    routes,
-    isStatic,
-    isGlobal,
+const lazy = <T extends any>(callback: () => T) => {
+  let firstCall = true;
+  let current: T | undefined = undefined;
+
+  return () => {
+    if (firstCall) {
+      current = callback();
+      firstCall = false;
+    }
+
+    return current;
+  };
+};
+
+const useMemoryHistory = (location: string | undefined) => {
+  const newGetHistory = lazy(() =>
+    createMemoryHistory({
+      initialEntries: location !== undefined ? [location] : undefined,
+    })
+  );
+
+  const historyStateCandidate = {
+    getHistory: newGetHistory,
+    location,
   };
 
-  if (resourceData) {
-    routerProps = { ...routerProps, resourceData };
+  const historyState = useRef(historyStateCandidate);
+
+  if (historyState.current.location !== historyStateCandidate.location) {
+    historyState.current = historyStateCandidate;
   }
 
-  if (resourceContext) {
-    routerProps = { ...routerProps, resourceContext };
-  }
-
-  return routerProps;
+  return historyState.current.getHistory();
 };
 
 /**
  * Ensures the router store uses memory history.
  *
  */
-export const MemoryRouter = (props: MemoryRouterProps) => {
-  const { location, children } = props;
-  const config: MemoryHistoryBuildOptions = {};
-
-  if (location) {
-    config.initialEntries = [location];
-  }
-
-  const history = createMemoryHistory(config);
-  const routerProps = getRouterProps(props);
+export const MemoryRouter = ({
+  isStatic = false,
+  isGlobal = true,
+  location,
+  children,
+  basePath,
+  routes,
+  resourceData,
+  resourceContext,
+}: MemoryRouterProps) => {
+  const history = useMemoryHistory(location);
 
   return (
     // @ts-ignore suppress history will be overwritten warning
-    <Router history={history} {...(routerProps as RouterProps)}>
+    <Router
+      isStatic={isStatic}
+      isGlobal={isGlobal}
+      history={history}
+      basePath={basePath}
+      routes={routes}
+      resourceData={resourceData}
+      resourceContext={resourceContext}
+    >
       {children}
     </Router>
   );
