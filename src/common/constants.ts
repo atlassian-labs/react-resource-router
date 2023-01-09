@@ -1,8 +1,9 @@
 import noop from 'lodash.noop';
 
-import { createLegacyHistory } from './utils/history';
+import { createLegacyHistory } from './utils/create-legacy-history';
 
 export const DEFAULT_LOCATION = { pathname: '', search: '', hash: '' };
+
 export const DEFAULT_MATCH = {
   params: {},
   isExact: false,
@@ -10,12 +11,15 @@ export const DEFAULT_MATCH = {
   url: '',
   query: {},
 };
+
 export const DEFAULT_ROUTE = {
   path: '',
   component: () => null,
   name: '',
 };
+
 export const DEFAULT_HISTORY = createLegacyHistory();
+
 export const NOOP_HISTORY = {
   location: DEFAULT_LOCATION,
   push: noop,

@@ -14,15 +14,15 @@ export {
   useTimeout,
 } from './hooks';
 export {
+  createResource,
   useResourceStoreContext,
   ResourceDependencyError,
 } from './resource-store';
-export { createResource } from './resource-utils';
 export type {
   CreateResourceArgBase,
   CreateResourceArgSync,
   CreateResourceArgAsync,
-} from './resource-utils';
+} from './resource-store';
 export {
   RouteResourceEnabledSubscriber,
   createRouterSelector,

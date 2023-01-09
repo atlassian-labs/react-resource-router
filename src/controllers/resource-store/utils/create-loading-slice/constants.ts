@@ -1,0 +1,1 @@
+export const DEFAULT_PREFETCH_MAX_AGE = 10 * 1000;

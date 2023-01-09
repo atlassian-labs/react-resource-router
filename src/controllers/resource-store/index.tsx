@@ -42,7 +42,6 @@ import {
   setResourceState,
   deleteResourceState,
   validateLRUCache,
-  ResourceDependencyError,
   actionWithDependencies,
   mapActionWithDependencies,
   executeForDependents,
@@ -53,7 +52,12 @@ import {
   createLoadingSlice,
 } from './utils';
 
-export { ResourceDependencyError };
+export { createResource, ResourceDependencyError } from './utils';
+export type {
+  CreateResourceArgAsync,
+  CreateResourceArgBase,
+  CreateResourceArgSync,
+} from './utils';
 
 export const privateActions = {
   /**
@@ -553,13 +557,6 @@ export const ResourceContainer = createContainer<
   displayName: 'ResourceContainer',
 });
 
-export const ResourceActions = createSubscriber<State, Actions, void>(
-  ResourceStore,
-  {
-    selector: null,
-  }
-);
-
 export const ResourceSubscriber = createSubscriber<
   State,
   Actions,
@@ -587,6 +584,13 @@ export const useResourceStore = createHook<
   selector: getSliceForResource,
 });
 
+export const useResourceActions = createHook<State, Actions, void>(
+  ResourceStore,
+  {
+    selector: null,
+  }
+);
+
 export const useResourceStoreContext = createHook<
   State,
   Actions,
@@ -594,10 +598,3 @@ export const useResourceStoreContext = createHook<
 >(ResourceStore, {
   selector: getResourceStoreContext,
 });
-
-export const useResourceActions = createHook<State, Actions, void>(
-  ResourceStore,
-  {
-    selector: null,
-  }
-);
