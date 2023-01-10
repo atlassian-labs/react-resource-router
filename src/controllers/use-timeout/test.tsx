@@ -1,6 +1,7 @@
 import React from 'react';
 import { shallow } from 'enzyme';
-import { useTimeout } from '../../../../../controllers/hooks';
+
+import { useTimeout } from './index';
 
 const DEFAULT_DELAY = 1000;
 
@@ -21,7 +22,7 @@ const TestComponent = ({
   );
 };
 
-describe('useTimeout', () => {
+describe('useTimeout()', () => {
   beforeEach(() => {
     jest.useFakeTimers();
   });

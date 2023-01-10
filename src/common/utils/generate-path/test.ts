@@ -4,7 +4,7 @@
 
 import { generatePath } from './index';
 
-describe('generatePath', () => {
+describe('generatePath()', () => {
   describe('tests covering cases for PROJECT_SETTINGS_ISSUE_TYPES_ROUTE', () => {
     const PROJECT_SETTINGS_ISSUE_TYPES_ROUTE =
       '/projects/:projectKey/settings/issuetypes/:issueTypeId?';

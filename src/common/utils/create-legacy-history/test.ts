@@ -2,7 +2,7 @@ import { createLegacyHistory } from './index';
 
 type NodeChangeCallback = () => void;
 
-describe('createLegacyHistory', () => {
+describe('createLegacyHistory()', () => {
   let onNodeChanges: NodeChangeCallback = () => {};
 
   const triggerLocationChange = async (location: string, push = true) => {

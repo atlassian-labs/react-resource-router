@@ -7,7 +7,7 @@ const Noop = () => null;
 const DEFAULT_QUERY_PARAMS = {};
 const { parse } = qs;
 
-describe('matchRoute', () => {
+describe('matchRoute()', () => {
   beforeEach(() => {
     matchRouteCache.cache.clear();
   });

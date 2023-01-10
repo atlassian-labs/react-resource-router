@@ -1,7 +1,7 @@
 import React, { ReactNode } from 'react';
 
-import { useRouterActions } from '../hooks';
 import { RouterActionsType } from '../router-store/types';
+import { useRouterActions } from '../use-router-actions';
 
 type RouterActionsProps = {
   children: (actions: RouterActionsType) => ReactNode;

@@ -1,4 +1,5 @@
 import { useCallback, useMemo } from 'react';
+import { createHook } from 'react-sweet-state';
 
 import {
   RouteResource,
@@ -6,11 +7,10 @@ import {
   RouteResourceUpdater,
   RouterContext,
   UseResourceHookResponse,
-} from '../../../common/types';
-import { useResourceActions, useResourceStore } from '../../resource-store';
-import { RouterStore, useRouterStoreActions } from '../../router-store';
-import { EntireRouterState, AllRouterActions } from '../../router-store/types';
-import { createHook } from 'react-sweet-state';
+} from '../../common/types';
+import { useResourceActions, useResourceStore } from '../resource-store';
+import { RouterStore, useRouterStoreActions } from '../router-store';
+import { EntireRouterState, AllRouterActions } from '../router-store/types';
 
 type UseResourceOptions = {
   routerContext?: RouterContext;

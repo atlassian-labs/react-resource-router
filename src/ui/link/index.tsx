@@ -15,8 +15,8 @@ import {
   createRouterContext,
   generateLocationFromPath,
 } from '../../common/utils';
-import { useTimeout } from '../../controllers';
 import { useRouterStoreActions } from '../../controllers/router-store';
+import { useTimeout } from '../../controllers/use-timeout';
 
 import { getValidLinkType, handleNavigation } from './utils';
 

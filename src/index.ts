@@ -1,24 +1,24 @@
 export { createBrowserHistory, createMemoryHistory } from 'history';
 
 export {
-  Router,
-  MemoryRouter,
-  StaticRouter,
-  RouterSubscriber,
-  RouteResourceEnabledSubscriber,
-  Redirect,
-  RouterActions,
-  withRouter,
-  ResourceSubscriber,
-  useResource,
-  useRouter,
-  useQueryParam,
-  usePathParam,
-  useResourceStoreContext,
-  ResourceDependencyError,
   createResource,
-  useRouterActions,
   createRouterSelector,
+  MemoryRouter,
+  Redirect,
+  ResourceDependencyError,
+  ResourceSubscriber,
+  RouteResourceEnabledSubscriber,
+  Router,
+  RouterActions,
+  RouterSubscriber,
+  StaticRouter,
+  usePathParam,
+  useQueryParam,
+  useResource,
+  useResourceStoreContext,
+  useRouter,
+  useRouterActions,
+  withRouter,
 } from './controllers';
 
 export type {
@@ -30,11 +30,11 @@ export type {
 export { RouteComponent, Link } from './ui';
 
 export {
-  matchRoute,
-  generatePath,
   createLegacyHistory,
   createRouterContext,
   findRouterContext,
+  generatePath,
+  matchRoute,
 } from './common/utils';
 
 export type {

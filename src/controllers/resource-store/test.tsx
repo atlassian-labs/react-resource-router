@@ -1,13 +1,11 @@
-/* eslint-disable prefer-destructuring */
-/* eslint-disable prefer-promise-reject-errors */
 import { mount } from 'enzyme';
 import React from 'react';
 import { BoundActions, defaultRegistry } from 'react-sweet-state';
 
 import { ResourceType, RouteResourceResponse } from '../../common/types';
 
-import { useResource } from '../hooks';
 import * as routerStoreModule from '../router-store';
+import { useResource } from '../use-resource';
 
 import { getResourceStore, ResourceDependencyError } from './index';
 import { getSliceForResource } from './selectors';
