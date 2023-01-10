@@ -3,9 +3,7 @@ import { RouterActionsType, RouterState } from '../router-store/types';
 
 /**
  * Utility hook for accessing the public router store
+ *
+ * Note that this should eventually filter out private state / actions
  */
-export const useRouter = (): [RouterState, RouterActionsType] => {
-  const [state, actions] = useRouterStore();
-
-  return [state, actions];
-};
+export const useRouter: () => [RouterState, RouterActionsType] = useRouterStore;
