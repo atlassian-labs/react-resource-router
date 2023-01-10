@@ -1,4 +1,3 @@
-/* eslint-disable no-undef */
 // @flow
 
 import type { Node } from 'react';
