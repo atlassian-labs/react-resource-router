@@ -1,5 +1,3 @@
-/* eslint-disable no-use-before-define */
-
 import { Action, StoreActionApi } from 'react-sweet-state';
 
 import {

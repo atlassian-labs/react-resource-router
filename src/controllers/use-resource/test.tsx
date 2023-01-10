@@ -5,7 +5,6 @@ import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../common/constants';
 import { createRouterContext } from '../../common/utils';
-
 import { createResource, ResourceStore } from '../resource-store';
 import { getRouterState } from '../router-store';
 

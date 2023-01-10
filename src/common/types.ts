@@ -1,5 +1,5 @@
-/* eslint-disable no-use-before-define */
-
+import { History, Location as HistoryLocationShape } from 'history';
+import { History as History5 } from 'history-5';
 import {
   ComponentType,
   ReactNode,
@@ -7,9 +7,6 @@ import {
   KeyboardEvent,
   AnchorHTMLAttributes,
 } from 'react';
-
-import { History, Location as HistoryLocationShape } from 'history';
-import { History as History5 } from 'history-5';
 
 export type LocationShape = HistoryLocationShape;
 

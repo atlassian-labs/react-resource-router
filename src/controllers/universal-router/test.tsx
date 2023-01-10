@@ -4,7 +4,6 @@ import React from 'react';
 
 import { mockRoute } from '../../common/mocks';
 import { isServerEnvironment } from '../../common/utils';
-
 import { getResourceStore } from '../resource-store';
 import { RouterSubscriber } from '../router-subscriber';
 

@@ -1,8 +1,7 @@
-import React from 'react';
-
 import { mount } from 'enzyme';
-import { defaultRegistry } from 'react-sweet-state';
+import React from 'react';
 import { act } from 'react-dom/test-utils';
+import { defaultRegistry } from 'react-sweet-state';
 
 import { LinkProps } from '../../common/types';
 import { Router } from '../../controllers/router';

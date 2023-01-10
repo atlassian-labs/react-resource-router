@@ -1,6 +1,6 @@
 import { KeyboardEvent, MouseEvent } from 'react';
-import { Route } from '../../../common/types';
 
+import { Route } from '../../../common/types';
 import { isKeyboardEvent, isModifiedEvent } from '../../../common/utils/event';
 
 type LinkNavigationEvent = MouseEvent | KeyboardEvent;

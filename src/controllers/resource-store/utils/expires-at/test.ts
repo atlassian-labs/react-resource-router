@@ -1,4 +1,5 @@
 import { mockRouteResourceResponse } from '../../../../common/mocks';
+
 import { getExpiresAt, setExpiresAt } from './index';
 
 describe('getExpiresAt()', () => {

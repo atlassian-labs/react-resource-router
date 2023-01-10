@@ -3,6 +3,7 @@ import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { getRouterState } from '../router-store';
+
 import { MemoryRouter } from './index';
 
 describe('<MemoryRouter />', () => {

@@ -7,10 +7,11 @@ import { createSubscriber, defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_ACTION } from '../../common/constants';
 import { mockRoute } from '../../common/mocks';
-
 import { MemoryRouter } from '../memory-router';
 import { createResource, getResourceStore } from '../resource-store';
 import { ResourceSubscriber } from '../resource-subscriber';
+
+import { AllRouterActions, EntireRouterState } from './types';
 
 import {
   createRouterSelector,
@@ -19,7 +20,6 @@ import {
   INITIAL_STATE,
   RouterStore,
 } from './index';
-import { AllRouterActions, EntireRouterState } from './types';
 
 const mockLocation = {
   pathname: '/pathname',

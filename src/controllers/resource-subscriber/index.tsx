@@ -6,7 +6,6 @@ import {
   RouteResourceUpdater,
   RouterContext,
 } from '../../common/types';
-
 import { useResource } from '../use-resource';
 
 type Props<T> = {

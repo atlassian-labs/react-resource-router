@@ -1,4 +1,5 @@
 import { createResource } from '../create-resource';
+
 import { getResourcesForNextLocation } from './index';
 
 const type = 'mockResourceType';

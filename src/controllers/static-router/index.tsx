@@ -1,13 +1,12 @@
+import { createMemoryHistory } from 'history';
 import React from 'react';
 
-import { createMemoryHistory } from 'history';
-
-import { createLocation } from '../../common/utils/create-location';
 import { MemoryRouterProps } from '../../common/types';
+import { createLocation } from '../../common/utils/create-location';
 import { MemoryRouter } from '../memory-router';
 import { getResourceStore } from '../resource-store';
-import { getRouterStore } from '../router-store';
 import type { State } from '../resource-store/types';
+import { getRouterStore } from '../router-store';
 
 import { RequestResourcesParams } from './types';
 

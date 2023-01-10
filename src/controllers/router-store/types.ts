@@ -1,5 +1,5 @@
+import { MemoryHistory, UnregisterCallback } from 'history';
 import { ReactNode } from 'react';
-
 import { Action, BoundActions } from 'react-sweet-state';
 
 import {
@@ -17,7 +17,6 @@ import {
   RouterContext,
   Routes,
 } from '../../common/types';
-import { MemoryHistory, UnregisterCallback } from 'history';
 
 type PublicStateProperties = {
   basePath: string;

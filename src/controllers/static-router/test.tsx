@@ -6,6 +6,7 @@ import { defaultRegistry } from 'react-sweet-state';
 import { mockRoute } from '../../common/mocks';
 import { getResourceStore } from '../resource-store';
 import { RouterSubscriber } from '../router-subscriber';
+
 import { StaticRouter } from './index';
 
 const mockLocation = {

@@ -1,7 +1,8 @@
 import { qs } from 'url-parse';
 
-import matchRoute from './index';
 import { matchRouteCache } from './utils';
+
+import matchRoute from './index';
 
 const Noop = () => null;
 const DEFAULT_QUERY_PARAMS = {};

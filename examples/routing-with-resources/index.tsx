@@ -1,13 +1,13 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
+
+import { homeRoute, aboutRoute } from './routes';
 
 import {
   Router,
   RouteComponent,
   createBrowserHistory,
 } from 'react-resource-router';
-
-import { homeRoute, aboutRoute } from './routes';
 
 const myHistory = createBrowserHistory();
 
@@ -26,4 +26,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById('root'));

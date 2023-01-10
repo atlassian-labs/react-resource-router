@@ -1,3 +1,4 @@
+import { Action, parsePath, Location } from 'history';
 import {
   createContainer,
   createHook,
@@ -6,7 +7,6 @@ import {
   defaultRegistry,
   batch,
 } from 'react-sweet-state';
-import { Action, parsePath, Location } from 'history';
 
 import {
   DEFAULT_ACTION,
@@ -14,6 +14,7 @@ import {
   DEFAULT_MATCH,
   DEFAULT_ROUTE,
 } from '../../common/constants';
+import { Query } from '../../common/types';
 import {
   findRouterContext,
   isServerEnvironment,
@@ -31,9 +32,6 @@ import {
   EntireRouterState,
   RouterState,
 } from './types';
-
-import { Query } from '../../common/types';
-
 import {
   getRelativePath,
   isExternalAbsolutePath,
