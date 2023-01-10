@@ -1,4 +1,5 @@
 import { DEFAULT_CACHE_MAX_LIMIT } from './constants';
+
 import { createResource } from './index';
 
 describe('resource utils', () => {

@@ -6,6 +6,7 @@ module.exports = {
   },
   extends: [
     'eslint:recommended',
+    'plugin:import/recommended',
     'plugin:react/recommended',
     'plugin:prettier/recommended',
   ],
@@ -25,6 +26,15 @@ module.exports = {
   },
   plugins: ['react', 'react-hooks', 'import'],
   rules: {
+    'import/order': [
+      'error',
+      {
+        alphabetize: {
+          order: 'asc',
+        },
+        'newlines-between': 'always',
+      },
+    ],
     indent: 'off',
     'linebreak-style': 'off',
     'newline-before-return': 'error',
@@ -51,7 +61,10 @@ module.exports = {
     {
       // TypeScript specific rules
       files: ['*.{ts,tsx}'],
-      extends: ['plugin:@typescript-eslint/recommended'],
+      extends: [
+        'plugin:@typescript-eslint/recommended',
+        'plugin:import/typescript',
+      ],
       rules: {
         '@typescript-eslint/ban-ts-comment': 'off',
         '@typescript-eslint/no-empty-function': 'off',
@@ -63,6 +76,11 @@ module.exports = {
           { vars: 'all', args: 'after-used', ignoreRestSiblings: true },
         ],
         '@typescript-eslint/no-unnecessary-type-constraint': 'off',
+      },
+      settings: {
+        'import/resolver': {
+          typescript: true,
+        },
       },
     },
     {

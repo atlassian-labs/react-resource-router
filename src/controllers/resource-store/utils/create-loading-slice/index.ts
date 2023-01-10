@@ -4,9 +4,7 @@ import {
   RouterContext,
   RouteResource,
 } from '../../../../common/types';
-
 import { GetResourceOptions, PrefetchSlice } from '../../types';
-
 import { DEFAULT_RESOURCE_MAX_AGE } from '../create-resource/constants';
 import { getExpiresAt } from '../expires-at';
 import { generateTimeGuard } from '../generate-time-guard';

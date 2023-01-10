@@ -1,6 +1,7 @@
 import React from 'react';
 
 import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../common/constants';
+
 import { createRouterContext, findRouterContext } from './index';
 
 const mockComponent = () => <div>I am a route</div>;

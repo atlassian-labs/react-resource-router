@@ -1,5 +1,9 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
+
+import Home from './home';
+import PathParamExample from './use-path-param';
+import QueryParamExample from './use-query-param';
 
 import {
   Router,
@@ -7,10 +11,6 @@ import {
   createBrowserHistory,
   createRouterSelector,
 } from 'react-resource-router';
-
-import Home from './home';
-import QueryParamExample from './use-query-param';
-import PathParamExample from './use-path-param';
 
 const myHistory = createBrowserHistory();
 const useRouteName = createRouterSelector(s => s.route.name);
@@ -54,4 +54,4 @@ const App = () => {
   );
 };
 
-ReactDOM.render(<App />, document.getElementById('root'));
+render(<App />, document.getElementById('root'));

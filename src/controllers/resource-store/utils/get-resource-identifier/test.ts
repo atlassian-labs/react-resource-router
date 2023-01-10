@@ -1,4 +1,5 @@
 import { createResource } from '../../../index';
+
 import { getResourceIdentifier, getResourceIdentifiers } from './index';
 
 const getDataPromise = Promise.resolve();

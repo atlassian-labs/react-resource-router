@@ -4,7 +4,6 @@ import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../common/constants';
-
 import { createResource, ResourceStore } from '../resource-store';
 
 import { ResourceSubscriber } from './index';

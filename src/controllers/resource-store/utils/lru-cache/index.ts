@@ -4,9 +4,7 @@ import {
   RouteResource,
   RouteResourceDataForType,
 } from '../../../../common/types';
-
 import { State } from '../../types';
-
 import { deleteResourceState } from '../manage-resource-state';
 
 export const getExpiredResourceDataKeys = (

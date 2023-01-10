@@ -3,11 +3,9 @@ import React from 'react';
 import { BoundActions, defaultRegistry } from 'react-sweet-state';
 
 import { ResourceType, RouteResourceResponse } from '../../common/types';
-
 import * as routerStoreModule from '../router-store';
 import { useResource } from '../use-resource';
 
-import { getResourceStore, ResourceDependencyError } from './index';
 import { getSliceForResource } from './selectors';
 import {
   Actions as ResourceStoreActions,
@@ -23,6 +21,8 @@ import {
   TimeoutError,
 } from './utils';
 import { BASE_DEFAULT_STATE_SLICE } from './utils/get-default-state-slice/constants';
+
+import { getResourceStore, ResourceDependencyError } from './index';
 
 jest.mock('./utils', () => ({
   ...jest.requireActual('./utils'),

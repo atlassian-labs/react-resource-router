@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 
 import { Location, MatchParams, Query, Route } from '../../common/types';
 import { generateLocationFromPath } from '../../common/utils';
-
 import { RouterActionsType, RouterState } from '../router-store/types';
 import { useRouter } from '../use-router';
 

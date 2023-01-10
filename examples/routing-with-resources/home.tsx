@@ -1,6 +1,8 @@
 import React from 'react';
-import { Link, createResource, useResource } from 'react-resource-router';
+
 import { aboutRoute } from './routes';
+
+import { Link, createResource, useResource } from 'react-resource-router';
 
 export const homeResource = createResource({
   type: 'home',

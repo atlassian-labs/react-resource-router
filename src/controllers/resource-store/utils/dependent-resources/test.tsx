@@ -7,7 +7,6 @@ import {
   RouteResource,
   RouteResourceResponse,
 } from '../../../../index';
-
 import { State } from '../../types';
 
 import {

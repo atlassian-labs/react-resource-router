@@ -5,6 +5,7 @@ import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_ACTION, DEFAULT_ROUTE } from '../../common/constants';
 import { Router } from '../router';
+
 import { withRouter } from './index';
 
 const waitALilBit = () => new Promise(resolve => setTimeout(resolve));

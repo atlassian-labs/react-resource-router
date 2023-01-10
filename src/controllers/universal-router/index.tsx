@@ -1,13 +1,17 @@
+import { createMemoryHistory } from 'history';
 import React, { Component } from 'react';
 
 import { BrowserHistory } from '../../common/types';
 import { createLocation } from '../../common/utils/create-location';
-import { getRouterState, UniversalRouterContainer } from '../router-store';
-import { UnlistenHistory } from '../router-store/types';
-import { UniversalRouterProps, RequestResourcesParams } from './types';
-import { createMemoryHistory } from 'history';
 import { getResourceStore, ResourceContainer } from '../resource-store';
-import { getRouterStore } from '../router-store';
+import {
+  getRouterState,
+  getRouterStore,
+  UniversalRouterContainer,
+} from '../router-store';
+import { UnlistenHistory } from '../router-store/types';
+
+import { UniversalRouterProps, RequestResourcesParams } from './types';
 
 /**
  * Default prop provider for the RouterContainer.

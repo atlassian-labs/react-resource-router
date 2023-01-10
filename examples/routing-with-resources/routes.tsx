@@ -1,5 +1,5 @@
-import { Home, homeResource } from './home';
 import { About, aboutResource } from './about';
+import { Home, homeResource } from './home';
 
 export const homeRoute = {
   name: 'home',

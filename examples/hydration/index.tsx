@@ -1,6 +1,8 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { render } from 'react-dom';
 import { defaultRegistry } from 'react-sweet-state';
+
+import { homeRoute } from './routes';
 
 import {
   Router,
@@ -8,8 +10,6 @@ import {
   createBrowserHistory,
   StaticRouter,
 } from 'react-resource-router';
-
-import { homeRoute } from './routes';
 
 const myHistory = createBrowserHistory();
 
@@ -45,7 +45,7 @@ const main = async () => {
     );
   };
 
-  ReactDOM.render(<App />, document.getElementById('root'));
+  render(<App />, document.getElementById('root'));
 };
 
 main();
