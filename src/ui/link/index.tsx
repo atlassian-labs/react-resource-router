@@ -44,7 +44,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     },
     ref
   ) => {
-    const [, routerActions] = useRouterStoreActions();
+    const routerActions = useRouterStoreActions();
     const { schedule, cancel } = useTimeout(PREFETCH_DELAY);
 
     const validLinkType = getValidLinkType(linkType);
