@@ -7,7 +7,7 @@ import { createSubscriber, defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_ACTION } from '../../common/constants';
 import { mockRoute } from '../../common/mocks';
-import { MemoryRouter } from '../memory-router';
+import { MemoryRouter as Router } from '../memory-router';
 import { createResource, getResourceStore } from '../resource-store';
 import { ResourceSubscriber } from '../resource-subscriber';
 
@@ -95,20 +95,14 @@ describe('SPA Router store', () => {
     });
 
     it('should call the history listener when initialised', () => {
-      mount(
-        <MemoryRouter routes={[]}>
-          <RouterStoreSubscriber>
-            {() => <div>I am a subscriber</div>}
-          </RouterStoreSubscriber>
-        </MemoryRouter>
-      );
+      mount(<Router routes={[]} />);
 
       expect(mockHistory.listen).toBeCalled();
     });
 
     it('should send right props after render with routes', () => {
       mount(
-        <MemoryRouter routes={[mockRoutes[0]]}>
+        <Router routes={[mockRoutes[0]]}>
           <RouterStoreSubscriber>
             {({
               history,
@@ -134,7 +128,7 @@ describe('SPA Router store', () => {
               return <div>I am a subscriber</div>;
             }}
           </RouterStoreSubscriber>
-        </MemoryRouter>
+        </Router>
       );
     });
 
@@ -175,9 +169,9 @@ describe('SPA Router store', () => {
 
     it('should send location with route change', async () => {
       mount(
-        <MemoryRouter routes={mockRoutes} location={mockRoutes[0].path}>
+        <Router routes={mockRoutes} location={mockRoutes[0].path}>
           <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-        </MemoryRouter>
+        </Router>
       );
       const { history } = children.mock.calls[0][0];
 
@@ -216,9 +210,9 @@ describe('SPA Router store', () => {
 
     it('should send correct action key for route changes', async () => {
       mount(
-        <MemoryRouter routes={mockRoutes}>
+        <Router routes={mockRoutes}>
           <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-        </MemoryRouter>
+        </Router>
       );
       const { history } = children.mock.calls[0][0];
 
@@ -267,9 +261,9 @@ describe('SPA Router store', () => {
 
     it('should send location with route change', async () => {
       mount(
-        <MemoryRouter routes={mockRoutes} location={mockRoutes[0].path}>
+        <Router routes={mockRoutes} location={mockRoutes[0].path}>
           <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-        </MemoryRouter>
+        </Router>
       );
       const { history } = children.mock.calls[0][0];
 
@@ -308,9 +302,9 @@ describe('SPA Router store', () => {
 
     it('should send correct action key for route changes', async () => {
       mount(
-        <MemoryRouter routes={mockRoutes}>
+        <Router routes={mockRoutes}>
           <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-        </MemoryRouter>
+        </Router>
       );
       const { history } = children.mock.calls[0][0];
 
@@ -355,21 +349,12 @@ describe('SPA Router store', () => {
         .mockImplementation(() => mockHistory);
     });
 
-    describe('push', () => {
-      let children: any;
-
-      beforeEach(() => {
-        children = jest.fn().mockReturnValue(null);
-      });
-
+    describe('push()', () => {
       it('should push a relative path if the URL is absolute but on the same domain', () => {
-        mount(
-          <MemoryRouter routes={[]}>
-            <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-          </MemoryRouter>
-        );
         const path = 'http://localhost:3000/board/123';
         const { actions } = getRouterStore();
+
+        mount(<Router routes={[]} />);
 
         actions.push(path);
 
@@ -378,12 +363,9 @@ describe('SPA Router store', () => {
       });
 
       it('should push a relative path a Location object is pushed', () => {
-        mount(
-          <MemoryRouter routes={[]}>
-            <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-          </MemoryRouter>
-        );
         const { actions } = getRouterStore();
+
+        mount(<Router routes={[]} />);
 
         actions.push({ pathname: '/board/123', search: '', hash: '' });
 
@@ -395,18 +377,14 @@ describe('SPA Router store', () => {
       });
 
       it('should call window.location.assign with the absolute URL if it is on a different domain', () => {
+        const path = 'http://example.com';
+        const { actions } = getRouterStore();
+
         jest
           .spyOn(window.location, 'assign')
           .mockImplementation(() => jest.fn());
 
-        mount(
-          <MemoryRouter routes={[]}>
-            <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-          </MemoryRouter>
-        );
-
-        const path = 'http://example.com';
-        const { actions } = getRouterStore();
+        mount(<Router routes={[]} />);
 
         actions.push(path);
 
@@ -415,21 +393,12 @@ describe('SPA Router store', () => {
       });
     });
 
-    describe('pushTo', () => {
-      let children: any;
-
-      beforeEach(() => {
-        children = jest.fn().mockReturnValue(null);
-      });
-
+    describe('pushTo()', () => {
       it('should push a relative path generated from route and parameters', () => {
-        mount(
-          <MemoryRouter routes={[]}>
-            <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-          </MemoryRouter>
-        );
         const route = { name: '', path: '/page/:id', component: () => null };
         const { actions } = getRouterStore();
+
+        mount(<Router routes={[]} />);
 
         actions.pushTo(route, { params: { id: '1' }, query: { uid: '1' } });
 
@@ -441,21 +410,12 @@ describe('SPA Router store', () => {
       });
     });
 
-    describe('replace', () => {
-      let children: any;
-
-      beforeEach(() => {
-        children = jest.fn().mockReturnValue(null);
-      });
-
+    describe('replace()', () => {
       it('should replace a relative path if the URL is absolute but on the same domain', () => {
-        mount(
-          <MemoryRouter routes={[]}>
-            <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-          </MemoryRouter>
-        );
         const path = 'http://localhost:3000/board/123';
         const { actions } = getRouterStore();
+
+        mount(<Router routes={[]} />);
 
         actions.replace(path);
 
@@ -464,18 +424,14 @@ describe('SPA Router store', () => {
       });
 
       it('should call window.location.replace with the absolute URL if it is on a different domain', () => {
+        const path = 'http://example.com';
+        const { actions } = getRouterStore();
+
         jest
           .spyOn(window.location, 'replace')
           .mockImplementation(() => jest.fn());
 
-        mount(
-          <MemoryRouter routes={[]}>
-            <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-          </MemoryRouter>
-        );
-
-        const path = 'http://example.com';
-        const { actions } = getRouterStore();
+        mount(<Router routes={[]} />);
 
         actions.replace(path);
 
@@ -484,21 +440,12 @@ describe('SPA Router store', () => {
       });
     });
 
-    describe('replaceTo', () => {
-      let children: any;
-
-      beforeEach(() => {
-        children = jest.fn().mockReturnValue(null);
-      });
-
+    describe('replaceTo()', () => {
       it('should replace a relative path generated from route and parameters', () => {
-        mount(
-          <MemoryRouter routes={[]}>
-            <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-          </MemoryRouter>
-        );
         const route = { name: '', path: '/page/:id', component: () => null };
         const { actions } = getRouterStore();
+
+        mount(<Router routes={[]} />);
 
         actions.replaceTo(route, { params: { id: '1' }, query: { uid: '1' } });
 
@@ -520,11 +467,8 @@ describe('SPA Router store', () => {
       resourceData: {},
     };
 
-    let children: any;
-
     beforeEach(() => {
       jest.clearAllMocks();
-      children = jest.fn().mockReturnValue(null);
     });
 
     it('should hydrate the resource store state when bootstrapped', () => {
@@ -535,30 +479,29 @@ describe('SPA Router store', () => {
         resourceData,
       };
       const props = { ...containerProps, ...initialResourceStoreState };
-      const spy = jest.spyOn(getResourceStore().actions, 'hydrate');
+      const hydrate = jest.spyOn(getResourceStore().actions, 'hydrate');
 
       // @ts-ignore - mocks
       getRouterStore().actions.bootstrapStore(props);
 
-      expect(spy).toBeCalledWith({
+      expect(hydrate).toBeCalledWith({
         resourceContext,
         resourceData,
       });
     });
 
     it('should request route resources when the router is mounted', () => {
-      const spy = jest.spyOn(getResourceStore().actions, 'requestAllResources');
-
-      mount(
-        <MemoryRouter routes={mockRoutes}>
-          <RouterStoreSubscriber>{children}</RouterStoreSubscriber>
-        </MemoryRouter>
+      const requestAllResources = jest.spyOn(
+        getResourceStore().actions,
+        'requestAllResources'
       );
+
+      mount(<Router routes={mockRoutes} />);
 
       const { route, match, query } = getRouterState();
 
-      expect(spy).toBeCalledTimes(1);
-      expect(spy).toBeCalledWith(
+      expect(requestAllResources).toBeCalledTimes(1);
+      expect(requestAllResources).toBeCalledWith(
         {
           route,
           match,
@@ -598,7 +541,7 @@ describe('SPA Router store', () => {
       };
 
       mount(
-        <MemoryRouter routes={routes} location={initialLocation}>
+        <Router routes={routes} location={initialLocation}>
           <RouterStoreSubscriber>
             {(
               { route, location: currentLocation, query, match, action },
@@ -617,7 +560,7 @@ describe('SPA Router store', () => {
               );
             }}
           </RouterStoreSubscriber>
-        </MemoryRouter>
+        </Router>
       );
 
       await nextTick();
@@ -631,6 +574,7 @@ describe('SPA Router store', () => {
       getData: () => Promise.resolve(`A-${Date.now()}`),
       maxAge: 0,
     });
+
     const resourceB = createResource({
       type: 'TYPE_B',
       getKey: () => 'KEY_B',
@@ -909,7 +853,7 @@ describe('SPA Router store', () => {
     });
   });
 
-  describe('createRouterSelector', () => {
+  describe('createRouterSelector()', () => {
     it('should return selected state', () => {
       const mockSelector = jest.fn().mockImplementation(s => s.route.name);
       const useRouteName = createRouterSelector(mockSelector);
@@ -917,9 +861,9 @@ describe('SPA Router store', () => {
       const route = { path: '', name: 'home', component: () => null };
 
       const wrapper = mount(
-        <MemoryRouter routes={[route]}>
+        <Router routes={[route]}>
           <RouteName />
-        </MemoryRouter>
+        </Router>
       );
 
       expect(mockSelector).toBeCalledWith(
@@ -938,9 +882,9 @@ describe('SPA Router store', () => {
       const route = { path: '', name: 'home', component: () => null };
 
       const wrapper = mount(
-        <MemoryRouter routes={[route]}>
+        <Router routes={[route]}>
           <RouteName argument="bar" />
-        </MemoryRouter>
+        </Router>
       );
 
       expect(mockSelector).toBeCalledWith(
