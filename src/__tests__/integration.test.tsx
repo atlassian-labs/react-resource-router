@@ -1,10 +1,10 @@
 import { mount } from 'enzyme';
-import * as historyHelper from 'history';
+import { createMemoryHistory } from 'history';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { mockRoute } from '../common/mocks';
-import { ResourceStore } from '../controllers/resource-store';
+import { isServerEnvironment } from '../common/utils/is-server-environment';
+import { createResource, ResourceStore } from '../controllers/resource-store';
 import {
   RouteComponent,
   Router,
@@ -13,150 +13,108 @@ import {
   StaticRouter,
 } from '../index';
 
-const mockLocation = {
-  pathname: '/projects/123/board/456',
-  search: '?foo=hello&bar=world',
-  hash: '#hash',
-};
+jest.mock('../common/utils/is-server-environment');
 
-const mockRoutes = [
-  {
-    path: '/projects/:projectId/board/:boardId',
-    component: () => null,
-    name: '',
-  },
-  {
-    path: '/anotherpath',
-    component: () => null,
-    name: '',
-  },
-];
-
-const resolver = (resolveWith: any, delay = 0) =>
-  new Promise(resolve => setTimeout(() => resolve(resolveWith), delay));
-
-const mockResource = {
-  type: 'type',
-  getKey: () => 'entry',
-  getData: () => Promise.resolve('mock-data'),
-  maxAge: 0,
-  maxCache: Infinity,
-  isBrowserOnly: false,
-  depends: null,
-};
-
-const historyBuildOptions = {
-  initialEntries: [
-    `${mockLocation.pathname}${mockLocation.search}${mockLocation.hash}`,
-  ],
-};
-
-let history = historyHelper.createMemoryHistory(historyBuildOptions);
-let historyPushSpy = jest.spyOn(history, 'push');
-let historyReplaceSpy = jest.spyOn(history, 'replace');
-const nextTick = () => new Promise(resolve => setTimeout(resolve));
-
-describe('<Router /> integration tests', () => {
+describe('<Router /> client-side integration tests', () => {
   beforeEach(() => {
-    history = historyHelper.createMemoryHistory(historyBuildOptions);
-    historyPushSpy = jest.spyOn(history, 'push');
-    historyReplaceSpy = jest.spyOn(history, 'replace');
+    (isServerEnvironment as any).mockReturnValue(false);
   });
 
   afterEach(() => {
     defaultRegistry.stores.clear();
-    jest.resetAllMocks();
-    jest.restoreAllMocks();
   });
 
-  it('should send the right path to history API', async () => {
-    let _routerActions = {} as RouterActionsType;
-    mount(
-      <Router routes={mockRoutes} history={history}>
-        <RouterActions>
-          {routerActions => {
-            _routerActions = routerActions;
+  describe('sends the expected path to history', () => {
+    function renderRouter(basePath?: string) {
+      const history = createMemoryHistory();
+      const push = jest.spyOn(history, 'push');
+      const replace = jest.spyOn(history, 'replace');
 
-            return null;
-          }}
-        </RouterActions>
-      </Router>
-    );
+      let routerActions = {} as RouterActionsType;
+      mount(
+        <Router basePath={basePath} history={history} routes={[]}>
+          <RouterActions>
+            {actions => {
+              routerActions = actions;
 
-    _routerActions.push('/hello');
-    await nextTick();
-    expect(historyPushSpy).toBeCalledWith(`/hello`);
+              return null;
+            }}
+          </RouterActions>
+        </Router>
+      );
 
-    _routerActions.replace('/world');
-    await nextTick();
-    expect(historyReplaceSpy).toBeCalledWith(`/world`);
+      return {
+        history: {
+          push,
+          replace,
+        },
+        routerActions,
+      };
+    }
+
+    it('when basePath is set', async () => {
+      const { history, routerActions } = renderRouter('/basepath');
+
+      routerActions.push('/push');
+      expect(history.push).toHaveBeenCalledWith('/basepath/push');
+
+      routerActions.replace('/replace');
+      expect(history.replace).toHaveBeenCalledWith('/basepath/replace');
+    });
+
+    it('when basePath is not set', async () => {
+      const { history, routerActions } = renderRouter();
+
+      routerActions.push('/push');
+      expect(history.push).toBeCalledWith('/push');
+
+      routerActions.replace('/replace');
+      expect(history.replace).toBeCalledWith('/replace');
+    });
   });
 
-  it('should send the right path to history API when basePath is set', async () => {
-    let _routerActions = {} as RouterActionsType;
-    mount(
-      <Router routes={mockRoutes} history={history} basePath="/base">
-        <RouterActions>
-          {routerActions => {
-            _routerActions = routerActions;
+  it('re-triggers requests for timed out resources when mounted', async () => {
+    const resolver = (resolveWith: any, delay = 0) =>
+      new Promise(resolve => setTimeout(() => resolve(resolveWith), delay));
 
-            return null;
-          }}
-        </RouterActions>
-      </Router>
-    );
+    const completedResource = createResource({
+      getKey: () => 'key',
+      getData: () => resolver('completed', 250),
+      type: 'COMPLETED',
+    });
 
-    _routerActions.push('/hello');
-    await nextTick();
-    expect(historyPushSpy).toBeCalledWith(`/base/hello`);
+    const timeoutResource = createResource({
+      getKey: () => 'key',
+      getData: () => resolver('timeout', 500),
+      type: 'TIMEOUT',
+    });
 
-    _routerActions.replace('/world');
-    await nextTick();
-    expect(historyReplaceSpy).toBeCalledWith(`/base/world`);
-  });
+    const location = '/pathname?search=search#hash=hash';
+    const getCompletedData = jest.spyOn(completedResource, 'getData');
+    const getTimeoutData = jest.spyOn(timeoutResource, 'getData');
 
-  it('should re-trigger requests for timed out resources when mounted', async () => {
-    const completedResource = {
-      ...mockResource,
-      ...{ type: 'HI', getData: () => resolver('hello world', 250) },
+    const route = {
+      component: () => <div>foo</div>,
+      name: 'mock-route',
+      path: location.substring(0, location.indexOf('?')),
+      resources: [completedResource, timeoutResource],
     };
-    const getCompletedDataSpy = jest.spyOn(completedResource, 'getData');
-
-    const timeoutResource = {
-      ...mockResource,
-      ...{
-        type: 'BYE',
-        getData: () => resolver('goodbye cruel world', 500),
-      },
-    };
-    const getTimeoutDataSpy = jest.spyOn(timeoutResource, 'getData');
-
-    const mockedRoutes = [
-      {
-        ...mockRoute,
-        name: 'mock-route',
-        path: mockLocation.pathname,
-        component: () => <div>foo</div>,
-        resources: [completedResource, timeoutResource],
-      },
-    ];
 
     const serverData = await StaticRouter.requestResources({
-      // @ts-ignore
-      routes: mockedRoutes,
-      location: mockLocation.pathname,
+      location,
+      routes: [route],
       timeout: 350,
     });
 
-    expect(getCompletedDataSpy).toHaveBeenCalledTimes(1);
-    expect(getTimeoutDataSpy).toHaveBeenCalledTimes(1);
+    expect(getCompletedData).toHaveBeenCalledTimes(1);
+    expect(getTimeoutData).toHaveBeenCalledTimes(1);
 
     expect(serverData).toEqual({
-      BYE: {
-        entry: {
+      TIMEOUT: {
+        key: {
           data: null,
           error: {
-            message: 'Resource timed out: BYE',
+            message: 'Resource timed out: TIMEOUT',
             name: 'TimeoutError',
             stack: expect.any(String),
           },
@@ -167,9 +125,9 @@ describe('<Router /> integration tests', () => {
           accessedAt: null,
         },
       },
-      HI: {
-        entry: {
-          data: 'hello world',
+      COMPLETED: {
+        key: {
+          data: 'completed',
           error: null,
           expiresAt: null,
           key: undefined,
@@ -183,31 +141,33 @@ describe('<Router /> integration tests', () => {
     defaultRegistry.stores.clear();
 
     jest.useFakeTimers();
+
     mount(
-      <Router routes={mockedRoutes} history={history} resourceData={serverData}>
-        <RouterActions>
-          {() => {
-            return null;
-          }}
-        </RouterActions>
-      </Router>
+      <Router
+        history={createMemoryHistory({
+          initialEntries: [location],
+        })}
+        resourceData={serverData}
+        routes={[route]}
+      />
     );
+
     jest.runAllTimers();
 
     // Await a fake promise to let route resources to complete
     await Promise.resolve();
 
-    expect(getCompletedDataSpy).toHaveBeenCalledTimes(1);
-    expect(getTimeoutDataSpy).toHaveBeenCalledTimes(2);
+    expect(getCompletedData).toHaveBeenCalledTimes(1);
+    expect(getTimeoutData).toHaveBeenCalledTimes(2);
 
     const resourceStore = defaultRegistry.getStore(ResourceStore);
 
     expect(resourceStore.storeState.getState()).toEqual({
       context: {},
       data: {
-        BYE: {
-          entry: {
-            data: 'goodbye cruel world',
+        TIMEOUT: {
+          key: {
+            data: 'timeout',
             error: null,
             expiresAt: expect.any(Number),
             key: undefined,
@@ -216,9 +176,9 @@ describe('<Router /> integration tests', () => {
             accessedAt: expect.any(Number),
           },
         },
-        HI: {
-          entry: {
-            data: 'hello world',
+        COMPLETED: {
+          key: {
+            data: 'completed',
             error: null,
             expiresAt: expect.any(Number),
             key: undefined,
@@ -234,35 +194,38 @@ describe('<Router /> integration tests', () => {
   });
 });
 
-describe('<StaticRouter /> integration tests', () => {
-  const basePath = '/base';
+describe('<StaticRouter /> server-side integration tests', () => {
   const route = {
-    path: '/anotherpath',
-    component: () => <>important</>,
+    component: () => <>route component</>,
     name: '',
+    path: '/path',
   };
+
+  beforeEach(() => {
+    (isServerEnvironment as any).mockReturnValue(true);
+  });
 
   it('should match the right route when basePath is set', async () => {
     const wrapper = mount(
       <StaticRouter
+        basePath="/basepath"
+        location={`/basepath${route.path}`}
         routes={[route]}
-        location={`${basePath}${route.path}`}
-        basePath={basePath}
       >
         <RouteComponent />
       </StaticRouter>
     );
 
-    expect(wrapper.text()).toBe('important');
+    expect(wrapper.text()).toBe('route component');
   });
 
   it('should match the right route when basePath is not set', async () => {
     const wrapper = mount(
-      <StaticRouter routes={[route]} location={route.path}>
+      <StaticRouter location={route.path} routes={[route]}>
         <RouteComponent />
       </StaticRouter>
     );
 
-    expect(wrapper.text()).toBe('important');
+    expect(wrapper.text()).toBe('route component');
   });
 });
