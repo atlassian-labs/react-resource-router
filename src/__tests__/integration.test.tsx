@@ -1,16 +1,17 @@
 import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
-import React from 'react';
+import React, { Fragment } from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../common/utils/is-server-environment';
 import { createResource, ResourceStore } from '../controllers/resource-store';
 import {
+  Route,
   RouteComponent,
   Router,
-  RouterActions,
-  RouterActionsType,
+  RouteResource,
   StaticRouter,
+  useResource,
 } from '../index';
 
 jest.mock('../common/utils/is-server-environment');
@@ -22,55 +23,7 @@ describe('<Router /> client-side integration tests', () => {
 
   afterEach(() => {
     defaultRegistry.stores.clear();
-  });
-
-  describe('sends the expected path to history', () => {
-    function renderRouter(basePath?: string) {
-      const history = createMemoryHistory();
-      const push = jest.spyOn(history, 'push');
-      const replace = jest.spyOn(history, 'replace');
-
-      let routerActions = {} as RouterActionsType;
-      mount(
-        <Router basePath={basePath} history={history} routes={[]}>
-          <RouterActions>
-            {actions => {
-              routerActions = actions;
-
-              return null;
-            }}
-          </RouterActions>
-        </Router>
-      );
-
-      return {
-        history: {
-          push,
-          replace,
-        },
-        routerActions,
-      };
-    }
-
-    it('when basePath is set', async () => {
-      const { history, routerActions } = renderRouter('/basepath');
-
-      routerActions.push('/push');
-      expect(history.push).toHaveBeenCalledWith('/basepath/push');
-
-      routerActions.replace('/replace');
-      expect(history.replace).toHaveBeenCalledWith('/basepath/replace');
-    });
-
-    it('when basePath is not set', async () => {
-      const { history, routerActions } = renderRouter();
-
-      routerActions.push('/push');
-      expect(history.push).toBeCalledWith('/push');
-
-      routerActions.replace('/replace');
-      expect(history.replace).toBeCalledWith('/replace');
-    });
+    jest.useRealTimers();
   });
 
   it('re-triggers requests for timed out resources when mounted', async () => {
@@ -94,7 +47,7 @@ describe('<Router /> client-side integration tests', () => {
     const getTimeoutData = jest.spyOn(timeoutResource, 'getData');
 
     const route = {
-      component: () => <div>foo</div>,
+      component: () => <div>test</div>,
       name: 'mock-route',
       path: location.substring(0, location.indexOf('?')),
       resources: [completedResource, timeoutResource],
@@ -110,6 +63,17 @@ describe('<Router /> client-side integration tests', () => {
     expect(getTimeoutData).toHaveBeenCalledTimes(1);
 
     expect(serverData).toEqual({
+      COMPLETED: {
+        key: {
+          data: 'completed',
+          error: null,
+          expiresAt: null,
+          key: undefined,
+          loading: false,
+          promise: null,
+          accessedAt: null,
+        },
+      },
       TIMEOUT: {
         key: {
           data: null,
@@ -121,17 +85,6 @@ describe('<Router /> client-side integration tests', () => {
           expiresAt: null,
           key: undefined,
           loading: true,
-          promise: null,
-          accessedAt: null,
-        },
-      },
-      COMPLETED: {
-        key: {
-          data: 'completed',
-          error: null,
-          expiresAt: null,
-          key: undefined,
-          loading: false,
           promise: null,
           accessedAt: null,
         },
@@ -165,17 +118,6 @@ describe('<Router /> client-side integration tests', () => {
     expect(resourceStore.storeState.getState()).toEqual({
       context: {},
       data: {
-        TIMEOUT: {
-          key: {
-            data: 'timeout',
-            error: null,
-            expiresAt: expect.any(Number),
-            key: undefined,
-            loading: false,
-            promise: expect.any(Promise),
-            accessedAt: expect.any(Number),
-          },
-        },
         COMPLETED: {
           key: {
             data: 'completed',
@@ -187,9 +129,162 @@ describe('<Router /> client-side integration tests', () => {
             accessedAt: expect.any(Number),
           },
         },
+        TIMEOUT: {
+          key: {
+            data: 'timeout',
+            error: null,
+            expiresAt: expect.any(Number),
+            key: undefined,
+            loading: false,
+            promise: expect.any(Promise),
+            accessedAt: expect.any(Number),
+          },
+        },
       },
       executing: null,
       prefetching: null,
+    });
+  });
+
+  describe('renders the next route with', () => {
+    function renderRouter(routes: Route[]) {
+      const history = createMemoryHistory({ initialEntries: [routes[0].path] });
+      const push: any = jest.spyOn(history, 'push');
+      const waitForData = () => new Promise(resolve => setTimeout(resolve));
+
+      const router = mount(
+        <Router history={history} isGlobal routes={routes}>
+          <RouteComponent />
+        </Router>
+      );
+
+      return {
+        history: {
+          push,
+        },
+        router,
+        waitForData,
+      };
+    }
+
+    function createResources() {
+      let cached = 0;
+      let network = 0;
+
+      return {
+        cacheResource: createResource({
+          getData: () => {
+            cached += 1;
+
+            return Promise.resolve(`cache-${cached}`);
+          },
+          getKey: () => 'cache',
+          maxAge: Infinity,
+          type: 'CACHE',
+        }),
+        networkResource: createResource({
+          getData: () => {
+            network += 1;
+
+            return Promise.resolve(`network-${network}`);
+          },
+          getKey: () => 'network',
+          maxAge: 0,
+          type: 'NETWORK',
+        }),
+      };
+    }
+
+    function createResourceComponent(resource: RouteResource<string>) {
+      return () => {
+        const { data, error, loading } = useResource(resource);
+        if (error) {
+          return <>error:{error}</>;
+        }
+
+        if (loading) {
+          return <>loading:{resource.type.toLowerCase()}</>;
+        }
+
+        return <>data:{data?.toString()}</>;
+      };
+    }
+
+    function createComponent(resources: RouteResource<string>[]) {
+      const components = resources.map(createResourceComponent);
+
+      return () => {
+        return (
+          <>
+            {components.map((Component, index) => (
+              <Fragment key={index}>
+                <Component />
+                {index < components.length - 1 ? ' ' : ''}
+              </Fragment>
+            ))}
+          </>
+        );
+      };
+    }
+
+    it('previous data when transitioning to the same route and resource keys', async () => {
+      const { cacheResource, networkResource } = createResources();
+      const route = {
+        component: createComponent([cacheResource, networkResource]),
+        name: 'page-1',
+        path: '/pages/1',
+        resources: [cacheResource, networkResource],
+      };
+
+      const { history, router, waitForData } = renderRouter([route]);
+
+      expect(router.html()).toBe('loading:cache loading:network');
+      await waitForData();
+      router.update();
+      expect(router.html()).toBe('data:cache-1 data:network-1');
+
+      history.push(route.path + '?query#hash');
+      router.update();
+
+      expect(router.html()).toBe('data:cache-1 data:network-1');
+      await waitForData();
+      router.update();
+      expect(router.html()).toBe('data:cache-1 data:network-1');
+    });
+
+    it('fresh data when transitioning to a new route', async () => {
+      const { cacheResource, networkResource } = createResources();
+      const component = createComponent([cacheResource, networkResource]);
+
+      const routes = [
+        {
+          component,
+          name: 'page-1',
+          path: '/pages/1',
+          resources: [cacheResource, networkResource],
+        },
+        {
+          component,
+          name: 'page-2',
+          path: '/pages/2',
+          resources: [cacheResource, networkResource],
+        },
+      ];
+
+      const { history, router, waitForData } = renderRouter(routes);
+
+      expect(router.html()).toBe('loading:cache loading:network');
+      await waitForData();
+      router.update();
+      expect(router.html()).toBe('data:cache-1 data:network-1');
+
+      history.push(routes[1].path);
+      router.update();
+
+      expect(router.html()).toBe('data:cache-1 loading:network');
+      await waitForData();
+      router.update();
+      expect(router.html()).toBe('data:cache-1 data:network-2');
     });
   });
 });
@@ -205,11 +300,11 @@ describe('<StaticRouter /> server-side integration tests', () => {
     (isServerEnvironment as any).mockReturnValue(true);
   });
 
-  it('should match the right route when basePath is set', async () => {
+  it('renders the expected route when basePath is set', async () => {
     const wrapper = mount(
       <StaticRouter
-        basePath="/basepath"
-        location={`/basepath${route.path}`}
+        basePath="/base-path"
+        location={`/base-path${route.path}`}
         routes={[route]}
       >
         <RouteComponent />
@@ -219,7 +314,7 @@ describe('<StaticRouter /> server-side integration tests', () => {
     expect(wrapper.text()).toBe('route component');
   });
 
-  it('should match the right route when basePath is not set', async () => {
+  it('renders the expected route when basePath is not set', async () => {
     const wrapper = mount(
       <StaticRouter location={route.path} routes={[route]}>
         <RouteComponent />
