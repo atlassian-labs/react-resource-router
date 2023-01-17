@@ -56,6 +56,7 @@ export class Router extends Component<RouterProps> {
       resourceContext,
       resourceData,
       onPrefetch,
+      loader,
     } = this.props;
 
     return (
@@ -69,6 +70,7 @@ export class Router extends Component<RouterProps> {
         resourceData={resourceData}
         onPrefetch={onPrefetch}
         isGlobal={isGlobal}
+        loader={loader}
       >
         {children}
       </RouterContainer>

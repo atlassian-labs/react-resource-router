@@ -23,7 +23,6 @@ import {
   warmupMatchRouteCache,
 } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
-import { getResourcesForNextLocation } from '../resource-store/utils';
 
 import {
   AllRouterActions,
@@ -51,6 +50,7 @@ export const INITIAL_STATE: EntireRouterState = {
   basePath: '',
   isStatic: false,
   onPrefetch: undefined,
+  loader: null,
 };
 
 const actions: AllRouterActions = {
@@ -67,6 +67,7 @@ const actions: AllRouterActions = {
         basePath = '',
         routes,
         initialRoute,
+        loader,
         ...initialProps
       } = props;
       const { history, isStatic } = initialProps;
@@ -82,8 +83,16 @@ const actions: AllRouterActions = {
         routes,
         location: history.location,
         action: history.action,
+        loader: loader
+          ? loader({
+              context: resourceContext,
+              resourceData,
+              isStatic,
+            })
+          : null,
       });
-      getResourceStore().actions.hydrate({ resourceContext, resourceData });
+
+      // getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
       if (!isStatic) {
         dispatch(actions.listen());
@@ -115,6 +124,7 @@ const actions: AllRouterActions = {
         basePath,
         location: history.location,
         action: history.action,
+        loader: null,
       });
       getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
@@ -128,12 +138,14 @@ const actions: AllRouterActions = {
    * Must be dispatched after setting state with the new route context.
    *
    */
+  // TODO: remove
   requestRouteResources:
     (options = {}) =>
     ({ getState }) => {
       const { route, match, query } = getState();
 
       return getResourceStore().actions.requestAllResources(
+        // same as requestResources() from the page
         {
           route,
           match,
@@ -143,32 +155,32 @@ const actions: AllRouterActions = {
       );
     },
 
-  prefetchNextRouteResources:
-    (path, nextContext) =>
-    ({ getState }) => {
-      const { routes, basePath, onPrefetch, route, match, query } = getState();
-      const { prefetchResources, getContext: getResourceStoreContext } =
-        getResourceStore().actions;
+  // prefetchNextRouteResources:
+  //   (path, nextContext) =>
+  //   ({ getState }) => {
+  //     const { routes, basePath, onPrefetch, route, match, query } = getState();
+  //     const { prefetchResources, getContext: getResourceStoreContext } =
+  //       getResourceStore().actions;
 
-      if (!nextContext && !isExternalAbsolutePath(path)) {
-        const location = parsePath(getRelativePath(path, basePath) as any);
-        nextContext = findRouterContext(routes, { location, basePath });
-      }
+  //     if (!nextContext && !isExternalAbsolutePath(path)) {
+  //       const location = parsePath(getRelativePath(path, basePath) as any);
+  //       nextContext = findRouterContext(routes, { location, basePath });
+  //     }
 
-      if (nextContext == null) return;
-      const nextLocationContext = nextContext;
+  //     if (nextContext == null) return;
+  //     const nextLocationContext = nextContext;
 
-      const nextResources = getResourcesForNextLocation(
-        { route, match, query },
-        nextLocationContext,
-        getResourceStoreContext()
-      );
+  //     const nextResources = getResourcesForNextLocation(
+  //       { route, match, query },
+  //       nextLocationContext,
+  //       getResourceStoreContext()
+  //     );
 
-      batch(() => {
-        prefetchResources(nextResources, nextLocationContext, {});
-        if (onPrefetch) onPrefetch(nextLocationContext);
-      });
-    },
+  //     batch(() => {
+  //       prefetchResources(nextResources, nextLocationContext, {});
+  //       if (onPrefetch) onPrefetch(nextLocationContext);
+  //     });
+  //   },
 
   /**
    * Starts listening to browser history and sets the unlisten function in state.
@@ -177,7 +189,7 @@ const actions: AllRouterActions = {
    */
   listen:
     () =>
-    ({ getState, setState }) => {
+    ({ getState, setState, dispatch }) => {
       const { history } = getState();
 
       type LocationUpateV4 = [Location, Action];
@@ -196,27 +208,33 @@ const actions: AllRouterActions = {
             query: currentQuery,
           } = getState();
 
-          const {
-            cleanExpiredResources,
-            requestResources,
-            getContext: getResourceStoreContext,
-          } = getResourceStore().actions;
+          // const {
+          //   cleanExpiredResources,
+          //   requestResources,
+          //   getContext: getResourceStoreContext,
+          // } = getResourceStore().actions;
 
           const nextContext = findRouterContext(routes, { location, basePath });
-          const nextLocationContext = {
-            route: nextContext.route,
-            match: nextContext.match,
-            query: nextContext.query,
+          // const nextLocationContext = {
+          //   route: nextContext.route,
+          //   match: nextContext.match,
+          //   query: nextContext.query,
+          // };
+          // const nextResources = getResourcesForNextLocation(
+          //   {
+          //     route: currentRoute,
+          //     match: currentMatch,
+          //     query: currentQuery,
+          //   },
+          //   nextLocationContext,
+          //   getResourceStoreContext()
+          // );
+
+          const prevLocationContext = {
+            route: currentRoute,
+            match: currentMatch,
+            query: currentQuery,
           };
-          const nextResources = getResourcesForNextLocation(
-            {
-              route: currentRoute,
-              match: currentMatch,
-              query: currentQuery,
-            },
-            nextLocationContext,
-            getResourceStoreContext()
-          );
 
           /* Explicitly batch update
            * as we need resources cleaned + route changed + resource fetch started together
@@ -224,13 +242,15 @@ const actions: AllRouterActions = {
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            cleanExpiredResources(nextResources, nextLocationContext);
+            // cleanExpiredResources(nextResources, nextLocationContext);
             setState({
               ...nextContext,
               location,
               action,
             });
-            requestResources(nextResources, nextLocationContext, {});
+            // requestResources(nextResources, nextLocationContext, {});
+
+            dispatch(actions.loadRoute(prevLocationContext));
           });
         }
       );
@@ -397,6 +417,33 @@ const actions: AllRouterActions = {
         history[updateType](updatedRelativePath);
       }
     },
+  loadRoute:
+    prevLocationContext =>
+    ({ getState }) => {
+      const { loader, match, query, route } = getState();
+
+      return loader?.load({ match, query, route, prevLocationContext });
+    },
+  prefetchRoute:
+    (path, nextContext) =>
+    ({ getState }) => {
+      const { loader, routes, basePath, onPrefetch } = getState();
+
+      if (!nextContext && !isExternalAbsolutePath(path)) {
+        const location = parsePath(getRelativePath(path, basePath) as any);
+        nextContext = findRouterContext(routes, { location, basePath });
+      }
+
+      if (nextContext == null) return;
+      const nextLocationContext = nextContext;
+
+      batch(() => {
+        loader?.prefetch(nextLocationContext);
+        // prefetchResources(nextResources, nextLocationContext, {});
+        if (onPrefetch) onPrefetch(nextLocationContext);
+      });
+    },
+  // ...
 };
 
 type State = EntireRouterState;
@@ -417,7 +464,8 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
       () =>
       ({ dispatch }, props) => {
         dispatch(actions.bootstrapStore(props));
-        !props.isStatic && dispatch(actions.requestRouteResources());
+        // !props.isStatic && dispatch(actions.requestRouteResources());
+        !props.isStatic && dispatch(actions.loadRoute());
       },
     onCleanup: () => () => {
       if (process.env.NODE_ENV === 'development') {
@@ -440,7 +488,8 @@ export const UniversalRouterContainer = createContainer<
     () =>
     ({ dispatch }, props) => {
       dispatch(actions.bootstrapStoreUniversal(props));
-      !isServerEnvironment() && dispatch(actions.requestRouteResources());
+      // !isServerEnvironment() && dispatch(actions.requestRouteResources());
+      !isServerEnvironment() && dispatch(actions.loadRoute());
     },
   onCleanup: () => () => {
     if (process.env.NODE_ENV === 'development') {

@@ -7,6 +7,7 @@ import {
   createResource,
   useResource,
   useQueryParam,
+  useEntryPoint,
 } from 'react-resource-router';
 
 export const aboutResource = createResource({
@@ -29,6 +30,7 @@ export const About = () => {
   // eslint-disable-next-line
   const { data, loading, error } = useResource(aboutResource);
   const [breedName] = useQueryParam('name');
+  const a = useEntryPoint();
 
   return (
     <div>

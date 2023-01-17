@@ -335,3 +335,19 @@ export type FindRouterContextOptions = {
   location: Location;
   basePath?: string;
 };
+
+export type LoaderAPI<T = any> = {
+  load: (
+    context: RouterContext & {
+      prevLocationContext?: RouterContext;
+    }
+  ) => T;
+  prefetch: (context: RouterContext) => T;
+};
+
+export type Loader<T = any> = (props: {
+  context: any;
+  resourceData: any;
+  timeout?: number;
+  isStatic?: boolean;
+}) => LoaderAPI<T>;

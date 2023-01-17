@@ -47,9 +47,9 @@ StaticRouter.requestResources = async (props: RequestResourcesParams) => {
 
   bootstrapStore({ ...bootstrapProps, ...overrides });
 
-  await requestRouteResources({ timeout, isStatic: true });
+  await requestRouteResources({ timeout, isStatic: true }); // TODO: replace with `await loader().loadRoute();`
 
-  return getResourceStore().actions.getSafeData();
+  return getResourceStore().actions.getSafeData(); // TODO: remove
 };
 
 StaticRouter.addResourcesListener = (fn: (nextState: State) => void) => {
