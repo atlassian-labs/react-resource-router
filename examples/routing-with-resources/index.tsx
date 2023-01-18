@@ -1,7 +1,6 @@
 import React from 'react';
 import { render } from 'react-dom';
 
-import { combine } from '../../src/common/utils/combine';
 import { entryPointsLoader } from '../../src/entry-points/loader';
 import { resourcesLoader } from '../../src/resources/loader';
 
@@ -11,6 +10,7 @@ import {
   Router,
   RouteComponent,
   createBrowserHistory,
+  combine,
 } from 'react-resource-router';
 
 const myHistory = createBrowserHistory();

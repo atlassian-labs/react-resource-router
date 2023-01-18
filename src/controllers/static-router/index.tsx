@@ -36,7 +36,7 @@ export const StaticRouter = ({
  * TODO: return type (see imports)
  */
 StaticRouter.requestResources = async (props: RequestResourcesParams) => {
-  const { bootstrapStore, requestRouteResources } = getRouterStore().actions;
+  const { bootstrapStore, loadRoute } = getRouterStore().actions;
   const { location, timeout, ...bootstrapProps } = props;
   const initialEntries = [location];
   const overrides = {
@@ -47,7 +47,13 @@ StaticRouter.requestResources = async (props: RequestResourcesParams) => {
 
   bootstrapStore({ ...bootstrapProps, ...overrides });
 
-  await requestRouteResources({ timeout, isStatic: true }); // TODO: replace with `await loader().loadRoute();`
+  // TODO: move out to consumer code
+  const { resources } = loadRoute();
+
+  // TODO: wait for entryPoint to be loaded
+  await resources;
+
+  // await requestRouteResources({ timeout, isStatic: true }); // TODO: replace with `await loader().loadRoute();`
 
   return getResourceStore().actions.getSafeData(); // TODO: remove
 };

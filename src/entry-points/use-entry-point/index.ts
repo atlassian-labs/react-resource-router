@@ -3,5 +3,9 @@ import { useRouter } from '../../controllers/use-router';
 export const useEntryPoint = (): any => {
   const [{ route }] = useRouter();
 
-  return route?.entryPoint ?? undefined; // loadEntryPoint(...)
+  if (!route.entryPoint) {
+    return undefined;
+  }
+
+  return { entryPointReference: route?.entryPoint }; // loadEntryPoint(...)
 };
