@@ -8,10 +8,6 @@ export const homeRoute = {
   component: Home,
   navigation: null,
   resources: [homeResource],
-  entryPoint: {
-    a: 12,
-    b: 3,
-  },
 };
 
 export const aboutRoute = {
