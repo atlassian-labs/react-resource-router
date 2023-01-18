@@ -19,7 +19,6 @@ export {
   useRouter,
   useRouterActions,
   withRouter,
-  useEntryPoint,
 } from './controllers';
 
 export type {
