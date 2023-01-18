@@ -2,7 +2,10 @@ import { createMemoryHistory } from 'history';
 import React from 'react';
 
 import { MemoryRouterProps } from '../../common/types';
+import { combine } from '../../common/utils';
 import { createLocation } from '../../common/utils/create-location';
+import { entryPointsLoader } from '../../entry-points/loader';
+import { resourcesLoader } from '../../resources/loader';
 import { MemoryRouter } from '../memory-router';
 import { getResourceStore } from '../resource-store';
 import type { State } from '../resource-store/types';
@@ -45,7 +48,17 @@ StaticRouter.requestResources = async (props: RequestResourcesParams) => {
     isStatic: true,
   };
 
-  bootstrapStore({ ...bootstrapProps, ...overrides });
+  const loader = combine(
+    entryPointsLoader,
+    resourcesLoader
+  )({
+    context: props.resourceContext,
+    isStatic: true,
+    resourceData: null,
+    timeout,
+  });
+
+  bootstrapStore({ ...bootstrapProps, ...overrides, loader });
 
   // TODO: move out to consumer code
   const { resources } = loadRoute();

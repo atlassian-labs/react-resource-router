@@ -1,10 +1,15 @@
 import React, { Component } from 'react';
 
 import { DEFAULT_HISTORY } from '../../common/constants';
+import { combine } from '../../common/utils/combine';
+import { entryPointsLoader } from '../../entry-points/loader';
+import { resourcesLoader } from '../../resources/loader';
 import { getRouterState, RouterContainer } from '../router-store';
 import { UnlistenHistory } from '../router-store/types';
 
 import { RouterProps } from './types';
+
+import { LoaderAPI } from 'src/common/types';
 
 /**
  * Default prop provider for the RouterContainer.
@@ -16,6 +21,23 @@ export class Router extends Component<RouterProps> {
     isGlobal: true,
     history: DEFAULT_HISTORY,
   };
+
+  loader: LoaderAPI;
+
+  constructor(props: RouterProps) {
+    super(props);
+
+    const { resourceContext, resourceData, isStatic } = props;
+
+    this.loader = combine(
+      entryPointsLoader,
+      resourcesLoader
+    )({
+      context: resourceContext,
+      resourceData,
+      isStatic,
+    });
+  }
 
   /**
    * Keep a copy of the history listener so that we can be sure that
@@ -56,7 +78,6 @@ export class Router extends Component<RouterProps> {
       resourceContext,
       resourceData,
       onPrefetch,
-      loader,
     } = this.props;
 
     return (
@@ -70,7 +91,7 @@ export class Router extends Component<RouterProps> {
         resourceData={resourceData}
         onPrefetch={onPrefetch}
         isGlobal={isGlobal}
-        loader={loader}
+        loader={this.loader}
       >
         {children}
       </RouterContainer>

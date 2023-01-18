@@ -2,9 +2,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { entryPointsLoader } from '../../src/entry-points/loader';
-import { resourcesLoader } from '../../src/resources/loader';
-
 import { homeRoute } from './routes';
 
 import {
@@ -12,14 +9,11 @@ import {
   RouteComponent,
   createBrowserHistory,
   StaticRouter,
-  combine,
 } from 'react-resource-router';
 
 const myHistory = createBrowserHistory();
 
 const appRoutes = [homeRoute];
-
-const loader = combine(resourcesLoader, entryPointsLoader);
 
 const getStateFromServer = async () => {
   // StaticRouter should only be used on Server!
@@ -27,7 +21,6 @@ const getStateFromServer = async () => {
   const resourceData = await StaticRouter.requestResources({
     location: '/',
     routes: appRoutes,
-    loader,
   });
 
   // clearing the store
@@ -46,7 +39,6 @@ const main = async () => {
         history={myHistory}
         basePath="/hydration"
         resourceData={data}
-        loader={loader}
       >
         <RouteComponent />
       </Router>

@@ -7,7 +7,6 @@ import {
   Route,
   RouterContext,
   Routes,
-  Loader,
 } from '../../common/types';
 
 export type RouterProps = PropsWithChildren<{
@@ -20,5 +19,4 @@ export type RouterProps = PropsWithChildren<{
   routes: Routes;
   isGlobal?: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
-  loader?: Loader;
 }>;

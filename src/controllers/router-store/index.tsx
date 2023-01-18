@@ -83,13 +83,7 @@ const actions: AllRouterActions = {
         routes,
         location: history.location,
         action: history.action,
-        loader: loader
-          ? loader({
-              context: resourceContext,
-              resourceData,
-              isStatic,
-            })
-          : null,
+        loader,
       });
 
       // getResourceStore().actions.hydrate({ resourceContext, resourceData });

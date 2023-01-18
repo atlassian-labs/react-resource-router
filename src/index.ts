@@ -35,7 +35,6 @@ export {
   findRouterContext,
   generatePath,
   matchRoute,
-  combine,
 } from './common/utils';
 
 export type {

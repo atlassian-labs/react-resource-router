@@ -2,12 +2,7 @@ import React from 'react';
 
 import { aboutRoute } from './routes';
 
-import {
-  Link,
-  createResource,
-  useResource,
-  useEntryPoint,
-} from 'react-resource-router';
+import { Link, createResource, useResource } from 'react-resource-router';
 
 export const homeResource = createResource({
   type: 'home',
@@ -25,7 +20,6 @@ export const Home = () => {
   // eslint-disable-next-line
   const { data, loading, error } = useResource(homeResource);
   const breeds = data?.message ? Object.keys(data.message) : [];
-  const a = useEntryPoint();
 
   return (
     <div>

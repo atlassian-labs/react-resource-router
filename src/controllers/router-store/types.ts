@@ -52,7 +52,7 @@ export type ContainerProps = {
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
   onPrefetch?: (routerContext: RouterContext) => void;
-  loader?: Loader;
+  loader: LoaderAPI;
 };
 
 export type UniversalRouterContainerProps = { isGlobal?: boolean } & Omit<
