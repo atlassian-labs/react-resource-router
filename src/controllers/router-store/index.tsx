@@ -104,6 +104,7 @@ const actions: AllRouterActions = {
         resourceContext,
         resourceData,
         basePath = '',
+        loader,
         ...initialProps
       } = props;
       const { history, routes } = initialProps;
@@ -118,7 +119,7 @@ const actions: AllRouterActions = {
         basePath,
         location: history.location,
         action: history.action,
-        loader: null,
+        loader,
       });
       getResourceStore().actions.hydrate({ resourceContext, resourceData });
 

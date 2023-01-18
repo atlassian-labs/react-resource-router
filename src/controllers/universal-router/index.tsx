@@ -1,8 +1,11 @@
 import { createMemoryHistory } from 'history';
 import React, { Component } from 'react';
 
-import { BrowserHistory } from '../../common/types';
+import { BrowserHistory, LoaderAPI } from '../../common/types';
+import { combine } from '../../common/utils';
 import { createLocation } from '../../common/utils/create-location';
+import { entryPointsLoader } from '../../entry-points/loader';
+import { resourcesLoader } from '../../resources/loader';
 import { getResourceStore, ResourceContainer } from '../resource-store';
 import {
   getRouterState,
@@ -28,8 +31,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
    * TODO: return type
    */
   static async requestResources(props: RequestResourcesParams) {
-    const { bootstrapStoreUniversal, requestRouteResources } =
-      getRouterStore().actions;
+    const { bootstrapStoreUniversal, loadRoute } = getRouterStore().actions;
     const { location, timeout, ...bootstrapProps } = props;
     const initialEntries = [location];
     const overrides = {
@@ -37,9 +39,18 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
       location: createLocation(location),
     };
 
-    bootstrapStoreUniversal({ ...bootstrapProps, ...overrides });
+    const loader = combine(
+      entryPointsLoader,
+      resourcesLoader
+    )({
+      context: props.resourceContext,
+      resourceData: null,
+      timeout,
+    });
 
-    await requestRouteResources({ timeout });
+    bootstrapStoreUniversal({ ...bootstrapProps, ...overrides, loader });
+
+    await loadRoute().resources;
 
     return getResourceStore().actions.getSafeData();
   }
@@ -55,10 +66,22 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
   unlistenHistory: UnlistenHistory | null = null;
   history: BrowserHistory;
 
+  loader: LoaderAPI;
+
   constructor(props: UniversalRouterProps) {
     super(props);
     const initialEntries = props.location ? [props.location] : [];
     this.history = props.history || createMemoryHistory({ initialEntries });
+
+    const { resourceContext, resourceData } = props;
+
+    this.loader = combine(
+      entryPointsLoader,
+      resourcesLoader
+    )({
+      context: resourceContext,
+      resourceData,
+    });
   }
 
   componentDidMount() {
@@ -94,6 +117,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
         resourceData={resourceData}
         isGlobal={isGlobal}
         onPrefetch={onPrefetch}
+        loader={this.loader}
       >
         <ResourceContainer isGlobal={isGlobal}>{children}</ResourceContainer>
       </UniversalRouterContainer>

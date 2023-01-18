@@ -60,11 +60,7 @@ StaticRouter.requestResources = async (props: RequestResourcesParams) => {
 
   bootstrapStore({ ...bootstrapProps, ...overrides, loader });
 
-  // TODO: move out to consumer code
-  const { resources } = loadRoute();
-
-  // TODO: wait for entryPoint to be loaded
-  await resources;
+  await loadRoute().resources;
 
   // await requestRouteResources({ timeout, isStatic: true }); // TODO: replace with `await loader().loadRoute();`
 

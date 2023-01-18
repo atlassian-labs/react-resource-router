@@ -17,7 +17,6 @@ import {
   RouterContext,
   Routes,
   LoaderAPI,
-  Loader,
 } from '../../common/types';
 
 type PublicStateProperties = {
