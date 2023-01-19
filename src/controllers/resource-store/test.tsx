@@ -7,10 +7,7 @@ import * as routerStoreModule from '../router-store';
 import { useResource } from '../use-resource';
 
 import { getSliceForResource } from './selectors';
-import {
-  Actions as ResourceStoreActions,
-  State as ResourceStoreState,
-} from './types';
+import { State as ResourceStoreState } from './types';
 import {
   createResource,
   getAccessedAt,
@@ -22,7 +19,7 @@ import {
 } from './utils';
 import { BASE_DEFAULT_STATE_SLICE } from './utils/get-default-state-slice/constants';
 
-import { getResourceStore, ResourceDependencyError } from './index';
+import { Actions, getResourceStore, ResourceDependencyError } from './index';
 
 jest.mock('./utils', () => ({
   ...jest.requireActual('./utils'),
@@ -42,7 +39,7 @@ jest.mock('./utils/expires-at', () => ({
 describe('resource store', () => {
   let resourceStore;
   let storeState: any;
-  let actions: BoundActions<ResourceStoreState, ResourceStoreActions>;
+  let actions: BoundActions<ResourceStoreState, Actions>;
 
   const type = 'type';
   const key = 'key';

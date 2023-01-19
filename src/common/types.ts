@@ -314,7 +314,7 @@ export type MemoryRouterProps = {
   location?: string;
   isGlobal?: boolean;
   routes: Routes;
-  children: ReactNode;
+  children?: ReactNode;
   resourceData?: ResourceStoreData;
   resourceContext?: ResourceStoreContext;
 };
