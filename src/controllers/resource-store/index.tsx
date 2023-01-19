@@ -1,4 +1,5 @@
 import {
+  createActionsHook,
   createContainer,
   createHook,
   createStore,
@@ -20,7 +21,6 @@ import {
 
 import { getResourceStoreContext, getSliceForResource } from './selectors';
 import {
-  Actions,
   ContainerProps,
   GetResourceOptions,
   ResourceAction,
@@ -328,7 +328,7 @@ export const privateActions = {
     },
 };
 
-export const actions: Actions = {
+export const actions = {
   /**
    * Clears a resource for the current key, or where context is not provided all keys.
    * Execute such that dependencies on current route will be cleared.
@@ -351,12 +351,16 @@ export const actions: Actions = {
   updateResourceState: (
     resource: RouteResource,
     routerStoreContext: RouterContext,
-    ...args
+    getNewSliceData: RouteResourceUpdater
   ) =>
     actionWithDependencies<void>(
       routerStoreContext.route.resources,
       resource,
-      privateActions.updateResourceState(resource, routerStoreContext, ...args)
+      privateActions.updateResourceState(
+        resource,
+        routerStoreContext,
+        getNewSliceData
+      )
     ),
 
   /**
@@ -367,12 +371,12 @@ export const actions: Actions = {
   getResource: (
     resource: RouteResource,
     routerStoreContext: RouterContext,
-    ...args
+    options: GetResourceOptions
   ) =>
     actionWithDependencies<Promise<RouteResourceResponse>>(
       routerStoreContext.route.resources,
       resource,
-      privateActions.getResource(resource, routerStoreContext, ...args)
+      privateActions.getResource(resource, routerStoreContext, options)
     ),
 
   /**
@@ -382,7 +386,7 @@ export const actions: Actions = {
   getResourceFromRemote: (
     resource: RouteResource,
     routerStoreContext: RouterContext,
-    ...args
+    options: GetResourceOptions
   ) =>
     actionWithDependencies<Promise<RouteResourceResponse>>(
       routerStoreContext.route.resources,
@@ -390,7 +394,7 @@ export const actions: Actions = {
       privateActions.getResourceFromRemote(
         resource,
         routerStoreContext,
-        ...args
+        options
       )
     ),
 
@@ -398,7 +402,10 @@ export const actions: Actions = {
    * Request all resources.
    */
   requestAllResources:
-    (routerStoreContext, options) =>
+    (
+      routerStoreContext: RouterContext,
+      options: GetResourceOptions = {}
+    ): ResourceAction<Promise<RouteResourceResponse[]>> =>
     ({ dispatch }) => {
       const { route } = routerStoreContext || {};
 
@@ -408,11 +415,7 @@ export const actions: Actions = {
 
       return Promise.all(
         dispatch(
-          actions.requestResources(
-            route.resources,
-            routerStoreContext,
-            options || {}
-          )
+          actions.requestResources(route.resources, routerStoreContext, options)
         )
       );
     },
@@ -422,7 +425,10 @@ export const actions: Actions = {
    * We need to do this when transitioning into a route.
    */
   cleanExpiredResources:
-    (resources, routerStoreContext) =>
+    (
+      resources: RouteResource[],
+      routerStoreContext: RouterContext
+    ): ResourceAction<void> =>
     ({ getState, dispatch }) => {
       const { context: resourceContext } = getState();
 
@@ -440,7 +446,11 @@ export const actions: Actions = {
   /**
    * Requests a specific set of resources.
    */
-  requestResources: (resources, routerStoreContext, options) => {
+  requestResources: (
+    resources: RouteResource[],
+    routerStoreContext: RouterContext,
+    options: GetResourceOptions
+  ) => {
     const predicate = options.isStatic
       ? ({ isBrowserOnly }: RouteResource) => !isBrowserOnly
       : () => true;
@@ -456,7 +466,11 @@ export const actions: Actions = {
   /**
    * Prefetch a specific set of resources.
    */
-  prefetchResources: (resources, routerStoreContext, options) =>
+  prefetchResources: (
+    resources: RouteResource[],
+    routerStoreContext: RouterContext,
+    options: GetResourceOptions
+  ) =>
     mapActionWithDependencies<Promise<void>>(
       routerStoreContext.route.resources,
       resources,
@@ -472,7 +486,13 @@ export const actions: Actions = {
    * Will not override pre-hydrated state.
    */
   hydrate:
-    ({ resourceData, resourceContext }) =>
+    ({
+      resourceData,
+      resourceContext,
+    }: {
+      resourceData?: ResourceStoreData;
+      resourceContext?: ResourceStoreContext;
+    }): ResourceAction<void> =>
     ({ getState, setState }) => {
       const { data, context } = getState();
       function getNextStateValue<R = any>(
@@ -513,7 +533,7 @@ export const actions: Actions = {
    * Gets the store's context
    */
   getContext:
-    () =>
+    (): ResourceAction<ResourceStoreContext> =>
     ({ getState }) =>
       getState().context,
 
@@ -521,7 +541,7 @@ export const actions: Actions = {
    * Returns safe, portable and rehydratable data.
    */
   getSafeData:
-    () =>
+    (): ResourceAction<ResourceStoreData> =>
     ({ getState }) =>
       transformData(getState().data, ({ data, key, error, loading }) => ({
         data,
@@ -537,6 +557,8 @@ export const actions: Actions = {
         loading: error instanceof TimeoutError ? loading : false,
       })),
 };
+
+export type Actions = typeof actions;
 
 export const ResourceStore = createStore<State, Actions>({
   initialState: {
@@ -584,11 +606,8 @@ export const useResourceStore = createHook<
   selector: getSliceForResource,
 });
 
-export const useResourceActions = createHook<State, Actions, void>(
-  ResourceStore,
-  {
-    selector: null,
-  }
+export const useResourceStoreActions = createActionsHook<State, Actions>(
+  ResourceStore
 );
 
 export const useResourceStoreContext = createHook<

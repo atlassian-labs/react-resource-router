@@ -1,5 +1,6 @@
 import { Action, parsePath, Location } from 'history';
 import {
+  createActionsHook,
   createContainer,
   createHook,
   createStore,
@@ -527,13 +528,10 @@ export const useRouterStore = createHook<EntireRouterState, AllRouterActions>(
   RouterStore
 );
 
-export const useRouterStoreActions = createHook<
+export const useRouterStoreActions = createActionsHook<
   EntireRouterState,
-  AllRouterActions,
-  void
->(RouterStore, {
-  selector: null,
-});
+  AllRouterActions
+>(RouterStore);
 
 /**
  * Utility to create custom hooks without re-rendering on route change
