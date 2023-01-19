@@ -4,6 +4,7 @@ import * as history5 from 'history-5';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
+import { createCombinedLoader } from '../loader';
 import { getResourceStore } from '../resource-store';
 
 import { ContainerProps } from './types';
@@ -48,11 +49,18 @@ describe('RouterStore', () => {
       const push = jest.spyOn(history, 'push');
       const replace = jest.spyOn(history, 'replace');
 
+      const loader = createCombinedLoader({
+        context: props.resourceContext,
+        resourceData: props.resourceData,
+        isStatic: props.isStatic,
+      });
+
       mount(
         <RouterContainer
           history={history}
           isGlobal
           routes={routes}
+          loader={loader}
           {...props}
         />
       );
@@ -127,6 +135,7 @@ describe('RouterStore', () => {
           route: routes[0],
           routes: routes,
           unlisten: expect.any(Function),
+          loader: expect.any(Object),
         });
       });
 
@@ -342,8 +351,17 @@ describe('RouterStore', () => {
           path: '',
         };
 
+        const loader = createCombinedLoader({
+          context: {},
+          resourceData: null,
+        });
+
         const wrapper = mount(
-          <RouterContainer history={createMemoryHistory()} routes={[route]}>
+          <RouterContainer
+            history={createMemoryHistory()}
+            routes={[route]}
+            loader={loader}
+          >
             <RouteName />
           </RouterContainer>
         );
@@ -372,8 +390,17 @@ describe('RouterStore', () => {
           path: '',
         };
 
+        const loader = createCombinedLoader({
+          context: {},
+          resourceData: null,
+        });
+
         const wrapper = mount(
-          <RouterContainer history={createMemoryHistory()} routes={[route]}>
+          <RouterContainer
+            history={createMemoryHistory()}
+            routes={[route]}
+            loader={loader}
+          >
             <RouteName argument="bar" />
           </RouterContainer>
         );

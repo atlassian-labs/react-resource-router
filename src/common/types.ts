@@ -336,8 +336,9 @@ export type FindRouterContextOptions = {
   basePath?: string;
 };
 
-export type LoaderAPI<T = any> = {
-  onBeforeRouteChange: (params: {
+export type LoaderAPI<T = Record<string, unknown>> = {
+  hydrate?: () => void;
+  onBeforeRouteChange?: (params: {
     prevLocationContext: RouterContext;
     nextLocationContext: RouterContext;
   }) => void;
@@ -346,10 +347,10 @@ export type LoaderAPI<T = any> = {
       prevLocationContext?: RouterContext;
     }
   ) => T;
-  prefetch: (context: RouterContext) => T;
+  prefetch: (context: RouterContext) => void;
 };
 
-export type Loader<T = any> = (props: {
+export type Loader<T> = (props: {
   context: any;
   resourceData: any;
   timeout?: number;

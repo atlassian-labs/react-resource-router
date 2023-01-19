@@ -1,14 +1,12 @@
-import { Loader, Route } from '../common/types';
+import { LoaderAPI, Route } from '../common/types';
 
-export const entryPointsLoader: Loader = () => {
+export const entryPointsLoader = (): LoaderAPI<{ entryPoint: unknown }> => {
   return {
-    onBeforeRouteChange: () => {},
     load: ({ route }: { route: Route }) => {
-      if (route.entryPoint) {
-        // debugger;
-
-        return route.entryPoint; // loadEntryPoint(route.entryPoint, ...)
-      }
+      return {
+        // @ts-expect-error as EntryPoint is missing in Route definition for now
+        entryPoint: route.entryPoint,
+      };
     },
     prefetch: () => {},
   };

@@ -2,10 +2,8 @@ import { createMemoryHistory } from 'history';
 import React, { Component } from 'react';
 
 import { BrowserHistory, LoaderAPI } from '../../common/types';
-import { combine } from '../../common/utils';
 import { createLocation } from '../../common/utils/create-location';
-import { entryPointsLoader } from '../../entry-points/loader';
-import { resourcesLoader } from '../../resources/loader';
+import { createCombinedLoader } from '../loader';
 import { getResourceStore, ResourceContainer } from '../resource-store';
 import {
   getRouterState,
@@ -39,10 +37,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
       location: createLocation(location),
     };
 
-    const loader = combine(
-      entryPointsLoader,
-      resourcesLoader
-    )({
+    const loader = createCombinedLoader({
       context: props.resourceContext,
       resourceData: null,
       timeout,
@@ -75,10 +70,7 @@ export class UniversalRouter extends Component<UniversalRouterProps> {
 
     const { resourceContext, resourceData } = props;
 
-    this.loader = combine(
-      entryPointsLoader,
-      resourcesLoader
-    )({
+    this.loader = createCombinedLoader({
       context: resourceContext,
       resourceData,
     });

@@ -103,7 +103,9 @@ type PrivateRouterActions = {
     },
     updateType?: HistoryUpdateType
   ) => RouterAction;
-  loadRoute: (prevLocationContext?: RouterContext) => RouterAction;
+  loadRoute: (
+    prevLocationContext?: RouterContext
+  ) => Action<EntireRouterState, AllRouterActions, Record<string, unknown>>;
   prefetchRoute: (
     path: Href,
     nextContext: RouterContext | null

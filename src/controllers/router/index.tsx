@@ -1,9 +1,7 @@
 import React, { Component } from 'react';
 
 import { DEFAULT_HISTORY } from '../../common/constants';
-import { combine } from '../../common/utils/combine';
-import { entryPointsLoader } from '../../entry-points/loader';
-import { resourcesLoader } from '../../resources/loader';
+import { createCombinedLoader } from '../loader/index';
 import { getRouterState, RouterContainer } from '../router-store';
 import { UnlistenHistory } from '../router-store/types';
 
@@ -29,10 +27,7 @@ export class Router extends Component<RouterProps> {
 
     const { resourceContext, resourceData, isStatic } = props;
 
-    this.loader = combine(
-      entryPointsLoader,
-      resourcesLoader
-    )({
+    this.loader = createCombinedLoader({
       context: resourceContext,
       resourceData,
       isStatic,

@@ -40,8 +40,9 @@ import {
 } from './utils';
 
 const defaultLoader = {
+  hydrate: () => {},
   onBeforeRouteChange: () => {},
-  load: () => {},
+  load: () => ({}),
   prefetch: () => {},
 };
 
@@ -93,6 +94,10 @@ const actions: AllRouterActions = {
         loader,
       });
 
+      if (loader.hydrate) {
+        loader.hydrate();
+      }
+
       // getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
       if (!isStatic) {
@@ -128,7 +133,11 @@ const actions: AllRouterActions = {
         action: history.action,
         loader,
       });
-      getResourceStore().actions.hydrate({ resourceContext, resourceData });
+
+      if (loader.hydrate) {
+        loader.hydrate();
+      }
+      // getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
@@ -250,10 +259,12 @@ const actions: AllRouterActions = {
           batch(() => {
             // cleanExpiredResources(nextResources, nextLocationContext);
 
-            loader.onBeforeRouteChange({
-              prevLocationContext,
-              nextLocationContext,
-            });
+            if (loader.onBeforeRouteChange) {
+              loader.onBeforeRouteChange({
+                prevLocationContext,
+                nextLocationContext,
+              });
+            }
 
             setState({
               ...nextLocationContext,

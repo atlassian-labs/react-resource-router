@@ -1,4 +1,9 @@
-import type { Loader, RouterContext } from '../common/types';
+import type {
+  LoaderAPI,
+  ResourceStoreContext,
+  RouterContext,
+  RouteResourceResponse,
+} from '../common/types';
 import { getResourceStore } from '../controllers/resource-store';
 import { getResourcesForNextLocation } from '../controllers/resource-store/utils';
 import { getRouterState } from '../controllers/router-store';
@@ -34,7 +39,7 @@ const loadOnUrlChange = ({
     getResourceStoreContext()
   );
 
-  requestResources(nextResources, nextLocationContext, {});
+  return Promise.all(requestResources(nextResources, nextLocationContext, {}));
 };
 
 const onBeforeRouteChange = ({
@@ -46,43 +51,56 @@ const onBeforeRouteChange = ({
 }) => {
   const { cleanExpiredResources, getContext: getResourceStoreContext } =
     getResourceStore().actions;
-
   const nextResources = getResourcesForNextLocation(
     prevLocationContext,
     nextLocationContext,
     getResourceStoreContext()
   );
-
   cleanExpiredResources(nextResources, nextLocationContext);
 };
 
-export const resourcesLoader: Loader<any> = ({
+export const resourcesLoader = ({
   context: resourceContext,
   isStatic,
   resourceData,
   timeout,
-}) => {
-  getResourceStore().actions.hydrate({ resourceContext, resourceData });
-
+}: {
+  context: ResourceStoreContext | undefined;
+  resourceData: any;
+  timeout?: number;
+  isStatic?: boolean;
+}): LoaderAPI<{
+  resources: Promise<RouteResourceResponse<unknown>[]>;
+}> => {
   return {
+    hydrate: () => {
+      getResourceStore().actions.hydrate({ resourceContext, resourceData });
+    },
     onBeforeRouteChange,
     load: ({ route, match, query, prevLocationContext }) => {
-      if (route.resources) {
-        if (prevLocationContext) {
-          loadOnUrlChange({ route, match, query, prevLocationContext });
-        }
-
+      // TODO: in next refactoring add `if (route.resources)` check
+      // For now requesting resources for every route even if `resources` prop is missing on Route
+      if (prevLocationContext) {
         return {
-          resources: getResourceStore().actions.requestAllResources(
-            {
-              route,
-              match,
-              query,
-            },
-            { isStatic, timeout }
-          ),
+          resources: loadOnUrlChange({
+            route,
+            match,
+            query,
+            prevLocationContext,
+          }),
         };
       }
+
+      return {
+        resources: getResourceStore().actions.requestAllResources(
+          {
+            route,
+            match,
+            query,
+          },
+          { isStatic, timeout }
+        ),
+      };
     },
     prefetch: (nextLocationContext: RouterContext) => {
       const { route, match, query } = getRouterState();
