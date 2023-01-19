@@ -34,7 +34,7 @@ export const Router = ({
   }, []);
 
   return (
-    <ResourceContainer isGlobal={isGlobal}>
+    <ResourceContainer isGlobal>
       <RouterContainer
         basePath={basePath}
         history={history}

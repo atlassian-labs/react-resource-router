@@ -152,7 +152,7 @@ describe('<Router /> client-side integration tests', () => {
       const waitForData = () => new Promise(resolve => setTimeout(resolve));
 
       const router = mount(
-        <Router history={history} isGlobal routes={routes}>
+        <Router history={history} routes={routes}>
           <RouteComponent />
         </Router>
       );
