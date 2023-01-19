@@ -36,7 +36,7 @@ type PrivateStateProperties = {
   unlisten: UnlistenHistory | null;
   isStatic: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
-  loader: LoaderAPI | null;
+  loader: LoaderAPI;
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;

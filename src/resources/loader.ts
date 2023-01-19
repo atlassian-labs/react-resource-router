@@ -16,11 +16,8 @@ const loadOnUrlChange = ({
     match: prevMatch,
     query: prevQuery,
   } = prevLocationContext;
-  const {
-    cleanExpiredResources,
-    requestResources,
-    getContext: getResourceStoreContext,
-  } = getResourceStore().actions;
+  const { requestResources, getContext: getResourceStoreContext } =
+    getResourceStore().actions;
 
   const nextLocationContext = {
     route,
@@ -37,8 +34,26 @@ const loadOnUrlChange = ({
     getResourceStoreContext()
   );
 
-  cleanExpiredResources(nextResources, nextLocationContext);
   requestResources(nextResources, nextLocationContext, {});
+};
+
+const onBeforeRouteChange = ({
+  prevLocationContext,
+  nextLocationContext,
+}: {
+  prevLocationContext: RouterContext;
+  nextLocationContext: RouterContext;
+}) => {
+  const { cleanExpiredResources, getContext: getResourceStoreContext } =
+    getResourceStore().actions;
+
+  const nextResources = getResourcesForNextLocation(
+    prevLocationContext,
+    nextLocationContext,
+    getResourceStoreContext()
+  );
+
+  cleanExpiredResources(nextResources, nextLocationContext);
 };
 
 export const resourcesLoader: Loader<any> = ({
@@ -50,6 +65,7 @@ export const resourcesLoader: Loader<any> = ({
   getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
   return {
+    onBeforeRouteChange,
     load: ({ route, match, query, prevLocationContext }) => {
       if (route.resources) {
         if (prevLocationContext) {

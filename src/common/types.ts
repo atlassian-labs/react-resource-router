@@ -337,6 +337,10 @@ export type FindRouterContextOptions = {
 };
 
 export type LoaderAPI<T = any> = {
+  onBeforeRouteChange: (params: {
+    prevLocationContext: RouterContext;
+    nextLocationContext: RouterContext;
+  }) => void;
   load: (
     context: RouterContext & {
       prevLocationContext?: RouterContext;

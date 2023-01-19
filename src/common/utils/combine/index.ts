@@ -5,6 +5,18 @@ export const combine = (...args: Loader[]): Loader => {
     const loaders = args.map(loader => loader(loaderArgs));
 
     return {
+      onBeforeRouteChange: params => {
+        return loaders.reduce(
+          (accumulator, loader) => ({
+            ...accumulator,
+            ...(loader.onBeforeRouteChange
+              ? loader.onBeforeRouteChange(params)
+              : {}),
+          }),
+          {}
+        );
+      },
+
       load: loadParams => {
         return loaders.reduce(
           (accumulator, loader) => ({

@@ -38,6 +38,12 @@ import {
   getRelativeURLFromLocation,
 } from './utils';
 
+const defaultLoader = {
+  onBeforeRouteChange: () => {},
+  load: () => {},
+  prefetch: () => {},
+};
+
 export const INITIAL_STATE: EntireRouterState = {
   history: DEFAULT_HISTORY,
   location: DEFAULT_HISTORY.location,
@@ -50,7 +56,7 @@ export const INITIAL_STATE: EntireRouterState = {
   basePath: '',
   isStatic: false,
   onPrefetch: undefined,
-  loader: null,
+  loader: defaultLoader,
 };
 
 const actions: AllRouterActions = {
@@ -184,7 +190,7 @@ const actions: AllRouterActions = {
    */
   listen:
     () =>
-    ({ getState, setState, dispatch }) => {
+    ({ getState, setState }) => {
       const { history } = getState();
 
       type LocationUpateV4 = [Location, Action];
@@ -196,6 +202,7 @@ const actions: AllRouterActions = {
           const action = update.length === 2 ? update[1] : update[0].action;
 
           const {
+            loader,
             routes,
             basePath,
             match: currentMatch,
@@ -209,7 +216,10 @@ const actions: AllRouterActions = {
           //   getContext: getResourceStoreContext,
           // } = getResourceStore().actions;
 
-          const nextContext = findRouterContext(routes, { location, basePath });
+          const nextLocationContext = findRouterContext(routes, {
+            location,
+            basePath,
+          });
           // const nextLocationContext = {
           //   route: nextContext.route,
           //   match: nextContext.match,
@@ -238,14 +248,23 @@ const actions: AllRouterActions = {
 
           batch(() => {
             // cleanExpiredResources(nextResources, nextLocationContext);
+
+            loader.onBeforeRouteChange({
+              prevLocationContext,
+              nextLocationContext,
+            });
+
             setState({
-              ...nextContext,
+              ...nextLocationContext,
               location,
               action,
             });
-            // requestResources(nextResources, nextLocationContext, {});
 
-            dispatch(actions.loadRoute(prevLocationContext));
+            // requestResources(nextResources, nextLocationContext, {});
+            loader.load({
+              ...nextLocationContext,
+              prevLocationContext,
+            });
           });
         }
       );
@@ -417,7 +436,7 @@ const actions: AllRouterActions = {
     ({ getState }) => {
       const { loader, match, query, route } = getState();
 
-      return loader?.load({ match, query, route, prevLocationContext });
+      return loader.load({ match, query, route, prevLocationContext });
     },
   prefetchRoute:
     (path, nextContext) =>
@@ -433,7 +452,7 @@ const actions: AllRouterActions = {
       const nextLocationContext = nextContext;
 
       batch(() => {
-        loader?.prefetch(nextLocationContext);
+        loader.prefetch(nextLocationContext);
         // prefetchResources(nextResources, nextLocationContext, {});
         if (onPrefetch) onPrefetch(nextLocationContext);
       });
