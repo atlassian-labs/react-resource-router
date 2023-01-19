@@ -32,7 +32,6 @@ export type ResourceSliceIdentifier = {
 export type GetResourceOptions = {
   prefetch?: boolean;
   timeout?: number;
-  isStatic?: boolean;
 };
 
 export type ResourceAction<T> = Action<State, void, T>;

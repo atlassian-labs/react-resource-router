@@ -1,77 +1,89 @@
-import React, { Component } from 'react';
+import { createMemoryHistory } from 'history';
+import React, { useMemo, useEffect } from 'react';
 
-import { DEFAULT_HISTORY } from '../../common/constants';
-import { getRouterState, RouterContainer } from '../router-store';
-import { UnlistenHistory } from '../router-store/types';
+import { getResourceStore, ResourceContainer } from '../resource-store';
+import {
+  getRouterState,
+  RouterContainer,
+  getRouterStore,
+} from '../router-store';
 
-import { RouterProps } from './types';
+import {
+  RouterProps,
+  MemoryRouterProps,
+  RequestResourcesParams,
+} from './types';
 
-/**
- * Default prop provider for the RouterContainer.
- *
- */
-export class Router extends Component<RouterProps> {
-  static defaultProps = {
-    isStatic: false,
-    isGlobal: true,
-    history: DEFAULT_HISTORY,
-  };
+export const Router = ({
+  basePath,
+  children,
+  history,
+  initialRoute,
+  isGlobal = true,
+  onPrefetch,
+  resourceContext,
+  resourceData,
+  routes,
+}: RouterProps) => {
+  useEffect(() => {
+    const { unlisten } = getRouterState();
 
-  /**
-   * Keep a copy of the history listener so that we can be sure that
-   * on unmount we call the listener that was in the router store at the
-   * time of mounting.
-   *
-   * This prevents an issue where the wrong listener is removed if the router
-   * is re-mounted.
-   */
-  unlistenHistory: UnlistenHistory | null = null;
+    return () => {
+      unlisten && unlisten();
+    };
+  }, []);
 
-  componentDidMount() {
-    if (!this.props.isStatic) {
-      const state = getRouterState();
-      this.unlistenHistory = state.unlisten;
-    }
-  }
-
-  /**
-   * Ensures that the router store stops listening to history when the Router
-   * is unmounted.
-   */
-  componentWillUnmount() {
-    if (this.unlistenHistory) {
-      this.unlistenHistory();
-    }
-  }
-
-  render() {
-    const {
-      children,
-      routes,
-      history,
-      initialRoute,
-      isStatic,
-      isGlobal,
-      basePath,
-      resourceContext,
-      resourceData,
-      onPrefetch,
-    } = this.props;
-
-    return (
+  return (
+    <ResourceContainer isGlobal>
       <RouterContainer
         basePath={basePath}
-        routes={routes}
         history={history}
         initialRoute={initialRoute}
-        isStatic={isStatic}
+        isGlobal={isGlobal}
+        onPrefetch={onPrefetch}
         resourceContext={resourceContext}
         resourceData={resourceData}
-        onPrefetch={onPrefetch}
-        isGlobal={isGlobal}
+        routes={routes}
       >
         {children}
       </RouterContainer>
-    );
-  }
+    </ResourceContainer>
+  );
+};
+
+/**
+ * The entry point for requesting resource data on the server.
+ * Pass the result data into the router as a prop in order to hydrate it.
+ */
+Router.requestResources = async ({
+  location,
+  history,
+  timeout,
+  ...bootstrapProps
+}: RequestResourcesParams) => {
+  const { bootstrapStore, requestRouteResources } = getRouterStore().actions;
+
+  bootstrapStore({
+    ...bootstrapProps,
+    history: history || createMemoryHistory({ initialEntries: [location] }),
+  });
+
+  await requestRouteResources({ timeout });
+
+  return getResourceStore().actions.getSafeData();
+};
+
+Router.addResourcesListener = (fn: (...args: any) => any) =>
+  getResourceStore().storeState.subscribe(fn);
+
+export function MemoryRouter(props: MemoryRouterProps) {
+  const history = useMemo(
+    () =>
+      createMemoryHistory(
+        props.location ? { initialEntries: [props.location] } : {}
+      ),
+    [props.location]
+  );
+
+  return <Router {...props} history={history} isGlobal={false} />;
 }

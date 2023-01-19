@@ -9,6 +9,8 @@ import { getRouterStore } from '../../controllers/router-store';
 
 import { useQueryParam } from './index';
 
+jest.mock('../../common/utils/is-server-environment');
+
 const mockLocation = {
   pathname: '/projects/123/board/456',
   search: '?foo=hello&bar=world',

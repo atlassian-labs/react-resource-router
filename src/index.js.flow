@@ -4,38 +4,38 @@ import type { ComponentType, ElementConfig, Node } from 'react';
 
 import type {
   BrowserHistory,
+  CreateRouterContextOptions,
+  GetData,
   HistoryUpdateType,
   LinkProps,
   Location,
   MatchParams,
   MemoryRouterProps,
   Query,
+  RequestResourcesParams,
   ResourceOptions,
   ResourceStoreContext,
+  ResourceStoreData,
+  ResourceType,
   Route,
   RouteContext,
   RouterActionsType,
-  ResourceType,
-  RouteResourceBase,
-  GetData,
+  RouterContext,
+  RouterProps,
+  RouterState,
+  RouterSubscriberProps,
   RouteResource,
+  RouteResourceBase,
   RouteResourceData,
   RouteResourceResponse,
   RouteResourceUpdater,
-  RouterProps,
-  RouterState,
-  RouterContext,
-  RouterSubscriberProps,
-  StaticRouterProps,
-  CreateRouterContextOptions,
-  ResourceStoreData,
-  RequestResourcesParams,
 } from './types.js.flow';
 
 export * from './utils.js.flow';
 export * from './types.js.flow';
 
 declare export function Link(props: LinkProps): Node;
+
 declare export function Redirect(props: {
   to: Location | Route | string,
   push?: boolean,
@@ -47,15 +47,12 @@ declare export function RouterActions(props: {|
   children: (actions: RouterActionsType) => Node,
 |}): Node;
 
-declare export function Router(props: RouterProps): Node;
-declare export var MemoryRouter: {
-  (props: MemoryRouterProps): Node,
+declare export var Router: {
+  (props: RouterProps): Node,
   requestResources: RequestResourcesParams => Promise<ResourceStoreData>,
 };
-declare export var StaticRouter: {
-  (props: StaticRouterProps): Node,
-  requestResources: RequestResourcesParams => Promise<ResourceStoreData>,
-};
+
+declare export function MemoryRouter(props: MemoryRouterProps): Node;
 
 declare export function ResourceSubscriber<T>(props: {
   children: (
@@ -86,6 +83,7 @@ declare export function useResource<T>(
   clear: () => void,
   clearAll: () => void,
 |};
+
 declare export function useRouter(): [RouterState, RouterActionsType];
 declare export function useRouterActions(): RouterActionsType;
 declare export function useResourceStoreContext(): ResourceStoreContext;
@@ -100,6 +98,7 @@ declare export function useQueryParam(
   string | void,
   (newValue: string | void, updateType?: HistoryUpdateType) => void
 ];
+
 declare export function usePathParam(
   paramKey: string
 ): [

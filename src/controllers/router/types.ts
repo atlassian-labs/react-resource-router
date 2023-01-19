@@ -1,7 +1,7 @@
 import { PropsWithChildren } from 'react';
 
 import {
-  BrowserHistory,
+  History,
   ResourceStoreContext,
   ResourceStoreData,
   Route,
@@ -10,13 +10,26 @@ import {
 } from '../../common/types';
 
 export type RouterProps = PropsWithChildren<{
-  isStatic: boolean;
-  history: BrowserHistory;
-  initialRoute?: Route;
-  resourceContext?: ResourceStoreContext;
-  resourceData?: ResourceStoreData;
   basePath?: string;
-  routes: Routes;
+  history: History;
+  initialRoute?: Route;
   isGlobal?: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
+  resourceContext?: ResourceStoreContext;
+  resourceData?: ResourceStoreData;
+  routes: Routes;
 }>;
+
+export type MemoryRouterProps = PropsWithChildren<{
+  basePath?: string;
+  location?: string;
+  routes: Routes;
+}>;
+
+export type RequestResourcesParams = {
+  history?: History;
+  location: string;
+  resourceContext?: ResourceStoreContext;
+  routes: Routes;
+  timeout?: number;
+};

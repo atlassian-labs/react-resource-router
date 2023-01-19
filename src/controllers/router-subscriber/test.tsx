@@ -1,6 +1,7 @@
 import { shallow } from 'enzyme';
 import React from 'react';
 
+import * as isServerEnvironment from '../../common/utils/is-server-environment';
 import * as store from '../router-store';
 import { EntireRouterState } from '../router-store/types';
 
@@ -11,8 +12,15 @@ describe('<RouterSubscriber />', () => {
     jest.restoreAllMocks();
   });
 
-  function renderRouterSubscriber(state: Partial<EntireRouterState>) {
+  function renderRouterSubscriber(
+    state: Partial<EntireRouterState>,
+    isServer = false
+  ) {
     const listen = jest.fn();
+
+    jest
+      .spyOn(isServerEnvironment, 'isServerEnvironment')
+      .mockReturnValue(isServer);
 
     jest
       .spyOn(store, 'useRouterStore')
@@ -36,11 +44,8 @@ describe('<RouterSubscriber />', () => {
     expect(listen).not.toHaveBeenCalled();
   });
 
-  it('should not call listen if container is static', () => {
-    const { listen } = renderRouterSubscriber({
-      isStatic: true,
-      unlisten: () => null,
-    });
+  it('should not call listen if server environment', () => {
+    const { listen } = renderRouterSubscriber({ unlisten: () => null }, true);
 
     expect(listen).not.toHaveBeenCalled();
   });
