@@ -68,7 +68,6 @@
     "lodash.debounce": "^4.0.8",
     "lodash.noop": "^3.0.1",
     "path-to-regexp": "^1.7.0",
-    "react-relay": "^14.1.0",
     "react-sweet-state": "^2.6.4",
     "url-parse": "^1.5.10"
   },
