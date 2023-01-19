@@ -20,7 +20,7 @@ describe('<RouterSubscriber />', () => {
 
     jest
       .spyOn(isServerEnvironment, 'isServerEnvironment')
-      .mockImplementation(() => isServer);
+      .mockReturnValue(isServer);
 
     jest
       .spyOn(store, 'useRouterStore')

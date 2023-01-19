@@ -86,7 +86,9 @@ const actions: AllRouterActions = {
 
       getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
-      dispatch(actions.listen());
+      if (!isServerEnvironment()) {
+        dispatch(actions.listen());
+      }
     },
 
   /**

@@ -3,17 +3,20 @@ import { createMemoryHistory } from 'history';
 import React, { ReactNode } from 'react';
 
 import { Route } from '../../common/types';
+import * as isServerEnvironment from '../../common/utils/is-server-environment';
 import { createResource, getResourceStore } from '../resource-store';
 
 import { Router } from './index';
 
-jest.mock('../../common/utils/is-server-environment', () => ({
-  isServerEnvironment: () => true,
-}));
-
 describe('<Router />', () => {
   const history = createMemoryHistory();
   const routes: Route[] = [];
+
+  beforeEach(() => {
+    jest
+      .spyOn(isServerEnvironment, 'isServerEnvironment')
+      .mockReturnValue(false);
+  });
 
   afterEach(() => {
     jest.restoreAllMocks();
@@ -220,6 +223,10 @@ describe('<Router />', () => {
     });
 
     it('should not re-request resources when they have already been requested by requestResources on the server', async () => {
+      jest
+        .spyOn(isServerEnvironment, 'isServerEnvironment')
+        .mockReturnValue(true);
+
       const params = createRequestResourceParams();
       const route = params.routes[0];
       const resources = route.resources.map(resource =>

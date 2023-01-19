@@ -10,6 +10,8 @@ import { withRouter } from './index';
 
 const waitALilBit = () => new Promise(resolve => setTimeout(resolve));
 
+jest.mock('../../common/utils/is-server-environment');
+
 describe('withRouter()', () => {
   const ComponentToBeWrapped = (props: any) => (
     <div> deep component {props.foo} </div>
