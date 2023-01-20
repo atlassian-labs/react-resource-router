@@ -9,26 +9,26 @@ export const combine = (...loaders: Loader[]): CombinedLoader => {
         }
       });
     },
-    beforeLoad: params => {
+    beforeLoad: (...args) => {
       loaders.forEach(loader => {
         if (loader.beforeLoad !== undefined) {
-          loader.beforeLoad(params);
+          loader.beforeLoad(...args);
         }
       });
     },
 
-    load: loadParams => {
+    load: (...args) => {
       return loaders.reduce(
         (accumulator, loader) => ({
           ...accumulator,
-          ...loader.load(loadParams),
+          ...loader.load(...args),
         }),
         {}
       );
     },
-    prefetch: prefetchParams => {
+    prefetch: (...args) => {
       loaders.forEach(loader => {
-        loader.prefetch(prefetchParams);
+        loader.prefetch(...args);
       });
     },
   };
