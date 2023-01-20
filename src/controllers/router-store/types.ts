@@ -16,7 +16,7 @@ import {
   Route,
   RouterContext,
   Routes,
-  LoaderAPI,
+  CombinedLoader,
 } from '../../common/types';
 
 type PublicStateProperties = {
@@ -35,7 +35,7 @@ type PrivateStateProperties = {
   onPrefetch?: (routerContext: RouterContext) => void;
   routes: Routes;
   unlisten: UnlistenHistory | null;
-  loader: LoaderAPI;
+  loader: CombinedLoader;
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
@@ -49,7 +49,7 @@ export type ContainerProps = {
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
   routes: Routes;
-  loader: LoaderAPI;
+  loader: CombinedLoader;
 };
 
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
@@ -70,10 +70,6 @@ type PrivateRouterActions = {
   requestRouteResources: (
     options?: RequestRouteResourcesOptions
   ) => Action<EntireRouterState, AllRouterActions, Promise<unknown[]>>;
-  // prefetchNextRouteResources: (
-  //   path: Href,
-  //   nextContext: RouterContext | null
-  // ) => RouterAction;
   listen: () => RouterAction;
   getContext: () => Action<
     EntireRouterState,

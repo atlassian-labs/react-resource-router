@@ -1,5 +1,5 @@
 import type {
-  LoaderAPI,
+  Loader,
   ResourceStoreContext,
   RouterContext,
   RouteResourceResponse,
@@ -8,84 +8,65 @@ import { getResourceStore } from '../controllers/resource-store';
 import { getResourcesForNextLocation } from '../controllers/resource-store/utils';
 import { getRouterState } from '../controllers/router-store';
 
-const loadOnUrlChange = ({
-  route,
-  match,
-  query,
-  prevLocationContext,
-}: RouterContext & {
-  prevLocationContext: RouterContext;
-}) => {
-  const {
-    route: prevRoute,
-    match: prevMatch,
-    query: prevQuery,
-  } = prevLocationContext;
+const loadOnUrlChange = (
+  context: RouterContext,
+  prevContext: RouterContext
+) => {
   const { requestResources, getContext: getResourceStoreContext } =
     getResourceStore().actions;
 
-  const nextLocationContext = {
-    route,
-    match,
-    query,
-  };
   const nextResources = getResourcesForNextLocation(
-    {
-      route: prevRoute,
-      match: prevMatch,
-      query: prevQuery,
-    },
-    nextLocationContext,
+    prevContext,
+    context,
     getResourceStoreContext()
   );
 
-  return Promise.all(requestResources(nextResources, nextLocationContext, {}));
+  return Promise.all(requestResources(nextResources, context, {}));
 };
 
-const onBeforeRouteChange = ({
-  prevLocationContext,
-  nextLocationContext,
+const beforeLoad = ({
+  prevContext,
+  nextContext,
 }: {
-  prevLocationContext: RouterContext;
-  nextLocationContext: RouterContext;
+  prevContext: RouterContext;
+  nextContext: RouterContext;
 }) => {
   const { cleanExpiredResources, getContext: getResourceStoreContext } =
     getResourceStore().actions;
   const nextResources = getResourcesForNextLocation(
-    prevLocationContext,
-    nextLocationContext,
+    prevContext,
+    nextContext,
     getResourceStoreContext()
   );
-  cleanExpiredResources(nextResources, nextLocationContext);
+  cleanExpiredResources(nextResources, nextContext);
 };
 
-export const resourcesLoader = ({
-  context: resourceContext,
-  resourceData,
+export const createResourcesLoader = ({
+  context: initialResourceContext,
+  resourceData: initialResourceData,
   timeout,
 }: {
   context: ResourceStoreContext | undefined;
   resourceData: any;
   timeout?: number;
-}): LoaderAPI<{
+}): Loader<{
   resources: Promise<RouteResourceResponse<unknown>[]>;
 }> => {
   return {
     hydrate: () => {
-      getResourceStore().actions.hydrate({ resourceContext, resourceData });
+      getResourceStore().actions.hydrate({
+        resourceContext: initialResourceContext,
+        resourceData: initialResourceData,
+      });
     },
-    onBeforeRouteChange,
-    load: ({ route, match, query, prevLocationContext }) => {
+    beforeLoad,
+    load: (context, prevContext) => {
+      const { route, match, query } = context;
       // TODO: in next refactoring add `if (route.resources)` check
       // For now requesting resources for every route even if `resources` prop is missing on Route
-      if (prevLocationContext) {
+      if (prevContext) {
         return {
-          resources: loadOnUrlChange({
-            route,
-            match,
-            query,
-            prevLocationContext,
-          }),
+          resources: loadOnUrlChange(context, prevContext),
         };
       }
 
@@ -100,19 +81,19 @@ export const resourcesLoader = ({
         ),
       };
     },
-    prefetch: (nextLocationContext: RouterContext) => {
+    prefetch: (context: RouterContext) => {
       const { route, match, query } = getRouterState();
       const { prefetchResources, getContext: getResourceStoreContext } =
         getResourceStore().actions;
 
       const nextResources = getResourcesForNextLocation(
         { route, match, query },
-        nextLocationContext,
+        context,
         getResourceStoreContext()
       );
 
       return {
-        resources: prefetchResources(nextResources, nextLocationContext, {}),
+        resources: prefetchResources(nextResources, context, {}),
       };
     },
   };

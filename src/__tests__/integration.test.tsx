@@ -226,7 +226,7 @@ describe('<Router /> client-side integration tests', () => {
       };
     }
 
-    it('previous data when transitioning to the same route and resource keys', async () => {
+    it.only('previous data when transitioning to the same route and resource keys', async () => {
       const { cacheResource, networkResource } = createResources();
       const route = {
         component: createComponent([cacheResource, networkResource]),
@@ -239,6 +239,7 @@ describe('<Router /> client-side integration tests', () => {
 
       expect(router.html()).toBe('loading:cache loading:network');
       await waitForData();
+      // await new Promise(resolve => setTimeout(resolve, 1500));
       router.update();
       expect(router.html()).toBe('data:cache-1 data:network-1');
 

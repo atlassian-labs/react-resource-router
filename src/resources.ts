@@ -1,1 +1,1 @@
-export { resourcesLoader } from './resources/loader';
+export { createResourcesLoader as resourcesLoader } from './resources/loader';

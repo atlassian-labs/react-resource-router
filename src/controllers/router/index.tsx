@@ -1,7 +1,8 @@
 import { createMemoryHistory } from 'history';
 import React, { useMemo, useEffect } from 'react';
 
-import { createCombinedLoader } from '../loader/index';
+import { combine } from '../../common/utils/combine';
+import { createResourcesLoader } from '../../resources/loader';
 import { getResourceStore, ResourceContainer } from '../resource-store';
 import {
   getRouterState,
@@ -25,6 +26,7 @@ export const Router = ({
   resourceContext,
   resourceData,
   routes,
+  loaders,
 }: RouterProps) => {
   useEffect(() => {
     const { unlisten } = getRouterState();
@@ -34,14 +36,17 @@ export const Router = ({
     };
   }, []);
 
-  const loader = useMemo(
-    () =>
-      createCombinedLoader({
-        context: resourceContext,
-        resourceData,
-      }),
-    [resourceContext, resourceData]
-  );
+  const loader = useMemo(() => {
+    if (loaders) return combine(...loaders);
+
+    // default 'loaders' fallback for the first relase
+    const resources = createResourcesLoader({
+      context: resourceContext,
+      resourceData,
+    });
+
+    return combine(resources);
+  }, [resourceContext, resourceData, loaders]);
 
   return (
     <ResourceContainer isGlobal>
@@ -70,15 +75,25 @@ Router.requestResources = async ({
   location,
   history,
   timeout,
+  loaders,
   ...bootstrapProps
 }: RequestResourcesParams) => {
   const { bootstrapStore, loadRoute } = getRouterStore().actions;
 
-  const loader = createCombinedLoader({
-    context: bootstrapProps.resourceContext,
-    resourceData: null,
-    timeout,
-  });
+  const loader = (() => {
+    if (loaders) {
+      return combine(...loaders);
+    }
+
+    // default 'loaders' fallback for the first relase
+    const resources = createResourcesLoader({
+      context: bootstrapProps.resourceContext,
+      resourceData: null,
+      timeout,
+    });
+
+    return combine(resources);
+  })();
 
   bootstrapStore({
     ...bootstrapProps,

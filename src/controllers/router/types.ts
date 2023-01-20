@@ -2,6 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import {
   History,
+  Loader,
   ResourceStoreContext,
   ResourceStoreData,
   Route,
@@ -18,6 +19,7 @@ export type RouterProps = PropsWithChildren<{
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
   routes: Routes;
+  loaders?: Loader[];
 }>;
 
 export type MemoryRouterProps = PropsWithChildren<{
@@ -32,4 +34,5 @@ export type RequestResourcesParams = {
   resourceContext?: ResourceStoreContext;
   routes: Routes;
   timeout?: number;
+  loaders?: Loader[];
 };

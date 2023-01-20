@@ -40,7 +40,7 @@ import {
 
 const defaultLoader = {
   hydrate: () => {},
-  onBeforeRouteChange: () => {},
+  beforeLoad: () => {},
   load: () => ({}),
   prefetch: () => {},
 };
@@ -95,8 +95,6 @@ const actions: AllRouterActions = {
         loader.hydrate();
       }
 
-      // getResourceStore().actions.hydrate({ resourceContext, resourceData });
-
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
       }
@@ -123,33 +121,6 @@ const actions: AllRouterActions = {
         options
       );
     },
-
-  // prefetchNextRouteResources:
-  //   (path, nextContext) =>
-  //   ({ getState }) => {
-  //     const { routes, basePath, onPrefetch, route, match, query } = getState();
-  //     const { prefetchResources, getContext: getResourceStoreContext } =
-  //       getResourceStore().actions;
-
-  //     if (!nextContext && !isExternalAbsolutePath(path)) {
-  //       const location = parsePath(getRelativePath(path, basePath) as any);
-  //       nextContext = findRouterContext(routes, { location, basePath });
-  //     }
-
-  //     if (nextContext == null) return;
-  //     const nextLocationContext = nextContext;
-
-  //     const nextResources = getResourcesForNextLocation(
-  //       { route, match, query },
-  //       nextLocationContext,
-  //       getResourceStoreContext()
-  //     );
-
-  //     batch(() => {
-  //       prefetchResources(nextResources, nextLocationContext, {});
-  //       if (onPrefetch) onPrefetch(nextLocationContext);
-  //     });
-  //   },
 
   /**
    * Starts listening to browser history and sets the unlisten function in state.
@@ -179,32 +150,12 @@ const actions: AllRouterActions = {
             query: currentQuery,
           } = getState();
 
-          // const {
-          //   cleanExpiredResources,
-          //   requestResources,
-          //   getContext: getResourceStoreContext,
-          // } = getResourceStore().actions;
-
-          const nextLocationContext = findRouterContext(routes, {
+          const nextContext = findRouterContext(routes, {
             location,
             basePath,
           });
-          // const nextLocationContext = {
-          //   route: nextContext.route,
-          //   match: nextContext.match,
-          //   query: nextContext.query,
-          // };
-          // const nextResources = getResourcesForNextLocation(
-          //   {
-          //     route: currentRoute,
-          //     match: currentMatch,
-          //     query: currentQuery,
-          //   },
-          //   nextLocationContext,
-          //   getResourceStoreContext()
-          // );
 
-          const prevLocationContext = {
+          const prevContext = {
             route: currentRoute,
             match: currentMatch,
             query: currentQuery,
@@ -216,26 +167,18 @@ const actions: AllRouterActions = {
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            // cleanExpiredResources(nextResources, nextLocationContext);
-
-            if (loader.onBeforeRouteChange) {
-              loader.onBeforeRouteChange({
-                prevLocationContext,
-                nextLocationContext,
-              });
-            }
+            loader.beforeLoad({
+              prevContext,
+              nextContext,
+            });
 
             setState({
-              ...nextLocationContext,
+              ...nextContext,
               location,
               action,
             });
 
-            // requestResources(nextResources, nextLocationContext, {});
-            loader.load({
-              ...nextLocationContext,
-              prevLocationContext,
-            });
+            loader.load(nextContext, prevContext);
           });
         }
       );
@@ -403,11 +346,11 @@ const actions: AllRouterActions = {
       }
     },
   loadRoute:
-    prevLocationContext =>
+    () =>
     ({ getState }) => {
       const { loader, match, query, route } = getState();
 
-      return loader.load({ match, query, route, prevLocationContext });
+      return loader.load({ match, query, route });
     },
   prefetchRoute:
     (path, nextContext) =>

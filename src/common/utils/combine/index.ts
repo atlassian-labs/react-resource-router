@@ -1,31 +1,6 @@
-import type {
-  LoaderAPI,
-  RouterContext,
-  RouteResourceResponse,
-} from '../../types';
+import type { Loader, CombinedLoader } from '../../types';
 
-type CombinedLoaderAPI<T> = {
-  hydrate: () => void;
-  onBeforeRouteChange: (params: {
-    prevLocationContext: RouterContext;
-    nextLocationContext: RouterContext;
-  }) => void;
-  load: (
-    context: RouterContext & {
-      prevLocationContext?: RouterContext;
-    }
-  ) => T;
-  prefetch: (context: RouterContext) => void;
-};
-
-type LoadResult = {
-  resources: Promise<RouteResourceResponse<unknown>[]>;
-  entryPoint: any; // TODO: add proper type when implementing EntryPoints
-};
-
-export const combine = (
-  ...loaders: LoaderAPI[]
-): CombinedLoaderAPI<LoadResult> => {
+export const combine = (...loaders: Loader[]): CombinedLoader => {
   return {
     hydrate: () => {
       loaders.forEach(loader => {
@@ -34,10 +9,10 @@ export const combine = (
         }
       });
     },
-    onBeforeRouteChange: params => {
+    beforeLoad: params => {
       loaders.forEach(loader => {
-        if (loader.onBeforeRouteChange !== undefined) {
-          loader.onBeforeRouteChange(params);
+        if (loader.beforeLoad !== undefined) {
+          loader.beforeLoad(params);
         }
       });
     },
@@ -48,7 +23,7 @@ export const combine = (
           ...accumulator,
           ...loader.load(loadParams),
         }),
-        {} as LoadResult
+        {}
       );
     },
     prefetch: prefetchParams => {

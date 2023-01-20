@@ -1,6 +1,6 @@
-import { LoaderAPI, Route } from '../common/types';
+import { Loader, Route } from '../common/types';
 
-export const entryPointsLoader = (): LoaderAPI<{ entryPoint: unknown }> => {
+export const entryPointsLoader = (): Loader<{ entryPoint: unknown }> => {
   return {
     load: ({ route }: { route: Route }) => {
       return {

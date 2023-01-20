@@ -4,8 +4,9 @@ import * as history5 from 'history-5';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
+import { combine } from '../../common/utils/combine';
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
-import { createCombinedLoader } from '../loader';
+import { createResourcesLoader } from '../../resources/loader';
 import { getResourceStore } from '../resource-store';
 
 import { ContainerProps } from './types';
@@ -17,6 +18,21 @@ import {
   INITIAL_STATE,
   RouterContainer,
 } from './index';
+
+const createCombinedLoader = ({
+  context,
+  resourceData,
+}: {
+  context: any;
+  resourceData: any;
+}) => {
+  const resources = createResourcesLoader({
+    context,
+    resourceData,
+  });
+
+  return combine(resources);
+};
 
 describe('RouterStore', () => {
   describe.each([

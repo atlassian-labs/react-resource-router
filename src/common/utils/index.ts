@@ -8,4 +8,3 @@ export {
   warmupMatchRouteCache,
 } from './match-route';
 export { findRouterContext, createRouterContext } from './router-context';
-export { combine } from './combine';
