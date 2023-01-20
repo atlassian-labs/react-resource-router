@@ -34,10 +34,14 @@ export const Router = ({
     };
   }, []);
 
-  const loader = createCombinedLoader({
-    context: resourceContext,
-    resourceData,
-  });
+  const loader = useMemo(
+    () =>
+      createCombinedLoader({
+        context: resourceContext,
+        resourceData,
+      }),
+    [resourceContext, resourceData]
+  );
 
   return (
     <ResourceContainer isGlobal>
@@ -68,14 +72,23 @@ Router.requestResources = async ({
   timeout,
   ...bootstrapProps
 }: RequestResourcesParams) => {
-  const { bootstrapStore, requestRouteResources } = getRouterStore().actions;
+  const { bootstrapStore, loadRoute } = getRouterStore().actions;
+
+  const loader = createCombinedLoader({
+    context: bootstrapProps.resourceContext,
+    resourceData: null,
+    timeout,
+  });
 
   bootstrapStore({
     ...bootstrapProps,
     history: history || createMemoryHistory({ initialEntries: [location] }),
+    loader,
   });
 
-  await requestRouteResources({ timeout });
+  // await requestRouteResources({ timeout });
+
+  await loadRoute().resources;
 
   return getResourceStore().actions.getSafeData();
 };

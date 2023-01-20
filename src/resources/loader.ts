@@ -61,14 +61,12 @@ const onBeforeRouteChange = ({
 
 export const resourcesLoader = ({
   context: resourceContext,
-  isStatic,
   resourceData,
   timeout,
 }: {
   context: ResourceStoreContext | undefined;
   resourceData: any;
   timeout?: number;
-  isStatic?: boolean;
 }): LoaderAPI<{
   resources: Promise<RouteResourceResponse<unknown>[]>;
 }> => {
@@ -98,7 +96,7 @@ export const resourcesLoader = ({
             match,
             query,
           },
-          { isStatic, timeout }
+          { timeout }
         ),
       };
     },
