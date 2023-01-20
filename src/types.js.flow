@@ -5,6 +5,8 @@ import type { Action } from 'react-sweet-state';
 
 export type BrowserHistory = any;
 export type MemoryHistory = any;
+export type History = BrowserHistory | MemoryHistory;
+
 export type LocationShape = any;
 
 export type Location = {|
@@ -164,36 +166,24 @@ export type InvariantRoutes = InvariantRoute[];
 export type Routes = Route[];
 
 type ContainerProps = {|
-  isStatic?: boolean,
-  history: BrowserHistory,
-  location?: Location,
-  routes: Routes,
+  history: History,
   resourceData?: ResourceStoreData,
   resourceContext?: ResourceStoreContext,
-|};
-
-export type UniversalRouterContainerProps = {|
-  isGlobal?: boolean,
-  history: BrowserHistory | MemoryHistory,
-  location?: Location,
   routes: Routes,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
 |};
 
 type PublicStateProperties = {|
+  action: HistoryAction,
   location: Location,
+  match: Match,
   query: Query,
   route: Route,
-  match: Match,
-  action: HistoryAction,
 |};
 
 type PrivateStateProperties = {|
   routes: Routes,
-  history: BrowserHistory,
+  history: History,
   unlisten: (() => void) | null,
-  isStatic: boolean,
   shouldUseSuspense: boolean,
 |};
 
@@ -214,69 +204,40 @@ export type RouterAction = Action<EntireRouterState, ContainerProps, *>;
 type UnregisterCallback = () => void;
 
 export type RouterActionsType = {|
-  push: (path: Href | Location, state?: any) => void,
-  pushTo: (route: Route, attributes: ToAttributes) => void,
-  replace: (path: Href | Location, state?: any) => void,
-  replaceTo: (route: Route, attributes: ToAttributes) => void,
+  getBasePath: () => string,
   goBack: () => void,
   goForward: () => void,
+  push: (path: Href | Location, state?: any) => void,
+  pushTo: (route: Route, attributes: ToAttributes) => void,
   registerBlock: (blocker: HistoryBlocker | any) => UnregisterCallback,
-  getBasePath: () => string,
+  replace: (path: Href | Location, state?: any) => void,
+  replaceTo: (route: Route, attributes: ToAttributes) => void,
 |};
 
-// TODO: DRY out all these different router props if possible
 export type RouterProps = {
-  isStatic?: boolean,
-  history?: BrowserHistory,
-  resourceContext?: ResourceStoreContext,
-  resourceData?: ResourceStoreData,
-  routes: Routes,
-  children: Node,
-  initialRoute?: Route,
-  isGlobal?: boolean,
   basePath?: string,
-  onPrefetch?: (routerContext: RouterContext) => void,
-};
-
-export type UniversalRouterProps = {
+  children: Node,
+  history: History,
+  initialRoute?: Route,
   isGlobal?: boolean,
-  history?: BrowserHistory | MemoryHistory,
+  onPrefetch?: (routerContext: RouterContext) => void,
   resourceContext?: ResourceStoreContext,
   resourceData?: ResourceStoreData,
   routes: Routes,
-  children: Node,
-  initialRoute?: Route,
-  onPrefetch?: (routerContext: RouterContext) => void,
 };
 
 export type MemoryRouterProps = {
-  isStatic?: boolean,
-  isGlobal?: boolean,
+  basePath?: string,
+  children: Node,
   location?: string,
   routes?: Routes,
-  children: Node,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-  initialRoute?: Route,
-  basePath?: string,
-  onPrefetch?: (routerContext: RouterContext) => void,
-};
-
-export type StaticRouterProps = {
-  isStatic?: boolean,
-  location?: string,
-  routes: Routes,
-  children: Node,
-  resourceData?: ResourceStoreData,
-  resourceContext?: ResourceStoreContext,
-  initialRoute?: Route,
-  basePath?: string,
 };
 
 export type RequestResourcesParams = {
+  history?: BrowserHistory,
   location: string,
-  routes: Routes,
   resourceContext?: ResourceStoreContext,
+  routes: Routes,
   timeout?: number,
 };
 

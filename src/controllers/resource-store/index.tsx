@@ -18,6 +18,7 @@ import {
   RouteResourceUpdater,
   RouteResourceSyncResult,
 } from '../../common/types';
+import { isServerEnvironment } from '../../common/utils';
 
 import { getResourceStoreContext, getSliceForResource } from './selectors';
 import {
@@ -451,7 +452,7 @@ export const actions = {
     routerStoreContext: RouterContext,
     options: GetResourceOptions
   ) => {
-    const predicate = options.isStatic
+    const predicate = isServerEnvironment()
       ? ({ isBrowserOnly }: RouteResource) => !isBrowserOnly
       : () => true;
 

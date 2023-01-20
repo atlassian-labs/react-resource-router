@@ -28,7 +28,6 @@ import { getResourceStore } from '../resource-store';
 import {
   AllRouterActions,
   ContainerProps,
-  UniversalRouterContainerProps,
   EntireRouterState,
   RouterState,
 } from './types';
@@ -47,17 +46,16 @@ const defaultLoader = {
 };
 
 export const INITIAL_STATE: EntireRouterState = {
-  history: DEFAULT_HISTORY,
-  location: DEFAULT_HISTORY.location,
-  query: {},
-  routes: [],
-  route: DEFAULT_ROUTE,
-  match: DEFAULT_MATCH,
   action: DEFAULT_ACTION,
-  unlisten: null,
   basePath: '',
-  isStatic: false,
+  location: DEFAULT_HISTORY.location,
+  history: DEFAULT_HISTORY,
+  match: DEFAULT_MATCH,
   onPrefetch: undefined,
+  query: {},
+  route: DEFAULT_ROUTE,
+  routes: [],
+  unlisten: null,
   loader: defaultLoader,
 };
 
@@ -70,24 +68,23 @@ const actions: AllRouterActions = {
     props =>
     ({ setState, dispatch }) => {
       const {
-        resourceContext,
-        resourceData,
         basePath = '',
-        routes,
+        history,
         initialRoute,
+        onPrefetch,
+        routes,
         loader,
-        ...initialProps
       } = props;
-      const { history, isStatic } = initialProps;
       const routerContext = findRouterContext(
         initialRoute ? [initialRoute] : routes,
         { location: history.location, basePath }
       );
 
       setState({
-        ...initialProps,
         ...routerContext,
         basePath,
+        history,
+        onPrefetch,
         routes,
         location: history.location,
         action: history.action,
@@ -98,45 +95,6 @@ const actions: AllRouterActions = {
         loader.hydrate();
       }
 
-      // getResourceStore().actions.hydrate({ resourceContext, resourceData });
-
-      if (!isStatic) {
-        dispatch(actions.listen());
-      }
-    },
-
-  /**
-   * Duplicate method that uses isServerEnvironment instead of removed isStatic prop
-   * internally. We can remove this when UniversalRouter replaces Router completely.
-   */
-  bootstrapStoreUniversal:
-    props =>
-    ({ setState, dispatch }) => {
-      const {
-        resourceContext,
-        resourceData,
-        basePath = '',
-        loader,
-        ...initialProps
-      } = props;
-      const { history, routes } = initialProps;
-      const routerContext = findRouterContext(routes, {
-        location: history.location,
-        basePath,
-      });
-
-      setState({
-        ...initialProps,
-        ...routerContext,
-        basePath,
-        location: history.location,
-        action: history.action,
-        loader,
-      });
-
-      if (loader.hydrate) {
-        loader.hydrate();
-      }
       // getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
       if (!isServerEnvironment()) {
@@ -201,7 +159,8 @@ const actions: AllRouterActions = {
   listen:
     () =>
     ({ getState, setState }) => {
-      const { history } = getState();
+      const { history, unlisten } = getState();
+      if (unlisten) unlisten();
 
       type LocationUpateV4 = [Location, Action];
       type LocationUpateV5 = [{ location: Location; action: Action }];
@@ -490,8 +449,8 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
       () =>
       ({ dispatch }, props) => {
         dispatch(actions.bootstrapStore(props));
-        // !props.isStatic && dispatch(actions.requestRouteResources());
-        !props.isStatic && dispatch(actions.loadRoute());
+        !isServerEnvironment() && dispatch(actions.loadRoute());
+        // !isServerEnvironment() && dispatch(actions.requestRouteResources());
       },
     onCleanup: () => () => {
       if (process.env.NODE_ENV === 'development') {
@@ -503,29 +462,6 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
     },
   }
 );
-
-export const UniversalRouterContainer = createContainer<
-  State,
-  Actions,
-  UniversalRouterContainerProps
->(RouterStore, {
-  displayName: 'UniversalRouterContainer',
-  onInit:
-    () =>
-    ({ dispatch }, props) => {
-      dispatch(actions.bootstrapStoreUniversal(props));
-      // !isServerEnvironment() && dispatch(actions.requestRouteResources());
-      !isServerEnvironment() && dispatch(actions.loadRoute());
-    },
-  onCleanup: () => () => {
-    if (process.env.NODE_ENV === 'development') {
-      // eslint-disable-next-line no-console
-      console.warn(
-        `Warning: react-resource-router has been unmounted! Was this intentional? Resources will be refetched when the router is mounted again.`
-      );
-    }
-  },
-});
 
 export const RouteResourceEnabledSubscriber = createSubscriber<
   State,

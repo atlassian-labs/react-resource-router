@@ -3,6 +3,7 @@ import React from 'react';
 import { BoundActions, defaultRegistry } from 'react-sweet-state';
 
 import { ResourceType, RouteResourceResponse } from '../../common/types';
+import { isServerEnvironment } from '../../common/utils/is-server-environment';
 import * as routerStoreModule from '../router-store';
 import { useResource } from '../use-resource';
 
@@ -20,6 +21,8 @@ import {
 import { BASE_DEFAULT_STATE_SLICE } from './utils/get-default-state-slice/constants';
 
 import { Actions, getResourceStore, ResourceDependencyError } from './index';
+
+jest.mock('../../common/utils/is-server-environment');
 
 jest.mock('./utils', () => ({
   ...jest.requireActual('./utils'),
@@ -405,17 +408,20 @@ describe('resource store', () => {
     });
 
     describe('requestResources', () => {
-      it('should skip isBrowserOnly resources if isStatic is true', () => {
+      it('should skip isBrowserOnly resources on a server environment', () => {
+        (isServerEnvironment as any).mockReturnValue(true);
+
         const data = actions.requestResources(
           [{ ...mockResource, isBrowserOnly: true }],
           mockRouterStoreContext,
-          { ...mockOptions, isStatic: true }
+          mockOptions
         );
 
         expect(data).toEqual([]);
       });
 
-      it('should ignore isBrowserOnly if isStatic is falsey', async () => {
+      it('should request isBrowserOnly resources on a client environment', async () => {
+        (isServerEnvironment as any).mockReturnValue(false);
         (getDefaultStateSlice as any).mockImplementation(() => ({
           ...BASE_DEFAULT_STATE_SLICE,
           expiresAt: 1,

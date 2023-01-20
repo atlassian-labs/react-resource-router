@@ -4,6 +4,7 @@ import * as history5 from 'history-5';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
+import * as isServerEnvironment from '../../common/utils/is-server-environment';
 import { createCombinedLoader } from '../loader';
 import { getResourceStore } from '../resource-store';
 
@@ -52,7 +53,6 @@ describe('RouterStore', () => {
       const loader = createCombinedLoader({
         context: props.resourceContext,
         resourceData: props.resourceData,
-        isStatic: props.isStatic,
       });
 
       mount(
@@ -84,6 +84,10 @@ describe('RouterStore', () => {
           replace: jest.fn(),
         },
       });
+
+      jest
+        .spyOn(isServerEnvironment, 'isServerEnvironment')
+        .mockReturnValue(false);
     });
 
     afterEach(() => {
@@ -107,10 +111,20 @@ describe('RouterStore', () => {
     });
 
     describe('when the container is rendered', () => {
-      it('calls history.listen()', () => {
+      it('calls history.listen() in a client environment', () => {
         const { history } = renderRouterContainer();
 
         expect(history.listen).toHaveBeenCalledTimes(1);
+      });
+
+      it('does not call history.listen() in a server environment', () => {
+        jest
+          .spyOn(isServerEnvironment, 'isServerEnvironment')
+          .mockReturnValue(true);
+
+        const { history } = renderRouterContainer();
+
+        expect(history.listen).not.toHaveBeenCalled();
       });
 
       it('returns the expected state', () => {
