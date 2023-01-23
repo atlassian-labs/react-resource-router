@@ -40,12 +40,12 @@ export const Router = ({
     if (loaders) return combine(loaders);
 
     // default 'loaders' fallback for the first relase
-    const resources = createResourcesLoader({
+    const resourceLoader = createResourcesLoader({
       context: resourceContext,
       resourceData,
     });
 
-    return combine([resources]);
+    return combine([resourceLoader]);
   }, [resourceContext, resourceData, loaders]);
 
   return (

@@ -26,12 +26,12 @@ const createCombinedLoader = ({
   context: any;
   resourceData: any;
 }) => {
-  const resources = createResourcesLoader({
+  const resourceLoader = createResourcesLoader({
     context,
     resourceData,
   });
 
-  return combine(resources);
+  return combine([resourceLoader]);
 };
 
 describe('RouterStore', () => {
