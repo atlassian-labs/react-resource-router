@@ -330,19 +330,19 @@ export type FindRouterContextOptions = {
 export type Loader<T = Record<string, any>> = {
   hydrate?: () => void;
   beforeLoad?: (params: {
-    prevContext: RouterContext;
+    context: RouterContext;
     nextContext: RouterContext;
   }) => void;
-  load: (context: RouterContext, prevContext?: RouterContext) => T;
+  load: (params: { context: RouterContext; prevContext?: RouterContext }) => T;
   prefetch: (context: RouterContext) => void;
 };
 
 export type CombinedLoader<T = Record<string, any>> = {
   hydrate: () => void;
   beforeLoad: (params: {
-    prevContext: RouterContext;
+    context: RouterContext;
     nextContext: RouterContext;
   }) => void;
-  load: (context: RouterContext, prevContext?: RouterContext) => T;
+  load: (params: { context: RouterContext; prevContext?: RouterContext }) => T;
   prefetch: (context: RouterContext) => void;
 };

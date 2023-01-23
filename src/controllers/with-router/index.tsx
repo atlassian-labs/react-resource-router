@@ -36,14 +36,14 @@ export const withRouter = <P extends Record<string, any>>(
     return (
       <Component
         {...props}
-        route={route}
-        location={location}
-        query={query}
-        match={match}
         action={action}
         history={history}
+        location={location}
+        match={match}
         push={push}
+        query={query}
         replace={replace}
+        route={route}
       />
     );
   };

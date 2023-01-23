@@ -1,6 +1,6 @@
 import type { Loader, CombinedLoader } from '../../types';
 
-export const combine = (...loaders: Loader[]): CombinedLoader => {
+export const combine = (loaders: Loader[]): CombinedLoader => {
   return {
     hydrate: () => {
       loaders.forEach(loader => {

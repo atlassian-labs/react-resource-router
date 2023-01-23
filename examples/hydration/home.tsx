@@ -23,7 +23,7 @@ export const Home = () => {
     <div>
       <h1>Random Dog</h1>
       <section>
-        {data?.message && <img style={{ width: '400px' }} src={data.message} />}
+        {data?.message && <img src={data.message} style={{ width: '400px' }} />}
       </section>
     </div>
   );

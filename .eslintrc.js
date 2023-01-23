@@ -47,6 +47,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'react-hooks/rules-of-hooks': 'error',
     semi: 'off',
+    'react/jsx-sort-props': 'error',
   },
   overrides: [
     {

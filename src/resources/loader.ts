@@ -25,16 +25,16 @@ const loadOnUrlChange = (
 };
 
 const beforeLoad = ({
-  prevContext,
+  context,
   nextContext,
 }: {
-  prevContext: RouterContext;
+  context: RouterContext;
   nextContext: RouterContext;
 }) => {
   const { cleanExpiredResources, getContext: getResourceStoreContext } =
     getResourceStore().actions;
   const nextResources = getResourcesForNextLocation(
-    prevContext,
+    context,
     nextContext,
     getResourceStoreContext()
   );
@@ -60,7 +60,7 @@ export const createResourcesLoader = ({
       });
     },
     beforeLoad,
-    load: (context, prevContext) => {
+    load: ({ context, prevContext }) => {
       const { route, match, query } = context;
       // TODO: in next refactoring add `if (route.resources)` check
       // For now requesting resources for every route even if `resources` prop is missing on Route

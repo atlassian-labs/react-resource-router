@@ -75,8 +75,8 @@ describe('RouterStore', () => {
         <RouterContainer
           history={history}
           isGlobal
-          routes={routes}
           loader={loader}
+          routes={routes}
           {...props}
         />
       );
@@ -89,6 +89,7 @@ describe('RouterStore', () => {
           push,
           replace,
         }),
+        loader,
       };
     }
 
@@ -145,7 +146,9 @@ describe('RouterStore', () => {
 
       it('returns the expected state', () => {
         const onPrefetch = jest.fn();
-        const { history, getState } = renderRouterContainer({ onPrefetch });
+        const { history, getState, loader } = renderRouterContainer({
+          onPrefetch,
+        });
 
         expect(getState()).toMatchObject({
           ...INITIAL_STATE,
@@ -165,7 +168,7 @@ describe('RouterStore', () => {
           route: routes[0],
           routes: routes,
           unlisten: expect.any(Function),
-          loader: expect.any(Object),
+          loader,
         });
       });
 
@@ -389,8 +392,8 @@ describe('RouterStore', () => {
         const wrapper = mount(
           <RouterContainer
             history={createMemoryHistory()}
-            routes={[route]}
             loader={loader}
+            routes={[route]}
           >
             <RouteName />
           </RouterContainer>
@@ -428,8 +431,8 @@ describe('RouterStore', () => {
         const wrapper = mount(
           <RouterContainer
             history={createMemoryHistory()}
-            routes={[route]}
             loader={loader}
+            routes={[route]}
           >
             <RouteName argument="bar" />
           </RouterContainer>

@@ -16,10 +16,10 @@ const appRoutes = [homeRoute, aboutRoute];
 const App = () => {
   return (
     <Router
-      routes={appRoutes}
-      history={myHistory}
       basePath="/routing-with-resources"
+      history={myHistory}
       onPrefetch={({ route }) => console.log('Prefetching route', route.name)}
+      routes={appRoutes}
     >
       <RouteComponent />
     </Router>

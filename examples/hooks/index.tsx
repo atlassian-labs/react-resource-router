@@ -47,7 +47,7 @@ const Title = () => {
 
 const App = () => {
   return (
-    <Router routes={appRoutes} history={myHistory} basePath="/hooks">
+    <Router basePath="/hooks" history={myHistory} routes={appRoutes}>
       <Title />
       <RouteComponent />
     </Router>

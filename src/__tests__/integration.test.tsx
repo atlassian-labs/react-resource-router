@@ -226,7 +226,7 @@ describe('<Router /> client-side integration tests', () => {
       };
     }
 
-    it.only('previous data when transitioning to the same route and resource keys', async () => {
+    it('previous data when transitioning to the same route and resource keys', async () => {
       const { cacheResource, networkResource } = createResources();
       const route = {
         component: createComponent([cacheResource, networkResource]),

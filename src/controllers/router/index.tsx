@@ -22,11 +22,11 @@ export const Router = ({
   history,
   initialRoute,
   isGlobal = true,
+  loaders,
   onPrefetch,
   resourceContext,
   resourceData,
   routes,
-  loaders,
 }: RouterProps) => {
   useEffect(() => {
     const { unlisten } = getRouterState();
@@ -37,7 +37,7 @@ export const Router = ({
   }, []);
 
   const loader = useMemo(() => {
-    if (loaders) return combine(...loaders);
+    if (loaders) return combine(loaders);
 
     // default 'loaders' fallback for the first relase
     const resources = createResourcesLoader({
@@ -45,7 +45,7 @@ export const Router = ({
       resourceData,
     });
 
-    return combine(resources);
+    return combine([resources]);
   }, [resourceContext, resourceData, loaders]);
 
   return (
@@ -55,11 +55,11 @@ export const Router = ({
         history={history}
         initialRoute={initialRoute}
         isGlobal={isGlobal}
+        loader={loader}
         onPrefetch={onPrefetch}
         resourceContext={resourceContext}
         resourceData={resourceData}
         routes={routes}
-        loader={loader}
       >
         {children}
       </RouterContainer>
@@ -82,7 +82,7 @@ Router.requestResources = async ({
 
   const loader = (() => {
     if (loaders) {
-      return combine(...loaders);
+      return combine(loaders);
     }
 
     // default 'loaders' fallback for the first relase
@@ -92,7 +92,7 @@ Router.requestResources = async ({
       timeout,
     });
 
-    return combine(resources);
+    return combine([resources]);
   })();
 
   bootstrapStore({

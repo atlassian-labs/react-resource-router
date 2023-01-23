@@ -32,10 +32,10 @@ const main = async () => {
   const App = () => {
     return (
       <Router
-        routes={appRoutes}
-        history={myHistory}
         basePath="/hydration"
+        history={myHistory}
         resourceData={data}
+        routes={appRoutes}
       >
         <RouteComponent />
       </Router>

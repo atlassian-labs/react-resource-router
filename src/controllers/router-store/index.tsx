@@ -168,7 +168,7 @@ const actions: AllRouterActions = {
 
           batch(() => {
             loader.beforeLoad({
-              prevContext,
+              context: prevContext,
               nextContext,
             });
 
@@ -178,7 +178,7 @@ const actions: AllRouterActions = {
               action,
             });
 
-            loader.load(nextContext, prevContext);
+            loader.load({ context: nextContext, prevContext });
           });
         }
       );
@@ -350,7 +350,7 @@ const actions: AllRouterActions = {
     ({ getState }) => {
       const { loader, match, query, route } = getState();
 
-      return loader.load({ match, query, route });
+      return loader.load({ context: { match, query, route } });
     },
   prefetchRoute:
     (path, nextContext) =>

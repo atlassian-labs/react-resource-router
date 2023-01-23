@@ -36,7 +36,7 @@ describe('<Route />', () => {
   it('renders a the route component', () => {
     const wrapper = mount(
       // @ts-expect-error
-      <Router routes={routes} history={HistoryMock}>
+      <Router history={HistoryMock} routes={routes}>
         <RouteComponent />
       </Router>
     );

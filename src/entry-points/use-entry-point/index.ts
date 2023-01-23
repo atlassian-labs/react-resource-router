@@ -3,9 +3,11 @@ import { useRouter } from '../../controllers/use-router';
 export const useEntryPoint = (): any => {
   const [{ route }] = useRouter();
 
-  if (!route.entryPoint) {
+  // @ts-expect-error as EntryPoint is missing in Route definition for now
+  if (!route || !route.entryPoint) {
     return undefined;
   }
 
-  return { entryPointReference: route?.entryPoint }; // loadEntryPoint(...)
+  // @ts-expect-error as EntryPoint is missing in Route definition for now
+  return { entryPoint: route?.entryPoint }; // loadEntryPoint(...)
 };
