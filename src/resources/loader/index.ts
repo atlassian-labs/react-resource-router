@@ -3,10 +3,10 @@ import type {
   ResourceStoreContext,
   RouterContext,
   RouteResourceResponse,
-} from '../common/types';
-import { getResourceStore } from '../controllers/resource-store';
-import { getResourcesForNextLocation } from '../controllers/resource-store/utils';
-import { getRouterState } from '../controllers/router-store';
+} from '../../common/types';
+import { getResourceStore } from '../../controllers/resource-store';
+import { getResourcesForNextLocation } from '../../controllers/resource-store/utils';
+import { getRouterState } from '../../controllers/router-store';
 
 const loadOnUrlChange = (
   context: RouterContext,
@@ -46,7 +46,7 @@ export const createResourcesLoader = ({
   resourceData: initialResourceData,
   timeout,
 }: {
-  context: ResourceStoreContext | undefined;
+  context?: ResourceStoreContext;
   resourceData: any;
   timeout?: number;
 }): Loader<{

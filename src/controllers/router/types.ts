@@ -36,3 +36,10 @@ export type RequestResourcesParams = {
   timeout?: number;
   loaders?: Loader[];
 };
+
+export type LoadRouteParams = {
+  history?: History;
+  location: string;
+  routes: Routes;
+  loaders: Loader[];
+};

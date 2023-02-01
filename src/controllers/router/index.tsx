@@ -14,6 +14,7 @@ import {
   RouterProps,
   MemoryRouterProps,
   RequestResourcesParams,
+  LoadRouteParams,
 } from './types';
 
 export const Router = ({
@@ -68,6 +69,7 @@ export const Router = ({
 };
 
 /**
+ * @deprecated
  * The entry point for requesting resource data on the server.
  * Pass the result data into the router as a prop in order to hydrate it.
  */
@@ -86,13 +88,13 @@ Router.requestResources = async ({
     }
 
     // default 'loaders' fallback for the first relase
-    const resources = createResourcesLoader({
+    const resourcesLoader = createResourcesLoader({
       context: bootstrapProps.resourceContext,
       resourceData: null,
       timeout,
     });
 
-    return combine([resources]);
+    return combine([resourcesLoader]);
   })();
 
   bootstrapStore({
@@ -106,6 +108,23 @@ Router.requestResources = async ({
   await loadRoute().resources;
 
   return getResourceStore().actions.getSafeData();
+};
+
+Router.loadRoute = ({
+  location,
+  history,
+  loaders,
+  routes,
+}: LoadRouteParams) => {
+  const { bootstrapStore, loadRoute } = getRouterStore().actions;
+
+  bootstrapStore({
+    routes,
+    history: history || createMemoryHistory({ initialEntries: [location] }),
+    loader: combine(loaders),
+  });
+
+  return loadRoute();
 };
 
 Router.addResourcesListener = (fn: (...args: any) => any) =>
