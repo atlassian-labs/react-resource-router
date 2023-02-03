@@ -4,14 +4,15 @@
  */
 const isJsDomEnvironment = () =>
   window.name === 'nodejs' ||
-  navigator.userAgent.includes('Node.js') ||
-  navigator.userAgent.includes('jsdom');
+  navigator?.userAgent.includes('Node.js') ||
+  navigator?.userAgent.includes('jsdom');
 
 export const isServerEnvironment = () => {
   if (
-    typeof process !== 'undefined' &&
-    process.versions != null &&
-    process.versions.node != null
+    typeof window === 'undefined' ||
+    (typeof process !== 'undefined' &&
+      process.versions != null &&
+      process.versions.node != null)
   ) {
     return true;
   }
