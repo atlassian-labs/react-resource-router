@@ -68,7 +68,7 @@ export type {
   RouterContext,
   RouterDataContext,
   UseResourceHookResponse,
-  Loader,
+  Plugin,
 } from './common/types';
 
 export type {

@@ -2,7 +2,7 @@ import { createMemoryHistory } from 'history';
 import React, { useMemo, useEffect } from 'react';
 
 import { combine } from '../../common/utils/combine';
-import { createResourcesLoader } from '../../resources/loader';
+import { createResourcesPlugin } from '../../resources/plugin';
 import { getResourceStore, ResourceContainer } from '../resource-store';
 import {
   getRouterState,
@@ -23,7 +23,7 @@ export const Router = ({
   history,
   initialRoute,
   isGlobal = true,
-  loaders,
+  plugins,
   onPrefetch,
   resourceContext,
   resourceData,
@@ -37,17 +37,17 @@ export const Router = ({
     };
   }, []);
 
-  const loader = useMemo(() => {
-    if (loaders) return combine(loaders);
+  const defaultPlugins = useMemo(() => {
+    if (plugins) return combine(plugins);
 
-    // default 'loaders' fallback for the first relase
-    const resourceLoader = createResourcesLoader({
+    // default 'plugins' fallback for the first relase
+    const resourcesPlugin = createResourcesPlugin({
       context: resourceContext,
       resourceData,
     });
 
-    return combine([resourceLoader]);
-  }, [resourceContext, resourceData, loaders]);
+    return combine([resourcesPlugin]);
+  }, [resourceContext, resourceData, plugins]);
 
   return (
     <ResourceContainer isGlobal>
@@ -56,8 +56,8 @@ export const Router = ({
         history={history}
         initialRoute={initialRoute}
         isGlobal={isGlobal}
-        loader={loader}
         onPrefetch={onPrefetch}
+        plugins={defaultPlugins}
         resourceContext={resourceContext}
         resourceData={resourceData}
         routes={routes}
@@ -77,30 +77,30 @@ Router.requestResources = async ({
   location,
   history,
   timeout,
-  loaders,
+  plugins,
   ...bootstrapProps
 }: RequestResourcesParams) => {
   const { bootstrapStore, loadRoute } = getRouterStore().actions;
 
-  const loader = (() => {
-    if (loaders) {
-      return combine(loaders);
+  const defaultPluginsFallback = (() => {
+    if (plugins) {
+      return combine(plugins);
     }
 
-    // default 'loaders' fallback for the first relase
-    const resourcesLoader = createResourcesLoader({
+    // default 'plugins' fallback for the first relase
+    const resourcesPlugin = createResourcesPlugin({
       context: bootstrapProps.resourceContext,
       resourceData: null,
       timeout,
     });
 
-    return combine([resourcesLoader]);
+    return combine([resourcesPlugin]);
   })();
 
   bootstrapStore({
     ...bootstrapProps,
     history: history || createMemoryHistory({ initialEntries: [location] }),
-    loader,
+    plugins: defaultPluginsFallback,
   });
 
   // await requestRouteResources({ timeout });
@@ -113,7 +113,7 @@ Router.requestResources = async ({
 Router.loadRoute = ({
   location,
   history,
-  loaders,
+  plugins,
   routes,
 }: LoadRouteParams) => {
   const { bootstrapStore, loadRoute } = getRouterStore().actions;
@@ -121,7 +121,7 @@ Router.loadRoute = ({
   bootstrapStore({
     routes,
     history: history || createMemoryHistory({ initialEntries: [location] }),
-    loader: combine(loaders),
+    plugins: combine(plugins),
   });
 
   return loadRoute();

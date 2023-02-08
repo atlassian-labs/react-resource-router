@@ -16,7 +16,7 @@ import {
   Route,
   RouterContext,
   Routes,
-  CombinedLoader,
+  CombinedPlugins,
 } from '../../common/types';
 
 type PublicStateProperties = {
@@ -35,7 +35,7 @@ type PrivateStateProperties = {
   onPrefetch?: (routerContext: RouterContext) => void;
   routes: Routes;
   unlisten: UnlistenHistory | null;
-  loader: CombinedLoader;
+  plugins: CombinedPlugins;
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
@@ -49,7 +49,7 @@ export type ContainerProps = {
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
   routes: Routes;
-  loader: CombinedLoader;
+  plugins: CombinedPlugins;
 };
 
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;

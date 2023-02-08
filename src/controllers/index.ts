@@ -28,5 +28,3 @@ export { useRouter } from './use-router';
 export { useRouterActions } from './use-router-actions';
 
 export { withRouter } from './with-router';
-// proof of concept ONLY
-export { useEntryPoint } from '../entry-points/use-entry-point';

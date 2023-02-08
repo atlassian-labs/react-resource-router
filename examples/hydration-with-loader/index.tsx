@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { createResourcesLoader, getResourcesSafeData } from '../../resources';
+import { createResourcesPlugin, getResourcesSafeData } from '../../resources';
 
 import { homeRoute } from './routes';
 
@@ -17,14 +17,14 @@ const myHistory = createBrowserHistory();
 const appRoutes = [homeRoute];
 
 const getStateFromServer = async () => {
-  const resourcesLoader = createResourcesLoader({
+  const resourcesPlugin = createResourcesPlugin({
     resourceData: null,
   });
 
   const data = Router.requestResources({
     location: '/',
     routes: appRoutes,
-    loaders: [resourcesLoader],
+    plugins: [resourcesPlugin],
   });
 
   // await data.resources;
@@ -40,7 +40,7 @@ const getStateFromServer = async () => {
 
 const main = async () => {
   const data = await getStateFromServer();
-  const resourceLoader = createResourcesLoader({
+  const resourcesPlugin = createResourcesPlugin({
     resourceData: data,
   });
 
@@ -49,7 +49,7 @@ const main = async () => {
       <Router
         basePath="/hydration-with-loader"
         history={myHistory}
-        loaders={[resourceLoader]}
+        plugins={[resourcesPlugin]}
         resourceData={data}
         routes={appRoutes}
       >

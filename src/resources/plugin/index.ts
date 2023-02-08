@@ -1,5 +1,5 @@
 import type {
-  Loader,
+  Plugin,
   ResourceStoreContext,
   RouterContext,
   RouteResourceResponse,
@@ -41,7 +41,7 @@ const beforeLoad = ({
   cleanExpiredResources(nextResources, nextContext);
 };
 
-export const createResourcesLoader = ({
+export const createResourcesPlugin = ({
   context: initialResourceContext,
   resourceData: initialResourceData,
   timeout,
@@ -49,7 +49,7 @@ export const createResourcesLoader = ({
   context?: ResourceStoreContext;
   resourceData: any;
   timeout?: number;
-}): Loader<{
+}): Plugin<{
   resources: Promise<RouteResourceResponse<unknown>[]>;
 }> => {
   return {
@@ -59,8 +59,8 @@ export const createResourcesLoader = ({
         resourceData: initialResourceData,
       });
     },
-    beforeLoad,
-    load: ({ context, prevContext }) => {
+    beforeRouteLoad: beforeLoad,
+    loadRoute: ({ context, prevContext }) => {
       const { route, match, query } = context;
       // TODO: in next refactoring add `if (route.resources)` check
       // For now requesting resources for every route even if `resources` prop is missing on Route
@@ -81,7 +81,7 @@ export const createResourcesLoader = ({
         ),
       };
     },
-    prefetch: (context: RouterContext) => {
+    prefetchRoute: (context: RouterContext) => {
       const { route, match, query } = getRouterState();
       const { prefetchResources, getContext: getResourceStoreContext } =
         getResourceStore().actions;

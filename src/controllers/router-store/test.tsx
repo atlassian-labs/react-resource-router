@@ -6,7 +6,7 @@ import { defaultRegistry } from 'react-sweet-state';
 
 import { combine } from '../../common/utils/combine';
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
-import { createResourcesLoader } from '../../resources/loader';
+import { createResourcesPlugin } from '../../resources/plugin';
 import { getResourceStore } from '../resource-store';
 
 import { ContainerProps } from './types';
@@ -19,19 +19,19 @@ import {
   RouterContainer,
 } from './index';
 
-const createCombinedLoader = ({
+const createPlugins = ({
   context,
   resourceData,
 }: {
   context: any;
   resourceData: any;
 }) => {
-  const resourceLoader = createResourcesLoader({
+  const resourcesPlugin = createResourcesPlugin({
     context,
     resourceData,
   });
 
-  return combine([resourceLoader]);
+  return combine([resourcesPlugin]);
 };
 
 describe('RouterStore', () => {
@@ -66,7 +66,7 @@ describe('RouterStore', () => {
       const push = jest.spyOn(history, 'push');
       const replace = jest.spyOn(history, 'replace');
 
-      const loader = createCombinedLoader({
+      const plugins = createPlugins({
         context: props.resourceContext,
         resourceData: props.resourceData,
       });
@@ -75,7 +75,7 @@ describe('RouterStore', () => {
         <RouterContainer
           history={history}
           isGlobal
-          loader={loader}
+          plugins={plugins}
           routes={routes}
           {...props}
         />
@@ -89,7 +89,7 @@ describe('RouterStore', () => {
           push,
           replace,
         }),
-        loader,
+        plugins,
       };
     }
 
@@ -146,7 +146,7 @@ describe('RouterStore', () => {
 
       it('returns the expected state', () => {
         const onPrefetch = jest.fn();
-        const { history, getState, loader } = renderRouterContainer({
+        const { history, getState, plugins } = renderRouterContainer({
           onPrefetch,
         });
 
@@ -168,7 +168,7 @@ describe('RouterStore', () => {
           route: routes[0],
           routes: routes,
           unlisten: expect.any(Function),
-          loader,
+          plugins,
         });
       });
 
@@ -384,7 +384,7 @@ describe('RouterStore', () => {
           path: '',
         };
 
-        const loader = createCombinedLoader({
+        const plugins = createPlugins({
           context: {},
           resourceData: null,
         });
@@ -392,7 +392,7 @@ describe('RouterStore', () => {
         const wrapper = mount(
           <RouterContainer
             history={createMemoryHistory()}
-            loader={loader}
+            plugins={plugins}
             routes={[route]}
           >
             <RouteName />
@@ -423,7 +423,7 @@ describe('RouterStore', () => {
           path: '',
         };
 
-        const loader = createCombinedLoader({
+        const plugins = createPlugins({
           context: {},
           resourceData: null,
         });
@@ -431,7 +431,7 @@ describe('RouterStore', () => {
         const wrapper = mount(
           <RouterContainer
             history={createMemoryHistory()}
-            loader={loader}
+            plugins={plugins}
             routes={[route]}
           >
             <RouteName argument="bar" />

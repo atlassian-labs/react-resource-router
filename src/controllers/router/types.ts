@@ -2,7 +2,7 @@ import { PropsWithChildren } from 'react';
 
 import {
   History,
-  Loader,
+  Plugin,
   ResourceStoreContext,
   ResourceStoreData,
   Route,
@@ -19,7 +19,7 @@ export type RouterProps = PropsWithChildren<{
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
   routes: Routes;
-  loaders?: Loader[];
+  plugins?: Plugin[];
 }>;
 
 export type MemoryRouterProps = PropsWithChildren<{
@@ -34,12 +34,12 @@ export type RequestResourcesParams = {
   resourceContext?: ResourceStoreContext;
   routes: Routes;
   timeout?: number;
-  loaders?: Loader[];
+  plugins?: Plugin[];
 };
 
 export type LoadRouteParams = {
   history?: History;
   location: string;
   routes: Routes;
-  loaders: Loader[];
+  plugins: Plugin[];
 };

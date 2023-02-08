@@ -1,3 +1,3 @@
-export { createResourcesLoader } from './resources/loader';
+export { createResourcesPlugin } from './resources/plugin';
 
-export { getResourcesSafeData } from './resources//utils/get-resources-safe-data';
+export { getResourcesSafeData } from './resources/utils/get-resources-safe-data';

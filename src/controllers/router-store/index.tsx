@@ -38,11 +38,11 @@ import {
   getRelativeURLFromLocation,
 } from './utils';
 
-const defaultLoader = {
+const defaultPlugins = {
   hydrate: () => {},
-  beforeLoad: () => {},
-  load: () => ({}),
-  prefetch: () => {},
+  beforeRouteLoad: () => {},
+  loadRoute: () => ({}),
+  prefetchRoute: () => {},
 };
 
 export const INITIAL_STATE: EntireRouterState = {
@@ -56,7 +56,7 @@ export const INITIAL_STATE: EntireRouterState = {
   route: DEFAULT_ROUTE,
   routes: [],
   unlisten: null,
-  loader: defaultLoader,
+  plugins: defaultPlugins,
 };
 
 const actions: AllRouterActions = {
@@ -73,7 +73,7 @@ const actions: AllRouterActions = {
         initialRoute,
         onPrefetch,
         routes,
-        loader,
+        plugins,
       } = props;
       const routerContext = findRouterContext(
         initialRoute ? [initialRoute] : routes,
@@ -88,12 +88,10 @@ const actions: AllRouterActions = {
         routes,
         location: history.location,
         action: history.action,
-        loader,
+        plugins,
       });
 
-      if (loader.hydrate) {
-        loader.hydrate();
-      }
+      plugins.hydrate();
 
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
@@ -142,7 +140,7 @@ const actions: AllRouterActions = {
           const action = update.length === 2 ? update[1] : update[0].action;
 
           const {
-            loader,
+            plugins,
             routes,
             basePath,
             match: currentMatch,
@@ -167,7 +165,7 @@ const actions: AllRouterActions = {
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            loader.beforeLoad({
+            plugins.beforeRouteLoad({
               context: prevContext,
               nextContext,
             });
@@ -178,7 +176,7 @@ const actions: AllRouterActions = {
               action,
             });
 
-            loader.load({ context: nextContext, prevContext });
+            plugins.loadRoute({ context: nextContext, prevContext });
           });
         }
       );
@@ -348,14 +346,14 @@ const actions: AllRouterActions = {
   loadRoute:
     () =>
     ({ getState }) => {
-      const { loader, match, query, route } = getState();
+      const { plugins, match, query, route } = getState();
 
-      return loader.load({ context: { match, query, route } });
+      return plugins.loadRoute({ context: { match, query, route } });
     },
   prefetchRoute:
     (path, nextContext) =>
     ({ getState }) => {
-      const { loader, routes, basePath, onPrefetch } = getState();
+      const { plugins, routes, basePath, onPrefetch } = getState();
 
       if (!nextContext && !isExternalAbsolutePath(path)) {
         const location = parsePath(getRelativePath(path, basePath) as any);
@@ -366,7 +364,7 @@ const actions: AllRouterActions = {
       const nextLocationContext = nextContext;
 
       batch(() => {
-        loader.prefetch(nextLocationContext);
+        plugins.prefetchRoute(nextLocationContext);
         // prefetchResources(nextResources, nextLocationContext, {});
         if (onPrefetch) onPrefetch(nextLocationContext);
       });

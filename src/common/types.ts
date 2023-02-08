@@ -327,22 +327,28 @@ export type FindRouterContextOptions = {
   basePath?: string;
 };
 
-export type Loader<T = Record<string, any>> = {
+export type Plugin<T = Record<string, any>> = {
   hydrate?: () => void;
-  beforeLoad?: (params: {
+  beforeRouteLoad?: (params: {
     context: RouterContext;
     nextContext: RouterContext;
   }) => void;
-  load: (params: { context: RouterContext; prevContext?: RouterContext }) => T;
-  prefetch: (context: RouterContext) => void;
+  loadRoute: (params: {
+    context: RouterContext;
+    prevContext?: RouterContext;
+  }) => T;
+  prefetchRoute: (context: RouterContext) => void;
 };
 
-export type CombinedLoader<T = Record<string, any>> = {
+export type CombinedPlugins<T = Record<string, any>> = {
   hydrate: () => void;
-  beforeLoad: (params: {
+  beforeRouteLoad: (params: {
     context: RouterContext;
     nextContext: RouterContext;
   }) => void;
-  load: (params: { context: RouterContext; prevContext?: RouterContext }) => T;
-  prefetch: (context: RouterContext) => void;
+  loadRoute: (params: {
+    context: RouterContext;
+    prevContext?: RouterContext;
+  }) => T;
+  prefetchRoute: (context: RouterContext) => void;
 };

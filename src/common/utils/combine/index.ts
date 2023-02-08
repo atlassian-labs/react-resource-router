@@ -1,34 +1,34 @@
-import type { Loader, CombinedLoader } from '../../types';
+import type { Plugin, CombinedPlugins } from '../../types';
 
-export const combine = (loaders: Loader[]): CombinedLoader => {
+export const combine = (plugins: Plugin[]): CombinedPlugins => {
   return {
     hydrate: () => {
-      loaders.forEach(loader => {
-        if (loader.hydrate !== undefined) {
-          loader.hydrate();
+      plugins.forEach(plugin => {
+        if (plugin.hydrate !== undefined) {
+          plugin.hydrate();
         }
       });
     },
-    beforeLoad: (...args) => {
-      loaders.forEach(loader => {
-        if (loader.beforeLoad !== undefined) {
-          loader.beforeLoad(...args);
+    beforeRouteLoad: (...args) => {
+      plugins.forEach(plugin => {
+        if (plugin.beforeRouteLoad !== undefined) {
+          plugin.beforeRouteLoad(...args);
         }
       });
     },
 
-    load: (...args) => {
-      return loaders.reduce(
-        (accumulator, loader) => ({
+    loadRoute: (...args) => {
+      return plugins.reduce(
+        (accumulator, plugin) => ({
           ...accumulator,
-          ...loader.load(...args),
+          ...plugin.loadRoute(...args),
         }),
         {}
       );
     },
-    prefetch: (...args) => {
-      loaders.forEach(loader => {
-        loader.prefetch(...args);
+    prefetchRoute: (...args) => {
+      plugins.forEach(plugin => {
+        plugin.prefetchRoute(...args);
       });
     },
   };
