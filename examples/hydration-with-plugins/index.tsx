@@ -2,7 +2,10 @@ import React from 'react';
 import { render } from 'react-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { createResourcesPlugin, getResourcesSafeData } from '../../resources';
+import {
+  createResourcesPlugin,
+  getResourcesSafeData,
+} from '../../src/resources';
 
 import { homeRoute } from './routes';
 
@@ -47,7 +50,7 @@ const main = async () => {
   const App = () => {
     return (
       <Router
-        basePath="/hydration-with-loader"
+        basePath="/hydration-with-plugins"
         history={myHistory}
         plugins={[resourcesPlugin]}
         resourceData={data}
