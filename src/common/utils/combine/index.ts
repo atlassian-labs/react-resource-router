@@ -1,34 +1,38 @@
-import type { Plugin, CombinedPlugins } from '../../types';
+import type { Plugin } from '../../types';
 
-export const combine = (plugins: Plugin[]): CombinedPlugins => {
+export const combine = (plugins: Plugin[]): Required<Plugin> => {
   return {
-    hydrate: () => {
+    onHydrate: () => {
       plugins.forEach(plugin => {
-        if (plugin.hydrate !== undefined) {
-          plugin.hydrate();
+        if (plugin.onHydrate !== undefined) {
+          plugin.onHydrate();
         }
       });
     },
-    beforeRouteLoad: (...args) => {
+    onBeforeRouteLoad: (...args) => {
       plugins.forEach(plugin => {
-        if (plugin.beforeRouteLoad !== undefined) {
-          plugin.beforeRouteLoad(...args);
+        if (plugin.onBeforeRouteLoad !== undefined) {
+          plugin.onBeforeRouteLoad(...args);
         }
       });
     },
 
-    loadRoute: (...args) => {
+    onRouteLoad: (...args) => {
       return plugins.reduce(
         (accumulator, plugin) => ({
           ...accumulator,
-          ...plugin.loadRoute(...args),
+          ...(plugin.onRouteLoad !== undefined
+            ? plugin.onRouteLoad(...args)
+            : {}),
         }),
         {}
       );
     },
-    prefetchRoute: (...args) => {
+    onRoutePrefetch: (...args) => {
       plugins.forEach(plugin => {
-        plugin.prefetchRoute(...args);
+        if (plugin.onRoutePrefetch !== undefined) {
+          plugin.onRoutePrefetch(...args);
+        }
       });
     },
   };

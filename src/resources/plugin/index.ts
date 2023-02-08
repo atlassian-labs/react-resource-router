@@ -53,14 +53,14 @@ export const createResourcesPlugin = ({
   resources: Promise<RouteResourceResponse<unknown>[]>;
 }> => {
   return {
-    hydrate: () => {
+    onHydrate: () => {
       getResourceStore().actions.hydrate({
         resourceContext: initialResourceContext,
         resourceData: initialResourceData,
       });
     },
-    beforeRouteLoad: beforeLoad,
-    loadRoute: ({ context, prevContext }) => {
+    onBeforeRouteLoad: beforeLoad,
+    onRouteLoad: ({ context, prevContext }) => {
       const { route, match, query } = context;
       // TODO: in next refactoring add `if (route.resources)` check
       // For now requesting resources for every route even if `resources` prop is missing on Route
@@ -81,7 +81,7 @@ export const createResourcesPlugin = ({
         ),
       };
     },
-    prefetchRoute: (context: RouterContext) => {
+    onRoutePrefetch: (context: RouterContext) => {
       const { route, match, query } = getRouterState();
       const { prefetchResources, getContext: getResourceStoreContext } =
         getResourceStore().actions;
