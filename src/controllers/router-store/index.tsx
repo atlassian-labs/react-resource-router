@@ -39,10 +39,10 @@ import {
 } from './utils';
 
 const defaultPlugins = {
-  hydrate: () => {},
-  beforeRouteLoad: () => {},
-  loadRoute: () => ({}),
-  prefetchRoute: () => {},
+  onHydrate: () => {},
+  onBeforeRouteLoad: () => {},
+  onRouteLoad: () => ({}),
+  onRoutePrefetch: () => {},
 };
 
 export const INITIAL_STATE: EntireRouterState = {
@@ -91,7 +91,7 @@ const actions: AllRouterActions = {
         plugins,
       });
 
-      plugins.hydrate();
+      plugins.onHydrate();
 
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
@@ -165,7 +165,7 @@ const actions: AllRouterActions = {
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            plugins.beforeRouteLoad({
+            plugins.onBeforeRouteLoad({
               context: prevContext,
               nextContext,
             });
@@ -176,7 +176,7 @@ const actions: AllRouterActions = {
               action,
             });
 
-            plugins.loadRoute({ context: nextContext, prevContext });
+            plugins.onRouteLoad({ context: nextContext, prevContext });
           });
         }
       );
@@ -348,7 +348,7 @@ const actions: AllRouterActions = {
     ({ getState }) => {
       const { plugins, match, query, route } = getState();
 
-      return plugins.loadRoute({ context: { match, query, route } });
+      return plugins.onRouteLoad({ context: { match, query, route } });
     },
   prefetchRoute:
     (path, nextContext) =>
@@ -364,7 +364,7 @@ const actions: AllRouterActions = {
       const nextLocationContext = nextContext;
 
       batch(() => {
-        plugins.prefetchRoute(nextLocationContext);
+        plugins.onRoutePrefetch(nextLocationContext);
         // prefetchResources(nextResources, nextLocationContext, {});
         if (onPrefetch) onPrefetch(nextLocationContext);
       });
