@@ -4,14 +4,14 @@ export const combine = (plugins: Plugin[]): Required<Plugin> => {
   return {
     onHydrate: () => {
       plugins.forEach(plugin => {
-        if (plugin.onHydrate !== undefined) {
+        if (plugin.onHydrate != null) {
           plugin.onHydrate();
         }
       });
     },
     onBeforeRouteLoad: (...args) => {
       plugins.forEach(plugin => {
-        if (plugin.onBeforeRouteLoad !== undefined) {
+        if (plugin.onBeforeRouteLoad != null) {
           plugin.onBeforeRouteLoad(...args);
         }
       });
@@ -21,16 +21,14 @@ export const combine = (plugins: Plugin[]): Required<Plugin> => {
       return plugins.reduce(
         (accumulator, plugin) => ({
           ...accumulator,
-          ...(plugin.onRouteLoad !== undefined
-            ? plugin.onRouteLoad(...args)
-            : {}),
+          ...(plugin.onRouteLoad != null ? plugin.onRouteLoad(...args) : {}),
         }),
         {}
       );
     },
     onRoutePrefetch: (...args) => {
       plugins.forEach(plugin => {
-        if (plugin.onRoutePrefetch !== undefined) {
+        if (plugin.onRoutePrefetch != null) {
           plugin.onRoutePrefetch(...args);
         }
       });
