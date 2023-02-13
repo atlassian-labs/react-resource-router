@@ -4,6 +4,7 @@ import React, { ReactNode } from 'react';
 
 import { Route } from '../../common/types';
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
+import { createResourcesPlugin } from '../../resources/plugin';
 import { createResource, getResourceStore } from '../resource-store';
 
 import { Router } from './index';
@@ -245,6 +246,171 @@ describe('<Router />', () => {
       for (const resource of resources) {
         expect(resource).toHaveBeenCalledTimes(1);
       }
+    });
+  });
+
+  describe('loadRoute', () => {
+    describe('should support resources as requestResources', () => {
+      const resolver = (r: any, d = 0) =>
+        new Promise(resolve => setTimeout(() => resolve(r), d));
+
+      function createRequestResourceParams({ timeout }: { timeout?: number }) {
+        const resourcesPlugin = createResourcesPlugin({
+          context: {},
+          resourceData: null,
+          timeout,
+        });
+
+        return {
+          location: '/path',
+          routes: [
+            {
+              name: '',
+              path: '/path',
+              component: () => <div>test</div>,
+              resources: [
+                createResource({
+                  getData: () => resolver('data-1', 250),
+                  getKey: () => 'key',
+                  type: 'TYPE_1',
+                }),
+                createResource({
+                  getData: () => resolver('data-2', 500),
+                  getKey: () => 'key',
+                  type: 'TYPE_2',
+                }),
+              ],
+            },
+          ],
+          plugins: [resourcesPlugin],
+        };
+      }
+
+      it('should be expose as a static method', () => {
+        expect(typeof Router.loadRoute).toBe('function');
+      });
+
+      it('should return hydratable, cleaned resource store state.data when awaited', async () => {
+        await Router.loadRoute(createRequestResourceParams({})).resources;
+
+        const data = getResourceStore().actions.getSafeData();
+
+        expect(data).toEqual({
+          TYPE_1: {
+            key: {
+              accessedAt: null,
+              data: 'data-1',
+              error: null,
+              expiresAt: null,
+              loading: false,
+              promise: null,
+            },
+          },
+          TYPE_2: {
+            key: {
+              accessedAt: null,
+              data: 'data-2',
+              error: null,
+              expiresAt: null,
+              loading: false,
+              promise: null,
+            },
+          },
+        });
+      });
+
+      it('should respect timeout when fetching resources', async () => {
+        await Router.loadRoute({
+          ...createRequestResourceParams({ timeout: 350 }),
+        }).resources;
+
+        const data = getResourceStore().actions.getSafeData();
+
+        expect(data).toEqual({
+          TYPE_1: {
+            key: {
+              accessedAt: null,
+              expiresAt: null,
+              data: 'data-1',
+              error: null,
+              loading: false,
+              promise: null,
+            },
+          },
+          TYPE_2: {
+            key: {
+              accessedAt: null,
+              expiresAt: null,
+              data: null,
+              error: {
+                message: 'Resource timed out: TYPE_2',
+                name: 'TimeoutError',
+                stack: expect.any(String),
+              },
+              loading: true,
+              promise: null,
+            },
+          },
+        });
+      });
+
+      it('should maintain the pre-requested state in the resource store when mounted', async () => {
+        const route = Router.loadRoute(createRequestResourceParams({}));
+
+        await route.resources;
+
+        mount(<Router history={history} routes={[]} />);
+
+        expect(getResourceStore().actions.getSafeData()).toEqual({
+          TYPE_1: {
+            key: {
+              accessedAt: null,
+              expiresAt: null,
+              data: 'data-1',
+              error: null,
+              loading: false,
+              promise: null,
+            },
+          },
+          TYPE_2: {
+            key: {
+              accessedAt: null,
+              expiresAt: null,
+              data: 'data-2',
+              error: null,
+              loading: false,
+              promise: null,
+            },
+          },
+        });
+      });
+
+      it('should not re-request resources when they have already been requested by requestResources on the server', async () => {
+        jest
+          .spyOn(isServerEnvironment, 'isServerEnvironment')
+          .mockReturnValue(true);
+
+        const params = createRequestResourceParams({});
+        const route = params.routes[0];
+        const resources = route.resources.map(resource =>
+          jest.spyOn(resource, 'getData')
+        );
+
+        const r = Router.loadRoute(params);
+
+        await r.resources;
+
+        mount(
+          <Router
+            history={createMemoryHistory({ initialEntries: [route.path] })}
+            routes={[route]}
+          />
+        );
+
+        for (const resource of resources) {
+          expect(resource).toHaveBeenCalledTimes(1);
+        }
+      });
     });
   });
 });

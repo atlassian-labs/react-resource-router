@@ -66,10 +66,12 @@ describe('RouterStore', () => {
       const push = jest.spyOn(history, 'push');
       const replace = jest.spyOn(history, 'replace');
 
-      const plugins = createPlugins({
-        context: props.resourceContext,
-        resourceData: props.resourceData,
-      });
+      const plugins =
+        props.plugins ||
+        createPlugins({
+          context: props.resourceContext,
+          resourceData: props.resourceData,
+        });
 
       mount(
         <RouterContainer
@@ -199,6 +201,32 @@ describe('RouterStore', () => {
         });
       });
 
+      it('onHydrate for each plugin is called', () => {
+        const plugin = {
+          onHydrate: jest.fn(),
+        };
+        const plugins = combine([plugin]);
+
+        renderRouterContainer({
+          plugins,
+        });
+
+        expect(plugin.onHydrate).toBeCalled();
+      });
+
+      it('plugin onRouteLoad is called on initial render', () => {
+        const plugin = {
+          onRouteLoad: jest.fn(),
+        };
+        const plugins = combine([plugin]);
+
+        renderRouterContainer({
+          plugins,
+        });
+
+        expect(plugin.onRouteLoad).toBeCalled();
+      });
+
       it('requests route resources', () => {
         const requestAllResources = jest.spyOn(
           getResourceStore().actions,
@@ -275,6 +303,92 @@ describe('RouterStore', () => {
               action: 'PUSH',
               route: routes[1],
             });
+          });
+
+          it('plugin route load actions are called on route change', async () => {
+            const plugin = {
+              onBeforeRouteLoad: jest.fn(),
+              onRouteLoad: jest.fn(),
+            };
+            const plugins = combine([plugin]);
+
+            const { actions } = renderRouterContainer({
+              plugins,
+            });
+            const nextLocation = { pathname: '/pages/1', search: '', hash: '' };
+
+            actions.push(nextLocation);
+
+            expect(plugin.onBeforeRouteLoad).toBeCalledWith({
+              nextContext: {
+                match: {
+                  isExact: true,
+                  params: { id: '1' },
+                  path: '/pages/:id',
+                  query: {},
+                  url: '/pages/1',
+                },
+                query: {},
+                route: {
+                  component: routes[1].component,
+                  name: 'page',
+                  path: '/pages/:id',
+                },
+              },
+              context: {
+                match: {
+                  isExact: true,
+                  params: {},
+                  path: '/pages',
+                  query: {},
+                  url: '/pages',
+                },
+                query: { key: 'value' },
+                route: {
+                  component: routes[0].component,
+                  exact: true,
+                  name: 'pages',
+                  path: '/pages',
+                },
+              },
+            });
+
+            // ignore onRouteLoad call on initial render and check the one after route change
+            expect(plugin.onRouteLoad.mock.calls[1]).toEqual([
+              {
+                context: {
+                  match: {
+                    isExact: true,
+                    params: { id: '1' },
+                    path: '/pages/:id',
+                    query: {},
+                    url: '/pages/1',
+                  },
+                  query: {},
+                  route: {
+                    component: routes[1].component,
+                    name: 'page',
+                    path: '/pages/:id',
+                  },
+                },
+                prevContext: {
+                  match: {
+                    isExact: true,
+                    params: {},
+                    path: '/pages',
+                    query: {},
+                    url: '/pages',
+                  },
+                  query: { key: 'value' },
+                  route: {
+                    component: routes[0].component,
+                    exact: true,
+                    name: 'pages',
+                    path: '/pages',
+                  },
+                },
+              },
+            ]);
           });
         }
       });
