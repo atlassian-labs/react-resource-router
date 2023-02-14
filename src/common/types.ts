@@ -328,7 +328,7 @@ export type FindRouterContextOptions = {
 };
 
 export type Plugin<T = Record<string, any>> = {
-  onHydrate?: () => void;
+  onHydrate?: (params: { context: RouterContext }) => void;
   onBeforeRouteLoad?: (params: {
     context: RouterContext;
     nextContext: RouterContext;
@@ -337,5 +337,8 @@ export type Plugin<T = Record<string, any>> = {
     context: RouterContext;
     prevContext?: RouterContext;
   }) => T;
-  onRoutePrefetch?: (context: RouterContext) => void;
+  onRoutePrefetch?: (params: {
+    context: RouterContext;
+    nextContext: RouterContext;
+  }) => void;
 };

@@ -53,7 +53,7 @@ describe('Combine', () => {
     };
 
     const combinedPlugins = combine([pluginOne, pluginTwo, pluginThree]);
-    combinedPlugins.onHydrate();
+    combinedPlugins.onHydrate({ context: firstContextMock });
     combinedPlugins.onBeforeRouteLoad({
       context: firstContextMock,
       nextContext: secondContextMock,
@@ -62,7 +62,10 @@ describe('Combine', () => {
       context: secondContextMock,
       prevContext: firstContextMock,
     });
-    combinedPlugins.onRoutePrefetch(secondContextMock);
+    combinedPlugins.onRoutePrefetch({
+      context: firstContextMock,
+      nextContext: secondContextMock,
+    });
 
     expect(pluginOne.onHydrate).toBeCalled();
     expect(pluginOne.onBeforeRouteLoad).toBeCalled();

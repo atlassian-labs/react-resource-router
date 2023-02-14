@@ -23,6 +23,7 @@ import {
   generateLocationFromPath,
   warmupMatchRouteCache,
 } from '../../common/utils';
+import { combine } from '../../common/utils/combine';
 import { getResourceStore } from '../resource-store';
 
 import {
@@ -56,7 +57,7 @@ export const INITIAL_STATE: EntireRouterState = {
   route: DEFAULT_ROUTE,
   routes: [],
   unlisten: null,
-  plugins: defaultPlugins,
+  combinedPlugins: defaultPlugins,
 };
 
 const actions: AllRouterActions = {
@@ -80,6 +81,8 @@ const actions: AllRouterActions = {
         { location: history.location, basePath }
       );
 
+      const combinedPlugins = combine(plugins);
+
       setState({
         ...routerContext,
         basePath,
@@ -88,10 +91,10 @@ const actions: AllRouterActions = {
         routes,
         location: history.location,
         action: history.action,
-        plugins,
+        combinedPlugins,
       });
 
-      plugins.onHydrate();
+      combinedPlugins.onHydrate({ context: routerContext });
 
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
@@ -139,7 +142,7 @@ const actions: AllRouterActions = {
           const action = update.length === 2 ? update[1] : update[0].action;
 
           const {
-            plugins,
+            combinedPlugins,
             routes,
             basePath,
             match: currentMatch,
@@ -164,7 +167,7 @@ const actions: AllRouterActions = {
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            plugins.onBeforeRouteLoad({
+            combinedPlugins.onBeforeRouteLoad({
               context: prevContext,
               nextContext,
             });
@@ -175,7 +178,7 @@ const actions: AllRouterActions = {
               action,
             });
 
-            plugins.onRouteLoad({ context: nextContext, prevContext });
+            combinedPlugins.onRouteLoad({ context: nextContext, prevContext });
           });
         }
       );
@@ -345,14 +348,15 @@ const actions: AllRouterActions = {
   loadRoute:
     () =>
     ({ getState }) => {
-      const { plugins, match, query, route } = getState();
+      const { combinedPlugins, match, query, route } = getState();
 
-      return plugins.onRouteLoad({ context: { match, query, route } });
+      return combinedPlugins.onRouteLoad({ context: { match, query, route } });
     },
   prefetchRoute:
     (path, nextContext) =>
     ({ getState }) => {
-      const { plugins, routes, basePath, onPrefetch } = getState();
+      const { combinedPlugins, routes, basePath, onPrefetch } = getState();
+      const { route, match, query } = getRouterState();
 
       if (!nextContext && !isExternalAbsolutePath(path)) {
         const location = parsePath(getRelativePath(path, basePath) as any);
@@ -363,11 +367,13 @@ const actions: AllRouterActions = {
       const nextLocationContext = nextContext;
 
       batch(() => {
-        plugins.onRoutePrefetch(nextLocationContext);
+        combinedPlugins.onRoutePrefetch({
+          context: { route, match, query },
+          nextContext: nextLocationContext,
+        });
         if (onPrefetch) onPrefetch(nextLocationContext);
       });
     },
-  // ...
 };
 
 type State = EntireRouterState;

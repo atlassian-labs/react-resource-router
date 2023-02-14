@@ -6,7 +6,6 @@ import type {
 } from '../../common/types';
 import { getResourceStore } from '../../controllers/resource-store';
 import { getResourcesForNextLocation } from '../../controllers/resource-store/utils';
-import { getRouterState } from '../../controllers/router-store';
 
 const loadOnUrlChange = (
   context: RouterContext,
@@ -81,14 +80,13 @@ export const createResourcesPlugin = ({
         ),
       };
     },
-    onRoutePrefetch: (context: RouterContext) => {
-      const { route, match, query } = getRouterState();
+    onRoutePrefetch: ({ context, nextContext }) => {
       const { prefetchResources, getContext: getResourceStoreContext } =
         getResourceStore().actions;
 
       const nextResources = getResourcesForNextLocation(
-        { route, match, query },
         context,
+        nextContext,
         getResourceStoreContext()
       );
 

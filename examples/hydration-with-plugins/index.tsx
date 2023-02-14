@@ -50,7 +50,6 @@ const main = async () => {
         basePath="/hydration-with-plugins"
         history={myHistory}
         plugins={[resourcesPlugin]}
-        resourceData={data}
         routes={appRoutes}
       >
         <RouteComponent />

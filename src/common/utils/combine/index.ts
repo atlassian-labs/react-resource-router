@@ -2,10 +2,10 @@ import type { Plugin } from '../../types';
 
 export const combine = (plugins: Plugin[]): Required<Plugin> => {
   return {
-    onHydrate: () => {
+    onHydrate: (...args) => {
       plugins.forEach(plugin => {
         if (plugin.onHydrate != null) {
-          plugin.onHydrate();
+          plugin.onHydrate(...args);
         }
       });
     },

@@ -4,7 +4,6 @@ import * as history5 from 'history-5';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { combine } from '../../common/utils/combine';
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
 import { createResourcesPlugin } from '../../resources/plugin';
 import { getResourceStore } from '../resource-store';
@@ -31,7 +30,7 @@ const createPlugins = ({
     resourceData,
   });
 
-  return combine([resourcesPlugin]);
+  return [resourcesPlugin];
 };
 
 describe('RouterStore', () => {
@@ -148,7 +147,7 @@ describe('RouterStore', () => {
 
       it('returns the expected state', () => {
         const onPrefetch = jest.fn();
-        const { history, getState, plugins } = renderRouterContainer({
+        const { history, getState } = renderRouterContainer({
           onPrefetch,
         });
 
@@ -170,7 +169,7 @@ describe('RouterStore', () => {
           route: routes[0],
           routes: routes,
           unlisten: expect.any(Function),
-          plugins,
+          combinedPlugins: expect.any(Object),
         });
       });
 
@@ -205,7 +204,7 @@ describe('RouterStore', () => {
         const plugin = {
           onHydrate: jest.fn(),
         };
-        const plugins = combine([plugin]);
+        const plugins = [plugin];
 
         renderRouterContainer({
           plugins,
@@ -218,7 +217,7 @@ describe('RouterStore', () => {
         const plugin = {
           onRouteLoad: jest.fn(),
         };
-        const plugins = combine([plugin]);
+        const plugins = [plugin];
 
         renderRouterContainer({
           plugins,
@@ -310,7 +309,7 @@ describe('RouterStore', () => {
               onBeforeRouteLoad: jest.fn(),
               onRouteLoad: jest.fn(),
             };
-            const plugins = combine([plugin]);
+            const plugins = [plugin];
 
             const { actions } = renderRouterContainer({
               plugins,

@@ -1,7 +1,6 @@
 import { createMemoryHistory } from 'history';
 import React, { useMemo, useEffect } from 'react';
 
-import { combine } from '../../common/utils/combine';
 import { createResourcesPlugin } from '../../resources/plugin';
 import { getResourceStore, ResourceContainer } from '../resource-store';
 import {
@@ -38,7 +37,7 @@ export const Router = ({
   }, []);
 
   const defaultPlugins = useMemo(() => {
-    if (plugins) return combine(plugins);
+    if (plugins) return plugins;
 
     // default 'plugins' fallback for the first relase
     const resourcesPlugin = createResourcesPlugin({
@@ -46,7 +45,7 @@ export const Router = ({
       resourceData,
     });
 
-    return combine([resourcesPlugin]);
+    return [resourcesPlugin];
   }, [resourceContext, resourceData, plugins]);
 
   return (
@@ -84,7 +83,7 @@ Router.requestResources = async ({
 
   const defaultPluginsFallback = (() => {
     if (plugins) {
-      return combine(plugins);
+      return plugins;
     }
 
     // default 'plugins' fallback for the first relase
@@ -94,7 +93,7 @@ Router.requestResources = async ({
       timeout,
     });
 
-    return combine([resourcesPlugin]);
+    return [resourcesPlugin];
   })();
 
   bootstrapStore({
@@ -114,7 +113,7 @@ Router.loadRoute = ({ history, plugins, routes }: LoadRouteParams) => {
   bootstrapStore({
     routes,
     history,
-    plugins: combine(plugins),
+    plugins,
   });
 
   return loadRoute();

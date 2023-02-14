@@ -46,7 +46,8 @@ describe('Resources plugin', () => {
       resourceData: { data: 'abc' },
     });
 
-    if (plugin.onHydrate !== undefined) plugin.onHydrate();
+    if (plugin.onHydrate !== undefined)
+      plugin.onHydrate({ context: firstContextMock });
 
     expect(hydrate).toBeCalledWith({
       resourceContext: { a: 1, b: 2 },
@@ -125,8 +126,11 @@ describe('Resources plugin', () => {
     });
 
     if (plugin.onRoutePrefetch !== undefined)
-      plugin.onRoutePrefetch(secondContextMock);
+      plugin.onRoutePrefetch({
+        context: firstContextMock,
+        nextContext: secondContextMock,
+      });
 
-    expect(prefetchResources).toBeCalledWith([], secondContextMock, {});
+    expect(prefetchResources).toBeCalledWith([], firstContextMock, {});
   });
 });
