@@ -113,7 +113,7 @@ Router.loadRoute = ({ history, plugins, routes }: LoadRouteParams) => {
 
   bootstrapStore({
     routes,
-    history: history,
+    history,
     plugins: combine(plugins),
   });
 

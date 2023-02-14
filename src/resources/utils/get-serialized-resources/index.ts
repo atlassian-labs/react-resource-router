@@ -1,5 +1,5 @@
 import { getResourceStore } from '../../../controllers/resource-store/index';
 
-export const getResourcesSafeData = () => {
+export const getSerializedResources = () => {
   return getResourceStore().actions.getSafeData();
 };

@@ -4,7 +4,7 @@ import { defaultRegistry } from 'react-sweet-state';
 
 import {
   createResourcesPlugin,
-  getResourcesSafeData,
+  getSerializedResources,
 } from '../../src/resources';
 
 import { homeRoute } from './routes';
@@ -30,7 +30,7 @@ const getStateFromServer = async () => {
     plugins: [resourcesPlugin],
   });
 
-  const resourceData = getResourcesSafeData();
+  const resourceData = getSerializedResources();
 
   // clearing the store
   defaultRegistry.stores.clear();
