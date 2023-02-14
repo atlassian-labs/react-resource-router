@@ -262,7 +262,7 @@ describe('<Router />', () => {
         });
 
         return {
-          location: '/path',
+          history: createMemoryHistory({ initialEntries: ['/path'] }),
           routes: [
             {
               name: '',

@@ -24,14 +24,11 @@ const getStateFromServer = async () => {
     resourceData: null,
   });
 
-  const data = Router.requestResources({
+  await Router.requestResources({
     location: '/',
     routes: appRoutes,
     plugins: [resourcesPlugin],
   });
-
-  // await data.resources;
-  await data;
 
   const resourceData = getResourcesSafeData();
 

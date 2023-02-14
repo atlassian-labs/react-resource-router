@@ -103,24 +103,17 @@ Router.requestResources = async ({
     plugins: defaultPluginsFallback,
   });
 
-  // await requestRouteResources({ timeout });
-
   await loadRoute().resources;
 
   return getResourceStore().actions.getSafeData();
 };
 
-Router.loadRoute = ({
-  location,
-  history,
-  plugins,
-  routes,
-}: LoadRouteParams) => {
+Router.loadRoute = ({ history, plugins, routes }: LoadRouteParams) => {
   const { bootstrapStore, loadRoute } = getRouterStore().actions;
 
   bootstrapStore({
     routes,
-    history: history || createMemoryHistory({ initialEntries: [location] }),
+    history: history,
     plugins: combine(plugins),
   });
 

@@ -33,7 +33,7 @@ const secondContextMock = {
   },
 };
 
-describe('Combine util', () => {
+describe('Combine', () => {
   it('calls each plugin method', () => {
     const pluginOne = {
       onHydrate: jest.fn(),

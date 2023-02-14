@@ -38,8 +38,7 @@ export type RequestResourcesParams = {
 };
 
 export type LoadRouteParams = {
-  history?: History;
-  location: string;
+  history: History;
   routes: Routes;
   plugins: Plugin[];
 };

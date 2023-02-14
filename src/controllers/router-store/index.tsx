@@ -103,7 +103,6 @@ const actions: AllRouterActions = {
    * Must be dispatched after setting state with the new route context.
    *
    */
-  // TODO: remove
   requestRouteResources:
     (options = {}) =>
     ({ getState }) => {
@@ -365,7 +364,6 @@ const actions: AllRouterActions = {
 
       batch(() => {
         plugins.onRoutePrefetch(nextLocationContext);
-        // prefetchResources(nextResources, nextLocationContext, {});
         if (onPrefetch) onPrefetch(nextLocationContext);
       });
     },
@@ -391,7 +389,6 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
       ({ dispatch }, props) => {
         dispatch(actions.bootstrapStore(props));
         !isServerEnvironment() && dispatch(actions.loadRoute());
-        // !isServerEnvironment() && dispatch(actions.requestRouteResources());
       },
     onCleanup: () => () => {
       if (process.env.NODE_ENV === 'development') {
