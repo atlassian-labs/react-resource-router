@@ -88,7 +88,7 @@ type PrivateRouterActions = {
     },
     updateType?: HistoryUpdateType
   ) => RouterAction;
-  loadRoute: (prevLocationContext?: RouterContext) => RouterAction;
+  loadPlugins: () => RouterAction;
   prefetchRoute: (
     path: Href,
     nextContext: RouterContext | null

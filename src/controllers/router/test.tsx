@@ -252,7 +252,7 @@ describe('<Router />', () => {
     });
   });
 
-  describe('loadRoute', () => {
+  describe('loadPlugins', () => {
     describe('should support resources as requestResources', () => {
       const resolver = (r: any, d = 0) =>
         new Promise(resolve => setTimeout(() => resolve(r), d));

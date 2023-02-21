@@ -339,7 +339,7 @@ const actions: AllRouterActions = {
         history[updateType](updatedRelativePath);
       }
     },
-  loadRoute:
+  loadPlugins:
     () =>
     ({ getState }) => {
       const { plugins, match, query, route } = getState();
@@ -390,7 +390,7 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
       () =>
       ({ dispatch }, props) => {
         dispatch(actions.bootstrapStore(props));
-        !isServerEnvironment() && dispatch(actions.loadRoute());
+        !isServerEnvironment() && dispatch(actions.loadPlugins());
       },
     onCleanup: () => () => {
       if (process.env.NODE_ENV === 'development') {

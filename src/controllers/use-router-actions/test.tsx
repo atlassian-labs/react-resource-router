@@ -23,7 +23,7 @@ describe('useRouterActions()', () => {
         "goBack": [Function],
         "goForward": [Function],
         "listen": [Function],
-        "loadRoute": [Function],
+        "loadPlugins": [Function],
         "prefetchRoute": [Function],
         "push": [Function],
         "pushTo": [Function],
