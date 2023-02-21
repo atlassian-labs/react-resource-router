@@ -46,8 +46,8 @@ describe('Resources plugin', () => {
       resourceData: { data: 'abc' },
     });
 
-    if (plugin.onHydrate !== undefined)
-      plugin.onHydrate({ context: firstContextMock });
+    if (plugin.hydrate !== undefined)
+      plugin.hydrate({ context: firstContextMock });
 
     expect(hydrate).toBeCalledWith({
       resourceContext: { a: 1, b: 2 },
@@ -65,8 +65,8 @@ describe('Resources plugin', () => {
       resourceData: {},
     });
 
-    if (plugin.onBeforeRouteLoad !== undefined)
-      plugin.onBeforeRouteLoad({
+    if (plugin.beforeRouteLoad !== undefined)
+      plugin.beforeRouteLoad({
         context: firstContextMock,
         nextContext: secondContextMock,
       });
@@ -85,8 +85,8 @@ describe('Resources plugin', () => {
       timeout: 1000,
     });
 
-    if (plugin.onRouteLoad !== undefined)
-      plugin.onRouteLoad({
+    if (plugin.routeLoad !== undefined)
+      plugin.routeLoad({
         context: secondContextMock,
       });
 
@@ -106,8 +106,8 @@ describe('Resources plugin', () => {
       timeout: 1000,
     });
 
-    if (plugin.onRouteLoad !== undefined)
-      plugin.onRouteLoad({
+    if (plugin.routeLoad !== undefined)
+      plugin.routeLoad({
         context: secondContextMock,
         prevContext: firstContextMock,
       });
@@ -125,8 +125,8 @@ describe('Resources plugin', () => {
       resourceData: {},
     });
 
-    if (plugin.onRoutePrefetch !== undefined)
-      plugin.onRoutePrefetch({
+    if (plugin.routePrefetch !== undefined)
+      plugin.routePrefetch({
         context: firstContextMock,
         nextContext: secondContextMock,
       });

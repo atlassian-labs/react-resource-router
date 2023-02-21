@@ -147,7 +147,7 @@ describe('RouterStore', () => {
 
       it('returns the expected state', () => {
         const onPrefetch = jest.fn();
-        const { history, getState } = renderRouterContainer({
+        const { history, getState, plugins } = renderRouterContainer({
           onPrefetch,
         });
 
@@ -169,7 +169,7 @@ describe('RouterStore', () => {
           route: routes[0],
           routes: routes,
           unlisten: expect.any(Function),
-          combinedPlugins: expect.any(Object),
+          plugins,
         });
       });
 
@@ -202,7 +202,7 @@ describe('RouterStore', () => {
 
       it('onHydrate for each plugin is called', () => {
         const plugin = {
-          onHydrate: jest.fn(),
+          hydrate: jest.fn(),
         };
         const plugins = [plugin];
 
@@ -210,12 +210,12 @@ describe('RouterStore', () => {
           plugins,
         });
 
-        expect(plugin.onHydrate).toBeCalled();
+        expect(plugin.hydrate).toBeCalled();
       });
 
       it('plugin onRouteLoad is called on initial render', () => {
         const plugin = {
-          onRouteLoad: jest.fn(),
+          routeLoad: jest.fn(),
         };
         const plugins = [plugin];
 
@@ -223,7 +223,7 @@ describe('RouterStore', () => {
           plugins,
         });
 
-        expect(plugin.onRouteLoad).toBeCalled();
+        expect(plugin.routeLoad).toBeCalled();
       });
 
       it('requests route resources', () => {
@@ -306,8 +306,8 @@ describe('RouterStore', () => {
 
           it('plugin route load actions are called on route change', async () => {
             const plugin = {
-              onBeforeRouteLoad: jest.fn(),
-              onRouteLoad: jest.fn(),
+              beforeRouteLoad: jest.fn(),
+              routeLoad: jest.fn(),
             };
             const plugins = [plugin];
 
@@ -318,7 +318,7 @@ describe('RouterStore', () => {
 
             actions.push(nextLocation);
 
-            expect(plugin.onBeforeRouteLoad).toBeCalledWith({
+            expect(plugin.beforeRouteLoad).toBeCalledWith({
               nextContext: {
                 match: {
                   isExact: true,
@@ -353,7 +353,7 @@ describe('RouterStore', () => {
             });
 
             // ignore onRouteLoad call on initial render and check the one after route change
-            expect(plugin.onRouteLoad.mock.calls[1]).toEqual([
+            expect(plugin.routeLoad.mock.calls[1]).toEqual([
               {
                 context: {
                   match: {

@@ -3,6 +3,7 @@ import type {
   ResourceStoreContext,
   RouterContext,
   RouteResourceResponse,
+  ResourceStoreData,
 } from '../../common/types';
 import { getResourceStore } from '../../controllers/resource-store';
 import { getResourcesForNextLocation } from '../../controllers/resource-store/utils';
@@ -40,6 +41,12 @@ const beforeLoad = ({
   cleanExpiredResources(nextResources, nextContext);
 };
 
+type LoadedResources = Promise<RouteResourceResponse<unknown>[]>;
+
+type ResourcesPlugin = Plugin & {
+  getSerializedResources: () => Promise<ResourceStoreData>;
+};
+
 export const createResourcesPlugin = ({
   context: initialResourceContext,
   resourceData: initialResourceData,
@@ -48,39 +55,35 @@ export const createResourcesPlugin = ({
   context?: ResourceStoreContext;
   resourceData: any;
   timeout?: number;
-}): Plugin<{
-  resources: Promise<RouteResourceResponse<unknown>[]>;
-}> => {
+}): ResourcesPlugin => {
+  let latestLoadedResources: LoadedResources = Promise.resolve([]);
+
   return {
-    onHydrate: () => {
+    hydrate: () => {
       getResourceStore().actions.hydrate({
         resourceContext: initialResourceContext,
         resourceData: initialResourceData,
       });
     },
-    onBeforeRouteLoad: beforeLoad,
-    onRouteLoad: ({ context, prevContext }) => {
+    beforeRouteLoad: beforeLoad,
+    routeLoad: ({ context, prevContext }) => {
       const { route, match, query } = context;
       // TODO: in next refactoring add `if (route.resources)` check
       // For now requesting resources for every route even if `resources` prop is missing on Route
       if (prevContext) {
-        return {
-          resources: loadOnUrlChange(context, prevContext),
-        };
-      }
-
-      return {
-        resources: getResourceStore().actions.requestAllResources(
+        latestLoadedResources = loadOnUrlChange(context, prevContext);
+      } else {
+        latestLoadedResources = getResourceStore().actions.requestAllResources(
           {
             route,
             match,
             query,
           },
           { timeout }
-        ),
-      };
+        );
+      }
     },
-    onRoutePrefetch: ({ context, nextContext }) => {
+    routePrefetch: ({ context, nextContext }) => {
       const { prefetchResources, getContext: getResourceStoreContext } =
         getResourceStore().actions;
 
@@ -93,6 +96,12 @@ export const createResourcesPlugin = ({
       return {
         resources: prefetchResources(nextResources, context, {}),
       };
+    },
+    getLatestResources: (): LoadedResources => latestLoadedResources,
+    getSerializedResources: async () => {
+      await latestLoadedResources;
+
+      return getResourceStore().actions.getSafeData();
     },
   };
 };

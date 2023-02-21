@@ -36,6 +36,8 @@ export {
   matchRoute,
 } from './common/utils';
 
+export { invokePluginLoad } from './controllers/plugins';
+
 export type {
   AdditionalRouteAttributes,
   BrowserHistory,

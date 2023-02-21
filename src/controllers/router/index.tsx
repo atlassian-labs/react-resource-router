@@ -1,19 +1,15 @@
 import { createMemoryHistory } from 'history';
 import React, { useMemo, useEffect } from 'react';
 
+import { invokePluginLoad } from '../../controllers/plugins/index';
 import { createResourcesPlugin } from '../../resources/plugin';
 import { getResourceStore, ResourceContainer } from '../resource-store';
-import {
-  getRouterState,
-  RouterContainer,
-  getRouterStore,
-} from '../router-store';
+import { getRouterState, RouterContainer } from '../router-store';
 
 import {
   RouterProps,
   MemoryRouterProps,
   RequestResourcesParams,
-  LoadRouteParams,
 } from './types';
 
 export const Router = ({
@@ -36,7 +32,7 @@ export const Router = ({
     };
   }, []);
 
-  const defaultPlugins = useMemo(() => {
+  const pluginsWithFallback = useMemo(() => {
     if (plugins) return plugins;
 
     // default 'plugins' fallback for the first relase
@@ -56,7 +52,7 @@ export const Router = ({
         initialRoute={initialRoute}
         isGlobal={isGlobal}
         onPrefetch={onPrefetch}
-        plugins={defaultPlugins}
+        plugins={pluginsWithFallback}
         resourceContext={resourceContext}
         resourceData={resourceData}
         routes={routes}
@@ -76,47 +72,23 @@ Router.requestResources = async ({
   location,
   history,
   timeout,
-  plugins,
-  ...bootstrapProps
+  routes,
+  resourceContext: context,
 }: RequestResourcesParams) => {
-  const { bootstrapStore, loadRoute } = getRouterStore().actions;
+  const resourcesPlugin = createResourcesPlugin({
+    context,
+    resourceData: null,
+    timeout,
+  });
 
-  const defaultPluginsFallback = (() => {
-    if (plugins) {
-      return plugins;
-    }
+  const plugins = [resourcesPlugin];
 
-    // default 'plugins' fallback for the first relase
-    const resourcesPlugin = createResourcesPlugin({
-      context: bootstrapProps.resourceContext,
-      resourceData: null,
-      timeout,
-    });
-
-    return [resourcesPlugin];
-  })();
-
-  bootstrapStore({
-    ...bootstrapProps,
+  invokePluginLoad(plugins, {
     history: history || createMemoryHistory({ initialEntries: [location] }),
-    plugins: defaultPluginsFallback,
+    routes: routes,
   });
 
-  await loadRoute().resources;
-
-  return getResourceStore().actions.getSafeData();
-};
-
-Router.loadRoute = ({ history, plugins, routes }: LoadRouteParams) => {
-  const { bootstrapStore, loadRoute } = getRouterStore().actions;
-
-  bootstrapStore({
-    routes,
-    history,
-    plugins,
-  });
-
-  return loadRoute();
+  return await resourcesPlugin.getSerializedResources();
 };
 
 Router.addResourcesListener = (fn: (...args: any) => any) =>

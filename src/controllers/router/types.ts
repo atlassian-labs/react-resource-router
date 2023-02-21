@@ -34,11 +34,4 @@ export type RequestResourcesParams = {
   resourceContext?: ResourceStoreContext;
   routes: Routes;
   timeout?: number;
-  plugins?: Plugin[];
-};
-
-export type LoadRouteParams = {
-  history: History;
-  routes: Routes;
-  plugins: Plugin[];
 };

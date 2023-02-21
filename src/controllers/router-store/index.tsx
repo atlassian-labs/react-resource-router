@@ -23,7 +23,6 @@ import {
   generateLocationFromPath,
   warmupMatchRouteCache,
 } from '../../common/utils';
-import { combine } from '../../common/utils/combine';
 import { getResourceStore } from '../resource-store';
 
 import {
@@ -39,13 +38,6 @@ import {
   getRelativeURLFromLocation,
 } from './utils';
 
-const defaultPlugins = {
-  onHydrate: () => {},
-  onBeforeRouteLoad: () => {},
-  onRouteLoad: () => ({}),
-  onRoutePrefetch: () => {},
-};
-
 export const INITIAL_STATE: EntireRouterState = {
   action: DEFAULT_ACTION,
   basePath: '',
@@ -57,7 +49,7 @@ export const INITIAL_STATE: EntireRouterState = {
   route: DEFAULT_ROUTE,
   routes: [],
   unlisten: null,
-  combinedPlugins: defaultPlugins,
+  plugins: [],
 };
 
 const actions: AllRouterActions = {
@@ -81,8 +73,6 @@ const actions: AllRouterActions = {
         { location: history.location, basePath }
       );
 
-      const combinedPlugins = combine(plugins);
-
       setState({
         ...routerContext,
         basePath,
@@ -91,10 +81,10 @@ const actions: AllRouterActions = {
         routes,
         location: history.location,
         action: history.action,
-        combinedPlugins,
+        plugins,
       });
 
-      combinedPlugins.onHydrate({ context: routerContext });
+      plugins.forEach(p => p.hydrate?.({ context: routerContext }));
 
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
@@ -142,7 +132,7 @@ const actions: AllRouterActions = {
           const action = update.length === 2 ? update[1] : update[0].action;
 
           const {
-            combinedPlugins,
+            plugins,
             routes,
             basePath,
             match: currentMatch,
@@ -167,10 +157,12 @@ const actions: AllRouterActions = {
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            combinedPlugins.onBeforeRouteLoad({
-              context: prevContext,
-              nextContext,
-            });
+            plugins.forEach(p =>
+              p.beforeRouteLoad?.({
+                context: prevContext,
+                nextContext,
+              })
+            );
 
             setState({
               ...nextContext,
@@ -178,7 +170,9 @@ const actions: AllRouterActions = {
               action,
             });
 
-            combinedPlugins.onRouteLoad({ context: nextContext, prevContext });
+            plugins.forEach(p =>
+              p.routeLoad?.({ context: nextContext, prevContext })
+            );
           });
         }
       );
@@ -348,14 +342,14 @@ const actions: AllRouterActions = {
   loadRoute:
     () =>
     ({ getState }) => {
-      const { combinedPlugins, match, query, route } = getState();
+      const { plugins, match, query, route } = getState();
 
-      return combinedPlugins.onRouteLoad({ context: { match, query, route } });
+      plugins.forEach(p => p.routeLoad?.({ context: { match, query, route } }));
     },
   prefetchRoute:
     (path, nextContext) =>
     ({ getState }) => {
-      const { combinedPlugins, routes, basePath, onPrefetch } = getState();
+      const { plugins, routes, basePath, onPrefetch } = getState();
       const { route, match, query } = getRouterState();
 
       if (!nextContext && !isExternalAbsolutePath(path)) {
@@ -367,10 +361,12 @@ const actions: AllRouterActions = {
       const nextLocationContext = nextContext;
 
       batch(() => {
-        combinedPlugins.onRoutePrefetch({
-          context: { route, match, query },
-          nextContext: nextLocationContext,
-        });
+        plugins.forEach(p =>
+          p.routePrefetch?.({
+            context: { route, match, query },
+            nextContext: nextLocationContext,
+          })
+        );
         if (onPrefetch) onPrefetch(nextLocationContext);
       });
     },

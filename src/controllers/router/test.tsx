@@ -1,10 +1,12 @@
 import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
 import React, { ReactNode } from 'react';
+import { defaultRegistry } from 'react-sweet-state';
 
 import { Route } from '../../common/types';
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
 import { createResourcesPlugin } from '../../resources/plugin';
+import { invokePluginLoad } from '../plugins/index';
 import { createResource, getResourceStore } from '../resource-store';
 
 import { Router } from './index';
@@ -21,6 +23,7 @@ describe('<Router />', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
+    defaultRegistry.stores.clear();
   });
 
   it('renders a RouterContainer', () => {
@@ -287,13 +290,14 @@ describe('<Router />', () => {
       }
 
       it('should be expose as a static method', () => {
-        expect(typeof Router.loadRoute).toBe('function');
+        expect(typeof invokePluginLoad).toBe('function');
       });
 
       it('should return hydratable, cleaned resource store state.data when awaited', async () => {
-        await Router.loadRoute(createRequestResourceParams({})).resources;
+        const { plugins, ...props } = createRequestResourceParams({});
+        invokePluginLoad(plugins, props);
 
-        const data = getResourceStore().actions.getSafeData();
+        const data = await plugins[0].getSerializedResources();
 
         expect(data).toEqual({
           TYPE_1: {
@@ -320,11 +324,12 @@ describe('<Router />', () => {
       });
 
       it('should respect timeout when fetching resources', async () => {
-        await Router.loadRoute({
-          ...createRequestResourceParams({ timeout: 350 }),
-        }).resources;
+        const { plugins, ...props } = createRequestResourceParams({
+          timeout: 350,
+        });
+        invokePluginLoad(plugins, props);
 
-        const data = getResourceStore().actions.getSafeData();
+        const data = await plugins[0].getSerializedResources();
 
         expect(data).toEqual({
           TYPE_1: {
@@ -355,13 +360,14 @@ describe('<Router />', () => {
       });
 
       it('should maintain the pre-requested state in the resource store when mounted', async () => {
-        const route = Router.loadRoute(createRequestResourceParams({}));
+        const { plugins, ...props } = createRequestResourceParams({});
+        invokePluginLoad(plugins, props);
 
-        await route.resources;
+        const data = await plugins[0].getSerializedResources();
 
         mount(<Router history={history} routes={[]} />);
 
-        expect(getResourceStore().actions.getSafeData()).toEqual({
+        expect(data).toEqual({
           TYPE_1: {
             key: {
               accessedAt: null,
@@ -390,15 +396,16 @@ describe('<Router />', () => {
           .spyOn(isServerEnvironment, 'isServerEnvironment')
           .mockReturnValue(true);
 
-        const params = createRequestResourceParams({});
+        const { plugins, ...params } = createRequestResourceParams({});
+
         const route = params.routes[0];
         const resources = route.resources.map(resource =>
           jest.spyOn(resource, 'getData')
         );
 
-        const r = Router.loadRoute(params);
+        invokePluginLoad(plugins, params);
 
-        await r.resources;
+        await plugins[0].getSerializedResources();
 
         mount(
           <Router

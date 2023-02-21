@@ -327,18 +327,19 @@ export type FindRouterContextOptions = {
   basePath?: string;
 };
 
-export type Plugin<T = Record<string, any>> = {
-  onHydrate?: (params: { context: RouterContext }) => void;
-  onBeforeRouteLoad?: (params: {
+export type Plugin = {
+  hydrate?: (params: { context: RouterContext }) => void;
+  beforeRouteLoad?: (params: {
     context: RouterContext;
     nextContext: RouterContext;
   }) => void;
-  onRouteLoad?: (params: {
+  routeLoad?: (params: {
     context: RouterContext;
     prevContext?: RouterContext;
-  }) => T;
-  onRoutePrefetch?: (params: {
+  }) => void;
+  routePrefetch?: (params: {
     context: RouterContext;
     nextContext: RouterContext;
   }) => void;
+  [key: string]: any;
 };

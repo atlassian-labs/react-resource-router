@@ -1,11 +1,9 @@
+import { createMemoryHistory } from 'history';
 import React from 'react';
 import { render } from 'react-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
-import {
-  createResourcesPlugin,
-  getSerializedResources,
-} from '../../src/resources';
+import { createResourcesPlugin } from '../../src/resources';
 
 import { homeRoute } from './routes';
 
@@ -13,6 +11,7 @@ import {
   Router,
   RouteComponent,
   createBrowserHistory,
+  invokePluginLoad,
 } from 'react-resource-router';
 
 const myHistory = createBrowserHistory();
@@ -24,13 +23,13 @@ const getStateFromServer = async () => {
     resourceData: null,
   });
 
-  await Router.requestResources({
-    location: '/',
+  invokePluginLoad([resourcesPlugin], {
+    history: createMemoryHistory({ initialEntries: [location] }),
     routes: appRoutes,
-    plugins: [resourcesPlugin],
+    basePath: '/hydration-with-plugins',
   });
 
-  const resourceData = getSerializedResources();
+  const resourceData = await resourcesPlugin.getSerializedResources();
 
   // clearing the store
   defaultRegistry.stores.clear();

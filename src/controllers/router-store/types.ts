@@ -35,7 +35,7 @@ type PrivateStateProperties = {
   onPrefetch?: (routerContext: RouterContext) => void;
   routes: Routes;
   unlisten: UnlistenHistory | null;
-  combinedPlugins: Required<Plugin>;
+  plugins: Plugin[];
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
@@ -88,9 +88,7 @@ type PrivateRouterActions = {
     },
     updateType?: HistoryUpdateType
   ) => RouterAction;
-  loadRoute: (
-    prevLocationContext?: RouterContext
-  ) => Action<EntireRouterState, AllRouterActions, Record<string, unknown>>;
+  loadRoute: (prevLocationContext?: RouterContext) => RouterAction;
   prefetchRoute: (
     path: Href,
     nextContext: RouterContext | null
