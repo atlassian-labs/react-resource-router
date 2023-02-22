@@ -1,7 +1,6 @@
 import { mount } from 'enzyme';
 import { createMemoryHistory } from 'history';
 import React, { ReactNode } from 'react';
-import { defaultRegistry } from 'react-sweet-state';
 
 import { Route } from '../../common/types';
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
@@ -23,7 +22,6 @@ describe('<Router />', () => {
 
   afterEach(() => {
     jest.restoreAllMocks();
-    defaultRegistry.stores.clear();
   });
 
   it('renders a RouterContainer', () => {

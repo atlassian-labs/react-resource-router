@@ -58,13 +58,12 @@ export const createResourcesPlugin = ({
 }): ResourcesPlugin => {
   let latestLoadedResources: LoadedResources = Promise.resolve([]);
 
+  getResourceStore().actions.hydrate({
+    resourceContext: initialResourceContext,
+    resourceData: initialResourceData,
+  });
+
   return {
-    hydrate: () => {
-      getResourceStore().actions.hydrate({
-        resourceContext: initialResourceContext,
-        resourceData: initialResourceData,
-      });
-    },
     beforeRouteLoad: beforeLoad,
     routeLoad: ({ context, prevContext }) => {
       const { route, match, query } = context;
