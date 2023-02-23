@@ -84,8 +84,6 @@ const actions: AllRouterActions = {
         plugins,
       });
 
-      plugins.forEach(p => p.hydrate?.({ context: routerContext }));
-
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
       }
