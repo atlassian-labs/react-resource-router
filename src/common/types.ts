@@ -328,7 +328,6 @@ export type FindRouterContextOptions = {
 };
 
 export type Plugin = {
-  hydrate?: (params: { context: RouterContext }) => void;
   beforeRouteLoad?: (params: {
     context: RouterContext;
     nextContext: RouterContext;

@@ -36,25 +36,6 @@ const secondContextMock = {
 };
 
 describe('Resources plugin', () => {
-  it('hydrates resources store with data', () => {
-    const hydrate = jest.spyOn(getResourceStore().actions, 'hydrate');
-    const plugin = createResourcesPlugin({
-      context: {
-        a: 1,
-        b: 2,
-      },
-      resourceData: { data: 'abc' },
-    });
-
-    if (plugin.hydrate !== undefined)
-      plugin.hydrate({ context: firstContextMock });
-
-    expect(hydrate).toBeCalledWith({
-      resourceContext: { a: 1, b: 2 },
-      resourceData: { data: 'abc' },
-    });
-  });
-
   it('cleans up expired resources before route change', () => {
     const cleanExpiredResources = jest.spyOn(
       getResourceStore().actions,

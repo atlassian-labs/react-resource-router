@@ -200,20 +200,7 @@ describe('RouterStore', () => {
         });
       });
 
-      it('onHydrate for each plugin is called', () => {
-        const plugin = {
-          hydrate: jest.fn(),
-        };
-        const plugins = [plugin];
-
-        renderRouterContainer({
-          plugins,
-        });
-
-        expect(plugin.hydrate).toBeCalled();
-      });
-
-      it('plugin onRouteLoad is called on initial render', () => {
+      it('plugin routeLoad is called on initial render', () => {
         const plugin = {
           routeLoad: jest.fn(),
         };
