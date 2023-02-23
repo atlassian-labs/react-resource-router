@@ -62,7 +62,7 @@ describe('usePathParam()', () => {
     let ppVal: string | undefined;
 
     mount(
-      <Router routes={mockRoutes} history={history}>
+      <Router history={history} routes={mockRoutes}>
         <MockComponent>
           {() => {
             const [param] = usePathParam('projectId');
@@ -79,7 +79,7 @@ describe('usePathParam()', () => {
   it('should return undefined for non-existent params', () => {
     let ppVal: string | undefined;
     mount(
-      <Router routes={mockRoutes} history={history}>
+      <Router history={history} routes={mockRoutes}>
         <MockComponent>
           {() => {
             const [param] = usePathParam('iamnotapathparam');
@@ -101,7 +101,7 @@ describe('usePathParam()', () => {
     ) => void;
 
     mount(
-      <Router routes={mockRoutes} history={history}>
+      <Router history={history} routes={mockRoutes}>
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('projectId');
@@ -134,7 +134,7 @@ describe('usePathParam()', () => {
     let renderCount = 0;
 
     mount(
-      <Router routes={mockRoutes} history={history}>
+      <Router history={history} routes={mockRoutes}>
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('projectId');
@@ -173,7 +173,7 @@ describe('usePathParam()', () => {
     ) => void;
 
     mount(
-      <Router routes={mockRoutes} history={history}>
+      <Router history={history} routes={mockRoutes}>
         <MockComponent>
           {() => {
             [ppVal, ppUpdateFn] = usePathParam('projectId');
@@ -208,7 +208,7 @@ describe('usePathParam()', () => {
       name: '',
     };
     mount(
-      <Router routes={[mockRouteWithOptionalParam]} history={history}>
+      <Router history={history} routes={[mockRouteWithOptionalParam]}>
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('issueId');
@@ -255,7 +255,7 @@ describe('usePathParam()', () => {
       name: '',
     };
     mount(
-      <Router routes={[mockRouteWithOptionalParam]} history={history}>
+      <Router history={history} routes={[mockRouteWithOptionalParam]}>
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('boardId');

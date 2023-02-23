@@ -5,6 +5,7 @@ import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
+import { createResourcesPlugin } from '../../resources/plugin';
 import { getResourceStore } from '../resource-store';
 
 import { ContainerProps } from './types';
@@ -16,6 +17,21 @@ import {
   INITIAL_STATE,
   RouterContainer,
 } from './index';
+
+const createPlugins = ({
+  context,
+  resourceData,
+}: {
+  context: any;
+  resourceData: any;
+}) => {
+  const resourcesPlugin = createResourcesPlugin({
+    context,
+    resourceData,
+  });
+
+  return [resourcesPlugin];
+};
 
 describe('RouterStore', () => {
   describe.each([
@@ -49,10 +65,18 @@ describe('RouterStore', () => {
       const push = jest.spyOn(history, 'push');
       const replace = jest.spyOn(history, 'replace');
 
+      const plugins =
+        props.plugins ||
+        createPlugins({
+          context: props.resourceContext,
+          resourceData: props.resourceData,
+        });
+
       mount(
         <RouterContainer
           history={history}
           isGlobal
+          plugins={plugins}
           routes={routes}
           {...props}
         />
@@ -66,6 +90,7 @@ describe('RouterStore', () => {
           push,
           replace,
         }),
+        plugins,
       };
     }
 
@@ -122,7 +147,9 @@ describe('RouterStore', () => {
 
       it('returns the expected state', () => {
         const onPrefetch = jest.fn();
-        const { history, getState } = renderRouterContainer({ onPrefetch });
+        const { history, getState, plugins } = renderRouterContainer({
+          onPrefetch,
+        });
 
         expect(getState()).toMatchObject({
           ...INITIAL_STATE,
@@ -142,6 +169,7 @@ describe('RouterStore', () => {
           route: routes[0],
           routes: routes,
           unlisten: expect.any(Function),
+          plugins,
         });
       });
 
@@ -170,6 +198,19 @@ describe('RouterStore', () => {
           resourceContext,
           resourceData,
         });
+      });
+
+      it('plugin routeLoad is called on initial render', () => {
+        const plugin = {
+          routeLoad: jest.fn(),
+        };
+        const plugins = [plugin];
+
+        renderRouterContainer({
+          plugins,
+        });
+
+        expect(plugin.routeLoad).toBeCalled();
       });
 
       it('requests route resources', () => {
@@ -248,6 +289,92 @@ describe('RouterStore', () => {
               action: 'PUSH',
               route: routes[1],
             });
+          });
+
+          it('plugin route load actions are called on route change', async () => {
+            const plugin = {
+              beforeRouteLoad: jest.fn(),
+              routeLoad: jest.fn(),
+            };
+            const plugins = [plugin];
+
+            const { actions } = renderRouterContainer({
+              plugins,
+            });
+            const nextLocation = { pathname: '/pages/1', search: '', hash: '' };
+
+            actions.push(nextLocation);
+
+            expect(plugin.beforeRouteLoad).toBeCalledWith({
+              nextContext: {
+                match: {
+                  isExact: true,
+                  params: { id: '1' },
+                  path: '/pages/:id',
+                  query: {},
+                  url: '/pages/1',
+                },
+                query: {},
+                route: {
+                  component: routes[1].component,
+                  name: 'page',
+                  path: '/pages/:id',
+                },
+              },
+              context: {
+                match: {
+                  isExact: true,
+                  params: {},
+                  path: '/pages',
+                  query: {},
+                  url: '/pages',
+                },
+                query: { key: 'value' },
+                route: {
+                  component: routes[0].component,
+                  exact: true,
+                  name: 'pages',
+                  path: '/pages',
+                },
+              },
+            });
+
+            // ignore onRouteLoad call on initial render and check the one after route change
+            expect(plugin.routeLoad.mock.calls[1]).toEqual([
+              {
+                context: {
+                  match: {
+                    isExact: true,
+                    params: { id: '1' },
+                    path: '/pages/:id',
+                    query: {},
+                    url: '/pages/1',
+                  },
+                  query: {},
+                  route: {
+                    component: routes[1].component,
+                    name: 'page',
+                    path: '/pages/:id',
+                  },
+                },
+                prevContext: {
+                  match: {
+                    isExact: true,
+                    params: {},
+                    path: '/pages',
+                    query: {},
+                    url: '/pages',
+                  },
+                  query: { key: 'value' },
+                  route: {
+                    component: routes[0].component,
+                    exact: true,
+                    name: 'pages',
+                    path: '/pages',
+                  },
+                },
+              },
+            ]);
           });
         }
       });
@@ -357,8 +484,17 @@ describe('RouterStore', () => {
           path: '',
         };
 
+        const plugins = createPlugins({
+          context: {},
+          resourceData: null,
+        });
+
         const wrapper = mount(
-          <RouterContainer history={createMemoryHistory()} routes={[route]}>
+          <RouterContainer
+            history={createMemoryHistory()}
+            plugins={plugins}
+            routes={[route]}
+          >
             <RouteName />
           </RouterContainer>
         );
@@ -387,8 +523,17 @@ describe('RouterStore', () => {
           path: '',
         };
 
+        const plugins = createPlugins({
+          context: {},
+          resourceData: null,
+        });
+
         const wrapper = mount(
-          <RouterContainer history={createMemoryHistory()} routes={[route]}>
+          <RouterContainer
+            history={createMemoryHistory()}
+            plugins={plugins}
+            routes={[route]}
+          >
             <RouteName argument="bar" />
           </RouterContainer>
         );

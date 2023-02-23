@@ -80,7 +80,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         typeof to !== 'string' && route
           ? createRouterContext(route, { params, query })
           : null;
-      routerActions.prefetchNextRouteResources(linkDestination, context);
+      routerActions.prefetchRoute(linkDestination, context);
       // omit params & query as already in linkDestination
       // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [route, linkDestination, routerActions]);

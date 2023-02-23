@@ -16,6 +16,7 @@ import {
   Route,
   RouterContext,
   Routes,
+  Plugin,
 } from '../../common/types';
 
 type PublicStateProperties = {
@@ -34,6 +35,7 @@ type PrivateStateProperties = {
   onPrefetch?: (routerContext: RouterContext) => void;
   routes: Routes;
   unlisten: UnlistenHistory | null;
+  plugins: Plugin[];
 };
 
 export type EntireRouterState = PublicStateProperties & PrivateStateProperties;
@@ -47,6 +49,7 @@ export type ContainerProps = {
   resourceContext?: ResourceStoreContext;
   resourceData?: ResourceStoreData;
   routes: Routes;
+  plugins: Plugin[];
 };
 
 export type RouterAction = Action<EntireRouterState, AllRouterActions>;
@@ -67,10 +70,6 @@ type PrivateRouterActions = {
   requestRouteResources: (
     options?: RequestRouteResourcesOptions
   ) => Action<EntireRouterState, AllRouterActions, Promise<unknown[]>>;
-  prefetchNextRouteResources: (
-    path: Href,
-    nextContext: RouterContext | null
-  ) => RouterAction;
   listen: () => RouterAction;
   getContext: () => Action<
     EntireRouterState,
@@ -88,6 +87,11 @@ type PrivateRouterActions = {
       [key: string]: string | undefined;
     },
     updateType?: HistoryUpdateType
+  ) => RouterAction;
+  loadPlugins: () => RouterAction;
+  prefetchRoute: (
+    path: Href,
+    nextContext: RouterContext | null
   ) => RouterAction;
 };
 

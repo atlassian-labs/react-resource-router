@@ -239,6 +239,7 @@ describe('<Router /> client-side integration tests', () => {
 
       expect(router.html()).toBe('loading:cache loading:network');
       await waitForData();
+
       router.update();
       expect(router.html()).toBe('data:cache-1 data:network-1');
 

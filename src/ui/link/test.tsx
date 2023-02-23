@@ -54,7 +54,7 @@ describe('<Link />', () => {
   ) =>
     mount(
       // @ts-expect-error
-      <Router history={HistoryMock} routes={[]} basePath={basePath}>
+      <Router basePath={basePath} history={HistoryMock} routes={[]}>
         <Link {...props}>{children}</Link>
       </Router>
     );

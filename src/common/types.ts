@@ -326,3 +326,19 @@ export type FindRouterContextOptions = {
   location: Location;
   basePath?: string;
 };
+
+export type Plugin = {
+  beforeRouteLoad?: (params: {
+    context: RouterContext;
+    nextContext: RouterContext;
+  }) => void;
+  routeLoad?: (params: {
+    context: RouterContext;
+    prevContext?: RouterContext;
+  }) => void;
+  routePrefetch?: (params: {
+    context: RouterContext;
+    nextContext: RouterContext;
+  }) => void;
+  [key: string]: any;
+};

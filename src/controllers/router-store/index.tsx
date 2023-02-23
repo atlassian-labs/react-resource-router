@@ -24,7 +24,6 @@ import {
   warmupMatchRouteCache,
 } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
-import { getResourcesForNextLocation } from '../resource-store/utils';
 
 import {
   AllRouterActions,
@@ -50,6 +49,7 @@ export const INITIAL_STATE: EntireRouterState = {
   route: DEFAULT_ROUTE,
   routes: [],
   unlisten: null,
+  plugins: [],
 };
 
 const actions: AllRouterActions = {
@@ -65,9 +65,8 @@ const actions: AllRouterActions = {
         history,
         initialRoute,
         onPrefetch,
-        resourceContext,
-        resourceData,
         routes,
+        plugins,
       } = props;
       const routerContext = findRouterContext(
         initialRoute ? [initialRoute] : routes,
@@ -82,9 +81,8 @@ const actions: AllRouterActions = {
         routes,
         location: history.location,
         action: history.action,
+        plugins,
       });
-
-      getResourceStore().actions.hydrate({ resourceContext, resourceData });
 
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
@@ -102,6 +100,7 @@ const actions: AllRouterActions = {
       const { route, match, query } = getState();
 
       return getResourceStore().actions.requestAllResources(
+        // same as requestResources() from the page
         {
           route,
           match,
@@ -109,33 +108,6 @@ const actions: AllRouterActions = {
         },
         options
       );
-    },
-
-  prefetchNextRouteResources:
-    (path, nextContext) =>
-    ({ getState }) => {
-      const { routes, basePath, onPrefetch, route, match, query } = getState();
-      const { prefetchResources, getContext: getResourceStoreContext } =
-        getResourceStore().actions;
-
-      if (!nextContext && !isExternalAbsolutePath(path)) {
-        const location = parsePath(getRelativePath(path, basePath) as any);
-        nextContext = findRouterContext(routes, { location, basePath });
-      }
-
-      if (nextContext == null) return;
-      const nextLocationContext = nextContext;
-
-      const nextResources = getResourcesForNextLocation(
-        { route, match, query },
-        nextLocationContext,
-        getResourceStoreContext()
-      );
-
-      batch(() => {
-        prefetchResources(nextResources, nextLocationContext, {});
-        if (onPrefetch) onPrefetch(nextLocationContext);
-      });
     },
 
   /**
@@ -158,6 +130,7 @@ const actions: AllRouterActions = {
           const action = update.length === 2 ? update[1] : update[0].action;
 
           const {
+            plugins,
             routes,
             basePath,
             match: currentMatch,
@@ -165,27 +138,16 @@ const actions: AllRouterActions = {
             query: currentQuery,
           } = getState();
 
-          const {
-            cleanExpiredResources,
-            requestResources,
-            getContext: getResourceStoreContext,
-          } = getResourceStore().actions;
+          const nextContext = findRouterContext(routes, {
+            location,
+            basePath,
+          });
 
-          const nextContext = findRouterContext(routes, { location, basePath });
-          const nextLocationContext = {
-            route: nextContext.route,
-            match: nextContext.match,
-            query: nextContext.query,
+          const prevContext = {
+            route: currentRoute,
+            match: currentMatch,
+            query: currentQuery,
           };
-          const nextResources = getResourcesForNextLocation(
-            {
-              match: currentMatch,
-              query: currentQuery,
-              route: currentRoute,
-            },
-            nextLocationContext,
-            getResourceStoreContext()
-          );
 
           /* Explicitly batch update
            * as we need resources cleaned + route changed + resource fetch started together
@@ -193,13 +155,22 @@ const actions: AllRouterActions = {
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            cleanExpiredResources(nextResources, nextLocationContext);
+            plugins.forEach(p =>
+              p.beforeRouteLoad?.({
+                context: prevContext,
+                nextContext,
+              })
+            );
+
             setState({
               ...nextContext,
               location,
               action,
             });
-            requestResources(nextResources, nextLocationContext, {});
+
+            plugins.forEach(p =>
+              p.routeLoad?.({ context: nextContext, prevContext })
+            );
           });
         }
       );
@@ -366,6 +337,37 @@ const actions: AllRouterActions = {
         history[updateType](updatedRelativePath);
       }
     },
+  loadPlugins:
+    () =>
+    ({ getState }) => {
+      const { plugins, match, query, route } = getState();
+
+      plugins.forEach(p => p.routeLoad?.({ context: { match, query, route } }));
+    },
+  prefetchRoute:
+    (path, nextContext) =>
+    ({ getState }) => {
+      const { plugins, routes, basePath, onPrefetch } = getState();
+      const { route, match, query } = getRouterState();
+
+      if (!nextContext && !isExternalAbsolutePath(path)) {
+        const location = parsePath(getRelativePath(path, basePath) as any);
+        nextContext = findRouterContext(routes, { location, basePath });
+      }
+
+      if (nextContext == null) return;
+      const nextLocationContext = nextContext;
+
+      batch(() => {
+        plugins.forEach(p =>
+          p.routePrefetch?.({
+            context: { route, match, query },
+            nextContext: nextLocationContext,
+          })
+        );
+        if (onPrefetch) onPrefetch(nextLocationContext);
+      });
+    },
 };
 
 type State = EntireRouterState;
@@ -386,7 +388,7 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
       () =>
       ({ dispatch }, props) => {
         dispatch(actions.bootstrapStore(props));
-        !isServerEnvironment() && dispatch(actions.requestRouteResources());
+        !isServerEnvironment() && dispatch(actions.loadPlugins());
       },
     onCleanup: () => () => {
       if (process.env.NODE_ENV === 'development') {

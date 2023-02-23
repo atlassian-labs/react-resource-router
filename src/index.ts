@@ -36,6 +36,8 @@ export {
   matchRoute,
 } from './common/utils';
 
+export { invokePluginLoad } from './controllers/plugins';
+
 export type {
   AdditionalRouteAttributes,
   BrowserHistory,
@@ -68,6 +70,7 @@ export type {
   RouterContext,
   RouterDataContext,
   UseResourceHookResponse,
+  Plugin,
 } from './common/types';
 
 export type {

@@ -1,12 +1,10 @@
 import { createMemoryHistory } from 'history';
 import React, { useMemo, useEffect } from 'react';
 
+import { invokePluginLoad } from '../../controllers/plugins/index';
+import { createResourcesPlugin } from '../../resources/plugin';
 import { getResourceStore, ResourceContainer } from '../resource-store';
-import {
-  getRouterState,
-  RouterContainer,
-  getRouterStore,
-} from '../router-store';
+import { getRouterState, RouterContainer } from '../router-store';
 
 import {
   RouterProps,
@@ -20,6 +18,7 @@ export const Router = ({
   history,
   initialRoute,
   isGlobal = true,
+  plugins,
   onPrefetch,
   resourceContext,
   resourceData,
@@ -33,6 +32,18 @@ export const Router = ({
     };
   }, []);
 
+  const pluginsWithFallback = useMemo(() => {
+    if (plugins) return plugins;
+
+    // default 'plugins' fallback for the first relase
+    const resourcesPlugin = createResourcesPlugin({
+      context: resourceContext,
+      resourceData,
+    });
+
+    return [resourcesPlugin];
+  }, [resourceContext, resourceData, plugins]);
+
   return (
     <ResourceContainer isGlobal>
       <RouterContainer
@@ -41,6 +52,7 @@ export const Router = ({
         initialRoute={initialRoute}
         isGlobal={isGlobal}
         onPrefetch={onPrefetch}
+        plugins={pluginsWithFallback}
         resourceContext={resourceContext}
         resourceData={resourceData}
         routes={routes}
@@ -52,6 +64,7 @@ export const Router = ({
 };
 
 /**
+ * @deprecated
  * The entry point for requesting resource data on the server.
  * Pass the result data into the router as a prop in order to hydrate it.
  */
@@ -59,18 +72,23 @@ Router.requestResources = async ({
   location,
   history,
   timeout,
-  ...bootstrapProps
+  routes,
+  resourceContext: context,
 }: RequestResourcesParams) => {
-  const { bootstrapStore, requestRouteResources } = getRouterStore().actions;
-
-  bootstrapStore({
-    ...bootstrapProps,
-    history: history || createMemoryHistory({ initialEntries: [location] }),
+  const resourcesPlugin = createResourcesPlugin({
+    context,
+    resourceData: null,
+    timeout,
   });
 
-  await requestRouteResources({ timeout });
+  const plugins = [resourcesPlugin];
 
-  return getResourceStore().actions.getSafeData();
+  invokePluginLoad(plugins, {
+    history: history || createMemoryHistory({ initialEntries: [location] }),
+    routes: routes,
+  });
+
+  return await resourcesPlugin.getSerializedResources();
 };
 
 Router.addResourcesListener = (fn: (...args: any) => any) =>

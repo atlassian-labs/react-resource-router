@@ -35,7 +35,7 @@ export const About = () => {
       <h1>{breedName}</h1>
       <Link to={homeRoute}>Go to home</Link>
       <section>
-        {!loading && <img src={data?.message} alt="A cute dog!" />}
+        {!loading && <img alt="A cute dog!" src={data?.message} />}
       </section>
     </div>
   );
