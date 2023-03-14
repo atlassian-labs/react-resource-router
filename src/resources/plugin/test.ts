@@ -96,7 +96,7 @@ describe('Resources plugin', () => {
     expect(requestResources).toBeCalledWith([], secondContextMock, {});
   });
 
-  it('resources are prefetched', () => {
+  it('Next route resources are prefetched', () => {
     const prefetchResources = jest.spyOn(
       getResourceStore().actions,
       'prefetchResources'
@@ -112,6 +112,6 @@ describe('Resources plugin', () => {
         nextContext: secondContextMock,
       });
 
-    expect(prefetchResources).toBeCalledWith([], firstContextMock, {});
+    expect(prefetchResources).toBeCalledWith([], secondContextMock, {});
   });
 });

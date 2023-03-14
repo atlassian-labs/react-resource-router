@@ -93,7 +93,7 @@ export const createResourcesPlugin = ({
       );
 
       return {
-        resources: prefetchResources(nextResources, context, {}),
+        resources: prefetchResources(nextResources, nextContext, {}),
       };
     },
     getLatestResources: (): LoadedResources => latestLoadedResources,
