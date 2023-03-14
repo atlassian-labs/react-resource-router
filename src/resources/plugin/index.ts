@@ -43,9 +43,9 @@ const beforeLoad = ({
 
 type LoadedResources = Promise<RouteResourceResponse<unknown>[]>;
 
-type ResourcesPlugin = Plugin & {
+interface ResourcesPlugin extends Plugin {
   getSerializedResources: () => Promise<ResourceStoreData>;
-};
+}
 
 export const createResourcesPlugin = ({
   context: initialResourceContext,
