@@ -327,7 +327,7 @@ export type FindRouterContextOptions = {
   basePath?: string;
 };
 
-export type Plugin = {
+export interface Plugin {
   beforeRouteLoad?: (params: {
     context: RouterContext;
     nextContext: RouterContext;
@@ -341,4 +341,4 @@ export type Plugin = {
     nextContext: RouterContext;
   }) => void;
   [key: string]: any;
-};
+}
