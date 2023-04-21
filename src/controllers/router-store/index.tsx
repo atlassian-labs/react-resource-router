@@ -185,7 +185,7 @@ const actions: AllRouterActions = {
               // keep old behaviour for Resources plugin
               if (p.id === 'resources-plugin') {
                 p.routeLoad?.({ context: nextContext, prevContext });
-                // load Route only if path/query/match changed, and ignore the rest of query-params
+                // load Route only if path/query/params changed, and ignore the rest of query-params
               } else if (!sameRoute) {
                 p.routeLoad?.({ context: nextContext, prevContext });
               }

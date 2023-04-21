@@ -65,10 +65,23 @@ export const getRelativeURLFromLocation = (location: Location): string => {
   return `${location.pathname}${location.search}${location.hash}`;
 };
 
-const getKey = (match: Match) =>
-  `${match.path}::${JSON.stringify(match.params)}::${JSON.stringify(
-    match.query
-  )}`;
+type ObjectToCompare = {
+  [key: string]: string | null | typeof undefined;
+};
+const isDeepEqual = (object1: ObjectToCompare, object2: ObjectToCompare) => {
+  const objKeys1 = Object.keys(object1);
+  const objKeys2 = Object.keys(object2);
+
+  if (objKeys1.length !== objKeys2.length) return false;
+
+  for (const key of objKeys1) {
+    if (object1[key] !== object2[key]) {
+      return false;
+    }
+  }
+
+  return true;
+};
 
 export const isSameRoute = ({
   prevContextMatch,
@@ -76,9 +89,7 @@ export const isSameRoute = ({
 }: {
   prevContextMatch: Match;
   nextContextMatch: Match;
-}) => {
-  const prevMatchKey = getKey(prevContextMatch);
-  const nextMatchKey = getKey(nextContextMatch);
-
-  return prevMatchKey === nextMatchKey;
-};
+}) =>
+  prevContextMatch.path === nextContextMatch.path &&
+  isDeepEqual(prevContextMatch.query, nextContextMatch.query) &&
+  isDeepEqual(prevContextMatch.params, nextContextMatch.params);
