@@ -1,6 +1,6 @@
 import URL, { qs } from 'url-parse';
 
-import { Href, Location, Query, Match } from '../../../common/types';
+import { Href, Location, Query } from '../../../common/types';
 
 const stripTrailingSlash = (path: string) =>
   path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
@@ -64,32 +64,3 @@ export const updateQueryParams = (location: Location, query: Query): string => {
 export const getRelativeURLFromLocation = (location: Location): string => {
   return `${location.pathname}${location.search}${location.hash}`;
 };
-
-type ObjectToCompare = {
-  [key: string]: string | null | typeof undefined;
-};
-const isDeepEqual = (object1: ObjectToCompare, object2: ObjectToCompare) => {
-  const objKeys1 = Object.keys(object1);
-  const objKeys2 = Object.keys(object2);
-
-  if (objKeys1.length !== objKeys2.length) return false;
-
-  for (const key of objKeys1) {
-    if (object1[key] !== object2[key]) {
-      return false;
-    }
-  }
-
-  return true;
-};
-
-export const isSameRoute = ({
-  prevContextMatch,
-  nextContextMatch,
-}: {
-  prevContextMatch: Match;
-  nextContextMatch: Match;
-}) =>
-  prevContextMatch.path === nextContextMatch.path &&
-  isDeepEqual(prevContextMatch.query, nextContextMatch.query) &&
-  isDeepEqual(prevContextMatch.params, nextContextMatch.params);

@@ -22,6 +22,7 @@ import {
   generatePath as generatePathUsingPathParams,
   generateLocationFromPath,
   warmupMatchRouteCache,
+  isSameRoute,
 } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
 
@@ -36,7 +37,6 @@ import {
   isExternalAbsolutePath,
   updateQueryParams,
   getRelativeURLFromLocation,
-  isSameRoute,
 } from './utils';
 
 export const INITIAL_STATE: EntireRouterState = {
