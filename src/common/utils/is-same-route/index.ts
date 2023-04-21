@@ -1,21 +1,14 @@
 import { Match } from '../../../common/types';
 
-type ObjectToCompare = {
-  [key: string]: string | null | typeof undefined;
-};
-const isShallowEqual = (object1: ObjectToCompare, object2: ObjectToCompare) => {
-  const objKeys1 = Object.keys(object1);
-  const objKeys2 = Object.keys(object2);
+type ObjectToCompare = Record<string, string | null | undefined>;
+
+const isShallowEqual = (o1: ObjectToCompare, o2: ObjectToCompare) => {
+  const objKeys1 = Object.keys(o1);
+  const objKeys2 = Object.keys(o2);
 
   if (objKeys1.length !== objKeys2.length) return false;
 
-  for (const key of objKeys1) {
-    if (object1[key] !== object2[key]) {
-      return false;
-    }
-  }
-
-  return true;
+  return objKeys1.every(key => o1[key] === o2[key]);
 };
 
 export const isSameRoute = ({
