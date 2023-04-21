@@ -1,6 +1,6 @@
 import URL, { qs } from 'url-parse';
 
-import { Href, Location, Query } from '../../../common/types';
+import { Href, Location, Query, Match } from '../../../common/types';
 
 const stripTrailingSlash = (path: string) =>
   path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
@@ -63,4 +63,22 @@ export const updateQueryParams = (location: Location, query: Query): string => {
 
 export const getRelativeURLFromLocation = (location: Location): string => {
   return `${location.pathname}${location.search}${location.hash}`;
+};
+
+const getKey = (match: Match) =>
+  `${match.path}::${JSON.stringify(match.params)}::${JSON.stringify(
+    match.query
+  )}`;
+
+export const isSameRoute = ({
+  prevContextMatch,
+  nextContextMatch,
+}: {
+  prevContextMatch: Match;
+  nextContextMatch: Match;
+}) => {
+  const prevMatchKey = getKey(prevContextMatch);
+  const nextMatchKey = getKey(nextContextMatch);
+
+  return prevMatchKey === nextMatchKey;
 };
