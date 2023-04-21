@@ -162,12 +162,7 @@ const actions: AllRouterActions = {
 
           batch(() => {
             plugins.forEach(p => {
-              if (p.id === 'resources-plugin') {
-                p.beforeRouteLoad?.({
-                  context: prevContext,
-                  nextContext,
-                });
-              } else if (!sameRoute) {
+              if (p.id === 'resources-plugin' || !sameRoute) {
                 p.beforeRouteLoad?.({
                   context: prevContext,
                   nextContext,
@@ -183,10 +178,8 @@ const actions: AllRouterActions = {
 
             plugins.forEach(p => {
               // keep old behaviour for Resources plugin
-              if (p.id === 'resources-plugin') {
-                p.routeLoad?.({ context: nextContext, prevContext });
-                // load Route only if path/query/params changed, and ignore the rest of query-params
-              } else if (!sameRoute) {
+              // load Route only if path/query/params changed, and ignore the rest of query-params
+              if (p.id === 'resources-plugin' || !sameRoute) {
                 p.routeLoad?.({ context: nextContext, prevContext });
               }
             });

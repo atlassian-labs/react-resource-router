@@ -3,7 +3,7 @@ import { Match } from '../../../common/types';
 type ObjectToCompare = {
   [key: string]: string | null | typeof undefined;
 };
-const isDeepEqual = (object1: ObjectToCompare, object2: ObjectToCompare) => {
+const isShallowEqual = (object1: ObjectToCompare, object2: ObjectToCompare) => {
   const objKeys1 = Object.keys(object1);
   const objKeys2 = Object.keys(object2);
 
@@ -26,5 +26,5 @@ export const isSameRoute = ({
   nextContextMatch: Match;
 }) =>
   prevContextMatch.path === nextContextMatch.path &&
-  isDeepEqual(prevContextMatch.query, nextContextMatch.query) &&
-  isDeepEqual(prevContextMatch.params, nextContextMatch.params);
+  isShallowEqual(prevContextMatch.query, nextContextMatch.query) &&
+  isShallowEqual(prevContextMatch.params, nextContextMatch.params);
