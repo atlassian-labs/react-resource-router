@@ -64,6 +64,7 @@ export const createResourcesPlugin = ({
   });
 
   return {
+    id: 'resources-plugin',
     beforeRouteLoad: beforeLoad,
     routeLoad: ({ context, prevContext }) => {
       const { route, match, query } = context;

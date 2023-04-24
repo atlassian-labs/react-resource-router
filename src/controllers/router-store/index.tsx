@@ -22,6 +22,7 @@ import {
   generatePath as generatePathUsingPathParams,
   generateLocationFromPath,
   warmupMatchRouteCache,
+  isSameRoute,
 } from '../../common/utils';
 import { getResourceStore } from '../resource-store';
 
@@ -149,18 +150,25 @@ const actions: AllRouterActions = {
             query: currentQuery,
           };
 
+          const sameRoute = isSameRoute({
+            prevContextMatch: prevContext.match,
+            nextContextMatch: nextContext.match,
+          });
+
           /* Explicitly batch update
            * as we need resources cleaned + route changed + resource fetch started together
            * If we do not batch, React might be re-render when route changes but resource
            * fetching has not started yet, making the app render with data null */
 
           batch(() => {
-            plugins.forEach(p =>
-              p.beforeRouteLoad?.({
-                context: prevContext,
-                nextContext,
-              })
-            );
+            plugins.forEach(p => {
+              if (p.id === 'resources-plugin' || !sameRoute) {
+                p.beforeRouteLoad?.({
+                  context: prevContext,
+                  nextContext,
+                });
+              }
+            });
 
             setState({
               ...nextContext,
@@ -168,9 +176,13 @@ const actions: AllRouterActions = {
               action,
             });
 
-            plugins.forEach(p =>
-              p.routeLoad?.({ context: nextContext, prevContext })
-            );
+            plugins.forEach(p => {
+              // keep old behaviour for Resources plugin
+              // load Route only if path/query/params changed, and ignore the rest of query-params
+              if (p.id === 'resources-plugin' || !sameRoute) {
+                p.routeLoad?.({ context: nextContext, prevContext });
+              }
+            });
           });
         }
       );

@@ -328,6 +328,7 @@ export type FindRouterContextOptions = {
 };
 
 export interface Plugin {
+  id: string;
   beforeRouteLoad?: (params: {
     context: RouterContext;
     nextContext: RouterContext;

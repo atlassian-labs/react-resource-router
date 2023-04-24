@@ -202,6 +202,7 @@ describe('RouterStore', () => {
 
       it('plugin routeLoad is called on initial render', () => {
         const plugin = {
+          id: 'test-plugin',
           routeLoad: jest.fn(),
         };
         const plugins = [plugin];
@@ -293,6 +294,7 @@ describe('RouterStore', () => {
 
           it('plugin route load actions are called on route change', async () => {
             const plugin = {
+              id: 'test-plugin',
               beforeRouteLoad: jest.fn(),
               routeLoad: jest.fn(),
             };
@@ -375,6 +377,39 @@ describe('RouterStore', () => {
                 },
               },
             ]);
+          });
+
+          it('plugin route load actions are called only if route path/match/query change', async () => {
+            const plugin = {
+              id: 'test-plugin',
+              beforeRouteLoad: jest.fn(),
+              routeLoad: jest.fn(),
+            };
+            const resourcesPlugin = {
+              id: 'resources-plugin',
+              beforeRouteLoad: jest.fn(),
+              routeLoad: jest.fn(),
+            };
+            const plugins = [plugin, resourcesPlugin];
+
+            const { actions } = renderRouterContainer({
+              plugins,
+            });
+            const nextLocation = {
+              pathname: '/pages',
+              search: '?a=1&b=2',
+              hash: '',
+            };
+
+            actions.push(nextLocation);
+
+            // Plugin actions would not be called as path/match/query does not change
+            expect(plugin.beforeRouteLoad).not.toBeCalled();
+            expect(plugin.routeLoad).toHaveBeenCalledTimes(1); // called only on router init
+
+            // For Resources plugin keeping old behaviour
+            expect(resourcesPlugin.beforeRouteLoad).toBeCalled();
+            expect(resourcesPlugin.routeLoad).toHaveBeenCalledTimes(2); // called both on router init and URL change
           });
         }
       });
