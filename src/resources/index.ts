@@ -1,0 +1,1 @@
+export { createResourcesPlugin } from './plugin';
