@@ -1,5 +1,5 @@
 {
-  "main": "../build/cjs/resources.js",
-  "module": "../build/esm/resources.js",
-  "types": "../build/cjs/resources.d.ts"
+  "main": "../build/cjs/resources/index.js",
+  "module": "../build/esm/resources/index.js",
+  "types": "../build/cjs/resources/index.d.ts"
 }
