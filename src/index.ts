@@ -1,29 +1,18 @@
 export { createBrowserHistory, createMemoryHistory } from 'history';
 
 export {
-  createResource,
   createRouterSelector,
   MemoryRouter,
   Redirect,
-  ResourceDependencyError,
-  ResourceSubscriber,
   RouteResourceEnabledSubscriber,
   Router,
   RouterActions,
   RouterSubscriber,
   usePathParam,
   useQueryParam,
-  useResource,
-  useResourceStoreContext,
   useRouter,
   useRouterActions,
   withRouter,
-} from './controllers';
-
-export type {
-  CreateResourceArgBase,
-  CreateResourceArgSync,
-  CreateResourceArgAsync,
 } from './controllers';
 
 export { RouteComponent, Link } from './ui';
@@ -79,3 +68,31 @@ export type {
   RouterActionReplace,
   RouterSubscriberProps,
 } from './controllers/router-store/types';
+
+// extra exports for resources only
+export {
+  RouterStore,
+  useRouterStoreActions,
+  getRouterState,
+} from './controllers/router-store';
+export type {
+  EntireRouterState,
+  AllRouterActions,
+} from './controllers/router-store/types';
+
+export { DEFAULT_MATCH, DEFAULT_ROUTE } from './common/constants';
+
+// resources plugin re-exports (deprecated)
+export {
+  createResource,
+  ResourceDependencyError,
+  ResourceSubscriber,
+  useResource,
+  useResourceStoreContext,
+} from './resources';
+
+export type {
+  CreateResourceArgBase,
+  CreateResourceArgSync,
+  CreateResourceArgAsync,
+} from './resources';

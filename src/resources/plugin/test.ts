@@ -1,4 +1,4 @@
-import { getResourceStore } from '../../controllers/resource-store';
+import { getResourceStore } from '../controllers/resource-store';
 
 import { createResourcesPlugin } from './index';
 

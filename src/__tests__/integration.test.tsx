@@ -4,7 +4,6 @@ import React, { Fragment } from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../common/utils/is-server-environment';
-import { createResource, ResourceStore } from '../controllers/resource-store';
 import {
   Route,
   RouteComponent,
@@ -12,6 +11,7 @@ import {
   RouteResource,
   useResource,
 } from '../index';
+import { createResource, ResourceStore } from '../resources';
 
 jest.mock('../common/utils/is-server-environment');
 

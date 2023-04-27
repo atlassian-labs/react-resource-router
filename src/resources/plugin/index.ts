@@ -5,8 +5,8 @@ import type {
   RouteResourceResponse,
   ResourceStoreData,
 } from '../../common/types';
-import { getResourceStore } from '../../controllers/resource-store';
-import { getResourcesForNextLocation } from '../../controllers/resource-store/utils';
+import { getResourceStore } from '../controllers/resource-store';
+import { getResourcesForNextLocation } from '../controllers/resource-store/utils';
 
 const loadOnUrlChange = (
   context: RouterContext,

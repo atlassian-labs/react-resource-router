@@ -61,15 +61,8 @@ type ToAttributes = {
   params?: MatchParams;
 };
 
-type RequestRouteResourcesOptions = {
-  timeout?: number;
-};
-
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
-  requestRouteResources: (
-    options?: RequestRouteResourcesOptions
-  ) => Action<EntireRouterState, AllRouterActions, Promise<unknown[]>>;
   listen: () => RouterAction;
   getContext: () => Action<
     EntireRouterState,

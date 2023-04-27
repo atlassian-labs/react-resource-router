@@ -4,9 +4,9 @@ import React, { ReactNode } from 'react';
 
 import { Route } from '../../common/types';
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
+import { createResource, getResourceStore } from '../../resources';
 import { createResourcesPlugin } from '../../resources/plugin';
 import { invokePluginLoad } from '../plugins/index';
-import { createResource, getResourceStore } from '../resource-store';
 
 import { Router } from './index';
 

@@ -5,8 +5,8 @@ import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
+import { getResourceStore } from '../../resources/controllers/resource-store';
 import { createResourcesPlugin } from '../../resources/plugin';
-import { getResourceStore } from '../resource-store';
 
 import { ContainerProps } from './types';
 
