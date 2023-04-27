@@ -4,14 +4,7 @@ import React, { Fragment } from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../common/utils/is-server-environment';
-import {
-  Route,
-  RouteComponent,
-  Router,
-  RouteResource,
-  useResource,
-} from '../index';
-import { createResource, ResourceStore } from '../resources';
+import { Route, RouteComponent, Router, type Plugin } from '../index';
 
 jest.mock('../common/utils/is-server-environment');
 
@@ -25,266 +18,214 @@ describe('<Router /> client-side integration tests', () => {
     jest.useRealTimers();
   });
 
-  it('re-triggers requests for timed out resources when mounted', async () => {
-    const resolver = (resolveWith: any, delay = 0) =>
-      new Promise(resolve => setTimeout(() => resolve(resolveWith), delay));
-
-    const completedResource = createResource({
-      getKey: () => 'key',
-      getData: () => resolver('completed', 250),
-      type: 'COMPLETED',
+  function mountRouter({
+    routes,
+    plugins = [],
+    location,
+  }: {
+    routes: Route[];
+    plugins?: Plugin[];
+    location?: string;
+  }) {
+    const history = createMemoryHistory({
+      initialEntries: [location || routes[0].path],
     });
+    const push: any = jest.spyOn(history, 'push');
+    const waitForData = () => new Promise(resolve => setTimeout(resolve));
 
-    const timeoutResource = createResource({
-      getKey: () => 'key',
-      getData: () => resolver('timeout', 500),
-      type: 'TIMEOUT',
-    });
+    const router = mount(
+      <Router history={history} plugins={plugins} routes={routes}>
+        <RouteComponent />
+      </Router>
+    );
 
+    return {
+      history: {
+        push,
+      },
+      router,
+      waitForData,
+    };
+  }
+
+  it('renders route', async () => {
     const location = '/pathname?search=search#hash=hash';
-    const getCompletedData = jest.spyOn(completedResource, 'getData');
-    const getTimeoutData = jest.spyOn(timeoutResource, 'getData');
-
     const route = {
       component: () => <div>test</div>,
       name: 'mock-route',
       path: location.substring(0, location.indexOf('?')),
-      resources: [completedResource, timeoutResource],
     };
 
-    const serverData = await Router.requestResources({
-      location,
-      routes: [route],
-      timeout: 350,
-    });
+    const { router } = mountRouter({ routes: [route] });
 
-    expect(getCompletedData).toHaveBeenCalledTimes(1);
-    expect(getTimeoutData).toHaveBeenCalledTimes(1);
-
-    expect(serverData).toEqual({
-      COMPLETED: {
-        key: {
-          data: 'completed',
-          error: null,
-          expiresAt: null,
-          key: undefined,
-          loading: false,
-          promise: null,
-          accessedAt: null,
-        },
-      },
-      TIMEOUT: {
-        key: {
-          data: null,
-          error: {
-            message: 'Resource timed out: TIMEOUT',
-            name: 'TimeoutError',
-            stack: expect.any(String),
-          },
-          expiresAt: null,
-          key: undefined,
-          loading: true,
-          promise: null,
-          accessedAt: null,
-        },
-      },
-    });
-
-    defaultRegistry.stores.clear();
-
-    jest.useFakeTimers();
-
-    mount(
-      <Router
-        history={createMemoryHistory({
-          initialEntries: [location],
-        })}
-        resourceData={serverData}
-        routes={[route]}
-      />
-    );
-
-    jest.runAllTimers();
-
-    // Await a fake promise to let route resources to complete
-    await Promise.resolve();
-
-    expect(getCompletedData).toHaveBeenCalledTimes(1);
-    expect(getTimeoutData).toHaveBeenCalledTimes(2);
-
-    const resourceStore = defaultRegistry.getStore(ResourceStore);
-
-    expect(resourceStore.storeState.getState()).toEqual({
-      context: {},
-      data: {
-        COMPLETED: {
-          key: {
-            data: 'completed',
-            error: null,
-            expiresAt: expect.any(Number),
-            key: undefined,
-            loading: false,
-            promise: expect.any(Promise),
-            accessedAt: expect.any(Number),
-          },
-        },
-        TIMEOUT: {
-          key: {
-            data: 'timeout',
-            error: null,
-            expiresAt: expect.any(Number),
-            key: undefined,
-            loading: false,
-            promise: expect.any(Promise),
-            accessedAt: expect.any(Number),
-          },
-        },
-      },
-      executing: null,
-      prefetching: null,
-    });
+    expect(router.html()).toBe('<div>test</div>');
   });
 
-  describe('renders the next route with', () => {
-    function renderRouter(routes: Route[]) {
-      const history = createMemoryHistory({ initialEntries: [routes[0].path] });
-      const push: any = jest.spyOn(history, 'push');
-      const waitForData = () => new Promise(resolve => setTimeout(resolve));
+  it('triggers plugin.loadRoute when mounted', async () => {
+    const location = '/pathname?search=search#hash=hash';
+    const route = {
+      component: () => <div>test</div>,
+      name: 'mock-route',
+      path: location.substring(0, location.indexOf('?')),
+    };
 
-      const router = mount(
-        <Router history={history} routes={routes}>
-          <RouteComponent />
-        </Router>
-      );
+    const plugin: Plugin = {
+      id: 'test-plugin',
+      routeLoad: jest.fn(),
+    };
 
-      return {
-        history: {
-          push,
-        },
-        router,
-        waitForData,
-      };
-    }
-
-    function createResources() {
-      let cached = 0;
-      let network = 0;
-
-      return {
-        cacheResource: createResource({
-          getData: () => {
-            cached += 1;
-
-            return Promise.resolve(`cache-${cached}`);
-          },
-          getKey: () => 'cache',
-          maxAge: Infinity,
-          type: 'CACHE',
-        }),
-        networkResource: createResource({
-          getData: () => {
-            network += 1;
-
-            return Promise.resolve(`network-${network}`);
-          },
-          getKey: () => 'network',
-          maxAge: 0,
-          type: 'NETWORK',
-        }),
-      };
-    }
-
-    function createResourceComponent(resource: RouteResource<string>) {
-      return () => {
-        const { data, error, loading } = useResource(resource);
-        if (error) {
-          return <>error:{error}</>;
-        }
-
-        if (loading) {
-          return <>loading:{resource.type.toLowerCase()}</>;
-        }
-
-        return <>data:{data?.toString()}</>;
-      };
-    }
-
-    function createComponent(resources: RouteResource<string>[]) {
-      const components = resources.map(createResourceComponent);
-
-      return () => {
-        return (
-          <>
-            {components.map((Component, index) => (
-              <Fragment key={index}>
-                <Component />
-                {index < components.length - 1 ? ' ' : ''}
-              </Fragment>
-            ))}
-          </>
-        );
-      };
-    }
-
-    it('previous data when transitioning to the same route and resource keys', async () => {
-      const { cacheResource, networkResource } = createResources();
-      const route = {
-        component: createComponent([cacheResource, networkResource]),
-        name: 'page-1',
-        path: '/pages/1',
-        resources: [cacheResource, networkResource],
-      };
-
-      const { history, router, waitForData } = renderRouter([route]);
-
-      expect(router.html()).toBe('loading:cache loading:network');
-      await waitForData();
-
-      router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-1');
-
-      history.push(route.path + '?query#hash');
-      router.update();
-
-      expect(router.html()).toBe('data:cache-1 data:network-1');
-      await waitForData();
-      router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-1');
+    mountRouter({
+      routes: [route],
+      plugins: [plugin],
     });
 
-    it('fresh data when transitioning to a new route', async () => {
-      const { cacheResource, networkResource } = createResources();
-      const component = createComponent([cacheResource, networkResource]);
+    expect(plugin.routeLoad).toBeCalled();
+  });
 
-      const routes = [
-        {
-          component,
-          name: 'page-1',
-          path: '/pages/1',
-          resources: [cacheResource, networkResource],
-        },
-        {
-          component,
-          name: 'page-2',
-          path: '/pages/2',
-          resources: [cacheResource, networkResource],
-        },
-      ];
+  it('renders next route', async () => {
+    const location = '/pathname?search=search#hash=hash';
+    const route = {
+      component: () => <div>first route</div>,
+      name: 'mock-route',
+      path: location.substring(0, location.indexOf('?')),
+    };
 
-      const { history, router, waitForData } = renderRouter(routes);
+    const route2 = {
+      component: () => <div>second route</div>,
+      name: 'mock-route2',
+      path: '/route2',
+    };
 
-      expect(router.html()).toBe('loading:cache loading:network');
-      await waitForData();
+    const { history, router } = mountRouter({
+      routes: [route, route2],
+    });
+
+    expect(router.html()).toBe('<div>first route</div>');
+
+    history.push('/route2');
+    router.update();
+
+    expect(router.html()).toBe('<div>second route</div>');
+  });
+
+  it('triggers plugin.loadRoute after URL change', async () => {
+    const location = '/pathname?search=search#hash=hash';
+    const route = {
+      component: () => <div>first route</div>,
+      name: 'mock-route',
+      path: location.substring(0, location.indexOf('?')),
+    };
+
+    const route2 = {
+      component: () => <div>second route</div>,
+      name: 'mock-route2',
+      path: '/route2',
+    };
+
+    const plugin: Plugin = {
+      id: 'test-plugin',
+      routeLoad: jest.fn(),
+    };
+
+    const { history, router } = mountRouter({
+      routes: [route, route2],
+      plugins: [plugin],
+    });
+
+    expect(plugin.routeLoad).toBeCalled();
+    expect((plugin.routeLoad as any).mock.calls[0][0].context.route).toBe(
+      route
+    );
+
+    history.push('/route2');
+    router.update();
+
+    expect((plugin.routeLoad as any).mock.calls[1][0].context.route).toBe(
+      route2
+    );
+  });
+
+  describe('route re-rendering', () => {
+    it('route loaded once as URL pathname did not change', async () => {
+      const location = '/pathname?search=search#hash=hash';
+      const route = {
+        component: () => <div>first route</div>,
+        name: 'mock-route',
+        path: location.substring(0, location.indexOf('?')),
+      };
+
+      const plugin: Plugin = {
+        id: 'test-plugin',
+        routeLoad: jest.fn(),
+      };
+
+      const { history, router } = mountRouter({
+        routes: [route],
+        plugins: [plugin],
+      });
+
+      expect(plugin.routeLoad).toBeCalled();
+
+      history.push('/pathname?search=blah-blah-blah');
       router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-1');
 
-      history.push(routes[1].path);
+      expect(plugin.routeLoad).toBeCalledTimes(1);
+    });
+
+    it('route loads twice as query params change', async () => {
+      const location = '/pathname?search=search#hash=hash';
+      const route = {
+        component: () => <div>first route</div>,
+        name: 'mock-route',
+        query: ['search'],
+        path: location.substring(0, location.indexOf('?')),
+      };
+
+      const plugin: Plugin = {
+        id: 'test-plugin',
+        routeLoad: jest.fn(),
+      };
+
+      const { history, router } = mountRouter({
+        routes: [route],
+        plugins: [plugin],
+        location,
+      });
+
+      expect(plugin.routeLoad).toBeCalled();
+
+      history.push('/pathname?search=blah-blah-blah');
       router.update();
 
-      expect(router.html()).toBe('data:cache-1 loading:network');
-      await waitForData();
+      expect(plugin.routeLoad).toBeCalledTimes(2);
+    });
+
+    it('route loads once as defined query param did not change', async () => {
+      const location = '/pathname?search=search';
+      const route = {
+        component: () => <div>first route</div>,
+        name: 'mock-route',
+        query: ['search'],
+        path: location.substring(0, location.indexOf('?')),
+      };
+
+      const plugin: Plugin = {
+        id: 'test-plugin',
+        routeLoad: jest.fn(),
+      };
+
+      const { history, router } = mountRouter({
+        routes: [route],
+        plugins: [plugin],
+        location,
+      });
+
+      expect(plugin.routeLoad).toBeCalled();
+
+      history.push('/pathname?search=search&issue-key=1');
       router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-2');
+
+      expect(plugin.routeLoad).toBeCalledTimes(1);
     });
   });
 });
@@ -307,6 +248,7 @@ describe('<Router /> server-side integration tests', () => {
         history={createMemoryHistory({
           initialEntries: [`/base-path${route.path}`],
         })}
+        plugins={[]}
         routes={[route]}
       >
         <RouteComponent />
@@ -322,6 +264,7 @@ describe('<Router /> server-side integration tests', () => {
         history={createMemoryHistory({
           initialEntries: [route.path],
         })}
+        plugins={[]}
         routes={[route]}
       >
         <RouteComponent />

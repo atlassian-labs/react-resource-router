@@ -12,11 +12,4 @@ export {
   mockRoutes,
 } from './common/mocks';
 
-import { ResourceDependencyError } from './index';
-
-ResourceDependencyError;
-
-/**
- * @deprecated import from react-resource-router/resources instead
- */
 export { mockRouteResourceResponse } from './resources';

@@ -5,8 +5,6 @@ import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
-import { getResourceStore } from '../../resources/controllers/resource-store';
-import { createResourcesPlugin } from '../../resources/plugin';
 
 import { ContainerProps } from './types';
 
@@ -17,21 +15,6 @@ import {
   INITIAL_STATE,
   RouterContainer,
 } from './index';
-
-const createPlugins = ({
-  context,
-  resourceData,
-}: {
-  context: any;
-  resourceData: any;
-}) => {
-  const resourcesPlugin = createResourcesPlugin({
-    context,
-    resourceData,
-  });
-
-  return [resourcesPlugin];
-};
 
 describe('RouterStore', () => {
   describe.each([
@@ -65,12 +48,7 @@ describe('RouterStore', () => {
       const push = jest.spyOn(history, 'push');
       const replace = jest.spyOn(history, 'replace');
 
-      const plugins =
-        props.plugins ||
-        createPlugins({
-          context: props.resourceContext,
-          resourceData: props.resourceData,
-        });
+      const plugins = props.plugins || [];
 
       mount(
         <RouterContainer
@@ -173,33 +151,6 @@ describe('RouterStore', () => {
         });
       });
 
-      it('hydrates the resource store with the provided data', () => {
-        const hydrate = jest.spyOn(getResourceStore().actions, 'hydrate');
-        const resourceContext = { context: 'test' };
-        const resourceData = {
-          type: {
-            key: {
-              accessedAt: 0,
-              data: 'data',
-              error: null,
-              expiresAt: 0,
-              loading: false,
-              promise: Promise.resolve('data'),
-            },
-          },
-        };
-
-        renderRouterContainer({
-          resourceContext,
-          resourceData,
-        });
-
-        expect(hydrate).toBeCalledWith({
-          resourceContext,
-          resourceData,
-        });
-      });
-
       it('plugin routeLoad is called on initial render', () => {
         const plugin = {
           id: 'test-plugin',
@@ -212,29 +163,6 @@ describe('RouterStore', () => {
         });
 
         expect(plugin.routeLoad).toBeCalled();
-      });
-
-      it('requests route resources', () => {
-        const requestAllResources = jest.spyOn(
-          getResourceStore().actions,
-          'requestAllResources'
-        );
-
-        const { getState } = renderRouterContainer();
-
-        const { route, match, query } = getState();
-
-        expect(requestAllResources).toBeCalledTimes(1);
-        expect(requestAllResources).toBeCalledWith(
-          {
-            route,
-            match,
-            query,
-          },
-          {
-            timeout: undefined,
-          }
-        );
       });
     });
 
@@ -519,15 +447,10 @@ describe('RouterStore', () => {
           path: '',
         };
 
-        const plugins = createPlugins({
-          context: {},
-          resourceData: null,
-        });
-
         const wrapper = mount(
           <RouterContainer
             history={createMemoryHistory()}
-            plugins={plugins}
+            plugins={[]}
             routes={[route]}
           >
             <RouteName />
@@ -558,15 +481,10 @@ describe('RouterStore', () => {
           path: '',
         };
 
-        const plugins = createPlugins({
-          context: {},
-          resourceData: null,
-        });
-
         const wrapper = mount(
           <RouterContainer
             history={createMemoryHistory()}
-            plugins={plugins}
+            plugins={[]}
             routes={[route]}
           >
             <RouteName argument="bar" />
