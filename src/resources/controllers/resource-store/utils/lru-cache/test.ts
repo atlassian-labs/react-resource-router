@@ -2,7 +2,7 @@ import {
   RouteResourceDataForType,
   RouteResourceResponse,
   RouteResourceTimestamp,
-} from '../../../../../common/types';
+} from '../../../../common/types';
 
 import { getLRUResourceKey } from './index';
 

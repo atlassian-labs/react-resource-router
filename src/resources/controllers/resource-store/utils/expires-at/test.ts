@@ -1,4 +1,4 @@
-import { mockRouteResourceResponse } from '../../../../../common/mocks';
+import { mockRouteResourceResponse } from '../../../../common/mocks';
 
 import { getExpiresAt, setExpiresAt } from './index';
 

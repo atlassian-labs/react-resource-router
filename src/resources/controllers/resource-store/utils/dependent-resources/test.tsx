@@ -1,12 +1,12 @@
 import React from 'react';
 import { StoreActionApi } from 'react-sweet-state';
 
-import { ResourceType } from '../../../../../common/types';
 import {
   createResource,
   RouteResource,
   RouteResourceResponse,
 } from '../../../../../index';
+import { ResourceType } from '../../../../common/types';
 import { State } from '../../types';
 
 import {
