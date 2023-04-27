@@ -1,8 +1,8 @@
-import {
+import type { RouterContext } from '../../../../../index';
+import type {
   ResourceStoreContext,
   RouteResource,
-  RouterContext,
-} from '../../../../../common/types';
+} from '../../../../common/types';
 
 export const getResourceIdentifier = (
   resource: RouteResource,

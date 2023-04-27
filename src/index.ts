@@ -46,19 +46,10 @@ export type {
   MatchedInvariantRoute,
   MatchedRoute,
   Query,
-  ResourceStoreContext,
-  ResourceStoreData,
   Route,
   Routes,
   RouteContext,
-  RouteResource,
-  RouteResourceError,
-  RouteResourceLoading,
-  RouteResourceResponse,
-  RouteResourceUpdater,
   RouterContext,
-  RouterDataContext,
-  UseResourceHookResponse,
   Plugin,
 } from './common/types';
 
@@ -82,17 +73,40 @@ export type {
 
 export { DEFAULT_MATCH, DEFAULT_ROUTE } from './common/constants';
 
-// resources plugin re-exports (deprecated)
+// re-export resources entry-point to avoid breaking API changes for now
+import * as resourcesEntrypoint from './resources';
+
+/**
+ * @deprecated import from react-resource-router/resources instead
+ */
+const {
+  createResource,
+  ResourceDependencyError,
+  ResourceSubscriber,
+  useResource,
+  useResourceStoreContext,
+} = resourcesEntrypoint;
+
 export {
   createResource,
   ResourceDependencyError,
   ResourceSubscriber,
   useResource,
   useResourceStoreContext,
-} from './resources';
+};
 
 export type {
-  CreateResourceArgBase,
   CreateResourceArgSync,
   CreateResourceArgAsync,
+  CreateResourceArgBase,
+  RouteResources,
+  ResourceStoreContext,
+  ResourceStoreData,
+  RouteResource,
+  RouteResourceError,
+  RouteResourceLoading,
+  RouteResourceResponse,
+  RouteResourceUpdater,
+  RouterDataContext,
+  UseResourceHookResponse,
 } from './resources';

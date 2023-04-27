@@ -18,3 +18,18 @@ export type {
   CreateResourceArgSync,
   CreateResourceArgAsync,
 } from './controllers/resource-store';
+
+export type {
+  RouteResources,
+  ResourceStoreContext,
+  ResourceStoreData,
+  RouteResource,
+  RouteResourceError,
+  RouteResourceLoading,
+  RouteResourceResponse,
+  RouteResourceUpdater,
+  RouterDataContext,
+  UseResourceHookResponse,
+} from './common/types';
+
+export { mockRouteResourceResponse } from './common/mocks';

@@ -7,18 +7,18 @@ import {
   defaultRegistry,
 } from 'react-sweet-state';
 
-import {
+import { isServerEnvironment } from '../../../common/utils';
+import type { RouterContext } from '../../../index';
+import type {
   ResourceStoreContext,
   ResourceStoreData,
-  RouterContext,
   RouteResource,
   EmptyObject,
   RouteResourceAsyncResult,
   RouteResourceResponse,
   RouteResourceUpdater,
   RouteResourceSyncResult,
-} from '../../../common/types';
-import { isServerEnvironment } from '../../../common/utils';
+} from '../../common/types';
 
 import { getResourceStoreContext, getSliceForResource } from './selectors';
 import {

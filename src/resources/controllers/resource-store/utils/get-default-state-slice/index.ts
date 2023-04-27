@@ -1,4 +1,4 @@
-import { RouteResourceResponse } from '../../../../../common/types';
+import { RouteResourceResponse } from '../../../../common/types';
 import { getAccessedAt } from '../accessed-at';
 import { DEFAULT_RESOURCE_MAX_AGE } from '../create-resource/constants';
 import { getExpiresAt } from '../expires-at';

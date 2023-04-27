@@ -49,16 +49,6 @@ export const mockRouterActions = {
   goForward: () => () => null,
 };
 
-export const mockRouteResourceResponse = {
-  loading: false,
-  error: null,
-  data: { foo: 'bar' },
-  promise: null,
-  expiresAt: Date.now(),
-  accessedAt: Date.now(),
-  key: '',
-};
-
 export const mockRouterStoreContext = {
   route: mockRoute,
   query: mockQuery,
