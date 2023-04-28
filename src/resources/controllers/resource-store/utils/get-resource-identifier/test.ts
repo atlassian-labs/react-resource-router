@@ -1,4 +1,4 @@
-import { createResource } from '../../../../index';
+import { createResource } from '../../../resource-store';
 
 import { getResourceIdentifier, getResourceIdentifiers } from './index';
 

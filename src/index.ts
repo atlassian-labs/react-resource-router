@@ -96,9 +96,6 @@ export {
 };
 
 export type {
-  CreateResourceArgSync,
-  CreateResourceArgAsync,
-  CreateResourceArgBase,
   RouteResources,
   ResourceStoreContext,
   ResourceStoreData,
@@ -109,4 +106,10 @@ export type {
   RouteResourceUpdater,
   RouterDataContext,
   UseResourceHookResponse,
+} from './common/types';
+
+export type {
+  CreateResourceArgSync,
+  CreateResourceArgAsync,
+  CreateResourceArgBase,
 } from './resources';
