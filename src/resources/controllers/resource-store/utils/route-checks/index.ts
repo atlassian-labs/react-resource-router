@@ -1,4 +1,4 @@
-import { Route } from '../../../../../common/types';
+import { Route } from '../../../../../index';
 
 export const routeHasResources = (route: Route | null): boolean =>
   !!(route && route.resources && route.resources.length > 0);

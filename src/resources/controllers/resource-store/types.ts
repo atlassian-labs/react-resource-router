@@ -4,7 +4,7 @@ import {
   ResourceStoreContext,
   ResourceStoreData,
   RouteResource,
-} from '../../common/types';
+} from '../../../common/types';
 
 export type ExecutionTuple = [RouteResource, ResourceAction<any>];
 export type ExecutionMaybeTuple = [RouteResource, ResourceAction<any> | null];

@@ -4,7 +4,7 @@ import {
   ResourceType,
   ResourceKey,
   RouteResourceResponse,
-} from '../../../../common/types';
+} from '../../../../../common/types';
 import { PrefetchSlice, State } from '../../types';
 
 export const getPrefetchSlice =

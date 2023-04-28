@@ -1,9 +1,9 @@
-import type { RouterContext } from '../../../../../index';
 import type {
   ResourceDependencies,
   ResourceStoreContext,
   RouteResource,
-} from '../../../../common/types';
+} from '../../../../../common/types';
+import type { RouterContext } from '../../../../../index';
 import { GetResourceOptions, PrefetchSlice } from '../../types';
 import { DEFAULT_RESOURCE_MAX_AGE } from '../create-resource/constants';
 import { getExpiresAt } from '../expires-at';

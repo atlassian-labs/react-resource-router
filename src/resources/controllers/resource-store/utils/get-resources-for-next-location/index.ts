@@ -1,5 +1,8 @@
+import {
+  ResourceStoreContext,
+  RouteResource,
+} from '../../../../../common/types';
 import { RouterContext } from '../../../../../index';
-import { ResourceStoreContext, RouteResource } from '../../../../common/types';
 import {
   getResourceIdentifier,
   getResourceIdentifiers,

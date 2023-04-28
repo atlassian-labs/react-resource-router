@@ -3,7 +3,7 @@ import { StoreActionApi } from 'react-sweet-state';
 import {
   RouteResource,
   RouteResourceDataForType,
-} from '../../../../common/types';
+} from '../../../../../common/types';
 import { State } from '../../types';
 import { deleteResourceState } from '../manage-resource-state';
 

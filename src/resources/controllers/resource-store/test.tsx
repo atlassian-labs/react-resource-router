@@ -2,9 +2,9 @@ import { mount } from 'enzyme';
 import React from 'react';
 import { BoundActions, defaultRegistry } from 'react-sweet-state';
 
+import { ResourceType, RouteResourceResponse } from '../../../common/types';
 import { isServerEnvironment } from '../../../common/utils/is-server-environment';
 import * as routerStoreModule from '../../../controllers/router-store';
-import { ResourceType, RouteResourceResponse } from '../../common/types';
 import { useResource } from '../use-resource';
 
 import { getSliceForResource } from './selectors';

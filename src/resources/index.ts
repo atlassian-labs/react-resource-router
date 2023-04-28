@@ -30,6 +30,6 @@ export type {
   RouteResourceUpdater,
   RouterDataContext,
   UseResourceHookResponse,
-} from './common/types';
+} from '../common/types';
 
 export { mockRouteResourceResponse } from './common/mocks';

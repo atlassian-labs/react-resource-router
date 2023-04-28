@@ -1,9 +1,9 @@
-import { Plugin, RouterContext } from '../../index';
 import type {
   ResourceStoreContext,
   RouteResourceResponse,
   ResourceStoreData,
-} from '../common/types';
+} from '../../common/types';
+import { Plugin, RouterContext } from '../../index';
 import { getResourceStore } from '../controllers/resource-store';
 import { getResourcesForNextLocation } from '../controllers/resource-store/utils';
 
