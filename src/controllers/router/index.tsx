@@ -44,7 +44,6 @@ export const Router = ({
   }, [resourceContext, resourceData, plugins]);
 
   return (
-    // <ResourceContainer isGlobal>
     <RouterContainer
       basePath={basePath}
       history={history}
@@ -58,7 +57,6 @@ export const Router = ({
     >
       {children}
     </RouterContainer>
-    // </ResourceContainer>
   );
 };
 
