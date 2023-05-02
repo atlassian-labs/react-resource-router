@@ -3,13 +3,11 @@ import { PropsWithChildren } from 'react';
 import {
   History,
   Plugin,
-  ResourceStoreContext,
-  ResourceStoreData,
   Route,
   RouterContext,
   Routes,
 } from '../../common/types';
-
+import type { ResourceStoreContext, ResourceStoreData } from '../../resources';
 export type RouterProps = PropsWithChildren<{
   basePath?: string;
   history: History;

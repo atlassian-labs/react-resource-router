@@ -3,7 +3,6 @@ import React, { useMemo, useEffect } from 'react';
 
 import { invokePluginLoad } from '../../controllers/plugins/index';
 import { createResourcesPlugin } from '../../resources/plugin';
-import { getResourceStore, ResourceContainer } from '../resource-store';
 import { getRouterState, RouterContainer } from '../router-store';
 
 import {
@@ -45,21 +44,19 @@ export const Router = ({
   }, [resourceContext, resourceData, plugins]);
 
   return (
-    <ResourceContainer isGlobal>
-      <RouterContainer
-        basePath={basePath}
-        history={history}
-        initialRoute={initialRoute}
-        isGlobal={isGlobal}
-        onPrefetch={onPrefetch}
-        plugins={pluginsWithFallback}
-        resourceContext={resourceContext}
-        resourceData={resourceData}
-        routes={routes}
-      >
-        {children}
-      </RouterContainer>
-    </ResourceContainer>
+    <RouterContainer
+      basePath={basePath}
+      history={history}
+      initialRoute={initialRoute}
+      isGlobal={isGlobal}
+      onPrefetch={onPrefetch}
+      plugins={pluginsWithFallback}
+      resourceContext={resourceContext}
+      resourceData={resourceData}
+      routes={routes}
+    >
+      {children}
+    </RouterContainer>
   );
 };
 
@@ -90,9 +87,6 @@ Router.requestResources = async ({
 
   return await resourcesPlugin.getSerializedResources();
 };
-
-Router.addResourcesListener = (fn: (...args: any) => any) =>
-  getResourceStore().storeState.subscribe(fn);
 
 export function MemoryRouter(props: MemoryRouterProps) {
   const history = useMemo(

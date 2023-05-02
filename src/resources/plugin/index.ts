@@ -1,12 +1,11 @@
 import type {
-  Plugin,
   ResourceStoreContext,
-  RouterContext,
   RouteResourceResponse,
   ResourceStoreData,
 } from '../../common/types';
-import { getResourceStore } from '../../controllers/resource-store';
-import { getResourcesForNextLocation } from '../../controllers/resource-store/utils';
+import { Plugin, RouterContext } from '../../index';
+import { getResourceStore } from '../controllers/resource-store';
+import { getResourcesForNextLocation } from '../controllers/resource-store/utils';
 
 const loadOnUrlChange = (
   context: RouterContext,

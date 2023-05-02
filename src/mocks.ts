@@ -7,8 +7,9 @@ export {
   mockRouteContext,
   mockRouteContextProp,
   mockRouterActions,
-  mockRouteResourceResponse,
   mockRouterStoreContext,
   mockRouterStoreContextProp,
   mockRoutes,
 } from './common/mocks';
+
+export { mockRouteResourceResponse } from './resources';

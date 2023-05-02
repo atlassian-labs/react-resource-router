@@ -24,7 +24,6 @@ import {
   warmupMatchRouteCache,
   isSameRoute,
 } from '../../common/utils';
-import { getResourceStore } from '../resource-store';
 
 import {
   AllRouterActions,
@@ -88,27 +87,6 @@ const actions: AllRouterActions = {
       if (!isServerEnvironment()) {
         dispatch(actions.listen());
       }
-    },
-
-  /**
-   * Uses the resource store to request resources for the route.
-   * Must be dispatched after setting state with the new route context.
-   *
-   */
-  requestRouteResources:
-    (options = {}) =>
-    ({ getState }) => {
-      const { route, match, query } = getState();
-
-      return getResourceStore().actions.requestAllResources(
-        // same as requestResources() from the page
-        {
-          route,
-          match,
-          query,
-        },
-        options
-      );
     },
 
   /**
