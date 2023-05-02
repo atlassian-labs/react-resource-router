@@ -7,6 +7,9 @@ module.exports = {
   resetMocks: true,
   setupFilesAfterEnv: ['<rootDir>jest.setup.js'],
   testEnvironment: 'jsdom',
-  testMatch: ['<rootDir>/src/**/?(*.)*test.ts?(x)'],
+  testMatch: [
+    '<rootDir>/src/**/?(*.)*test.ts?(x)',
+    '<rootDir>/codemods/**/?(*.)*test.ts?(x)',
+  ],
   verbose: true,
 };
