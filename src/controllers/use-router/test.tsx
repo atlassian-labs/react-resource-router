@@ -42,7 +42,6 @@ describe('useRouter()', () => {
         "registerBlock": [Function],
         "replace": [Function],
         "replaceTo": [Function],
-        "requestRouteResources": [Function],
         "updatePathParam": [Function],
         "updateQueryParam": [Function],
       }

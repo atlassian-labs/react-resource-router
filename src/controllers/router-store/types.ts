@@ -11,13 +11,12 @@ import {
   Match,
   MatchParams,
   Query,
-  ResourceStoreContext,
-  ResourceStoreData,
   Route,
   RouterContext,
   Routes,
   Plugin,
 } from '../../common/types';
+import type { ResourceStoreContext, ResourceStoreData } from '../../resources';
 
 type PublicStateProperties = {
   action: HistoryAction;
@@ -61,15 +60,8 @@ type ToAttributes = {
   params?: MatchParams;
 };
 
-type RequestRouteResourcesOptions = {
-  timeout?: number;
-};
-
 type PrivateRouterActions = {
   bootstrapStore: (initialState: ContainerProps) => RouterAction;
-  requestRouteResources: (
-    options?: RequestRouteResourcesOptions
-  ) => Action<EntireRouterState, AllRouterActions, Promise<unknown[]>>;
   listen: () => RouterAction;
   getContext: () => Action<
     EntireRouterState,

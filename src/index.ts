@@ -1,29 +1,18 @@
 export { createBrowserHistory, createMemoryHistory } from 'history';
 
 export {
-  createResource,
   createRouterSelector,
   MemoryRouter,
   Redirect,
-  ResourceDependencyError,
-  ResourceSubscriber,
   RouteResourceEnabledSubscriber,
   Router,
   RouterActions,
   RouterSubscriber,
   usePathParam,
   useQueryParam,
-  useResource,
-  useResourceStoreContext,
   useRouter,
   useRouterActions,
   withRouter,
-} from './controllers';
-
-export type {
-  CreateResourceArgBase,
-  CreateResourceArgSync,
-  CreateResourceArgAsync,
 } from './controllers';
 
 export { RouteComponent, Link } from './ui';
@@ -57,19 +46,10 @@ export type {
   MatchedInvariantRoute,
   MatchedRoute,
   Query,
-  ResourceStoreContext,
-  ResourceStoreData,
   Route,
   Routes,
   RouteContext,
-  RouteResource,
-  RouteResourceError,
-  RouteResourceLoading,
-  RouteResourceResponse,
-  RouteResourceUpdater,
   RouterContext,
-  RouterDataContext,
-  UseResourceHookResponse,
   Plugin,
 } from './common/types';
 
@@ -79,3 +59,57 @@ export type {
   RouterActionReplace,
   RouterSubscriberProps,
 } from './controllers/router-store/types';
+
+// extra exports for resources only
+export {
+  RouterStore,
+  useRouterStoreActions,
+  getRouterState,
+} from './controllers/router-store';
+export type {
+  EntireRouterState,
+  AllRouterActions,
+} from './controllers/router-store/types';
+
+export { DEFAULT_MATCH, DEFAULT_ROUTE } from './common/constants';
+
+// re-export resources entry-point to avoid breaking API changes for now
+import * as resourcesEntrypoint from './resources';
+
+/**
+ * @deprecated import from react-resource-router/resources instead
+ */
+const {
+  createResource,
+  ResourceDependencyError,
+  ResourceSubscriber,
+  useResource,
+  useResourceStoreContext,
+} = resourcesEntrypoint;
+
+export {
+  createResource,
+  ResourceDependencyError,
+  ResourceSubscriber,
+  useResource,
+  useResourceStoreContext,
+};
+
+export type {
+  RouteResources,
+  ResourceStoreContext,
+  ResourceStoreData,
+  RouteResource,
+  RouteResourceError,
+  RouteResourceLoading,
+  RouteResourceResponse,
+  RouteResourceUpdater,
+  RouterDataContext,
+  UseResourceHookResponse,
+} from './common/types';
+
+export type {
+  CreateResourceArgSync,
+  CreateResourceArgAsync,
+  CreateResourceArgBase,
+} from './resources';
