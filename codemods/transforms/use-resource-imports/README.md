@@ -1,16 +1,13 @@
-# react-resouce-router to react-resource-router/resources codemod
+# use-resource-imports codemod
 
 This codemod transforms relevant `react-resource-router` imports to `react-resource-router/resources`
 
-## How to run
+## Usage
 
-Via the CLI
-
-```
+```sh
 npm run codeshift -- --transform codemods/transforms/convert-to-resource-imports/index.ts source_file.tsx
 ```
 
-
-```
+```sh
 npm run codeshift -- --transform codemods/transforms/convert-to-resource-imports/index.ts ~my-project/**/*.tsx
 ```

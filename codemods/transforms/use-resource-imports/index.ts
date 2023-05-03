@@ -30,16 +30,16 @@ const resourcesImportSpecifiers = [
   'mockRouteResourceResponse',
 ];
 
-const RrrPackageName = 'react-resource-router';
-const RrrResourcesPackageName = 'react-resource-router/resources';
+const packageName = 'react-resource-router';
+const resourcesPackageName = 'react-resource-router/resources';
 
-const transformer = (
+export default function transformer(
   file: FileInfo,
   { jscodeshift: j }: API
-): string | undefined => {
+): string | undefined {
   const source = j(file.source);
 
-  const rrrImportDeclaration = getImportDeclaration(j, source, RrrPackageName);
+  const rrrImportDeclaration = getImportDeclaration(j, source, packageName);
 
   if (rrrImportDeclaration.length === 0) {
     return file.source;
@@ -55,7 +55,7 @@ const transformer = (
   if (importSpecifiersToMove.length > 0) {
     const newImport = j.importDeclaration(
       importSpecifiersToMove.nodes(),
-      j.stringLiteral(RrrResourcesPackageName)
+      j.stringLiteral(resourcesPackageName)
     );
 
     rrrImportDeclaration.insertAfter(newImport);
@@ -71,13 +71,11 @@ const transformer = (
     // remove rrr import if empty
     if (rrrImportDeclaration.find(j.ImportSpecifier).length === 0) {
       rrrImportDeclaration.remove();
-      removeImportDeclaration(j, source, RrrPackageName);
+      removeImportDeclaration(j, source, packageName);
     }
   }
 
   return source.toSource();
-};
-
-export default transformer;
+}
 
 export const parser = 'tsx';
