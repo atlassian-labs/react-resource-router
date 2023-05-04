@@ -16,6 +16,6 @@
     "target": "esnext",
     "typeRoots": ["./node_modules/@types", "types"],
   },
-  "include": ["examples/**/*", "src/**/*"],
+  "include": ["examples/**/*", "src/**/*", "codemods/**/*"],
   "exclude": ["**/*.js.flow"]
 }

@@ -5,9 +5,9 @@ This codemod transforms relevant `react-resource-router` imports to `react-resou
 ## Usage
 
 ```sh
-npm run codeshift -- --transform codemods/transforms/convert-to-resource-imports/index.ts source_file.tsx
+npx @codeshift/cli --packages "react-resource-router#use-resource-imports" source_file.tsx
 ```
 
 ```sh
-npm run codeshift -- --transform codemods/transforms/convert-to-resource-imports/index.ts ~my-project/**/*.tsx
+npx @codeshift/cli --packages "react-resource-router#use-resource-imports" ~my-project/**/*.tsx
 ```

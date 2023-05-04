@@ -52,7 +52,6 @@
     "build:esm": "babel src --out-dir build/esm --extensions \".ts,.tsx\"",
     "build:types-cjs": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/cjs && cp src/*.flow build/cjs",
     "build:types-esm": "tsc --emitDeclarationOnly --project tsconfig.build.json --outDir build/esm && cp src/*.flow build/esm",
-    "codeshift": "codeshift",
     "docs": "npx docsify-cli serve docs",
     "lint": "eslint --ext .ts,.tsx,.js src/ examples/",
     "lint:deps": "madge -c --extensions ts,tsx src",

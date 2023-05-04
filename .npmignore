@@ -4,7 +4,8 @@
 .editorconfig
 .eslintrc.js
 .prettierrc.js
-*.config.js
+jest.config.js
+webpack.config.js
 *.config.*.js
 *.setup.js
 .flowconfig
