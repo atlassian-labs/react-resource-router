@@ -22,3 +22,10 @@ export const invokePluginLoad = (
     p.routeLoad?.({ context });
   });
 };
+
+let shouldRoutePluginsLoadFlag = true;
+
+export const shouldRoutePluginsLoad = (): boolean => shouldRoutePluginsLoadFlag;
+
+export const setRoutePluginsReloadFlag = (value: boolean) =>
+  (shouldRoutePluginsLoadFlag = value);

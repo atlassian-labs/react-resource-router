@@ -33,7 +33,13 @@ const UpdateButton = ({ for: paramKey = '' }) => {
         margin: '20px 0',
       }}
     >
-      <button onClick={() => setParam(randomStr(5))}>Update {paramKey}</button>
+      <button
+        onClick={() =>
+          setParam(randomStr(5), 'push', { avoidRoutePluginsLoad: true })
+        }
+      >
+        Update {paramKey}
+      </button>
       <button onClick={() => setParam(randomStr(5), 'replace')}>
         Replace {paramKey}
       </button>

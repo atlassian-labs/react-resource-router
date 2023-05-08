@@ -24,13 +24,25 @@ export const useQueryParam = (
   paramKey: string
 ): [
   string | undefined,
-  (newValue: string | undefined, updateType?: HistoryUpdateType) => void
+  (
+    newValue: string | undefined,
+    updateType?: HistoryUpdateType,
+    options?: { avoidRoutePluginsLoad?: boolean }
+  ) => void
 ] => {
   const [paramVal, routerActions] = createQueryParamHook({ paramKey });
 
   const setQueryParam = useCallback(
-    (newValue: string | undefined, updateType?: HistoryUpdateType) => {
-      routerActions.updateQueryParam({ [paramKey]: newValue }, updateType);
+    (
+      newValue: string | undefined,
+      updateType?: HistoryUpdateType,
+      options?: { avoidRoutePluginsLoad?: boolean }
+    ) => {
+      routerActions.updateQueryParam(
+        { [paramKey]: newValue },
+        updateType,
+        options
+      );
     },
     [paramKey, routerActions]
   );

@@ -24,6 +24,7 @@ import {
   warmupMatchRouteCache,
   isSameRoute,
 } from '../../common/utils';
+import { shouldRoutePluginsLoad, setRoutePluginsReloadFlag } from '../plugins';
 
 import {
   AllRouterActions,
@@ -140,7 +141,10 @@ const actions: AllRouterActions = {
 
           batch(() => {
             plugins.forEach(p => {
-              if (p.id === 'resources-plugin' || !sameRoute) {
+              if (
+                (p.id === 'resources-plugin' || !sameRoute) &&
+                shouldRoutePluginsLoad()
+              ) {
                 p.beforeRouteLoad?.({
                   context: prevContext,
                   nextContext,
@@ -157,7 +161,10 @@ const actions: AllRouterActions = {
             plugins.forEach(p => {
               // keep old behaviour for Resources plugin
               // load Route only if path/query/params changed, and ignore the rest of query-params
-              if (p.id === 'resources-plugin' || !sameRoute) {
+              if (
+                (p.id === 'resources-plugin' || !sameRoute) &&
+                shouldRoutePluginsLoad()
+              ) {
                 p.routeLoad?.({ context: nextContext, prevContext });
               }
             });
@@ -281,7 +288,11 @@ const actions: AllRouterActions = {
     },
 
   updateQueryParam:
-    (params, updateType = 'push') =>
+    (
+      params,
+      updateType = 'push',
+      options?: { avoidRoutePluginsLoad?: boolean }
+    ) =>
     ({ getState }) => {
       const { query: existingQueryParams, history, location } = getState();
       const updatedQueryParams = { ...existingQueryParams, ...params };
@@ -298,7 +309,13 @@ const actions: AllRouterActions = {
       );
 
       if (updatedPath !== existingPath) {
+        if (options?.avoidRoutePluginsLoad === true)
+          setRoutePluginsReloadFlag(false);
+
         history[updateType](updatedPath);
+
+        if (options?.avoidRoutePluginsLoad === true)
+          setRoutePluginsReloadFlag(true);
       }
     },
 

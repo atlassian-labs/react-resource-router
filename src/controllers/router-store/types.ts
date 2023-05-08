@@ -72,7 +72,8 @@ type PrivateRouterActions = {
     params: {
       [key: string]: string | undefined;
     },
-    updateType?: HistoryUpdateType
+    updateType?: HistoryUpdateType,
+    options?: { avoidRoutePluginsLoad?: boolean }
   ) => RouterAction;
   updatePathParam: (
     params: {
