@@ -168,6 +168,10 @@ const actions: AllRouterActions = {
                 p.routeLoad?.({ context: nextContext, prevContext });
               }
             });
+
+            if (shouldRoutePluginsLoad() === false) {
+              setRoutePluginsReloadFlag(true);
+            }
           });
         }
       );
@@ -178,12 +182,15 @@ const actions: AllRouterActions = {
     },
 
   push:
-    path =>
+    (path, options) =>
     ({ getState }) => {
       const { history, basePath } = getState();
       if (isExternalAbsolutePath(path)) {
         window.location.assign(path as string);
       } else {
+        if (options?.avoidRoutePluginsLoad === true)
+          setRoutePluginsReloadFlag(false);
+
         history.push(getRelativePath(path, basePath));
       }
     },
@@ -313,9 +320,6 @@ const actions: AllRouterActions = {
           setRoutePluginsReloadFlag(false);
 
         history[updateType](updatedPath);
-
-        if (options?.avoidRoutePluginsLoad === true)
-          setRoutePluginsReloadFlag(true);
       }
     },
 

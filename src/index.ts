@@ -73,27 +73,13 @@ export type {
 
 export { DEFAULT_MATCH, DEFAULT_ROUTE } from './common/constants';
 
-// re-export resources entry-point to avoid breaking API changes for now
-import * as resourcesEntrypoint from './resources';
-
-/**
- * @deprecated import from react-resource-router/resources instead
- */
-const {
-  createResource,
-  ResourceDependencyError,
-  ResourceSubscriber,
-  useResource,
-  useResourceStoreContext,
-} = resourcesEntrypoint;
-
 export {
   createResource,
   ResourceDependencyError,
   ResourceSubscriber,
   useResource,
   useResourceStoreContext,
-};
+} from './resources';
 
 export type {
   RouteResources,
