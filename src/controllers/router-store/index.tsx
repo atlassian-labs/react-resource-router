@@ -24,7 +24,6 @@ import {
   warmupMatchRouteCache,
   isSameRoute,
 } from '../../common/utils';
-import { shouldRoutePluginsLoad, setRoutePluginsReloadFlag } from '../plugins';
 
 import {
   AllRouterActions,
