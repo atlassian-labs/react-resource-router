@@ -176,10 +176,6 @@ const actions: AllRouterActions = {
                 p.routeLoad?.({ context: nextContext, prevContext });
               }
             });
-
-            if (shouldRoutePluginsLoad() === false) {
-              setRoutePluginsReloadFlag(true);
-            }
           });
         }
       );
