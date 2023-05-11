@@ -2,7 +2,7 @@ import React from 'react';
 import { render } from 'react-dom';
 
 import Home from './home';
-import PathParamExample from './use-path-param';
+import PathParamExample, { testResource } from './use-path-param';
 import QueryParamExample from './use-query-param';
 
 import {
@@ -10,6 +10,7 @@ import {
   RouteComponent,
   createBrowserHistory,
   createRouterSelector,
+  type ShouldReloadFunction,
 } from 'react-resource-router';
 
 const myHistory = createBrowserHistory();
@@ -36,6 +37,13 @@ const appRoutes = [
     exact: true,
     component: PathParamExample,
     navigation: null,
+    resources: [testResource],
+    EXPERIMENTAL__shouldReload: ({
+      context,
+      prevContext,
+    }: Parameters<ShouldReloadFunction>[0]) => {
+      return context.match.params.foo !== prevContext.match.params.foo;
+    },
   },
 ];
 

@@ -1,6 +1,26 @@
-import React from 'react';
+import React, { memo } from 'react';
 
-import { Link, usePathParam } from 'react-resource-router';
+import {
+  Link,
+  usePathParam,
+  createResource,
+  useResource,
+} from 'react-resource-router';
+
+export const testResource = createResource({
+  type: 'test-resource',
+  getKey: routerContext => {
+    const key = 'test-resource-test-' + routerContext.match.params.foo;
+
+    return key;
+  },
+  maxAge: 0,
+  getData: () => {
+    const data = randomStr(10);
+
+    return data;
+  },
+});
 
 const randomStr = (length: number) => {
   let result = '';
@@ -40,6 +60,25 @@ const UpdateButton = ({ for: paramKey = '' }) => {
     </div>
   );
 };
+
+const TestResourceContainer = memo(({ data }: { data: string | null }) => {
+  return (
+    <div
+      style={{
+        margin: '20px 0',
+        padding: '20px',
+        backgroundColor: generateLightColorHex(),
+      }}
+    >
+      <div>
+        I am TestResourceContainer that consumes &apos;testResource&apos; data.
+        My background color changes only when query-param &apos;foo&apos;
+        changes.
+      </div>
+      <p>testResource data = {data}</p>
+    </div>
+  );
+});
 
 const ComponentFoo = () => {
   // eslint-disable-next-line
@@ -84,9 +123,12 @@ const ComponentBar = () => {
 };
 
 const PathParamExample = () => {
+  const resource = useResource(testResource);
+
   return (
     <div>
       <h1>usePathParam - /hooks/use-path-param/:foo/:bar</h1>
+      <TestResourceContainer data={resource.data} />
       <ComponentFoo />
       <UpdateButton for={'foo'} />
       <ComponentBar />

@@ -37,6 +37,7 @@ import {
   isExternalAbsolutePath,
   updateQueryParams,
   getRelativeURLFromLocation,
+  shouldReload,
 } from './utils';
 
 export const INITIAL_STATE: EntireRouterState = {
@@ -142,8 +143,12 @@ const actions: AllRouterActions = {
           batch(() => {
             plugins.forEach(p => {
               if (
-                (p.id === 'resources-plugin' || !sameRoute) &&
-                shouldRoutePluginsLoad()
+                shouldReload({
+                  context: nextContext,
+                  prevContext,
+                  defaultShouldReload:
+                    p.id === 'resources-plugin' || !sameRoute,
+                })
               ) {
                 p.beforeRouteLoad?.({
                   context: prevContext,
@@ -162,8 +167,12 @@ const actions: AllRouterActions = {
               // keep old behaviour for Resources plugin
               // load Route only if path/query/params changed, and ignore the rest of query-params
               if (
-                (p.id === 'resources-plugin' || !sameRoute) &&
-                shouldRoutePluginsLoad()
+                shouldReload({
+                  context: nextContext,
+                  prevContext,
+                  defaultShouldReload:
+                    p.id === 'resources-plugin' || !sameRoute,
+                })
               ) {
                 p.routeLoad?.({ context: nextContext, prevContext });
               }
@@ -182,15 +191,12 @@ const actions: AllRouterActions = {
     },
 
   push:
-    (path, options) =>
+    path =>
     ({ getState }) => {
       const { history, basePath } = getState();
       if (isExternalAbsolutePath(path)) {
         window.location.assign(path as string);
       } else {
-        if (options?.avoidRoutePluginsLoad === true)
-          setRoutePluginsReloadFlag(false);
-
         history.push(getRelativePath(path, basePath));
       }
     },
@@ -295,11 +301,7 @@ const actions: AllRouterActions = {
     },
 
   updateQueryParam:
-    (
-      params,
-      updateType = 'push',
-      options?: { avoidRoutePluginsLoad?: boolean }
-    ) =>
+    (params, updateType = 'push') =>
     ({ getState }) => {
       const { query: existingQueryParams, history, location } = getState();
       const updatedQueryParams = { ...existingQueryParams, ...params };
@@ -316,9 +318,6 @@ const actions: AllRouterActions = {
       );
 
       if (updatedPath !== existingPath) {
-        if (options?.avoidRoutePluginsLoad === true)
-          setRoutePluginsReloadFlag(false);
-
         history[updateType](updatedPath);
       }
     },

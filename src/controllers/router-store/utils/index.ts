@@ -1,6 +1,11 @@
 import URL, { qs } from 'url-parse';
 
-import { Href, Location, Query } from '../../../common/types';
+import {
+  Href,
+  Location,
+  Query,
+  ShouldReloadFunction,
+} from '../../../common/types';
 
 const stripTrailingSlash = (path: string) =>
   path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
@@ -63,4 +68,26 @@ export const updateQueryParams = (location: Location, query: Query): string => {
 
 export const getRelativeURLFromLocation = (location: Location): string => {
   return `${location.pathname}${location.search}${location.hash}`;
+};
+
+export const shouldReload = ({
+  context,
+  prevContext,
+  defaultShouldReload,
+}: Parameters<ShouldReloadFunction>[0]) => {
+  if (
+    context.route === prevContext.route &&
+    context.route.EXPERIMENTAL__shouldReload
+  ) {
+    const routeChoice = context.route.EXPERIMENTAL__shouldReload({
+      context,
+      prevContext,
+      defaultShouldReload,
+    });
+    if (typeof routeChoice === 'boolean') {
+      return routeChoice;
+    }
+  }
+
+  return defaultShouldReload;
 };

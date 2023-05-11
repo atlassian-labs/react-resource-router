@@ -114,6 +114,8 @@ export type Route = InvariantRoute & {
    * The resources for the route
    */
   resources?: RouteResources;
+
+  EXPERIMENTAL__shouldReload?: ShouldReloadFunction;
 } & AdditionalRouteAttributes;
 
 export type HistoryAction = 'PUSH' | 'REPLACE' | 'POP' | '';
@@ -202,6 +204,12 @@ export interface Plugin {
   }) => void;
   [key: string]: any;
 }
+
+export type ShouldReloadFunction = (params: {
+  context: RouterContext;
+  prevContext: RouterContext;
+  defaultShouldReload: boolean;
+}) => boolean;
 
 // resources types
 

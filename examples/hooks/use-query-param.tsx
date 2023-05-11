@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { Link, useQueryParam, useRouter } from 'react-resource-router';
+import { Link, useQueryParam } from 'react-resource-router';
 
 const randomStr = (length: number) => {
   let result = '';
@@ -26,7 +26,6 @@ const generateLightColorHex = () => {
 const UpdateButton = ({ for: paramKey = '' }) => {
   //eslint-disable-next-line
   const [param, setParam] = useQueryParam(paramKey);
-  const [, { push }] = useRouter();
 
   return (
     <div
@@ -34,12 +33,7 @@ const UpdateButton = ({ for: paramKey = '' }) => {
         margin: '20px 0',
       }}
     >
-      <button
-        onClick={() => push('/query-param', { avoidRoutePluginsLoad: true })}
-      >
-        Push {paramKey}
-      </button>
-      <button onClick={() => setParam(undefined)}>Empty {paramKey}</button>
+      <button onClick={() => setParam(randomStr(5))}>Update {paramKey}</button>
       <button onClick={() => setParam(randomStr(5), 'replace')}>
         Replace {paramKey}
       </button>
