@@ -73,6 +73,7 @@ export const getRelativeURLFromLocation = (location: Location): string => {
 export const shouldReload = ({
   context,
   prevContext,
+  pluginId,
   defaultShouldReload,
 }: Parameters<ShouldReloadFunction>[0]) => {
   if (
@@ -82,6 +83,7 @@ export const shouldReload = ({
     const routeChoice = context.route.EXPERIMENTAL__shouldReload({
       context,
       prevContext,
+      pluginId,
       defaultShouldReload,
     });
     if (typeof routeChoice === 'boolean') {
