@@ -9,8 +9,7 @@ it('codemod should move resources imports to react-resource-router/resources', a
       import { Link, createResource, useResource } from 'react-resource-router';
 
       const Button = (props) => <button {...props} />;
-    `,
-    { parser: 'tsx' }
+    `
   );
 
   expect(result).toContain(`import { Link } from 'react-resource-router';`);
