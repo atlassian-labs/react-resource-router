@@ -32,4 +32,6 @@ export type {
   UseResourceHookResponse,
 } from '../common/types';
 
+export { PLUGIN_ID } from './plugin/index';
+
 export { mockRouteResourceResponse } from './common/mocks';

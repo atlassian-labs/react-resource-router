@@ -7,6 +7,8 @@ import { Plugin, RouterContext } from '../../index';
 import { getResourceStore } from '../controllers/resource-store';
 import { getResourcesForNextLocation } from '../controllers/resource-store/utils';
 
+export const PLUGIN_ID = 'resources-plugin';
+
 const loadOnUrlChange = (
   context: RouterContext,
   prevContext: RouterContext
@@ -63,7 +65,7 @@ export const createResourcesPlugin = ({
   });
 
   return {
-    id: 'resources-plugin',
+    id: PLUGIN_ID,
     beforeRouteLoad: beforeLoad,
     routeLoad: ({ context, prevContext }) => {
       const { route, match, query } = context;

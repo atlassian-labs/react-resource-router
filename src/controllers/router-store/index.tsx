@@ -145,6 +145,7 @@ const actions: AllRouterActions = {
                 shouldReload({
                   context: nextContext,
                   prevContext,
+                  pluginId: p.id,
                   defaultShouldReload:
                     p.id === 'resources-plugin' || !sameRoute,
                 })
@@ -169,6 +170,7 @@ const actions: AllRouterActions = {
                 shouldReload({
                   context: nextContext,
                   prevContext,
+                  pluginId: p.id,
                   defaultShouldReload:
                     p.id === 'resources-plugin' || !sameRoute,
                 })

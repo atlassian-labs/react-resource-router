@@ -208,6 +208,7 @@ export interface Plugin {
 export type ShouldReloadFunction = (params: {
   context: RouterContext;
   prevContext: RouterContext;
+  pluginId: string;
   defaultShouldReload: boolean;
 }) => boolean;
 
