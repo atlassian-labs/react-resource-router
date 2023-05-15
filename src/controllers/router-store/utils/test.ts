@@ -1,3 +1,4 @@
+import { isSameRoute } from '../../../common/utils';
 import { mockRouteContext } from '../../../mocks';
 
 import {
@@ -8,6 +9,8 @@ import {
   sanitizePath,
   shouldReload,
 } from './index';
+
+jest.mock('../../../common/utils');
 
 describe('isAbsolutePath()', () => {
   it('should return true when given an absolute path', () => {
@@ -175,6 +178,9 @@ describe('sanitizePath()', () => {
 });
 
 describe('shouldReload()', () => {
+  beforeEach(() => {
+    (isSameRoute as any).mockReturnValue(false);
+  });
   it('should return defaultValue when routes are not the same', () => {
     const context = {
       ...mockRouteContext,
@@ -194,7 +200,6 @@ describe('shouldReload()', () => {
         context,
         prevContext,
         pluginId: 'test-plugin',
-        defaultShouldReload: true,
       })
     ).toBeTruthy();
   });
@@ -212,7 +217,6 @@ describe('shouldReload()', () => {
         context,
         prevContext,
         pluginId: 'test-plugin',
-        defaultShouldReload: true,
       })
     ).toBeTruthy();
   });
@@ -237,8 +241,43 @@ describe('shouldReload()', () => {
         context,
         prevContext,
         pluginId: 'test-plugin',
-        defaultShouldReload: true,
       })
     ).toBeFalsy();
+  });
+
+  it("should return defaultValue=false as route haven't changed", () => {
+    (isSameRoute as any).mockReturnValue(true);
+    const context = {
+      ...mockRouteContext,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+      })
+    ).toBeFalsy();
+  });
+
+  it('should return defaultValue=true for resources-plugin', () => {
+    (isSameRoute as any).mockReturnValue(true);
+    const context = {
+      ...mockRouteContext,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'resources-plugin',
+      })
+    ).toBeTruthy();
   });
 });

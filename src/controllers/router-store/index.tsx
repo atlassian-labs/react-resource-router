@@ -22,7 +22,6 @@ import {
   generatePath as generatePathUsingPathParams,
   generateLocationFromPath,
   warmupMatchRouteCache,
-  isSameRoute,
 } from '../../common/utils';
 
 import {
@@ -129,10 +128,16 @@ const actions: AllRouterActions = {
             query: currentQuery,
           };
 
-          const sameRoute = isSameRoute({
-            prevContextMatch: prevContext.match,
-            nextContextMatch: nextContext.match,
-          });
+          const shouldReloadByPlugin = new Map(
+            plugins.map(plugin => [
+              plugin.id,
+              shouldReload({
+                context: nextContext,
+                prevContext,
+                pluginId: plugin.id,
+              }),
+            ])
+          );
 
           /* Explicitly batch update
            * as we need resources cleaned + route changed + resource fetch started together
@@ -141,15 +146,7 @@ const actions: AllRouterActions = {
 
           batch(() => {
             plugins.forEach(p => {
-              if (
-                shouldReload({
-                  context: nextContext,
-                  prevContext,
-                  pluginId: p.id,
-                  defaultShouldReload:
-                    p.id === 'resources-plugin' || !sameRoute,
-                })
-              ) {
+              if (shouldReloadByPlugin.get(p.id)) {
                 p.beforeRouteLoad?.({
                   context: prevContext,
                   nextContext,
@@ -164,17 +161,7 @@ const actions: AllRouterActions = {
             });
 
             plugins.forEach(p => {
-              // keep old behaviour for Resources plugin
-              // load Route only if path/query/params changed, and ignore the rest of query-params
-              if (
-                shouldReload({
-                  context: nextContext,
-                  prevContext,
-                  pluginId: p.id,
-                  defaultShouldReload:
-                    p.id === 'resources-plugin' || !sameRoute,
-                })
-              ) {
+              if (shouldReloadByPlugin.get(p.id)) {
                 p.routeLoad?.({ context: nextContext, prevContext });
               }
             });
