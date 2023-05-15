@@ -1,9 +1,12 @@
+import { mockRouteContext } from '../../../mocks';
+
 import {
   getRelativePath,
   isAbsolutePath,
   isExternalAbsolutePath,
   updateQueryParams,
   sanitizePath,
+  shouldReload,
 } from './index';
 
 describe('isAbsolutePath()', () => {
@@ -168,5 +171,74 @@ describe('sanitizePath()', () => {
 
     const expectedOutput = '/base/path';
     expect(sanitizePath(path, basePath)).toEqual(expectedOutput);
+  });
+});
+
+describe('shouldReload()', () => {
+  it('should return defaultValue when routes are not the same', () => {
+    const context = {
+      ...mockRouteContext,
+      route: {
+        ...mockRouteContext.route,
+      },
+    };
+    const prevContext = {
+      ...mockRouteContext,
+      match: {
+        ...mockRouteContext.match,
+      },
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+        defaultShouldReload: true,
+      })
+    ).toBeTruthy();
+  });
+
+  it('should return defaultValue when route does not specify EXPERIMENTAL__shouldReload prop', () => {
+    const context = {
+      ...mockRouteContext,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+        defaultShouldReload: true,
+      })
+    ).toBeTruthy();
+  });
+
+  it('should use EXPERIMENTAL__shouldReload when specified', () => {
+    const route = {
+      ...mockRouteContext.route,
+      EXPERIMENTAL__shouldReload: () => false,
+    };
+
+    const context = {
+      ...mockRouteContext,
+      route,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+      route,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+        defaultShouldReload: true,
+      })
+    ).toBeFalsy();
   });
 });
