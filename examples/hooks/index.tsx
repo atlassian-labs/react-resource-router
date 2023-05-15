@@ -1,6 +1,8 @@
 import React from 'react';
 import { render } from 'react-dom';
 
+import { shouldReloadWhenRouteMatchChanges } from '../../src/utils';
+
 import Home from './home';
 import PathParamExample, { testResource } from './use-path-param';
 import QueryParamExample from './use-query-param';
@@ -10,7 +12,6 @@ import {
   RouteComponent,
   createBrowserHistory,
   createRouterSelector,
-  type ShouldReloadFunction,
 } from 'react-resource-router';
 
 const myHistory = createBrowserHistory();
@@ -38,12 +39,9 @@ const appRoutes = [
     component: PathParamExample,
     navigation: null,
     resources: [testResource],
-    EXPERIMENTAL__shouldReload: ({
-      context,
-      prevContext,
-    }: Parameters<ShouldReloadFunction>[0]) => {
-      return context.match.params.foo !== prevContext.match.params.foo;
-    },
+    EXPERIMENTAL__shouldReload: shouldReloadWhenRouteMatchChanges({
+      params: ['foo'],
+    }),
   },
 ];
 
