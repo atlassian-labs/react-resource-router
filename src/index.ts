@@ -51,6 +51,7 @@ export type {
   RouteContext,
   RouterContext,
   Plugin,
+  ShouldReloadFunction,
 } from './common/types';
 
 export type {

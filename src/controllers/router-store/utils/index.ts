@@ -1,6 +1,7 @@
 import URL, { qs } from 'url-parse';
 
-import { Href, Location, Query } from '../../../common/types';
+import { Href, Location, Query, RouterContext } from '../../../common/types';
+import { isSameRoute } from '../../../common/utils';
 
 const stripTrailingSlash = (path: string) =>
   path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
@@ -63,4 +64,40 @@ export const updateQueryParams = (location: Location, query: Query): string => {
 
 export const getRelativeURLFromLocation = (location: Location): string => {
   return `${location.pathname}${location.search}${location.hash}`;
+};
+
+export const shouldReload = ({
+  context,
+  prevContext,
+  pluginId,
+}: {
+  context: RouterContext;
+  prevContext: RouterContext;
+  pluginId: string;
+}) => {
+  const sameRoute = isSameRoute({
+    prevContextMatch: prevContext.match,
+    nextContextMatch: context.match,
+  });
+
+  // keep old behaviour for Resources plugin
+  // load Route only if path/query/params changed, and ignore the rest of query-params
+  const defaultShouldReload = pluginId === 'resources-plugin' || !sameRoute;
+
+  if (
+    context.route === prevContext.route &&
+    context.route.EXPERIMENTAL__shouldReload
+  ) {
+    const routeChoice = context.route.EXPERIMENTAL__shouldReload({
+      context,
+      prevContext,
+      pluginId,
+      defaultShouldReload,
+    });
+    if (typeof routeChoice === 'boolean') {
+      return routeChoice;
+    }
+  }
+
+  return defaultShouldReload;
 };

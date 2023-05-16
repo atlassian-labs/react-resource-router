@@ -1,10 +1,16 @@
+import { isSameRoute } from '../../../common/utils';
+import { mockRouteContext } from '../../../mocks';
+
 import {
   getRelativePath,
   isAbsolutePath,
   isExternalAbsolutePath,
   updateQueryParams,
   sanitizePath,
+  shouldReload,
 } from './index';
+
+jest.mock('../../../common/utils');
 
 describe('isAbsolutePath()', () => {
   it('should return true when given an absolute path', () => {
@@ -168,5 +174,110 @@ describe('sanitizePath()', () => {
 
     const expectedOutput = '/base/path';
     expect(sanitizePath(path, basePath)).toEqual(expectedOutput);
+  });
+});
+
+describe('shouldReload()', () => {
+  beforeEach(() => {
+    (isSameRoute as any).mockReturnValue(false);
+  });
+  it('should return defaultValue when routes are not the same', () => {
+    const context = {
+      ...mockRouteContext,
+      route: {
+        ...mockRouteContext.route,
+      },
+    };
+    const prevContext = {
+      ...mockRouteContext,
+      match: {
+        ...mockRouteContext.match,
+      },
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+      })
+    ).toBeTruthy();
+  });
+
+  it('should return defaultValue when route does not specify EXPERIMENTAL__shouldReload prop', () => {
+    const context = {
+      ...mockRouteContext,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+      })
+    ).toBeTruthy();
+  });
+
+  it('should use EXPERIMENTAL__shouldReload when specified', () => {
+    const route = {
+      ...mockRouteContext.route,
+      EXPERIMENTAL__shouldReload: () => false,
+    };
+
+    const context = {
+      ...mockRouteContext,
+      route,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+      route,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+      })
+    ).toBeFalsy();
+  });
+
+  it("should return defaultValue=false as route haven't changed", () => {
+    (isSameRoute as any).mockReturnValue(true);
+    const context = {
+      ...mockRouteContext,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'test-plugin',
+      })
+    ).toBeFalsy();
+  });
+
+  it('should return defaultValue=true for resources-plugin', () => {
+    (isSameRoute as any).mockReturnValue(true);
+    const context = {
+      ...mockRouteContext,
+    };
+    const prevContext = {
+      ...mockRouteContext,
+    };
+
+    expect(
+      shouldReload({
+        context,
+        prevContext,
+        pluginId: 'resources-plugin',
+      })
+    ).toBeTruthy();
   });
 });

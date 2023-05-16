@@ -1,8 +1,10 @@
 import React from 'react';
 import { render } from 'react-dom';
 
+import { shouldReloadWhenRouteMatchChanges } from '../../src/utils';
+
 import Home from './home';
-import PathParamExample from './use-path-param';
+import PathParamExample, { testResource } from './use-path-param';
 import QueryParamExample from './use-query-param';
 
 import {
@@ -36,6 +38,10 @@ const appRoutes = [
     exact: true,
     component: PathParamExample,
     navigation: null,
+    resources: [testResource],
+    EXPERIMENTAL__shouldReload: shouldReloadWhenRouteMatchChanges({
+      params: ['foo'],
+    }),
   },
 ];
 
