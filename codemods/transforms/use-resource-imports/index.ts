@@ -4,7 +4,7 @@ import {
 } from '@codeshift/utils';
 import type { FileInfo, API } from 'jscodeshift';
 
-import * as resources from '../../../build/esm/resources/index';
+import * as resources from '../../../resources';
 
 const resourcesImportSpecifiers = Object.keys(resources);
 
