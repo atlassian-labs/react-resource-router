@@ -4,9 +4,31 @@ import {
 } from '@codeshift/utils';
 import type { FileInfo, API } from 'jscodeshift';
 
-import * as resources from '../../../resources';
-
-const resourcesImportSpecifiers = Object.keys(resources);
+const resourcesImportSpecifiers = [
+  'createResourcesPlugin',
+  'ResourceSubscriber',
+  'useResource',
+  'addResourcesListener',
+  'createResource',
+  'useResourceStoreContext',
+  'ResourceDependencyError',
+  'getResourceStore',
+  'ResourceStore',
+  'CreateResourceArgBase',
+  'CreateResourceArgSync',
+  'CreateResourceArgAsync',
+  'RouteResources',
+  'ResourceStoreContext',
+  'ResourceStoreData',
+  'RouteResource',
+  'RouteResourceError',
+  'RouteResourceLoading',
+  'RouteResourceResponse',
+  'RouteResourceUpdater',
+  'RouterDataContext',
+  'UseResourceHookResponse',
+  'mockRouteResourceResponse',
+];
 
 const packageName = 'react-resource-router';
 const resourcesPackageName = 'react-resource-router/resources';
