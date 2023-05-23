@@ -340,7 +340,7 @@ export const actions = {
     routerStoreContext?: RouterContext
   ): ResourceAction<void> =>
     actionWithDependencies(
-      (routerStoreContext?.route as RouteWithResources).resources,
+      (routerStoreContext?.route as RouteWithResources)?.resources,
       resource,
       privateActions.clearResource(resource, routerStoreContext ?? null)
     ),
