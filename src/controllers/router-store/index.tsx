@@ -400,7 +400,7 @@ export const RouteResourceEnabledSubscriber = createSubscriber<
   Actions,
   boolean
 >(RouterStore, {
-  selector: state => Boolean(state.route && state.route.resources),
+  selector: state => Boolean(state.route && (state.route as any).resources),
 });
 
 export const useRouterStore = createHook<EntireRouterState, AllRouterActions>(

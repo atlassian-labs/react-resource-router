@@ -3,8 +3,6 @@ import React from 'react';
 import { render } from 'react-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
-import { createResourcesPlugin } from '../../src/resources';
-
 import { homeRoute } from './routes';
 
 import {
@@ -13,6 +11,7 @@ import {
   createBrowserHistory,
   invokePluginLoad,
 } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
 
 const myHistory = createBrowserHistory();
 

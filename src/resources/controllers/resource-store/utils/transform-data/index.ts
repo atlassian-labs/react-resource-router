@@ -1,7 +1,7 @@
 import {
   ResourceStoreData,
   RouteResourceResponse,
-} from '../../../../../common/types';
+} from '../../../../common/types';
 
 export const transformData = (
   data: ResourceStoreData,

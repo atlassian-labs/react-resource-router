@@ -1,9 +1,9 @@
+import type { RouterContext } from '../../../../../index';
 import type {
   RouteResource,
   ResourceDependencies,
   ResourceType,
-} from '../../../../../common/types';
-import type { RouterContext } from '../../../../../index';
+} from '../../../../common/types';
 import {
   ExecutionTuple,
   ExecutionMaybeTuple,

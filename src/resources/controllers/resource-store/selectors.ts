@@ -2,7 +2,7 @@ import {
   ResourceStoreContext,
   ResourceStoreData,
   RouteResourceResponse,
-} from '../../../common/types';
+} from '../../common/types';
 
 import { ResourceSliceIdentifier, State } from './types';
 import { getDefaultStateSlice } from './utils';

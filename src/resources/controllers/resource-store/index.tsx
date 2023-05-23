@@ -7,6 +7,8 @@ import {
   defaultRegistry,
 } from 'react-sweet-state';
 
+import { isServerEnvironment } from '../../../common/utils';
+import type { RouterContext } from '../../../index';
 import type {
   ResourceStoreContext,
   ResourceStoreData,
@@ -16,9 +18,8 @@ import type {
   RouteResourceResponse,
   RouteResourceUpdater,
   RouteResourceSyncResult,
-} from '../../../common/types';
-import { isServerEnvironment } from '../../../common/utils';
-import type { RouterContext } from '../../../index';
+  RouteWithResources,
+} from '../../common/types';
 
 import { getResourceStoreContext, getSliceForResource } from './selectors';
 import {
@@ -339,7 +340,7 @@ export const actions = {
     routerStoreContext?: RouterContext
   ): ResourceAction<void> =>
     actionWithDependencies(
-      routerStoreContext?.route.resources,
+      (routerStoreContext?.route as RouteWithResources).resources,
       resource,
       privateActions.clearResource(resource, routerStoreContext ?? null)
     ),
@@ -355,7 +356,7 @@ export const actions = {
     getNewSliceData: RouteResourceUpdater
   ) =>
     actionWithDependencies<void>(
-      routerStoreContext.route.resources,
+      (routerStoreContext.route as RouteWithResources).resources,
       resource,
       privateActions.updateResourceState(
         resource,
@@ -375,7 +376,7 @@ export const actions = {
     options: GetResourceOptions
   ) =>
     actionWithDependencies<Promise<RouteResourceResponse>>(
-      routerStoreContext.route.resources,
+      (routerStoreContext.route as RouteWithResources).resources,
       resource,
       privateActions.getResource(resource, routerStoreContext, options)
     ),
@@ -390,7 +391,7 @@ export const actions = {
     options: GetResourceOptions
   ) =>
     actionWithDependencies<Promise<RouteResourceResponse>>(
-      routerStoreContext.route.resources,
+      (routerStoreContext.route as RouteWithResources).resources,
       resource,
       privateActions.getResourceFromRemote(
         resource,
@@ -408,7 +409,9 @@ export const actions = {
       options: GetResourceOptions = {}
     ): ResourceAction<Promise<RouteResourceResponse[]>> =>
     ({ dispatch }) => {
-      const { route } = routerStoreContext || {};
+      const { route: routeDefault } = routerStoreContext || {};
+
+      const route = routeDefault as RouteWithResources;
 
       if (!route || !route.resources) {
         return Promise.all([]);
@@ -457,7 +460,9 @@ export const actions = {
       : () => true;
 
     return mapActionWithDependencies<Promise<RouteResourceResponse>>(
-      routerStoreContext.route.resources?.filter(predicate),
+      (routerStoreContext.route as RouteWithResources).resources?.filter(
+        predicate
+      ),
       resources.filter(predicate),
       resource =>
         privateActions.getResource(resource, routerStoreContext, options)
@@ -473,7 +478,7 @@ export const actions = {
     options: GetResourceOptions
   ) =>
     mapActionWithDependencies<Promise<void>>(
-      routerStoreContext.route.resources,
+      (routerStoreContext.route as RouteWithResources).resources,
       resources,
       resource =>
         privateActions.prefetchResourceFromRemote(

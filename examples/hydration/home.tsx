@@ -1,6 +1,6 @@
 import React from 'react';
 
-import { createResource, useResource } from 'react-resource-router';
+import { createResource, useResource } from 'react-resource-router/resources';
 
 export const homeResource = createResource({
   type: 'home',
