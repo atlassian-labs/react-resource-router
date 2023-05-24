@@ -3,7 +3,7 @@
 Resources should always be created using the `createResource` helper function like so
 
 ```js
-import { createResource } from 'react-resource-router';
+import { createResource } from 'react-resource-router/resources';
 
 export const userProfileResource = createResource({
   type: 'USER_PROFILE',

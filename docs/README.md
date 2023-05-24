@@ -26,7 +26,7 @@ React Resource Router was developed by Atlassian for [Jira](https://www.atlassia
 Resources describe and provide the data required for your route. This data is safely stored and accessed via the [`useResource`](api/hooks.md#use-resource) hook or [`ResourceSubscriber`](api/components.md#resourcesubscriber) component.
 
 ```js
-import { createResource } from 'react-resource-router';
+import { createResource } from 'react-resource-router/resources';
 import { fetch } from '../common/utils';
 
 export const homeResource = createResource({
@@ -47,7 +47,7 @@ export const aboutResource = createResource({
 These are the React components that get rendered for your routes. As mentioned, they can be wired into the state of your resources via the [`useResource`](api/hooks.md#use-resource) hook or [`ResourceSubscriber`](api/components.md#resourcesubscriber) component.
 
 ```js
-import { useResource } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { aboutResource, homeResource } from '../routes/resources';
 import { Loading, Error } from './common';
 

@@ -9,7 +9,7 @@ The `update` method takes a callback function as a parameter, which will be call
 Calling this function will replace the data property of the resource and set the `expiresAt` value, according the to the `maxAge` of the resource.
 
 ```js
-import { useResource } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { accountInfoResource } from '../routing/resources';
 
 export const UsernameUpdater = ({ newUsername }) => {
@@ -35,7 +35,7 @@ The refresh function is bound to the resource that you provide to [`useResource`
 When using the `refresh` function, the resource will always be fetched from remote and the resource state will be updated with any result, including errors.
 
 ```js
-import { useResource } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { accountInfoResource } from '../routing/resources';
 
 export const UsernameResetter = ({ newUsername }) => {
@@ -54,7 +54,7 @@ export const UsernameResetter = ({ newUsername }) => {
 The `clear` method is bound to the resource that you provide to [`useResource`](../api/hooks.md#useresource) hook or the [`ResourceSubscriber`](../api/components.md#resourcesubscriber). Calling this function will clear the resource so that the resource will be fetched from remote next time it's needed.
 
 ```js
-import { useResource } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { accountInfoResource } from '../routing/resources';
 
 export const UsernameResetter = ({ newUsername }) => {

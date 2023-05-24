@@ -3,7 +3,7 @@
 The `useResource` hook is the **recommended** way to subscribe route components to their respective resources.
 
 ```js
-import { useResource } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { feedResource } from '../routing/resources';
 import { Loading, Error } from './primitives';
 import { FeedList } from './FeedList';
