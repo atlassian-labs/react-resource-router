@@ -4,7 +4,6 @@ export {
   createRouterSelector,
   MemoryRouter,
   Redirect,
-  RouteResourceEnabledSubscriber,
   Router,
   RouterActions,
   RouterSubscriber,
