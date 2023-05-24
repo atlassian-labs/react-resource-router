@@ -4,7 +4,6 @@ import {
   createContainer,
   createHook,
   createStore,
-  createSubscriber,
   defaultRegistry,
   batch,
 } from 'react-sweet-state';
@@ -394,14 +393,6 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
     },
   }
 );
-
-export const RouteResourceEnabledSubscriber = createSubscriber<
-  State,
-  Actions,
-  boolean
->(RouterStore, {
-  selector: state => Boolean(state.route && (state.route as any).resources),
-});
 
 export const useRouterStore = createHook<EntireRouterState, AllRouterActions>(
   RouterStore
