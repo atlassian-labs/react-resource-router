@@ -47,5 +47,12 @@ export function MemoryRouter(props: MemoryRouterProps) {
     [props.location]
   );
 
-  return <Router {...props} history={history} isGlobal={false} />;
+  return (
+    <Router
+      {...props}
+      history={history}
+      isGlobal={false}
+      plugins={props.plugins || []}
+    />
+  );
 }

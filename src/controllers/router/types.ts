@@ -21,5 +21,5 @@ export type MemoryRouterProps = PropsWithChildren<{
   basePath?: string;
   location?: string;
   routes: Routes;
-  plugins: Plugin[];
+  plugins?: Plugin[];
 }>;
