@@ -62,19 +62,20 @@ describe('withRouter()', () => {
     const history = createMemoryHistory();
     const routes = [
       {
+        name: 'Example A',
         path: '/atlassian/:name',
         component: () => <div> Example A</div>,
       },
       {
+        name: 'Example B',
         path: '/cats',
         component: () => <div> Example B</div>,
       },
-      { path: '/', component: () => <div> Home </div> },
+      { name: 'Example C', path: '/', component: () => <div> Home </div> },
     ];
 
     const wrapper = mount(
-      // @ts-ignore
-      <Router history={history} routes={routes}>
+      <Router history={history} routes={routes} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
