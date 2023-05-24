@@ -29,6 +29,7 @@ describe('<Router />', () => {
         history={history}
         onPrefetch={onPrefetch}
         routes={routes}
+        plugins={[]}
       />
     );
 
@@ -46,7 +47,9 @@ describe('<Router />', () => {
   it('calls history.listen()() on unmount', () => {
     const unlisten = jest.fn();
     jest.spyOn(history, 'listen').mockReturnValue(unlisten);
-    const wrapper = mount(<Router history={history} routes={routes} />);
+    const wrapper = mount(
+      <Router history={history} routes={routes} plugins={[]} />
+    );
 
     wrapper.unmount();
 
@@ -77,7 +80,7 @@ describe('<Router />', () => {
 
       const wrapper = mount(
         <RemountingParent>
-          <Router history={history} routes={routes} />
+          <Router history={history} routes={routes} plugins={[]} />
         </RemountingParent>
       );
 

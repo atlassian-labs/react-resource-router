@@ -36,7 +36,7 @@ const routes = [
 
 const App = () => {
   return (
-    <Router history={history} routes={routes}>
+    <Router history={history} routes={routes} plugins={[]}>
       <RouteComponent />
     </Router>
   );

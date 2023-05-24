@@ -31,7 +31,7 @@ describe('withRouter()', () => {
   test('should provide match, route, location and history props to the wrapped component', () => {
     const history = createMemoryHistory();
     const wrapper = mount(
-      <Router history={history} routes={[]}>
+      <Router history={history} routes={[]} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
@@ -138,7 +138,7 @@ describe('withRouter()', () => {
   test('should pass null match to the wrapped component when no route has matched', () => {
     const history = createMemoryHistory();
     const wrapper = mount(
-      <Router history={history} routes={[]}>
+      <Router history={history} routes={[]} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );

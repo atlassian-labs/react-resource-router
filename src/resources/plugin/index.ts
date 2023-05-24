@@ -54,7 +54,7 @@ export const createResourcesPlugin = ({
   timeout,
 }: {
   context?: ResourceStoreContext;
-  resourceData: any;
+  resourceData?: ResourceStoreData;
   timeout?: number;
 }): ResourcesPlugin => {
   let latestLoadedResources: LoadedResources = Promise.resolve([]);

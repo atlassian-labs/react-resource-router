@@ -8,6 +8,7 @@ import {
   RouteComponent,
   createBrowserHistory,
 } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
 
 const myHistory = createBrowserHistory();
 
@@ -20,6 +21,7 @@ const App = () => {
       history={myHistory}
       onPrefetch={({ route }) => console.log('Prefetching route', route.name)}
       routes={appRoutes}
+      plugins={[createResourcesPlugin({})]}
     >
       <RouteComponent />
     </Router>

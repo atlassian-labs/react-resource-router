@@ -19,9 +19,7 @@ const myHistory = createBrowserHistory();
 const appRoutes = [homeRoute];
 
 const getStateFromServer = async () => {
-  const resourcesPlugin = createResourcesPlugin({
-    resourceData: null,
-  });
+  const resourcesPlugin = createResourcesPlugin({});
 
   invokePluginLoad([resourcesPlugin], {
     history: createMemoryHistory({ initialEntries: [location] }),

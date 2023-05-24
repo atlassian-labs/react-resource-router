@@ -62,7 +62,7 @@ describe('usePathParam()', () => {
     let ppVal: string | undefined;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param] = usePathParam('projectId');
@@ -79,7 +79,7 @@ describe('usePathParam()', () => {
   it('should return undefined for non-existent params', () => {
     let ppVal: string | undefined;
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param] = usePathParam('iamnotapathparam');
@@ -101,7 +101,7 @@ describe('usePathParam()', () => {
     ) => void;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('projectId');
@@ -134,7 +134,7 @@ describe('usePathParam()', () => {
     let renderCount = 0;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('projectId');
@@ -173,7 +173,7 @@ describe('usePathParam()', () => {
     ) => void;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             [ppVal, ppUpdateFn] = usePathParam('projectId');
@@ -208,7 +208,11 @@ describe('usePathParam()', () => {
       name: '',
     };
     mount(
-      <Router history={history} routes={[mockRouteWithOptionalParam]}>
+      <Router
+        history={history}
+        routes={[mockRouteWithOptionalParam]}
+        plugins={[]}
+      >
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('issueId');
@@ -255,7 +259,11 @@ describe('usePathParam()', () => {
       name: '',
     };
     mount(
-      <Router history={history} routes={[mockRouteWithOptionalParam]}>
+      <Router
+        history={history}
+        routes={[mockRouteWithOptionalParam]}
+        plugins={[]}
+      >
         <MockComponent>
           {() => {
             const [param, setParam] = usePathParam('boardId');

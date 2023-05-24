@@ -60,7 +60,7 @@ describe('useQueryParam()', () => {
 
   it('should return the right param value', () => {
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param] = useQueryParam('foo');
@@ -75,7 +75,7 @@ describe('useQueryParam()', () => {
 
   it('should return undefined for non-existent params', () => {
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param] = useQueryParam('iamnotaqueryparam');
@@ -94,7 +94,7 @@ describe('useQueryParam()', () => {
     let qpUpdateFn: (qp: string) => void;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param, setParam] = useQueryParam('newqueryparam');
@@ -121,7 +121,7 @@ describe('useQueryParam()', () => {
     let qpUpdateFn: (qp: string, updateType?: 'push' | 'replace') => void;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param, setParam] = useQueryParam('foo');
@@ -151,7 +151,7 @@ describe('useQueryParam()', () => {
     let renderCount = 0;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param, setParam] = useQueryParam('foo');
@@ -183,7 +183,7 @@ describe('useQueryParam()', () => {
     let qpUpdateFn: (qp: string, updateType?: 'push' | 'replace') => void;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             [qpVal, qpUpdateFn] = useQueryParam('foo');
@@ -210,7 +210,7 @@ describe('useQueryParam()', () => {
     let qpUpdateFn: (qp: string | undefined) => void;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [param, setParam] = useQueryParam('foo');
@@ -262,6 +262,7 @@ describe('useQueryParam()', () => {
       <Router
         history={historyHelper.createBrowserHistory()}
         routes={mockRoutes}
+        plugins={[]}
       >
         <ComponentFoo />
         <ComponentBar />
@@ -319,7 +320,7 @@ describe('useQueryParam()', () => {
     let barUpdateFn: (qp: string) => void;
 
     mount(
-      <Router history={history} routes={mockRoutes}>
+      <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
             const [foo, setFoo] = useQueryParam('foo');
