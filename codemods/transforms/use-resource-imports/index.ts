@@ -28,7 +28,6 @@ const resourcesImportSpecifiers = [
   'RouterDataContext',
   'UseResourceHookResponse',
   'mockRouteResourceResponse',
-  'RouteResourceEnabledSubscriber',
 ];
 
 const packageName = 'react-resource-router';
