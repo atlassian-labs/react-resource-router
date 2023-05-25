@@ -13,8 +13,6 @@ export {
   ResourceStore,
 } from './controllers/resource-store';
 
-export { RouteResourceEnabledSubscriber } from './controllers/route-resources-enabled-subscriber';
-
 export type {
   CreateResourceArgBase,
   CreateResourceArgSync,
