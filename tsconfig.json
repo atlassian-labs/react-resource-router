@@ -8,7 +8,8 @@
     "module": "esnext",
     "moduleResolution": "node",
     "paths": {
-      "react-resource-router": ["src"]
+      "react-resource-router": ["src"],
+      "react-resource-router/resources": ["src/resources"]
     },
     "preserveConstEnums": true,
     "skipLibCheck": true,

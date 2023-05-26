@@ -4,7 +4,6 @@ export {
   createRouterSelector,
   MemoryRouter,
   Redirect,
-  RouteResourceEnabledSubscriber,
   Router,
   RouterActions,
   RouterSubscriber,
@@ -73,31 +72,3 @@ export type {
 } from './controllers/router-store/types';
 
 export { DEFAULT_MATCH, DEFAULT_ROUTE } from './common/constants';
-
-// re-export resources entry-point to avoid breaking API changes for now
-export {
-  createResource,
-  ResourceDependencyError,
-  ResourceSubscriber,
-  useResource,
-  useResourceStoreContext,
-} from './resources';
-
-export type {
-  RouteResources,
-  ResourceStoreContext,
-  ResourceStoreData,
-  RouteResource,
-  RouteResourceError,
-  RouteResourceLoading,
-  RouteResourceResponse,
-  RouteResourceUpdater,
-  RouterDataContext,
-  UseResourceHookResponse,
-} from './common/types';
-
-export type {
-  CreateResourceArgSync,
-  CreateResourceArgAsync,
-  CreateResourceArgBase,
-} from './resources';

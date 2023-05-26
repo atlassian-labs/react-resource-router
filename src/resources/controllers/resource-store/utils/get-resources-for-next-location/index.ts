@@ -1,8 +1,9 @@
+import { RouterContext } from '../../../../../index';
 import {
   ResourceStoreContext,
   RouteResource,
-} from '../../../../../common/types';
-import { RouterContext } from '../../../../../index';
+  RouteWithResources,
+} from '../../../../common/types';
 import {
   getResourceIdentifier,
   getResourceIdentifiers,
@@ -18,9 +19,11 @@ export const getResourcesForNextLocation = (
   resourceStoreContext: ResourceStoreContext
 ): RouteResource[] => {
   const { route: prevRoute } = prevRouterStoreContext;
-  const { resources: prevResources = [] } = prevRoute || {};
+  const { resources: prevResources = [] } =
+    (prevRoute as RouteWithResources) || {};
   const { route: nextRoute } = nextRouterStoreContext;
-  const { resources: nextResources = [] } = nextRoute || {};
+  const { resources: nextResources = [] } =
+    (nextRoute as RouteWithResources) || {};
 
   if (!routeHasResources(nextRoute)) {
     return [];

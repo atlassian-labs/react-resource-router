@@ -30,7 +30,7 @@ export type {
   RouteResourceUpdater,
   RouterDataContext,
   UseResourceHookResponse,
-} from '../common/types';
+} from './common/types';
 
 export { PLUGIN_ID } from './plugin/index';
 
