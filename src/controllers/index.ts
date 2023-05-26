@@ -3,10 +3,7 @@ export { MemoryRouter, Router } from './router';
 export { RouterActions } from './router-actions';
 export { RouterSubscriber } from './router-subscriber';
 
-export {
-  RouteResourceEnabledSubscriber,
-  createRouterSelector,
-} from './router-store';
+export { createRouterSelector } from './router-store';
 
 export { usePathParam } from './use-path-param';
 export { useQueryParam } from './use-query-param';

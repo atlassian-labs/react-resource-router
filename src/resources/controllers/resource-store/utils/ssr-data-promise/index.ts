@@ -1,4 +1,4 @@
-import { RouteResourceResponse } from '../../../../../common/types';
+import { RouteResourceResponse } from '../../../../common/types';
 
 export const setSsrDataPromise = (
   slice: RouteResourceResponse

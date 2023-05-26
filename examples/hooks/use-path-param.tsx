@@ -1,11 +1,7 @@
 import React, { memo } from 'react';
 
-import {
-  Link,
-  usePathParam,
-  createResource,
-  useResource,
-} from 'react-resource-router';
+import { Link, usePathParam } from 'react-resource-router';
+import { createResource, useResource } from 'react-resource-router/resources';
 
 export const testResource = createResource({
   type: 'test-resource',

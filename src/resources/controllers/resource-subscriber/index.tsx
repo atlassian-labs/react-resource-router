@@ -1,11 +1,11 @@
 import React, { ReactNode } from 'react';
 
+import type { RouterContext } from '../../../index';
 import type {
   RouteResource,
   RouteResourceResponse,
   RouteResourceUpdater,
-} from '../../../common/types';
-import type { RouterContext } from '../../../index';
+} from '../../common/types';
 import { useResource } from '../use-resource';
 
 type Props<T> = {

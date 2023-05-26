@@ -20,7 +20,7 @@ You can use these properties and functions to implement your own customised rend
 Using resources via the [`useResource`](../api/hooks.md#useresource) hook is the **recommended** way to access your current resource state in a component. Here is an example of how you can do that
 
 ```jsx
-import { useResource } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { avatarResource } from '../routing/resources';
 import { Circle } from './primitives';
 
@@ -59,7 +59,8 @@ There are situations however, where you might want to access a different key for
 As an example, assuming your `blogPostRoute` has path `/blogs/:id` and you are on `/`, you can populate the resurce of blog `id: 1` by creating a custom `routerContext`:
 
 ```jsx
-import { useResource, createRouterContext } from 'react-resource-router';
+import { createRouterContext } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { blogPostResource } from '../routing/resources';
 import { blogPostRoute } from '../routing';
 

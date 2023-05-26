@@ -94,7 +94,8 @@ export const LinkExample = ({ href = '/' }) => {
 You can use a `Redirect` component as a route's `component` property to create a redirect route or to redirect a user elsewhere as part of internal component business logic.
 
 ```js
-import { Redirect, useResource } from 'react-resource-router';
+import { Redirect } from 'react-resource-router';
+import { useResource } from 'react-resource-router/resources';
 import { userResource } from 'src/routes/resources';
 import { Profile } from 'src/components/user';
 

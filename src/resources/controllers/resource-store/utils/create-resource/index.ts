@@ -2,7 +2,7 @@ import {
   ResourceType,
   RouteResource,
   RouteResourceDataPayload,
-} from '../../../../../common/types';
+} from '../../../../common/types';
 
 import {
   DEFAULT_CACHE_MAX_LIMIT,
