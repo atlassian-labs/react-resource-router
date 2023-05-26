@@ -19,10 +19,13 @@ export const App = () => (
 ```js
 // index.js
 import { Router, createBrowserHistory } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
 import { App } from './components';
 import { appRoutes } from './routing';
 
-<Router history={createBrowserHistory()} routes={appRoutes}>
+const resourcesPlugin = createResourcesPlugin({});
+
+<Router history={createBrowserHistory()} routes={appRoutes} plugins={[resourcesPlugin]}>
   <App />
 </Router>;
 ```
@@ -33,6 +36,7 @@ import { appRoutes } from './routing';
 | ----------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
 | `routes`          | `Routes[]`                | Your application's routes                                                                                                                     |
 | `history`         | `History`                 | The history instance for the router, if omitted memory history will be used (optional but recommended)                                        |
+| `plugins`         | `Plugin[]`                | Plugin allows you to hook into Router API and extra login on route load/prefetch/etc                                       |
 | `basePath`        | `string`                  | Base path string that will get prepended to all route paths (optional)                                                                        |
 | `initialRoute`    | `Route`                   | The route your application is initially showing, it's a performance optimisation to avoid route matching cost on initial render(optional)     |
 | `resourceContext` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods (optional)                                 |
@@ -143,13 +147,15 @@ import {
   Router,
   RouteComponent,
 } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
 import { StaticNavigation } from '../components';
 import { routes } from '../routing';
 
 const history = createBrowserHistory();
+const resourcesPlugin = createResourcesPlugin({});
 
 export const App = () => (
-  <Router history={history} routes={routes}>
+  <Router history={history} routes={routes} plugins={[resourcesPlugin]}>
     <StaticNavigation />
     <RouteComponent />
   </Router>

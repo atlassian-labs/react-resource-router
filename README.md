@@ -122,12 +122,14 @@ import {
   RouteComponent,
   createBrowserHistory,
 } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
 import { appRoutes } from './routing/routes';
 
 const history = createBrowserHistory();
+const resourcesPlugin = createResourcesPlugin({});
 
 const App = () => (
-  <Router routes={appRoutes} history={history}>
+  <Router routes={appRoutes} history={history} plugins={[resourcesPlugin]}>
     <RouteComponent />
   </Router>
 );
