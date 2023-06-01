@@ -66,16 +66,25 @@ export const ClientApp = () => (
 
 Until React Suspense works on the server, we cannot do progressive rendering server side. To get around this, we need to `await` all resource requests to render our app _with all our resource data_ on the server.
 
-Luckily the `Router` provides a convenient static method to do this for us.
+Luckily we have a convenient static method `invokePluginLoad` to do this for us.
 
 ```js
 import { renderToString } from 'react-dom/server';
 import { Router } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
 import { routes } from '../routing/routes';
 import { ServerApp } from './app';
 
 const renderToStringWithData = async ({ location }) => {
-  await Router.requestResources({ location, routes });
+  const resourcesPlugin = createResourcesPlugin({});
+
+  invokePluginLoad([resourcesPlugin], {
+    history: createMemoryHistory({ initialEntries: [location] }),
+    routes,
+    basePath: '...',
+  });
+
+  const resourceData = await resourcesPlugin.getSerializedResources();
 
   return renderToString(<ServerApp location={location} />);
 };
@@ -83,4 +92,4 @@ const renderToStringWithData = async ({ location }) => {
 
 Notice that we do not need to provide any `resourceData` object to the `ServerApp`, the `Router` handles this for us internally.
 
-To prevent slow APIs from causing long renders on the server you can optionally pass in `timeout` as an option to `Router.requestResources`. If a route resource does not return within the specified time then its data and promise will be set to null.
+To prevent slow APIs from causing long renders on the server you can optionally pass in `timeout` as an option to `createResourcesPlugin({ timeout: ... })`. If a route resource does not return within the specified time then its data and promise will be set to null.

@@ -52,13 +52,15 @@ const Title = () => {
   return <p>Page: {title}</p>;
 };
 
+const resourcesPlugin = createResourcesPlugin({});
+
 const App = () => {
   return (
     <Router
       basePath="/hooks"
       history={myHistory}
       routes={appRoutes}
-      plugins={[createResourcesPlugin({})]}
+      plugins={[resourcesPlugin]}
     >
       <Title />
       <RouteComponent />

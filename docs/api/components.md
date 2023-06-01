@@ -1,6 +1,6 @@
 ## Router
 
-The `Router` component should ideally wrap your client app as high up in the tree as possible. As soon as it is mounted, it will match the current route and then call all of the matched resources' `getData` methods. Components that are subscribed to these resources either via the [`useResource`](./hooks.md#useresource) hook or [`ResourceSubscriber`](./components.md#resourcesubscriber) will progressively update according to the requests' lifecycles.
+The `Router` component should ideally wrap your client app as high up in the tree as possible. 
 
 If you are planning to render your application on the server, we recommend creating a composition boundary between your router and the core of your application, including your `RouteComponent`.
 
@@ -39,9 +39,50 @@ const resourcesPlugin = createResourcesPlugin({});
 | `plugins`         | `Plugin[]`                | Plugin allows you to hook into Router API and extra login on route load/prefetch/etc                                       |
 | `basePath`        | `string`                  | Base path string that will get prepended to all route paths (optional)                                                                        |
 | `initialRoute`    | `Route`                   | The route your application is initially showing, it's a performance optimisation to avoid route matching cost on initial render(optional)     |
-| `resourceContext` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods (optional)                                 |
-| `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount (optional)                                          |
 | `onPrefetch`      | `function(RouterContext)` | Called when prefetch is triggered from a Link (optional)                                                                                      |
+
+## Resources plugin
+
+Resources plugin enables `resources` prop on the `Route` definition
+
+As soon as `Router` is mounted, it will match the current route and then call all of the matched resources' `getData` methods. Components that are subscribed to these resources either via the [`useResource`](./hooks.md#useresource) hook or [`ResourceSubscriber`](./components.md#resourcesubscriber) will progressively update according to the requests' lifecycles.
+
+```js
+// index.js
+import { Router, createBrowserHistory } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
+import { App } from './components';
+
+const resourcesPlugin = createResourcesPlugin({ ... });
+
+export const routes = [
+  {
+    path: '/home',
+    name: 'HOME',
+    component: Home,
+    resources: [homeResource],
+  },
+  {
+    path: '/about',
+    name: 'ABOUT',
+    component: About,
+    resources: [aboutResource],
+  },
+];
+
+<Router history={createBrowserHistory()} routes={routes} plugins={[resourcesPlugin]}>
+  <App />
+</Router>;
+```
+
+### Resources plugin props
+
+| prop              | type                      | description                                                                                                                                   |
+| ----------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
+| `context` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods (optional)                                 |
+| `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount (optional)                                          |
+| `timeout`    | `number`            | `timout` is used to prevent slow APIs from causing long renders on the server, If a route resource does not return within the specified time then its data and promise will be set to null.(optional)                                          |
+
 
 ## MemoryRouter
 
