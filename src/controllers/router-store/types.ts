@@ -16,7 +16,6 @@ import {
   Routes,
   Plugin,
 } from '../../common/types';
-import type { ResourceStoreContext, ResourceStoreData } from '../../resources';
 
 type PublicStateProperties = {
   action: HistoryAction;
@@ -45,8 +44,6 @@ export type ContainerProps = {
   initialRoute?: Route;
   isGlobal?: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
-  resourceContext?: ResourceStoreContext;
-  resourceData?: ResourceStoreData;
   routes: Routes;
   plugins: Plugin[];
 };

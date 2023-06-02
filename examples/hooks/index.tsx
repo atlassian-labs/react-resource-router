@@ -13,6 +13,7 @@ import {
   createBrowserHistory,
   createRouterSelector,
 } from 'react-resource-router';
+import { createResourcesPlugin } from 'react-resource-router/resources';
 
 const myHistory = createBrowserHistory();
 const useRouteName = createRouterSelector(s => s.route.name);
@@ -51,9 +52,16 @@ const Title = () => {
   return <p>Page: {title}</p>;
 };
 
+const resourcesPlugin = createResourcesPlugin({});
+
 const App = () => {
   return (
-    <Router basePath="/hooks" history={myHistory} routes={appRoutes}>
+    <Router
+      basePath="/hooks"
+      history={myHistory}
+      routes={appRoutes}
+      plugins={[resourcesPlugin]}
+    >
       <Title />
       <RouteComponent />
     </Router>

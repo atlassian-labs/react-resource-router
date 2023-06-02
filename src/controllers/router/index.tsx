@@ -1,15 +1,9 @@
 import { createMemoryHistory } from 'history';
 import React, { useMemo, useEffect } from 'react';
 
-import { invokePluginLoad } from '../../controllers/plugins/index';
-import { createResourcesPlugin } from '../../resources/plugin';
 import { getRouterState, RouterContainer } from '../router-store';
 
-import {
-  RouterProps,
-  MemoryRouterProps,
-  RequestResourcesParams,
-} from './types';
+import { RouterProps, MemoryRouterProps } from './types';
 
 export const Router = ({
   basePath,
@@ -19,8 +13,6 @@ export const Router = ({
   isGlobal = true,
   plugins,
   onPrefetch,
-  resourceContext,
-  resourceData,
   routes,
 }: RouterProps) => {
   useEffect(() => {
@@ -31,18 +23,6 @@ export const Router = ({
     };
   }, []);
 
-  const pluginsWithFallback = useMemo(() => {
-    if (plugins) return plugins;
-
-    // default 'plugins' fallback for the first relase
-    const resourcesPlugin = createResourcesPlugin({
-      context: resourceContext,
-      resourceData,
-    });
-
-    return [resourcesPlugin];
-  }, [resourceContext, resourceData, plugins]);
-
   return (
     <RouterContainer
       basePath={basePath}
@@ -50,42 +30,12 @@ export const Router = ({
       initialRoute={initialRoute}
       isGlobal={isGlobal}
       onPrefetch={onPrefetch}
-      plugins={pluginsWithFallback}
-      resourceContext={resourceContext}
-      resourceData={resourceData}
+      plugins={plugins}
       routes={routes}
     >
       {children}
     </RouterContainer>
   );
-};
-
-/**
- * @deprecated
- * The entry point for requesting resource data on the server.
- * Pass the result data into the router as a prop in order to hydrate it.
- */
-Router.requestResources = async ({
-  location,
-  history,
-  timeout,
-  routes,
-  resourceContext: context,
-}: RequestResourcesParams) => {
-  const resourcesPlugin = createResourcesPlugin({
-    context,
-    resourceData: null,
-    timeout,
-  });
-
-  const plugins = [resourcesPlugin];
-
-  invokePluginLoad(plugins, {
-    history: history || createMemoryHistory({ initialEntries: [location] }),
-    routes: routes,
-  });
-
-  return await resourcesPlugin.getSerializedResources();
 };
 
 export function MemoryRouter(props: MemoryRouterProps) {
@@ -97,5 +47,12 @@ export function MemoryRouter(props: MemoryRouterProps) {
     [props.location]
   );
 
-  return <Router {...props} history={history} isGlobal={false} />;
+  return (
+    <Router
+      {...props}
+      history={history}
+      isGlobal={false}
+      plugins={props.plugins || []}
+    />
+  );
 }

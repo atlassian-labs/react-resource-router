@@ -12,7 +12,6 @@ export const homeResource = createResource({
 
     return result;
   },
-  isBrowserOnly: true,
 });
 
 export const Home = () => {

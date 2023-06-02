@@ -31,7 +31,12 @@ const appRoutes = [
 
 const App = () => {
   return (
-    <Router basePath="/basic-routing" history={myHistory} routes={appRoutes}>
+    <Router
+      basePath="/basic-routing"
+      history={myHistory}
+      routes={appRoutes}
+      plugins={[]}
+    >
       <RouteComponent />
     </Router>
   );

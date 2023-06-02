@@ -55,7 +55,6 @@ describe('<Router /> with resources client-side integration tests', () => {
     const history = createMemoryHistory({ initialEntries: [location] });
 
     const resourcesPlugin = createResourcesPlugin({
-      resourceData: null,
       timeout: 350,
     });
 
@@ -166,11 +165,7 @@ describe('<Router /> with resources client-side integration tests', () => {
       const router = mount(
         <Router
           history={history}
-          plugins={[
-            createResourcesPlugin({
-              resourceData: null,
-            }),
-          ]}
+          plugins={[createResourcesPlugin({})]}
           routes={routes}
         >
           <RouteComponent />
@@ -327,11 +322,7 @@ describe('<Router /> server-side integration tests', () => {
         history={createMemoryHistory({
           initialEntries: [`/base-path${route.path}`],
         })}
-        plugins={[
-          createResourcesPlugin({
-            resourceData: null,
-          }),
-        ]}
+        plugins={[createResourcesPlugin({})]}
         routes={[route]}
       >
         <RouteComponent />
@@ -347,11 +338,7 @@ describe('<Router /> server-side integration tests', () => {
         history={createMemoryHistory({
           initialEntries: [route.path],
         })}
-        plugins={[
-          createResourcesPlugin({
-            resourceData: null,
-          }),
-        ]}
+        plugins={[createResourcesPlugin({})]}
         routes={[route]}
       >
         <RouteComponent />

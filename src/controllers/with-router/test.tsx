@@ -31,7 +31,7 @@ describe('withRouter()', () => {
   test('should provide match, route, location and history props to the wrapped component', () => {
     const history = createMemoryHistory();
     const wrapper = mount(
-      <Router history={history} routes={[]}>
+      <Router history={history} routes={[]} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
@@ -62,19 +62,20 @@ describe('withRouter()', () => {
     const history = createMemoryHistory();
     const routes = [
       {
+        name: 'Example A',
         path: '/atlassian/:name',
         component: () => <div> Example A</div>,
       },
       {
+        name: 'Example B',
         path: '/cats',
         component: () => <div> Example B</div>,
       },
-      { path: '/', component: () => <div> Home </div> },
+      { name: 'Example C', path: '/', component: () => <div> Home </div> },
     ];
 
     const wrapper = mount(
-      // @ts-ignore
-      <Router history={history} routes={routes}>
+      <Router history={history} routes={routes} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
@@ -138,7 +139,7 @@ describe('withRouter()', () => {
   test('should pass null match to the wrapped component when no route has matched', () => {
     const history = createMemoryHistory();
     const wrapper = mount(
-      <Router history={history} routes={[]}>
+      <Router history={history} routes={[]} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
