@@ -19,3 +19,4 @@
   - [Components](/api/components.md)
   - [Hooks](/api/hooks.md)
   - [Utilities](/api/utilities.md)
+  - [Plugins](/api/plugins.md)
