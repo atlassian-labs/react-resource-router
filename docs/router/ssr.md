@@ -70,7 +70,7 @@ Luckily we have a convenient static method `invokePluginLoad` to do this for us.
 
 ```js
 import { renderToString } from 'react-dom/server';
-import { Router } from 'react-resource-router';
+import { Router, invokePluginLoad } from 'react-resource-router';
 import { createResourcesPlugin } from 'react-resource-router/resources';
 import { routes } from '../routing/routes';
 import { ServerApp } from './app';
