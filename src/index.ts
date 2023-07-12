@@ -72,3 +72,31 @@ export type {
 } from './controllers/router-store/types';
 
 export { DEFAULT_MATCH, DEFAULT_ROUTE } from './common/constants';
+
+// re-export resources entry-point to keep it backwards compatible with 0.20.x version
+export {
+  createResource,
+  ResourceDependencyError,
+  ResourceSubscriber,
+  useResource,
+  useResourceStoreContext,
+} from './resources';
+
+export type {
+  RouteResources,
+  ResourceStoreContext,
+  ResourceStoreData,
+  RouteResource,
+  RouteResourceError,
+  RouteResourceLoading,
+  RouteResourceResponse,
+  RouteResourceUpdater,
+  RouterDataContext,
+  UseResourceHookResponse,
+} from './resources';
+
+export type {
+  CreateResourceArgSync,
+  CreateResourceArgAsync,
+  CreateResourceArgBase,
+} from './resources';
