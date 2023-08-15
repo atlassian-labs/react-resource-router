@@ -5,7 +5,7 @@ import { useRouter } from '../../controllers';
 export const RouteComponent = () => {
   const [{ action, location, match, query, route }] = useRouter();
 
-  if (!route) {
+  if (!route || !route.component) {
     return null;
   }
 
