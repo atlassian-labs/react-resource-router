@@ -1,4 +1,4 @@
-import { isSameRoute } from './index';
+import { isSameRouteMatch } from './index';
 
 describe('isSameRoute', () => {
   it('should be true', () => {
@@ -17,7 +17,9 @@ describe('isSameRoute', () => {
       url: '',
       query: {},
     };
-    expect(isSameRoute({ prevContextMatch, nextContextMatch })).toBeTruthy();
+    expect(
+      isSameRouteMatch({ prevContextMatch, nextContextMatch })
+    ).toBeTruthy();
   });
 
   it('should be false, as "query" is different', () => {
@@ -38,7 +40,9 @@ describe('isSameRoute', () => {
         a: '1',
       },
     };
-    expect(isSameRoute({ prevContextMatch, nextContextMatch })).toBeFalsy();
+    expect(
+      isSameRouteMatch({ prevContextMatch, nextContextMatch })
+    ).toBeFalsy();
   });
 
   it('should be false, as "params" are different', () => {
@@ -59,7 +63,9 @@ describe('isSameRoute', () => {
       url: '',
       query: {},
     };
-    expect(isSameRoute({ prevContextMatch, nextContextMatch })).toBeFalsy();
+    expect(
+      isSameRouteMatch({ prevContextMatch, nextContextMatch })
+    ).toBeFalsy();
   });
 
   it('should be false, as "path" is different', () => {
@@ -78,7 +84,9 @@ describe('isSameRoute', () => {
       url: '',
       query: {},
     };
-    expect(isSameRoute({ prevContextMatch, nextContextMatch })).toBeFalsy();
+    expect(
+      isSameRouteMatch({ prevContextMatch, nextContextMatch })
+    ).toBeFalsy();
   });
 
   it('should return true, even though "query" props are in different order', () => {
@@ -103,7 +111,9 @@ describe('isSameRoute', () => {
         a: '1',
       },
     };
-    expect(isSameRoute({ prevContextMatch, nextContextMatch })).toBeTruthy();
+    expect(
+      isSameRouteMatch({ prevContextMatch, nextContextMatch })
+    ).toBeTruthy();
   });
 
   it('should return true, even though "params" props are in different order', () => {
@@ -128,6 +138,8 @@ describe('isSameRoute', () => {
       url: '',
       query: {},
     };
-    expect(isSameRoute({ prevContextMatch, nextContextMatch })).toBeTruthy();
+    expect(
+      isSameRouteMatch({ prevContextMatch, nextContextMatch })
+    ).toBeTruthy();
   });
 });

@@ -8,4 +8,4 @@ export {
   warmupMatchRouteCache,
 } from './match-route';
 export { findRouterContext, createRouterContext } from './router-context';
-export { isSameRoute } from './is-same-route';
+export { isSameRouteMatch } from './is-same-route';

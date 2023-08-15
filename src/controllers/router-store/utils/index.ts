@@ -1,7 +1,7 @@
 import URL, { qs } from 'url-parse';
 
 import { Href, Location, Query, RouterContext } from '../../../common/types';
-import { isSameRoute } from '../../../common/utils';
+import { isSameRouteMatch } from '../../../common/utils';
 
 const stripTrailingSlash = (path: string) =>
   path.charAt(path.length - 1) === '/' ? path.slice(0, -1) : path;
@@ -75,7 +75,7 @@ export const shouldReload = ({
   prevContext: RouterContext;
   pluginId: string;
 }) => {
-  const sameRoute = isSameRoute({
+  const sameRoute = isSameRouteMatch({
     prevContextMatch: prevContext.match,
     nextContextMatch: context.match,
   });
