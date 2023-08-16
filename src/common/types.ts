@@ -108,7 +108,7 @@ export interface AdditionalRouteAttributes {}
 
 export type Route = InvariantRoute & {
   /** The component to render on match, typed explicitly */
-  component: ComponentType<RouteContext>;
+  component?: ComponentType<RouteContext>;
   EXPERIMENTAL__shouldReload?: ShouldReloadFunction;
 } & AdditionalRouteAttributes;
 
