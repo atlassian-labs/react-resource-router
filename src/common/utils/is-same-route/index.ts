@@ -11,7 +11,7 @@ const isShallowEqual = (o1: ObjectToCompare, o2: ObjectToCompare) => {
   return objKeys1.every(key => o1[key] === o2[key]);
 };
 
-export const isSameRoute = ({
+export const isSameRouteMatch = ({
   prevContextMatch,
   nextContextMatch,
 }: {

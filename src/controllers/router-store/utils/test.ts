@@ -1,4 +1,4 @@
-import { isSameRoute } from '../../../common/utils';
+import { isSameRouteMatch } from '../../../common/utils';
 import { mockRouteContext } from '../../../mocks';
 
 import {
@@ -179,7 +179,7 @@ describe('sanitizePath()', () => {
 
 describe('shouldReload()', () => {
   beforeEach(() => {
-    (isSameRoute as any).mockReturnValue(false);
+    (isSameRouteMatch as any).mockReturnValue(false);
   });
   it('should return defaultValue when routes are not the same', () => {
     const context = {
@@ -246,7 +246,7 @@ describe('shouldReload()', () => {
   });
 
   it("should return defaultValue=false as route haven't changed", () => {
-    (isSameRoute as any).mockReturnValue(true);
+    (isSameRouteMatch as any).mockReturnValue(true);
     const context = {
       ...mockRouteContext,
     };
@@ -264,7 +264,7 @@ describe('shouldReload()', () => {
   });
 
   it('should return defaultValue=true for resources-plugin', () => {
-    (isSameRoute as any).mockReturnValue(true);
+    (isSameRouteMatch as any).mockReturnValue(true);
     const context = {
       ...mockRouteContext,
     };
