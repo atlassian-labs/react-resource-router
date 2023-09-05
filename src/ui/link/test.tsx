@@ -115,7 +115,7 @@ describe('<Link />', () => {
     component.simulate('click', baseClickEvent);
 
     expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-    expect(HistoryMock.push).toHaveBeenCalledWith(newPath);
+    expect(HistoryMock.push).toHaveBeenCalledWith(newPath, undefined);
   });
 
   it('should call `event.preventDefault() on navigation`', () => {
@@ -287,7 +287,7 @@ describe('<Link />', () => {
       });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-      expect(HistoryMock.push).toHaveBeenCalledWith(newPath);
+      expect(HistoryMock.push).toHaveBeenCalledWith(newPath, undefined);
     });
 
     it('should not navigate for any other key', () => {

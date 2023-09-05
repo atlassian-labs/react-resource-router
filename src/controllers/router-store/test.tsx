@@ -175,7 +175,11 @@ describe('RouterStore', () => {
 
           actions.push('/pages/1');
 
-          expect(history.push).toBeCalledWith(`${basePath ?? ''}/pages/1`);
+          expect(history.push).toBeCalledWith(
+            `${basePath ?? ''}/pages/1`,
+            undefined
+          );
+
           expect(getState()).toMatchObject({
             action: 'PUSH',
             route: routes[1],
@@ -188,7 +192,10 @@ describe('RouterStore', () => {
 
             actions.push(`http://localhost:3000${basePath ?? ''}/pages/1`);
 
-            expect(history.push).toBeCalledWith(`${basePath ?? ''}/pages/1`);
+            expect(history.push).toBeCalledWith(
+              `${basePath ?? ''}/pages/1`,
+              undefined
+            );
             expect(getState()).toMatchObject({
               action: 'PUSH',
               route: routes[1],
@@ -200,7 +207,7 @@ describe('RouterStore', () => {
 
             actions.push(`http://localhost:3000/pages/1`);
 
-            expect(history.push).toBeCalledWith('/pages/1');
+            expect(history.push).toBeCalledWith('/pages/1', undefined);
             expect(getState()).toMatchObject({
               action: 'PUSH',
               route: routes[1],
@@ -213,7 +220,7 @@ describe('RouterStore', () => {
 
             actions.push(nextLocation);
 
-            expect(history.push).toBeCalledWith(nextLocation);
+            expect(history.push).toBeCalledWith(nextLocation, undefined);
             expect(getState()).toMatchObject({
               action: 'PUSH',
               route: routes[1],
@@ -349,6 +356,27 @@ describe('RouterStore', () => {
         actions.push('http://example.com');
 
         expect(assign).toBeCalledWith('http://example.com');
+      });
+
+      it('passes state when passed to push', () => {
+        const basePath = '/base-path';
+        const { actions, getState, history } = renderRouterContainer({
+          basePath,
+        });
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.push('/pages/1', pushedState);
+
+        expect(history.push).toBeCalledWith(
+          `${basePath ?? ''}/pages/1`,
+          pushedState
+        );
+
+        expect(getState()).toMatchObject({
+          action: 'PUSH',
+          route: routes[1],
+          state: pushedState,
+        });
       });
     });
 

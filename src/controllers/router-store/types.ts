@@ -24,6 +24,7 @@ type PublicStateProperties = {
   match: Match;
   query: Query;
   route: Route;
+  state?: unknown;
 };
 
 export type UnlistenHistory = () => void;

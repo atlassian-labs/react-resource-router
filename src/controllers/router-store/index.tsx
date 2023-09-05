@@ -157,6 +157,7 @@ const actions: AllRouterActions = {
               ...nextContext,
               location,
               action,
+              state: location.state,
             });
 
             plugins.forEach(p => {
@@ -174,13 +175,13 @@ const actions: AllRouterActions = {
     },
 
   push:
-    path =>
+    (path, state) =>
     ({ getState }) => {
       const { history, basePath } = getState();
       if (isExternalAbsolutePath(path)) {
         window.location.assign(path as string);
       } else {
-        history.push(getRelativePath(path, basePath));
+        history.push(getRelativePath(path, basePath), state);
       }
     },
 

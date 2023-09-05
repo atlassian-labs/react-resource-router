@@ -23,7 +23,7 @@ export type BrowserHistory = (
   | Omit<History5, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
 ) & {
   location: Location;
-  push: (path: string | Location) => void;
+  push: (path: string | Location, state?: unknown) => void;
   replace: (path: string | Location) => void;
 };
 

@@ -98,7 +98,7 @@ describe('<RouterActions />', () => {
       </Router>
     );
 
-    expect(HistoryMock.push).toBeCalledWith('push');
+    expect(HistoryMock.push).toBeCalledWith('push', undefined);
     expect(HistoryMock.replace).toBeCalledWith('replace');
     expect(HistoryMock.goBack).toBeCalled();
     expect(HistoryMock.goForward).toBeCalled();
