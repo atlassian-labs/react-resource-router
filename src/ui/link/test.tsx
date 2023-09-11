@@ -149,7 +149,7 @@ describe('<Link />', () => {
     component.simulate('click', baseClickEvent);
 
     expect(HistoryMock.replace).toHaveBeenCalledTimes(1);
-    expect(HistoryMock.replace).toHaveBeenCalledWith(newPath);
+    expect(HistoryMock.replace).toHaveBeenCalledWith(newPath, undefined);
   });
 
   describe('preventing navigation', () => {

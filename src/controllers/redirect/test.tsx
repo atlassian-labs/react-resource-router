@@ -132,7 +132,7 @@ describe('<Redirect />', () => {
     'should navigate to given route %s correctly',
     (_, to, params, query, expected) => {
       mountInRouter({ to, query, params, push: false });
-      expect(MockHistory.replace).toHaveBeenCalledWith(expected);
+      expect(MockHistory.replace).toHaveBeenCalledWith(expected, undefined);
       expect(MockHistory.push).not.toHaveBeenCalled();
     }
   );

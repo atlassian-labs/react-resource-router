@@ -16,6 +16,7 @@ export type Location = {
   pathname: string;
   search: string;
   hash: string;
+  state?: unknown;
 };
 
 export type BrowserHistory = (
@@ -24,7 +25,7 @@ export type BrowserHistory = (
 ) & {
   location: Location;
   push: (path: string | Location, state?: unknown) => void;
-  replace: (path: string | Location) => void;
+  replace: (path: string | Location, state?: unknown) => void;
 };
 
 export type History = BrowserHistory;

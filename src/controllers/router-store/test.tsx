@@ -375,8 +375,8 @@ describe('RouterStore', () => {
         expect(getState()).toMatchObject({
           action: 'PUSH',
           route: routes[1],
-          state: pushedState,
         });
+        expect(getState().location?.state).toMatchObject(pushedState);
       });
     });
 
@@ -409,7 +409,10 @@ describe('RouterStore', () => {
 
           actions.replace('/pages/1');
 
-          expect(history.replace).toBeCalledWith(`${basePath ?? ''}/pages/1`);
+          expect(history.replace).toBeCalledWith(
+            `${basePath ?? ''}/pages/1`,
+            undefined
+          );
           expect(getState()).toMatchObject({
             action: 'REPLACE',
             route: routes[1],
@@ -423,7 +426,7 @@ describe('RouterStore', () => {
 
         actions.replace(path);
 
-        expect(history.replace).toBeCalledWith('/pages/1');
+        expect(history.replace).toBeCalledWith('/pages/1', undefined);
         expect(getState()).toMatchObject({
           action: 'REPLACE',
           route: routes[1],
@@ -437,6 +440,21 @@ describe('RouterStore', () => {
         actions.replace('http://example.com');
 
         expect(replace).toBeCalledWith('http://example.com');
+      });
+
+      it('it passes state to replace', () => {
+        const path = 'http://localhost:3000/pages/1';
+        const { actions, getState, history } = renderRouterContainer();
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.replace(path, pushedState);
+
+        expect(history.replace).toBeCalledWith('/pages/1', pushedState);
+        expect(getState()).toMatchObject({
+          action: 'REPLACE',
+          route: routes[1],
+        });
+        expect(getState().location?.state).toMatchObject(pushedState);
       });
     });
 

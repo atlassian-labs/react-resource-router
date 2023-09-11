@@ -24,7 +24,6 @@ type PublicStateProperties = {
   match: Match;
   query: Query;
   route: Route;
-  state?: unknown;
 };
 
 export type UnlistenHistory = () => void;
@@ -86,9 +85,9 @@ type PrivateRouterActions = {
 };
 
 type PublicRouterActions = {
-  push: (path: Href | Location, state?: any) => RouterAction;
+  push: (path: Href | Location, state?: unknown) => RouterAction;
   pushTo: (route: Route, attributes?: ToAttributes) => RouterAction;
-  replace: (path: Href | Location) => RouterAction;
+  replace: (path: Href | Location, state?: unknown) => RouterAction;
   replaceTo: (route: Route, attributes?: ToAttributes) => RouterAction;
   goBack: () => RouterAction;
   goForward: () => RouterAction;
