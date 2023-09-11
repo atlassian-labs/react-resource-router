@@ -40,6 +40,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       params,
       query,
       prefetch = false,
+      state = undefined,
       ...rest
     },
     ref
@@ -101,6 +102,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
         routerActions,
         href: linkDestination,
         to: route && [route, { params, query }],
+        state,
       });
 
     const handleMouseEnter = (e: MouseEvent) => {

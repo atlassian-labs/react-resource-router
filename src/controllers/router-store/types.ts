@@ -55,6 +55,7 @@ export type HistoryUpdateType = 'push' | 'replace';
 type ToAttributes = {
   query?: Query;
   params?: MatchParams;
+  state?: unknown;
 };
 
 type PrivateRouterActions = {

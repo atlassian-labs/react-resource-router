@@ -198,7 +198,7 @@ const actions: AllRouterActions = {
         attributes.query,
         basePath
       );
-      history.push(location as any);
+      history.push(location as any, attributes?.state);
     },
 
   replace:
@@ -226,7 +226,7 @@ const actions: AllRouterActions = {
         attributes.query,
         basePath
       );
-      history.replace(location as any);
+      history.replace(location as any, attributes?.state);
     },
 
   goBack:

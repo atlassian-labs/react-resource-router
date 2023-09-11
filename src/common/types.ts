@@ -136,6 +136,7 @@ export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   params?: MatchParams;
   query?: Query;
   prefetch?: false | 'hover' | 'mount';
+  state?: unknown;
 };
 
 export type HistoryBlocker = (

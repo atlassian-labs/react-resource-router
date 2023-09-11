@@ -387,16 +387,46 @@ describe('RouterStore', () => {
 
         actions.pushTo(route, { params: { id: '1' }, query: { uid: '1' } });
 
-        expect(history.push).toBeCalledWith({
-          hash: '',
-          pathname: '/pages/1',
-          search: '?uid=1',
-        });
+        expect(history.push).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          undefined
+        );
 
         expect(getState()).toMatchObject({
           action: 'PUSH',
           route,
         });
+      });
+
+      it('passes state when passed to pushTo', () => {
+        const route = routes[1];
+        const { actions, getState, history } = renderRouterContainer();
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.pushTo(route, {
+          params: { id: '1' },
+          query: { uid: '1' },
+          state: pushedState,
+        });
+
+        expect(history.push).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          pushedState
+        );
+
+        expect(getState()).toMatchObject({
+          action: 'PUSH',
+          route,
+        });
+        expect(getState().location?.state).toMatchObject(pushedState);
       });
     });
 
@@ -465,16 +495,46 @@ describe('RouterStore', () => {
 
         actions.replaceTo(route, { params: { id: '1' }, query: { uid: '1' } });
 
-        expect(history.replace).toBeCalledWith({
-          hash: '',
-          pathname: '/pages/1',
-          search: '?uid=1',
-        });
+        expect(history.replace).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          undefined
+        );
 
         expect(getState()).toMatchObject({
           action: 'REPLACE',
           route,
         });
+      });
+
+      it('it passes state to replaceTo', () => {
+        const route = routes[1];
+        const { actions, getState, history } = renderRouterContainer();
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.replaceTo(route, {
+          params: { id: '1' },
+          query: { uid: '1' },
+          state: pushedState,
+        });
+
+        expect(history.replace).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          pushedState
+        );
+
+        expect(getState()).toMatchObject({
+          action: 'REPLACE',
+          route,
+        });
+        expect(getState().location?.state).toMatchObject(pushedState);
       });
     });
 

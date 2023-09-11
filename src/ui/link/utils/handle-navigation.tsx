@@ -8,20 +8,21 @@ type LinkNavigationEvent = MouseEvent | KeyboardEvent;
 type LinkPressArgs = {
   target?: string;
   routerActions: {
-    push: (href: string) => void;
-    replace: (href: string) => void;
-    pushTo: (route: Route, attributes: any) => void;
-    replaceTo: (route: Route, attributes: any) => void;
+    push: (href: string, state?: unknown) => void;
+    replace: (href: string, state?: unknown) => void;
+    pushTo: (route: Route, attributes: any, state?: unknown) => void;
+    replaceTo: (route: Route, attributes: any, state?: unknown) => void;
   };
   replace: boolean;
   href: string;
   onClick?: (e: LinkNavigationEvent) => void;
   to: [Route, any] | void;
+  state?: unknown;
 };
 
 export const handleNavigation = (
   event: any,
-  { onClick, target, replace, routerActions, href, to }: LinkPressArgs
+  { onClick, target, replace, routerActions, href, to, state }: LinkPressArgs
 ): void => {
   if (isKeyboardEvent(event) && event.keyCode !== 13) {
     return;
@@ -38,10 +39,10 @@ export const handleNavigation = (
     event.preventDefault();
     if (to) {
       const method = replace ? routerActions.replaceTo : routerActions.pushTo;
-      method(...to);
+      method(...to, state);
     } else {
       const method = replace ? routerActions.replace : routerActions.push;
-      method(href);
+      method(href, state);
     }
   }
 };
