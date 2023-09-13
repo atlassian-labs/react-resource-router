@@ -1,6 +1,6 @@
 ## Router
 
-The `Router` component should ideally wrap your client app as high up in the tree as possible. 
+The `Router` component should ideally wrap your client app as high up in the tree as possible.
 
 If you are planning to render your application on the server, we recommend creating a composition boundary between your router and the core of your application, including your `RouteComponent`.
 
@@ -25,21 +25,25 @@ import { appRoutes } from './routing';
 
 const resourcesPlugin = createResourcesPlugin({});
 
-<Router history={createBrowserHistory()} routes={appRoutes} plugins={[resourcesPlugin]}>
+<Router
+  history={createBrowserHistory()}
+  routes={appRoutes}
+  plugins={[resourcesPlugin]}
+>
   <App />
 </Router>;
 ```
 
 ### Router props
 
-| prop              | type                      | description                                                                                                                                   |
-| ----------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `routes`          | `Routes[]`                | Your application's routes                                                                                                                     |
-| `history`         | `History`                 | The history instance for the router, if omitted memory history will be used (optional but recommended)                                        |
-| `plugins`         | `Plugin[]`                | Plugin allows you to hook into Router API and extra login on route load/prefetch/etc                                       |
-| `basePath`        | `string`                  | Base path string that will get prepended to all route paths (optional)                                                                        |
-| `initialRoute`    | `Route`                   | The route your application is initially showing, it's a performance optimisation to avoid route matching cost on initial render(optional)     |
-| `onPrefetch`      | `function(RouterContext)` | Called when prefetch is triggered from a Link (optional)                                                                                      |
+| prop           | type                      | description                                                                                                                               |
+| -------------- | ------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| `routes`       | `Routes[]`                | Your application's routes                                                                                                                 |
+| `history`      | `History`                 | The history instance for the router, if omitted memory history will be used (optional but recommended)                                    |
+| `plugins`      | `Plugin[]`                | Plugin allows you to hook into Router API and extra login on route load/prefetch/etc                                                      |
+| `basePath`     | `string`                  | Base path string that will get prepended to all route paths (optional)                                                                    |
+| `initialRoute` | `Route`                   | The route your application is initially showing, it's a performance optimisation to avoid route matching cost on initial render(optional) |
+| `onPrefetch`   | `function(RouterContext)` | Called when prefetch is triggered from a Link (optional)                                                                                  |
 
 ## Resources plugin
 
@@ -77,12 +81,11 @@ export const routes = [
 
 ### Resources plugin props
 
-| prop              | type                      | description                                                                                                                                   |
-| ----------------- | ------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------- |
-| `context` | `ResourceContext`         | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods (optional)                                 |
-| `resourceData`    | `ResourceData`            | Pre-resolved resource data. When provided, the router will not request resources on mount (optional)                                          |
-| `timeout`    | `number`            | `timout` is used to prevent slow APIs from causing long renders on the server, If a route resource does not return within the specified time then its data and promise will be set to null.(optional)                                          |
-
+| prop           | type              | description                                                                                                                                                                                           |
+| -------------- | ----------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `context`      | `ResourceContext` | Custom contextual data that will be provided to all your resources' `getKey` and `getData` methods (optional)                                                                                         |
+| `resourceData` | `ResourceData`    | Pre-resolved resource data. When provided, the router will not request resources on mount (optional)                                                                                                  |
+| `timeout`      | `number`          | `timout` is used to prevent slow APIs from causing long renders on the server, If a route resource does not return within the specified time then its data and promise will be set to null.(optional) |
 
 ## MemoryRouter
 
@@ -133,6 +136,7 @@ export const LinkExample = ({ href = '/' }) => {
 | `params`   | `{ [key]: string }`                     | Used with `to` to generate correct path url                                |
 | `query`    | `{ [key]: string }`                     | Used with `to` to generate correct query string url                        |
 | `prefetch` | `false` or `hover` or `mount`           | Used to start prefetching router resources                                 |
+| `state`    | `unknown`                               | Allows you to pass state via location                                      |
 
 ## Redirect
 
@@ -254,10 +258,10 @@ Actions that communicate with the router's routing functionality are exposed saf
 By using either of these you will gain access to the following actions
 
 | prop            | type       | arguments                                                | description                                                                                           |
-| --------------- | ---------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- |
-| `push`          | `function` | `path: Href | Location, state?: any`                     | Calls `history.push` with the supplied args                                                           |
+| --------------- | ---------- | -------------------------------------------------------- | ----------------------------------------------------------------------------------------------------- | ---------------------------------------------- |
+| `push`          | `function` | `path: Href                                              | Location, state?: any`                                                                                | Calls `history.push` with the supplied args    |
 | `pushTo`        | `function` | `route: Route, attributes?: { params?: {}, query?: {} }` | Calls `history.push` generating the path from supplied route and attributes                           |
-| `replace`       | `function` | `path: Href | Location, state?: any`                     | Calls `history.replace` with the supplied args                                                        |
+| `replace`       | `function` | `path: Href                                              | Location, state?: any`                                                                                | Calls `history.replace` with the supplied args |
 | `replaceTo`     | `function` | `route: Route, attributes?: { params?: {}, query?: {} }` | Calls `history.replace` generating the path from supplied route and attributes                        |
 | `goBack`        | `function` |                                                          | Goes to the previous route in history                                                                 |
 | `goForward`     | `function` |                                                          | Goes to the next route in history                                                                     |
