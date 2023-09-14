@@ -12,7 +12,8 @@ import { FeedRefresher } from './FeedRefresher';
 import { FeedClearance } from './FeedCleaner';
 
 export const Feed = () => {
-  const { data, loading, error, update, refresh, clear } = useResource(feedResource);
+  const { data, loading, error, update, refresh, clear } =
+    useResource(feedResource);
 
   if (error) {
     return <Error error={error} />;
@@ -48,9 +49,10 @@ As well as returning actions that act on the resource (i.e. update and refresh),
 
 Where `-prev-` indicates the field will remain unchanged from any previous state, possibly the inital state.
 
-It is important to note 
-* The timeout state is essentially a hung loading state, with the difference that `promise = null` and `error != null`. Developers should give priority to `loading` when deciding between loading or error states for their components. Promises/errors should only ever be thrown on the client.
-* The `promise` reflects the last operation, either async or explicit update. Update will clear `error`, set `data`. It will also set a `promise` consistent with that `data` so long as no async is `loading`. When `loading` the `promise` will always reflect the future `data` or `error` from the pending async. 
+It is important to note
+
+- The timeout state is essentially a hung loading state, with the difference that `promise = null` and `error != null`. Developers should give priority to `loading` when deciding between loading or error states for their components. Promises/errors should only ever be thrown on the client.
+- The `promise` reflects the last operation, either async or explicit update. Update will clear `error`, set `data`. It will also set a `promise` consistent with that `data` so long as no async is `loading`. When `loading` the `promise` will always reflect the future `data` or `error` from the pending async.
 
 Additionaly `useResource` accepts additional arguments to customise behaviour, like `routerContext`.
 Check out [this section](../resources/usage.md) for more details on how to use the `useResource` hook.
@@ -67,6 +69,40 @@ export const MyRouteComponent = () => {
 
   return (
     <MyComponent location={routerState.location} push={routerActions.push} />
+  );
+};
+```
+
+You can also use the `location` inside the `routerState` to access state passed via a `Link` or `push` from `routerActions`.
+
+```js
+const StartPage = () => {
+  const [routerState, routerActions] = useRouter();
+
+  const handleButtonClick = () => {
+    const url = '/destination';
+    const state = { referrer: 'StartPage' };
+    routerActions.push(url, state);
+  };
+
+  return (
+    <div>
+      <h1>Welcome to the Start Page</h1>
+      <button onClick={handleButtonClick}>Go to Destination</button>
+    </div>
+  );
+};
+
+const DestinationPage = () => {
+  const [routerState] = useRouter();
+
+  const referrer = routerState.location?.state?.referrer;
+
+  return (
+    <div>
+      <h1>Welcome to the Destination Page</h1>
+      {referrer && <p>You came from the {referrer}!</p>}
+    </div>
   );
 };
 ```

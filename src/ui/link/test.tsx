@@ -115,7 +115,7 @@ describe('<Link />', () => {
     component.simulate('click', baseClickEvent);
 
     expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-    expect(HistoryMock.push).toHaveBeenCalledWith(newPath);
+    expect(HistoryMock.push).toHaveBeenCalledWith(newPath, undefined);
   });
 
   it('should call `event.preventDefault() on navigation`', () => {
@@ -149,7 +149,7 @@ describe('<Link />', () => {
     component.simulate('click', baseClickEvent);
 
     expect(HistoryMock.replace).toHaveBeenCalledTimes(1);
-    expect(HistoryMock.replace).toHaveBeenCalledWith(newPath);
+    expect(HistoryMock.replace).toHaveBeenCalledWith(newPath, undefined);
   });
 
   describe('preventing navigation', () => {
@@ -237,11 +237,14 @@ describe('<Link />', () => {
       component.simulate('click', baseClickEvent);
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-      expect(HistoryMock.push).toHaveBeenCalledWith({
-        hash: '',
-        pathname: '/base/my-page/1',
-        search: '?foo=bar',
-      });
+      expect(HistoryMock.push).toHaveBeenCalledWith(
+        {
+          hash: '',
+          pathname: '/base/my-page/1',
+          search: '?foo=bar',
+        },
+        undefined
+      );
     });
 
     it('should handle async route imports', async () => {
@@ -259,11 +262,14 @@ describe('<Link />', () => {
         '<a href="/my-page/1?foo=bar" target="_self">my link</a>'
       );
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-      expect(HistoryMock.push).toHaveBeenCalledWith({
-        hash: '',
-        pathname: '/my-page/1',
-        search: '?foo=bar',
-      });
+      expect(HistoryMock.push).toHaveBeenCalledWith(
+        {
+          hash: '',
+          pathname: '/my-page/1',
+          search: '?foo=bar',
+        },
+        undefined
+      );
     });
 
     it('should error if required route parameters are missing', () => {
@@ -287,7 +293,7 @@ describe('<Link />', () => {
       });
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
-      expect(HistoryMock.push).toHaveBeenCalledWith(newPath);
+      expect(HistoryMock.push).toHaveBeenCalledWith(newPath, undefined);
     });
 
     it('should not navigate for any other key', () => {

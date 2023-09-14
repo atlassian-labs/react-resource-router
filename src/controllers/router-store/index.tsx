@@ -174,13 +174,13 @@ const actions: AllRouterActions = {
     },
 
   push:
-    path =>
+    (path, state) =>
     ({ getState }) => {
       const { history, basePath } = getState();
       if (isExternalAbsolutePath(path)) {
         window.location.assign(path as string);
       } else {
-        history.push(getRelativePath(path, basePath));
+        history.push(getRelativePath(path, basePath), state);
       }
     },
 
@@ -198,17 +198,17 @@ const actions: AllRouterActions = {
         attributes.query,
         basePath
       );
-      history.push(location as any);
+      history.push(location as any, attributes?.state);
     },
 
   replace:
-    path =>
+    (path, state) =>
     ({ getState }) => {
       const { history, basePath } = getState();
       if (isExternalAbsolutePath(path)) {
         window.location.replace(path as string);
       } else {
-        history.replace(getRelativePath(path, basePath) as any);
+        history.replace(getRelativePath(path, basePath) as any, state);
       }
     },
 
@@ -226,7 +226,7 @@ const actions: AllRouterActions = {
         attributes.query,
         basePath
       );
-      history.replace(location as any);
+      history.replace(location as any, attributes?.state);
     },
 
   goBack:

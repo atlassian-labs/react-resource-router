@@ -16,6 +16,7 @@ export type Location = {
   pathname: string;
   search: string;
   hash: string;
+  state?: unknown;
 };
 
 export type BrowserHistory = (
@@ -23,8 +24,8 @@ export type BrowserHistory = (
   | Omit<History5, 'location' | 'go' | 'createHref' | 'push' | 'replace'>
 ) & {
   location: Location;
-  push: (path: string | Location) => void;
-  replace: (path: string | Location) => void;
+  push: (path: string | Location, state?: unknown) => void;
+  replace: (path: string | Location, state?: unknown) => void;
 };
 
 export type History = BrowserHistory;
@@ -135,6 +136,7 @@ export type LinkProps = AnchorHTMLAttributes<HTMLAnchorElement> & {
   params?: MatchParams;
   query?: Query;
   prefetch?: false | 'hover' | 'mount';
+  state?: unknown;
 };
 
 export type HistoryBlocker = (

@@ -78,14 +78,14 @@ describe('<Redirect />', () => {
     const to = '/cool-page';
 
     expect(() => mountInRouter({ to })).not.toThrow();
-    expect(MockHistory.push).toHaveBeenCalledWith(to);
+    expect(MockHistory.push).toHaveBeenCalledWith(to, undefined);
   });
 
   it("doesn't break / throw when rendered with location `to` created from string", () => {
     const to = '/go-out?search=foo#hash';
 
     expect(() => mountInRouter({ to })).not.toThrow();
-    expect(MockHistory.push).toHaveBeenCalledWith(to);
+    expect(MockHistory.push).toHaveBeenCalledWith(to, undefined);
   });
 
   it.each([
@@ -121,7 +121,7 @@ describe('<Redirect />', () => {
     "doesn't break / throw when rendered with `to` as a Route object, %s",
     (_, to, params, query, expected) => {
       expect(() => mountInRouter({ to, params, query })).not.toThrow();
-      expect(MockHistory.push).toHaveBeenCalledWith(expected);
+      expect(MockHistory.push).toHaveBeenCalledWith(expected, undefined);
     }
   );
 
@@ -132,7 +132,7 @@ describe('<Redirect />', () => {
     'should navigate to given route %s correctly',
     (_, to, params, query, expected) => {
       mountInRouter({ to, query, params, push: false });
-      expect(MockHistory.replace).toHaveBeenCalledWith(expected);
+      expect(MockHistory.replace).toHaveBeenCalledWith(expected, undefined);
       expect(MockHistory.push).not.toHaveBeenCalled();
     }
   );
@@ -168,7 +168,7 @@ describe('<Redirect />', () => {
     'should use push history correctly with given route %s',
     (_, to, params, expected) => {
       mountInRouter({ to, params, push: true });
-      expect(MockHistory.push).toHaveBeenCalledWith(expected);
+      expect(MockHistory.push).toHaveBeenCalledWith(expected, undefined);
       expect(MockHistory.replace).not.toHaveBeenCalled();
     }
   );

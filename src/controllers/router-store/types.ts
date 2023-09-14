@@ -55,6 +55,7 @@ export type HistoryUpdateType = 'push' | 'replace';
 type ToAttributes = {
   query?: Query;
   params?: MatchParams;
+  state?: unknown;
 };
 
 type PrivateRouterActions = {
@@ -85,9 +86,9 @@ type PrivateRouterActions = {
 };
 
 type PublicRouterActions = {
-  push: (path: Href | Location, state?: any) => RouterAction;
+  push: (path: Href | Location, state?: unknown) => RouterAction;
   pushTo: (route: Route, attributes?: ToAttributes) => RouterAction;
-  replace: (path: Href | Location) => RouterAction;
+  replace: (path: Href | Location, state?: unknown) => RouterAction;
   replaceTo: (route: Route, attributes?: ToAttributes) => RouterAction;
   goBack: () => RouterAction;
   goForward: () => RouterAction;

@@ -175,7 +175,11 @@ describe('RouterStore', () => {
 
           actions.push('/pages/1');
 
-          expect(history.push).toBeCalledWith(`${basePath ?? ''}/pages/1`);
+          expect(history.push).toBeCalledWith(
+            `${basePath ?? ''}/pages/1`,
+            undefined
+          );
+
           expect(getState()).toMatchObject({
             action: 'PUSH',
             route: routes[1],
@@ -188,7 +192,10 @@ describe('RouterStore', () => {
 
             actions.push(`http://localhost:3000${basePath ?? ''}/pages/1`);
 
-            expect(history.push).toBeCalledWith(`${basePath ?? ''}/pages/1`);
+            expect(history.push).toBeCalledWith(
+              `${basePath ?? ''}/pages/1`,
+              undefined
+            );
             expect(getState()).toMatchObject({
               action: 'PUSH',
               route: routes[1],
@@ -200,7 +207,7 @@ describe('RouterStore', () => {
 
             actions.push(`http://localhost:3000/pages/1`);
 
-            expect(history.push).toBeCalledWith('/pages/1');
+            expect(history.push).toBeCalledWith('/pages/1', undefined);
             expect(getState()).toMatchObject({
               action: 'PUSH',
               route: routes[1],
@@ -213,7 +220,7 @@ describe('RouterStore', () => {
 
             actions.push(nextLocation);
 
-            expect(history.push).toBeCalledWith(nextLocation);
+            expect(history.push).toBeCalledWith(nextLocation, undefined);
             expect(getState()).toMatchObject({
               action: 'PUSH',
               route: routes[1],
@@ -350,6 +357,27 @@ describe('RouterStore', () => {
 
         expect(assign).toBeCalledWith('http://example.com');
       });
+
+      it('passes state when passed to push', () => {
+        const basePath = '/base-path';
+        const { actions, getState, history } = renderRouterContainer({
+          basePath,
+        });
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.push('/pages/1', pushedState);
+
+        expect(history.push).toBeCalledWith(
+          `${basePath ?? ''}/pages/1`,
+          pushedState
+        );
+
+        expect(getState()).toMatchObject({
+          action: 'PUSH',
+          route: routes[1],
+        });
+        expect(getState().location?.state).toMatchObject(pushedState);
+      });
     });
 
     describe('pushTo()', () => {
@@ -359,16 +387,46 @@ describe('RouterStore', () => {
 
         actions.pushTo(route, { params: { id: '1' }, query: { uid: '1' } });
 
-        expect(history.push).toBeCalledWith({
-          hash: '',
-          pathname: '/pages/1',
-          search: '?uid=1',
-        });
+        expect(history.push).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          undefined
+        );
 
         expect(getState()).toMatchObject({
           action: 'PUSH',
           route,
         });
+      });
+
+      it('passes state when passed to pushTo', () => {
+        const route = routes[1];
+        const { actions, getState, history } = renderRouterContainer();
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.pushTo(route, {
+          params: { id: '1' },
+          query: { uid: '1' },
+          state: pushedState,
+        });
+
+        expect(history.push).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          pushedState
+        );
+
+        expect(getState()).toMatchObject({
+          action: 'PUSH',
+          route,
+        });
+        expect(getState().location?.state).toMatchObject(pushedState);
       });
     });
 
@@ -381,7 +439,10 @@ describe('RouterStore', () => {
 
           actions.replace('/pages/1');
 
-          expect(history.replace).toBeCalledWith(`${basePath ?? ''}/pages/1`);
+          expect(history.replace).toBeCalledWith(
+            `${basePath ?? ''}/pages/1`,
+            undefined
+          );
           expect(getState()).toMatchObject({
             action: 'REPLACE',
             route: routes[1],
@@ -395,7 +456,7 @@ describe('RouterStore', () => {
 
         actions.replace(path);
 
-        expect(history.replace).toBeCalledWith('/pages/1');
+        expect(history.replace).toBeCalledWith('/pages/1', undefined);
         expect(getState()).toMatchObject({
           action: 'REPLACE',
           route: routes[1],
@@ -410,6 +471,21 @@ describe('RouterStore', () => {
 
         expect(replace).toBeCalledWith('http://example.com');
       });
+
+      it('it passes state to replace', () => {
+        const path = 'http://localhost:3000/pages/1';
+        const { actions, getState, history } = renderRouterContainer();
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.replace(path, pushedState);
+
+        expect(history.replace).toBeCalledWith('/pages/1', pushedState);
+        expect(getState()).toMatchObject({
+          action: 'REPLACE',
+          route: routes[1],
+        });
+        expect(getState().location?.state).toMatchObject(pushedState);
+      });
     });
 
     describe('replaceTo()', () => {
@@ -419,16 +495,46 @@ describe('RouterStore', () => {
 
         actions.replaceTo(route, { params: { id: '1' }, query: { uid: '1' } });
 
-        expect(history.replace).toBeCalledWith({
-          hash: '',
-          pathname: '/pages/1',
-          search: '?uid=1',
-        });
+        expect(history.replace).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          undefined
+        );
 
         expect(getState()).toMatchObject({
           action: 'REPLACE',
           route,
         });
+      });
+
+      it('it passes state to replaceTo', () => {
+        const route = routes[1];
+        const { actions, getState, history } = renderRouterContainer();
+
+        const pushedState = { ids: [1, 2, 3, 4, 5] };
+        actions.replaceTo(route, {
+          params: { id: '1' },
+          query: { uid: '1' },
+          state: pushedState,
+        });
+
+        expect(history.replace).toBeCalledWith(
+          {
+            hash: '',
+            pathname: '/pages/1',
+            search: '?uid=1',
+          },
+          pushedState
+        );
+
+        expect(getState()).toMatchObject({
+          action: 'REPLACE',
+          route,
+        });
+        expect(getState().location?.state).toMatchObject(pushedState);
       });
     });
 

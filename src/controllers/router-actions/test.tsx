@@ -98,8 +98,8 @@ describe('<RouterActions />', () => {
       </Router>
     );
 
-    expect(HistoryMock.push).toBeCalledWith('push');
-    expect(HistoryMock.replace).toBeCalledWith('replace');
+    expect(HistoryMock.push).toBeCalledWith('push', undefined);
+    expect(HistoryMock.replace).toBeCalledWith('replace', undefined);
     expect(HistoryMock.goBack).toBeCalled();
     expect(HistoryMock.goForward).toBeCalled();
     expect(HistoryMock.block).toHaveBeenCalledWith(blockCallback);
