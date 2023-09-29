@@ -91,9 +91,9 @@ Here, we are assuming that your server has returned HTML with a script tag that 
 
 ## Adding a 404 Route
 
-The router will render nothing if no routes match the current location. This is useful if you want to render a 404 page. To do this, simply add a route with an empty string `""` to your routes array.
+The router will render nothing if no routes match the current location. This is useful if you want to render a 404 page. To do this, simply add a route with an empty string `""` to your routes array. You must ensure the 404 route is that last one in your Routes array otherwise incorrect or no routes can render.
 
-**NOTE:** You can not include the path property for the 404 route when using JS. However when using TS you must include the path property and set it to an empty string.
+**NOTE:** You can skip the path property for the 404 route when using JS. However when using TS you must include the path property and set it to an empty string.
 
 ```js
 export const routes = [
