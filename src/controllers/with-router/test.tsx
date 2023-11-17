@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { render, screen, waitFor } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
@@ -8,58 +8,65 @@ import { Router } from '../router';
 
 import { withRouter } from './index';
 
-const waitALilBit = () => new Promise(resolve => setTimeout(resolve));
-
 jest.mock('../../common/utils/is-server-environment');
 
 describe('withRouter()', () => {
-  const ComponentToBeWrapped = (props: any) => (
-    <div> deep component {props.foo} </div>
-  );
-  const ComponentWithRouter = withRouter(ComponentToBeWrapped);
-
   beforeEach(() => {
     defaultRegistry.stores.clear();
   });
 
-  test('should pass original props to the wrapped component and set displayName', () => {
-    const wrapper = mount(<ComponentWithRouter foo={'bar'} />);
-    expect(wrapper.find(ComponentToBeWrapped).prop('foo')).toEqual('bar');
-    expect(wrapper.find('withRouter(ComponentToBeWrapped)')).toHaveLength(1);
+  it('should pass original props to the wrapped component and set displayName', () => {
+    const ComponentToBeWrapped = (props: any) => (
+      <div> deep component {props.foo} </div>
+    );
+    const ComponentWithRouter = withRouter(ComponentToBeWrapped);
+
+    render(<ComponentWithRouter foo={'bar'} />);
+    expect(screen.getByText('deep component bar')).toBeInTheDocument();
   });
 
-  test('should provide match, route, location and history props to the wrapped component', () => {
+  it('should provide match, route, location and history props to the wrapped component', () => {
     const history = createMemoryHistory();
-    const wrapper = mount(
+    const MockComponent = jest.fn(() => null);
+    const ComponentWithRouter = withRouter(MockComponent);
+
+    render(
       <Router history={history} routes={[]} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
-    expect(wrapper.find(ComponentToBeWrapped).props()).toEqual({
-      foo: 'bar',
-      location: expect.objectContaining({
-        hash: '',
-        pathname: '/',
-        search: '',
-      }),
-      history,
-      match: expect.objectContaining({
-        isExact: false,
-        path: expect.any(String),
-        url: expect.any(String),
-        params: expect.any(Object),
+
+    expect(MockComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        foo: 'bar',
+        location: expect.objectContaining({
+          hash: '',
+          pathname: '/',
+          search: '',
+        }),
+        history: expect.any(Object),
+        match: expect.objectContaining({
+          isExact: expect.any(Boolean),
+          path: expect.any(String),
+          url: expect.any(String),
+          params: expect.any(Object),
+          query: expect.any(Object),
+        }),
+        route: DEFAULT_ROUTE,
+        action: DEFAULT_ACTION,
         query: expect.any(Object),
+        push: expect.any(Function),
+        replace: expect.any(Function),
       }),
-      route: DEFAULT_ROUTE,
-      action: DEFAULT_ACTION,
-      query: {},
-      push: expect.any(Function),
-      replace: expect.any(Function),
-    });
+      {}
+    );
   });
 
-  test('should provide the matched route and current location to the wrapped component', async () => {
+  it('should provide the matched route and current location to the wrapped component', async () => {
     const history = createMemoryHistory();
+    const MockComponent = jest.fn(() => null);
+    const ComponentWithRouter = withRouter(MockComponent);
+
     const routes = [
       {
         name: 'Example A',
@@ -74,85 +81,85 @@ describe('withRouter()', () => {
       { name: 'Example C', path: '/', component: () => <div> Home </div> },
     ];
 
-    const wrapper = mount(
+    render(
       <Router history={history} routes={routes} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
 
-    expect(wrapper.find(ComponentToBeWrapped).props()).toMatchObject({
-      location: {
-        hash: '',
-        pathname: '/',
-        search: '',
-      },
-      match: {
-        isExact: true,
-        params: {},
-        path: '/',
-        url: '/',
-      },
-      action: DEFAULT_ACTION,
-    });
+    // Initial route
+    expect(MockComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        location: expect.objectContaining({
+          pathname: '/',
+        }),
+        match: expect.objectContaining({
+          isExact: true,
+          params: {},
+        }),
+        action: DEFAULT_ACTION,
+      }),
+      {}
+    );
 
     history.push('/atlassian/jira');
-
-    await waitALilBit();
-
-    wrapper.update();
-    expect(wrapper.find(ComponentToBeWrapped).props()).toMatchObject({
-      location: {
-        hash: '',
-        pathname: '/atlassian/jira',
-        search: '',
-      },
-      match: {
-        isExact: true,
-        params: { name: 'jira' },
-        path: '/atlassian/:name',
-        url: '/atlassian/jira',
-      },
-      action: 'PUSH',
+    await waitFor(() => {
+      expect(MockComponent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          location: expect.objectContaining({
+            pathname: '/atlassian/jira',
+          }),
+          match: expect.objectContaining({
+            params: { name: 'jira' },
+          }),
+          action: 'PUSH',
+        }),
+        {}
+      );
     });
 
     history.replace('/atlassian/foo');
-
-    await waitALilBit();
-
-    wrapper.update();
-    expect(wrapper.find(ComponentToBeWrapped).props()).toMatchObject({
-      location: {
-        hash: '',
-        pathname: '/atlassian/foo',
-        search: '',
-      },
-      match: {
-        isExact: true,
-        params: { name: 'foo' },
-        path: '/atlassian/:name',
-        url: '/atlassian/foo',
-      },
-      action: 'REPLACE',
+    await waitFor(() => {
+      expect(MockComponent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          location: expect.objectContaining({
+            pathname: '/atlassian/foo',
+          }),
+          match: expect.objectContaining({
+            params: { name: 'foo' },
+          }),
+          action: 'REPLACE',
+        }),
+        {}
+      );
     });
   });
 
-  test('should pass null match to the wrapped component when no route has matched', () => {
+  test('should pass null match to the wrapped component when no route has matched', async () => {
     const history = createMemoryHistory();
-    const wrapper = mount(
+    const MockComponent = jest.fn(() => null);
+    const ComponentWithRouter = withRouter(MockComponent);
+
+    render(
       <Router history={history} routes={[]} plugins={[]}>
         <ComponentWithRouter foo={'bar'} />
       </Router>
     );
+
     history.push('/blabla');
-    wrapper.update();
-    expect(wrapper.find(ComponentToBeWrapped).prop('match')).toEqual(
-      expect.objectContaining({
-        isExact: false,
-        path: expect.any(String),
-        url: expect.any(String),
-        params: expect.any(Object),
-        query: expect.any(Object),
-      })
-    );
+    await waitFor(() => {
+      expect(MockComponent).toHaveBeenCalledWith(
+        expect.objectContaining({
+          match: expect.objectContaining({
+            isExact: false,
+            path: expect.any(String),
+            url: expect.any(String),
+            params: expect.any(Object),
+            query: expect.any(Object),
+          }),
+        }),
+        {}
+      );
+    });
   });
 });

@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
@@ -41,7 +41,7 @@ const mockRoute: Route = {
 
 describe('<Redirect />', () => {
   const mountInRouter = (args: Partial<RedirectProps>) =>
-    mount(
+    render(
       // @ts-expect-error
       <Router history={MockHistory} routes={[]}>
         <Redirect {...defaultArgs} {...args} />

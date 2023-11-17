@@ -1,6 +1,6 @@
-import { mount } from 'enzyme';
+import { render, act, screen } from '@testing-library/react';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
+import '@testing-library/jest-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../index';
@@ -63,25 +63,23 @@ describe('<ResourceSubscriber />', () => {
       },
     });
 
-    const Component = () => (
+    render(
       <ResourceSubscriber resource={mockResource}>
         {({ data, loading }) => {
           if (loading) {
-            return <div id="loading" />;
+            return <div data-testid="loading" />;
           }
 
           if (data) {
-            return <div id="data" />;
+            return <div data-testid="data" />;
           }
 
           return null;
         }}
       </ResourceSubscriber>
     );
-    const wrapper = mount(<Component />);
-
-    expect(wrapper.find('#loading')).toHaveLength(1);
-    expect(wrapper.find('#data')).toHaveLength(0);
+    expect(screen.getByTestId('loading')).toBeInTheDocument();
+    expect(screen.queryByTestId('data')).not.toBeInTheDocument();
   });
 
   it('should get the slice of data for the type and key', async () => {
@@ -98,15 +96,15 @@ describe('<ResourceSubscriber />', () => {
       },
     });
 
-    const Component = () => (
+    render(
       <ResourceSubscriber resource={mockResource}>
         {({ data, loading }) => {
           if (loading) {
-            return <div id="loading" />;
+            return <div data-testid="loading" />;
           }
 
           if (data) {
-            return <div id="data" />;
+            return <div data-testid="data" />;
           }
 
           return null;
@@ -114,10 +112,8 @@ describe('<ResourceSubscriber />', () => {
       </ResourceSubscriber>
     );
 
-    const wrapper = mount(<Component />);
-
-    expect(wrapper.find('#loading')).toHaveLength(0);
-    expect(wrapper.find('#data')).toHaveLength(1);
+    expect(screen.getByTestId('data')).toBeInTheDocument();
+    expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
   });
 
   describe('update action', () => {
@@ -131,7 +127,7 @@ describe('<ResourceSubscriber />', () => {
           },
         },
       });
-      mount(
+      render(
         <ResourceSubscriber resource={mockResource}>
           {({ data, loading, update }) => {
             subscriberUpdate = update;
@@ -152,7 +148,6 @@ describe('<ResourceSubscriber />', () => {
       act(() => subscriberUpdate(() => newData));
 
       const storeData = storeState.getState();
-
       expect(storeData.data[type][key]).toEqual({
         ...mockSlice,
         data: newData,
@@ -169,7 +164,7 @@ describe('<ResourceSubscriber />', () => {
           },
         },
       });
-      mount(
+      render(
         <ResourceSubscriber resource={mockResource}>
           {({ data, loading, update }) => {
             subscriberUpdate = update;
@@ -204,7 +199,7 @@ describe('<ResourceSubscriber />', () => {
         .spyOn(actions, 'getResourceFromRemote')
         .mockImplementation(() => {});
       let subscriberRefresh: any;
-      mount(
+      render(
         <ResourceSubscriber resource={mockResource}>
           {({ data, loading, refresh }) => {
             subscriberRefresh = refresh;

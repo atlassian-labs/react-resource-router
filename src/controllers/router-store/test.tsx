@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import * as history4 from 'history';
 import * as history5 from 'history-5';
 import React from 'react';
@@ -50,7 +50,7 @@ describe('RouterStore', () => {
 
       const plugins = props.plugins || [];
 
-      mount(
+      render(
         <RouterContainer
           history={history}
           isGlobal
@@ -548,12 +548,12 @@ describe('RouterStore', () => {
         const RouteName = () => <>{useRouteName()}</>;
 
         const route = {
-          component: () => null,
+          component: () => <p>home</p>,
           name: 'home',
           path: '',
         };
 
-        const wrapper = mount(
+        render(
           <RouterContainer
             history={createMemoryHistory()}
             plugins={[]}
@@ -567,7 +567,7 @@ describe('RouterStore', () => {
           expect.objectContaining({ route }),
           undefined
         );
-        expect(wrapper.html()).toEqual('home');
+        expect(screen.getByText('home')).toBeInTheDocument();
       });
 
       it('should pass through single hook argument to selector', () => {
@@ -582,12 +582,12 @@ describe('RouterStore', () => {
         );
 
         const route = {
-          component: () => null,
+          component: () => <p>home</p>,
           name: 'home',
           path: '',
         };
 
-        const wrapper = mount(
+        render(
           <RouterContainer
             history={createMemoryHistory()}
             plugins={[]}
@@ -601,7 +601,7 @@ describe('RouterStore', () => {
           expect.objectContaining({ route }),
           'bar'
         );
-        expect(wrapper.html()).toEqual('home');
+        expect(screen.getByText('home')).toBeInTheDocument();
       });
     });
   });

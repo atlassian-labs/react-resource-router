@@ -1,4 +1,4 @@
-import { shallow } from 'enzyme';
+import { render } from '@testing-library/react';
 import React from 'react';
 
 import * as isServerEnvironment from '../../common/utils/is-server-environment';
@@ -27,7 +27,7 @@ describe('<RouterSubscriber />', () => {
       // @ts-expect-error
       .mockImplementation(() => [state, { listen }]);
 
-    shallow(<RouterSubscriber>{() => <div />}</RouterSubscriber>);
+    render(<RouterSubscriber>{() => <div />}</RouterSubscriber>);
 
     return { listen };
   }

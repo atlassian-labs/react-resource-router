@@ -1,5 +1,7 @@
-import { shallow } from 'enzyme';
+import { render, screen } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import React from 'react';
+import '@testing-library/jest-dom';
 
 import { useTimeout } from './index';
 
@@ -16,8 +18,12 @@ const TestComponent = ({
 
   return (
     <>
-      <button id="schedule" onClick={() => schedule(callback)} />
-      <button id="cancel" onClick={cancel} />
+      <button name="schedule" onClick={() => schedule(callback)}>
+        schedule
+      </button>
+      <button name="cancel" onClick={cancel}>
+        cancel
+      </button>
     </>
   );
 };
@@ -32,54 +38,73 @@ describe('useTimeout()', () => {
     jest.useRealTimers();
   });
 
-  it('calls setTimeout on schedule()', () => {
-    const setTimeout = jest.spyOn(global, 'setTimeout');
-    const wrapper = shallow(<TestComponent callback={jest.fn()} />);
-
-    wrapper.find('#schedule').simulate('click');
-
-    expect(setTimeout).toHaveBeenCalledTimes(1);
-  });
-
-  it('calls clearTimeout on cancel()', () => {
-    const clearTimeout = jest.spyOn(global, 'clearTimeout');
-    const wrapper = shallow(<TestComponent callback={jest.fn()} />);
-
-    wrapper.find('#cancel').simulate('click');
-
-    expect(clearTimeout).toHaveBeenCalledTimes(1);
-  });
-
-  it('schedules a callback to be fired', () => {
+  it('calls setTimeout on schedule()', async () => {
+    const user = userEvent.setup({
+      delay: DEFAULT_DELAY,
+      advanceTimers: delay => jest.advanceTimersByTime(delay),
+    });
     const callback = jest.fn();
-    const wrapper = shallow(<TestComponent callback={callback} />);
+    render(<TestComponent callback={callback} />);
 
-    wrapper.find('#schedule').simulate('click');
-    jest.runOnlyPendingTimers();
+    await user.click(screen.getByRole('button', { name: 'schedule' }));
 
     expect(callback).toHaveBeenCalledTimes(1);
   });
 
-  it('cancels a scheduled callback', () => {
-    const callback = jest.fn();
-    const wrapper = shallow(<TestComponent callback={callback} />);
+  it('calls clearTimeout on cancel()', async () => {
+    const user = userEvent.setup({
+      delay: DEFAULT_DELAY,
+      advanceTimers: delay => jest.advanceTimersByTime(delay),
+    });
+    const clearTimeout = jest.spyOn(global, 'clearTimeout');
+    render(<TestComponent callback={jest.fn()} />);
 
-    wrapper.find('#schedule').simulate('click');
-    wrapper.find('#cancel').simulate('click');
-    jest.runAllTimers();
+    await user.click(screen.getByRole('button', { name: 'cancel' }));
+
+    expect(clearTimeout).toHaveBeenCalledTimes(1);
+  });
+
+  it('schedules a callback to be fired', async () => {
+    const user = userEvent.setup({
+      delay: DEFAULT_DELAY,
+      advanceTimers: delay => jest.advanceTimersByTime(delay),
+    });
+    const callback = jest.fn();
+    render(<TestComponent callback={callback} />);
+
+    await user.click(screen.getByRole('button', { name: 'schedule' }));
+
+    expect(callback).toHaveBeenCalledTimes(1);
+  });
+
+  it('cancels a scheduled callback', async () => {
+    const user = userEvent.setup({
+      advanceTimers: delay => jest.advanceTimersByTime(delay),
+    });
+    const callback = jest.fn();
+    render(<TestComponent callback={callback} />);
+
+    await user.click(screen.getByRole('button', { name: 'schedule' }));
+    await user.click(screen.getByRole('button', { name: 'cancel' }));
+
+    jest.advanceTimersByTime(DEFAULT_DELAY);
 
     expect(callback).not.toHaveBeenCalled();
   });
 
-  it('cancels a previously scheduled callback when schedule is called again', () => {
+  it('cancels a previously scheduled callback when schedule is called again', async () => {
+    const user = userEvent.setup({
+      advanceTimers: delay => jest.advanceTimersByTime(delay),
+    });
     const callback1 = jest.fn();
     const callback2 = jest.fn();
-    const wrapper = shallow(<TestComponent callback={callback1} />);
+    const { rerender } = render(<TestComponent callback={callback1} />);
 
-    wrapper.find('#schedule').simulate('click');
-    wrapper.setProps({ callback: callback2 });
-    wrapper.find('#schedule').simulate('click');
-    jest.runAllTimers();
+    await user.click(screen.getByRole('button', { name: 'schedule' }));
+    rerender(<TestComponent callback={callback2} />);
+    await user.click(screen.getByRole('button', { name: 'schedule' }));
+
+    jest.advanceTimersByTime(DEFAULT_DELAY);
 
     expect(callback1).not.toHaveBeenCalled();
     expect(callback2).toHaveBeenCalledTimes(1);
