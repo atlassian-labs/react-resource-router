@@ -45,8 +45,5 @@ describe('<Route />', () => {
     // Check if the mock component is rendered
     const component = screen.getByText('My component');
     expect(component).toBeInTheDocument();
-
-    // Optionally, check for location properties if they are passed as props
-    // This might require adjusting your MockComponent to display or use these props
   });
 });
