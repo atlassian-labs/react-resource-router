@@ -86,6 +86,7 @@ describe('<Router />', () => {
         </RemountingParent>
       );
 
+      // first listener is created on mount
       expect(listen).toHaveBeenCalledTimes(1);
 
       listen.mockReturnValue(unlisten2);
