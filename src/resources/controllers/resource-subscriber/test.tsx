@@ -100,11 +100,11 @@ describe('<ResourceSubscriber />', () => {
       <ResourceSubscriber resource={mockResource}>
         {({ data, loading }) => {
           if (loading) {
-            return <div data-testid="loading" />;
+            return <div>loading</div>;
           }
 
           if (data) {
-            return <div data-testid="data" />;
+            return <div>data</div>;
           }
 
           return null;
@@ -112,8 +112,8 @@ describe('<ResourceSubscriber />', () => {
       </ResourceSubscriber>
     );
 
-    expect(screen.getByTestId('data')).toBeInTheDocument();
-    expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+    expect(screen.getByText('data')).toBeInTheDocument();
+    expect(screen.queryByText('loading')).not.toBeInTheDocument();
   });
 
   describe('update action', () => {
