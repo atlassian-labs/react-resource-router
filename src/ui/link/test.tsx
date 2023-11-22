@@ -60,6 +60,14 @@ describe('<Link />', () => {
     expect(anchor).toHaveAttribute('href', defaultProps.href);
   });
 
+  it('should support the `to` prop', () => {
+    renderInRouter('my link', {
+      to: newPath,
+    });
+    const linkElement = screen.getByRole('link', { name: 'my link' });
+    expect(linkElement).toHaveAttribute('href', newPath);
+  });
+
   it('should pass props to the child element', () => {
     renderInRouter('my link', {
       ...defaultProps,
