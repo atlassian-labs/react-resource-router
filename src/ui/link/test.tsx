@@ -1,7 +1,7 @@
 import { render, screen, act } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { userEvent } from '@testing-library/user-event';
 import React from 'react';
-import '@testing-library/jest-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { LinkProps } from '../../common/types';

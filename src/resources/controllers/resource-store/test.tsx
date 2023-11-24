@@ -1,6 +1,6 @@
 import { render, screen } from '@testing-library/react';
-import React from 'react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { BoundActions, defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../../../common/utils/is-server-environment';

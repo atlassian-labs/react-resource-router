@@ -1,4 +1,5 @@
 import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';

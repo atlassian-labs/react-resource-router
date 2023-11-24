@@ -89,8 +89,8 @@
     "@codeshift/cli": "^0.13.0",
     "@codeshift/test-utils": "^0.3.0",
     "@codeshift/utils": "^0.2.0",
-    "@testing-library/jest-dom": "^5.7.0",
-    "@testing-library/react": "^10.4.9",
+    "@testing-library/jest-dom": "^6.1.4",
+    "@testing-library/react": "^14.1.2",
     "@testing-library/user-event": "^14.5.1",
     "@types/history": "^4.7.6",
     "@types/history-5": "npm:@types/history@^5.0.0",
@@ -98,8 +98,8 @@
     "@types/jscodeshift": "^0.11.6",
     "@types/lodash.debounce": "^4.0.6",
     "@types/lodash.noop": "^3.0.6",
-    "@types/react": "^16.9.35",
-    "@types/react-dom": "^16.9.8",
+    "@types/react": "^18.2.38",
+    "@types/react-dom": "^18.2.17",
     "@types/url-parse": "^1.4.8",
     "@typescript-eslint/eslint-plugin": "^5.33.1",
     "@typescript-eslint/parser": "^5.33.1",
@@ -128,8 +128,8 @@
     "jscodeshift": "^0.13.1",
     "madge": "^5.0.1",
     "prettier": "^2.0.5",
-    "react": "^16.10.2",
-    "react-dom": "^16.10.2",
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0",
     "typescript": "^4.7.4",
     "webpack": "^4.44.1",
     "webpack-dev-server": "^4.11.1"
@@ -137,8 +137,8 @@
   "peerDependencies": {
     "@babel/runtime": "^7",
     "history": "^4 || ^5",
-    "react": "^16.8.0",
-    "react-dom": "^16.8.0"
+    "react": "^18.2.0",
+    "react-dom": "^18.2.0"
   },
   "engines": {
     "node": ">=10.0"

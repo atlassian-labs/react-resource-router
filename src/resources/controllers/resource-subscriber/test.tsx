@@ -1,6 +1,6 @@
 import { render, act, screen } from '@testing-library/react';
-import React from 'react';
 import '@testing-library/jest-dom';
+import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_MATCH, DEFAULT_ROUTE } from '../../../index';
