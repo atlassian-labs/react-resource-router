@@ -1,5 +1,6 @@
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import React from 'react';
+import '@testing-library/jest-dom';
 import { BoundActions, defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../../../common/utils/is-server-environment';
@@ -844,19 +845,19 @@ describe('resource store', () => {
           const { data, loading } = useResource(mockResource);
 
           if (loading) {
-            return <div id="loading" />;
+            return <div data-testid="loading" />;
           }
 
           if (data) {
-            return <div id="data" />;
+            return <div data-testid="data" />;
           }
 
           return null;
         };
-        const wrapper = mount(<Component />);
+        render(<Component />);
 
-        expect(wrapper.find('#loading')).toHaveLength(1);
-        expect(wrapper.find('#data')).toHaveLength(0);
+        expect(screen.getByTestId('loading')).toBeInTheDocument();
+        expect(screen.queryByTestId('data')).not.toBeInTheDocument();
       });
 
       it('should select the right resource slice out of the state', () => {
@@ -927,20 +928,20 @@ describe('resource store', () => {
           const { data, loading } = useResource(mockResource);
 
           if (loading) {
-            return <div id="loading" />;
+            return <div data-testid="loading" />;
           }
 
           if (data) {
             // @ts-ignore
-            return <div id={data.id} />;
+            return <div data-testid={data.id} />;
           }
 
           return null;
         };
-        const wrapper = mount(<Component />);
+        render(<Component />);
 
-        expect(wrapper.find('#loading')).toHaveLength(0);
-        expect(wrapper.find(`#${id}`)).toHaveLength(1);
+        expect(screen.queryByTestId('loading')).not.toBeInTheDocument();
+        expect(screen.getByTestId(id)).toBeInTheDocument();
       });
     });
 

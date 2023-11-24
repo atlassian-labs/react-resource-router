@@ -1,4 +1,4 @@
-import { render } from 'enzyme';
+import { render } from '@testing-library/react';
 import noop from 'lodash.noop';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';

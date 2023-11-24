@@ -1,4 +1,5 @@
-import { mount } from 'enzyme';
+import { render, screen, waitFor } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
 import React, { Fragment } from 'react';
 import { defaultRegistry } from 'react-sweet-state';
@@ -103,7 +104,7 @@ describe('<Router /> with resources client-side integration tests', () => {
 
     jest.useFakeTimers();
 
-    mount(
+    render(
       <Router
         history={history}
         plugins={[
@@ -160,25 +161,19 @@ describe('<Router /> with resources client-side integration tests', () => {
     function renderRouter(routes: Route[]) {
       const history = createMemoryHistory({ initialEntries: [routes[0].path] });
       const push: any = jest.spyOn(history, 'push');
-      const waitForData = () => new Promise(resolve => setTimeout(resolve));
 
-      const router = mount(
+      render(
         <Router
           history={history}
           plugins={[createResourcesPlugin({})]}
           routes={routes}
         >
+          {/* Assuming RouteComponent and other relevant components are correctly set up */}
           <RouteComponent />
         </Router>
       );
 
-      return {
-        history: {
-          push,
-        },
-        router,
-        waitForData,
-      };
+      return { history, push };
     }
 
     function createResources() {
@@ -250,21 +245,22 @@ describe('<Router /> with resources client-side integration tests', () => {
         resources: [cacheResource, networkResource],
       };
 
-      const { history, router, waitForData } = renderRouter([route]);
+      const { history } = renderRouter([route]);
 
-      expect(router.html()).toBe('loading:cache loading:network');
-      await waitForData();
+      expect(screen.getByText(/loading:\s*cache/i)).toBeInTheDocument();
+      expect(screen.getByText(/loading:\s*network/i)).toBeInTheDocument();
 
-      router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-1');
+      await waitFor(() => {
+        expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
+        expect(screen.getByText(/data:\s*network-1/i)).toBeInTheDocument();
+      });
 
       history.push(route.path + '?query#hash');
-      router.update();
 
-      expect(router.html()).toBe('data:cache-1 data:network-1');
-      await waitForData();
-      router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-1');
+      await waitFor(() => {
+        expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
+        expect(screen.getByText(/data:\s*network-1/i)).toBeInTheDocument();
+      });
     });
 
     it('fresh data when transitioning to a new route', async () => {
@@ -286,20 +282,27 @@ describe('<Router /> with resources client-side integration tests', () => {
         },
       ];
 
-      const { history, router, waitForData } = renderRouter(routes);
+      const { history } = renderRouter(routes);
 
-      expect(router.html()).toBe('loading:cache loading:network');
-      await waitForData();
-      router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-1');
+      expect(screen.getByText(/loading:\s*cache/i)).toBeInTheDocument();
+      expect(screen.getByText(/loading:\s*network/i)).toBeInTheDocument();
+
+      await waitFor(() => {
+        expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
+        expect(screen.getByText(/data:\s*network-1/i)).toBeInTheDocument();
+      });
 
       history.push(routes[1].path);
-      router.update();
 
-      expect(router.html()).toBe('data:cache-1 loading:network');
-      await waitForData();
-      router.update();
-      expect(router.html()).toBe('data:cache-1 data:network-2');
+      await waitFor(() => {
+        expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
+        expect(screen.getByText(/loading:\s*network/i)).toBeInTheDocument();
+      });
+
+      await waitFor(() => {
+        expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
+        expect(screen.getByText(/data:\s*network-2/i)).toBeInTheDocument();
+      });
     });
   });
 });
@@ -316,7 +319,7 @@ describe('<Router /> server-side integration tests', () => {
   });
 
   it('renders the expected route when basePath is set', async () => {
-    const wrapper = mount(
+    render(
       <Router
         basePath="/base-path"
         history={createMemoryHistory({
@@ -329,11 +332,11 @@ describe('<Router /> server-side integration tests', () => {
       </Router>
     );
 
-    expect(wrapper.text()).toBe('route component');
+    expect(screen.getByText('route component')).toBeInTheDocument();
   });
 
   it('renders the expected route when basePath is not set', async () => {
-    const wrapper = mount(
+    render(
       <Router
         history={createMemoryHistory({
           initialEntries: [route.path],
@@ -345,6 +348,6 @@ describe('<Router /> server-side integration tests', () => {
       </Router>
     );
 
-    expect(wrapper.text()).toBe('route component');
+    expect(screen.getByText('route component')).toBeInTheDocument();
   });
 });

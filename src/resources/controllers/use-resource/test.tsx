@@ -1,6 +1,6 @@
-import { mount } from 'enzyme';
+import { render, act } from '@testing-library/react';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
+import '@testing-library/jest-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { createRouterContext } from '../../../common/utils';
@@ -95,7 +95,7 @@ describe('useResource()', () => {
   });
 
   it('should return the slice and bound actions for a given resource', () => {
-    mount(
+    render(
       <MockComponent>
         {() => {
           const resource = useResource(mockResource);
@@ -120,7 +120,7 @@ describe('useResource()', () => {
     it('should update a resource with the provided data', () => {
       const newData = 'my-better-data';
       let resourceResponse: any;
-      mount(
+      render(
         <MockComponent>
           {() => {
             resourceResponse = useResource(mockResource);
@@ -145,7 +145,7 @@ describe('useResource()', () => {
     it('should update a resource with the data set to null', () => {
       const newData = null;
       let resourceResponse: any;
-      mount(
+      render(
         <MockComponent>
           {() => {
             resourceResponse = useResource(mockResource);
@@ -172,7 +172,7 @@ describe('useResource()', () => {
       const mockGetData = jest.fn();
       let resourceResponse: any;
 
-      mount(
+      render(
         <MockComponent>
           {() => {
             resourceResponse = useResource(mockResource);
@@ -195,7 +195,7 @@ describe('useResource()', () => {
         .spyOn(actions, 'getResourceFromRemote')
         .mockImplementation(() => {});
       let resourceResponse: any;
-      mount(
+      render(
         <MockComponent>
           {() => {
             resourceResponse = useResource(mockResource);
@@ -223,7 +223,7 @@ describe('useResource()', () => {
         getData: () => Promise.resolve('original-data'),
       });
       let resourceResponse: any;
-      const wrapper = mount(
+      const { rerender } = render(
         <MockComponent page="page1">
           {({ page }: { page: string }) => {
             resourceResponse = useResource(mockRes, {
@@ -243,8 +243,19 @@ describe('useResource()', () => {
         data: 'new-data',
       });
 
-      // should retrieve data also on router context change
-      wrapper.setProps({ page: 'page2' });
+      rerender(
+        <MockComponent page="page2">
+          {({ page }: { page: string }) => {
+            resourceResponse = useResource(mockRes, {
+              routerContext: createRouterContext(mockRoute, {
+                params: { page },
+              }),
+            });
+
+            return <h1>my test</h1>;
+          }}
+        </MockComponent>
+      );
       act(() => resourceResponse.update(() => 'new-data-2'));
 
       expect(storeState.getState().data[mockType]['page2']).toMatchObject({
@@ -256,7 +267,7 @@ describe('useResource()', () => {
   describe('clear action', () => {
     it('should clear the resource', () => {
       let resourceResponse: any;
-      mount(
+      render(
         <MockComponent>
           {() => {
             resourceResponse = useResource(mockResource);
@@ -288,7 +299,7 @@ describe('useResource()', () => {
 
         let resourceResponse: any;
 
-        mount(
+        render(
           <MockComponent>
             {() => {
               resourceResponse = useResource(mockResource);

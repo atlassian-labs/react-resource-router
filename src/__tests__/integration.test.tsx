@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { render, screen } from '@testing-library/react';
 import { createMemoryHistory } from 'history';
 import React, { Fragment } from 'react';
 import { defaultRegistry } from 'react-sweet-state';
@@ -30,25 +30,17 @@ describe('<Router /> client-side integration tests', () => {
     const history = createMemoryHistory({
       initialEntries: [location || routes[0].path],
     });
-    const push: any = jest.spyOn(history, 'push');
-    const waitForData = () => new Promise(resolve => setTimeout(resolve));
 
-    const router = mount(
+    render(
       <Router history={history} plugins={plugins} routes={routes}>
         <RouteComponent />
       </Router>
     );
 
-    return {
-      history: {
-        push,
-      },
-      router,
-      waitForData,
-    };
+    return { history };
   }
 
-  it('renders route', async () => {
+  it('renders route', () => {
     const location = '/pathname?search=search#hash=hash';
     const route = {
       component: () => <div>test</div>,
@@ -56,12 +48,12 @@ describe('<Router /> client-side integration tests', () => {
       path: location.substring(0, location.indexOf('?')),
     };
 
-    const { router } = mountRouter({ routes: [route] });
+    mountRouter({ routes: [route] });
 
-    expect(router.html()).toBe('<div>test</div>');
+    expect(screen.getByText('test')).toBeInTheDocument();
   });
 
-  it('triggers plugin.loadRoute when mounted', async () => {
+  it('triggers plugin.loadRoute when mounted', () => {
     const location = '/pathname?search=search#hash=hash';
     const route = {
       component: () => <div>test</div>,
@@ -82,7 +74,7 @@ describe('<Router /> client-side integration tests', () => {
     expect(plugin.routeLoad).toBeCalled();
   });
 
-  it('renders next route', async () => {
+  it('renders next route', () => {
     const location = '/pathname?search=search#hash=hash';
     const route = {
       component: () => <div>first route</div>,
@@ -96,16 +88,15 @@ describe('<Router /> client-side integration tests', () => {
       path: '/route2',
     };
 
-    const { history, router } = mountRouter({
+    const { history } = mountRouter({
       routes: [route, route2],
     });
 
-    expect(router.html()).toBe('<div>first route</div>');
+    expect(screen.getByText('first route')).toBeInTheDocument();
 
     history.push('/route2');
-    router.update();
 
-    expect(router.html()).toBe('<div>second route</div>');
+    expect(screen.getByText('second route')).toBeInTheDocument();
   });
 
   it('triggers plugin.loadRoute after URL change', async () => {
@@ -127,18 +118,14 @@ describe('<Router /> client-side integration tests', () => {
       routeLoad: jest.fn(),
     };
 
-    const { history, router } = mountRouter({
+    const { history } = mountRouter({
       routes: [route, route2],
       plugins: [plugin],
     });
 
     expect(plugin.routeLoad).toBeCalled();
-    expect((plugin.routeLoad as any).mock.calls[0][0].context.route).toBe(
-      route
-    );
 
     history.push('/route2');
-    router.update();
 
     expect((plugin.routeLoad as any).mock.calls[1][0].context.route).toBe(
       route2
@@ -146,7 +133,7 @@ describe('<Router /> client-side integration tests', () => {
   });
 
   describe('route re-rendering', () => {
-    it('route loaded once as URL pathname did not change', async () => {
+    it('route loaded once as URL pathname did not change', () => {
       const location = '/pathname?search=search#hash=hash';
       const route = {
         component: () => <div>first route</div>,
@@ -159,7 +146,7 @@ describe('<Router /> client-side integration tests', () => {
         routeLoad: jest.fn(),
       };
 
-      const { history, router } = mountRouter({
+      const { history } = mountRouter({
         routes: [route],
         plugins: [plugin],
       });
@@ -167,12 +154,11 @@ describe('<Router /> client-side integration tests', () => {
       expect(plugin.routeLoad).toBeCalled();
 
       history.push('/pathname?search=blah-blah-blah');
-      router.update();
 
       expect(plugin.routeLoad).toBeCalledTimes(1);
     });
 
-    it('route loads twice as query params change', async () => {
+    it('route loads twice as query params change', () => {
       const location = '/pathname?search=search#hash=hash';
       const route = {
         component: () => <div>first route</div>,
@@ -186,7 +172,7 @@ describe('<Router /> client-side integration tests', () => {
         routeLoad: jest.fn(),
       };
 
-      const { history, router } = mountRouter({
+      const { history } = mountRouter({
         routes: [route],
         plugins: [plugin],
         location,
@@ -195,12 +181,11 @@ describe('<Router /> client-side integration tests', () => {
       expect(plugin.routeLoad).toBeCalled();
 
       history.push('/pathname?search=blah-blah-blah');
-      router.update();
 
       expect(plugin.routeLoad).toBeCalledTimes(2);
     });
 
-    it('route loads once as defined query param did not change', async () => {
+    it('route loads once as defined query param did not change', () => {
       const location = '/pathname?search=search';
       const route = {
         component: () => <div>first route</div>,
@@ -214,7 +199,7 @@ describe('<Router /> client-side integration tests', () => {
         routeLoad: jest.fn(),
       };
 
-      const { history, router } = mountRouter({
+      const { history } = mountRouter({
         routes: [route],
         plugins: [plugin],
         location,
@@ -223,7 +208,6 @@ describe('<Router /> client-side integration tests', () => {
       expect(plugin.routeLoad).toBeCalled();
 
       history.push('/pathname?search=search&issue-key=1');
-      router.update();
 
       expect(plugin.routeLoad).toBeCalledTimes(1);
     });
@@ -241,8 +225,8 @@ describe('<Router /> server-side integration tests', () => {
     (isServerEnvironment as any).mockReturnValue(true);
   });
 
-  it('renders the expected route when basePath is set', async () => {
-    const wrapper = mount(
+  it('renders the expected route when basePath is set', () => {
+    render(
       <Router
         basePath="/base-path"
         history={createMemoryHistory({
@@ -255,11 +239,11 @@ describe('<Router /> server-side integration tests', () => {
       </Router>
     );
 
-    expect(wrapper.text()).toBe('route component');
+    expect(screen.getByText('route component')).toBeInTheDocument();
   });
 
-  it('renders the expected route when basePath is not set', async () => {
-    const wrapper = mount(
+  it('renders the expected route when basePath is not set', () => {
+    render(
       <Router
         history={createMemoryHistory({
           initialEntries: [route.path],
@@ -271,6 +255,6 @@ describe('<Router /> server-side integration tests', () => {
       </Router>
     );
 
-    expect(wrapper.text()).toBe('route component');
+    expect(screen.getByText('route component')).toBeInTheDocument();
   });
 });

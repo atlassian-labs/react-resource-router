@@ -1,7 +1,6 @@
-import { mount } from 'enzyme';
+import { render, act } from '@testing-library/react';
 import * as historyHelper from 'history';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { Router } from '../../controllers';
@@ -59,7 +58,7 @@ describe('useQueryParam()', () => {
   });
 
   it('should return the right param value', () => {
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -74,7 +73,7 @@ describe('useQueryParam()', () => {
   });
 
   it('should return undefined for non-existent params', () => {
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -93,7 +92,7 @@ describe('useQueryParam()', () => {
     let qpVal: string | undefined;
     let qpUpdateFn: (qp: string) => void;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -120,7 +119,7 @@ describe('useQueryParam()', () => {
     let qpVal: string | undefined;
     let qpUpdateFn: (qp: string, updateType?: 'push' | 'replace') => void;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -150,7 +149,7 @@ describe('useQueryParam()', () => {
     let qpUpdateFn: (qp: string) => void;
     let renderCount = 0;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -182,7 +181,7 @@ describe('useQueryParam()', () => {
     let qpVal: string | undefined;
     let qpUpdateFn: (qp: string, updateType?: 'push' | 'replace') => void;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -209,7 +208,7 @@ describe('useQueryParam()', () => {
     let qpVal: string | undefined;
     let qpUpdateFn: (qp: string | undefined) => void;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -258,7 +257,7 @@ describe('useQueryParam()', () => {
       return null;
     };
 
-    mount(
+    render(
       <Router
         history={historyHelper.createBrowserHistory()}
         routes={mockRoutes}
@@ -319,7 +318,7 @@ describe('useQueryParam()', () => {
     let barVal: string | undefined;
     let barUpdateFn: (qp: string) => void;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {

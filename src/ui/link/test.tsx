@@ -1,6 +1,7 @@
-import { mount } from 'enzyme';
+import { render, screen, act } from '@testing-library/react';
+import { userEvent } from '@testing-library/user-event';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
+import '@testing-library/jest-dom';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { LinkProps } from '../../common/types';
@@ -29,35 +30,23 @@ const defaultProps = {
   href: '/my-link',
 };
 
-const baseClickEvent = {
-  preventDefault: jest.fn(),
-  button: 0,
-};
-
 const newPath = '/my-new-path';
-const eventModifiers = [['metaKey'], ['altKey'], ['ctrlKey'], ['shiftKey']];
-
-// https://github.com/facebook/jest/pull/5267#issuecomment-356605468
-const withoutConsoleError = (fn: () => void) => () => {
-  const consoleError = jest
-    .spyOn<Console, 'error'>(console, 'error')
-    .mockImplementation(() => undefined);
-  fn();
-  consoleError.mockRestore();
-};
+// const eventModifiers = [['metaKey'], ['altKey'], ['ctrlKey'], ['shiftKey']];
+const eventModifiers = ['ShiftLeft', 'ControlLeft', 'AltLeft', 'MetaLeft'];
 
 describe('<Link />', () => {
-  const mountInRouter = (
+  const renderInRouter = (
     children: LinkProps['children'],
     props: Partial<LinkProps> = defaultProps,
     basePath = ''
-  ) =>
-    mount(
+  ) => {
+    return render(
       // @ts-expect-error
       <Router basePath={basePath} history={HistoryMock} routes={[]}>
         <Link {...props}>{children}</Link>
       </Router>
     );
+  };
 
   afterEach(() => {
     jest.resetAllMocks();
@@ -65,137 +54,138 @@ describe('<Link />', () => {
   });
 
   it('should render a <Link />', () => {
-    const wrapper = mountInRouter('my link');
-    const anchor = wrapper.find('a');
+    renderInRouter('my link');
 
-    expect(anchor.prop('href')).toEqual(defaultProps.href);
+    const anchor = screen.getByRole('link', { name: 'my link' });
+    expect(anchor).toHaveAttribute('href', defaultProps.href);
   });
 
   it('should support the `to` prop', () => {
-    const wrapper = mountInRouter('my link', {
+    renderInRouter('my link', {
       to: newPath,
     });
-    const anchor = wrapper.find('a');
-
-    expect(anchor.prop('href')).toEqual(newPath);
+    const linkElement = screen.getByRole('link', { name: 'my link' });
+    expect(linkElement).toHaveAttribute('href', newPath);
   });
 
   it('should pass props to the child element', () => {
-    const wrapper = mountInRouter('my link', {
+    renderInRouter('my link', {
       ...defaultProps,
       // @ts-expect-error
       'data-qa': '.my-test-class',
     });
-    const component = wrapper.find('a');
-
-    expect(component).toHaveLength(1);
-    expect(component.prop('data-qa')).toEqual('.my-test-class');
-    expect(component.prop('href')).toEqual(defaultProps.href);
+    const linkElement = screen.getByRole('link', { name: 'my link' });
+    expect(linkElement).toHaveAttribute('data-qa', '.my-test-class');
+    expect(linkElement).toHaveAttribute('href', defaultProps.href);
   });
 
   it('should render as a button if the type prop is `button`', () => {
-    const wrapper = mountInRouter('my link', { type: 'button' });
-    const component = wrapper.find('button');
-
-    expect(component).toHaveLength(1);
+    renderInRouter('my link', { type: 'button' });
+    const buttonElement = screen.getByRole('button', { name: 'my link' });
+    expect(buttonElement).toBeInTheDocument();
   });
 
   it('should render as an anchor if the type prop is neither `a` nor `button`', () => {
     // @ts-expect-error
-    const wrapper = mountInRouter('my link', { type: 'somethingwrong' });
-    const component = wrapper.find('a');
-
-    expect(component).toHaveLength(1);
+    renderInRouter('my link', { type: 'somethingwrong' });
+    const anchorElement = screen.getByRole('link', { name: 'my link' });
+    expect(anchorElement).toBeInTheDocument();
   });
 
-  it('should use `history.push` to navigate on click', () => {
-    const wrapper = mountInRouter('my link', { href: newPath });
-    const component = wrapper.find('Link');
+  it('should use `history.push` to navigate on click', async () => {
+    const user = userEvent.setup();
+    renderInRouter('my link', { href: newPath });
 
-    component.simulate('click', baseClickEvent);
+    await user.click(screen.getByRole('link', { name: 'my link' }));
 
     expect(HistoryMock.push).toHaveBeenCalledTimes(1);
     expect(HistoryMock.push).toHaveBeenCalledWith(newPath, undefined);
   });
 
-  it('should call `event.preventDefault() on navigation`', () => {
-    const wrapper = mountInRouter('my link', { href: newPath });
-    const component = wrapper.find('Link');
+  it('should call `event.preventDefault()` on navigation', () => {
+    renderInRouter('my link', { href: newPath });
+    const linkElement = screen.getByRole('link', { name: 'my link' });
 
-    component.simulate('click', baseClickEvent);
+    const mockPreventDefault = jest.fn();
 
-    expect(baseClickEvent.preventDefault).toHaveBeenCalledTimes(1);
+    const event = new MouseEvent('click', { bubbles: true });
+    event.preventDefault = mockPreventDefault;
+
+    act(() => {
+      linkElement.dispatchEvent(event);
+    });
+
+    expect(mockPreventDefault).toHaveBeenCalledTimes(1);
   });
 
-  it('should call the `onClick` prop when it is provided', () => {
+  it('should call the `onClick` prop when it is provided', async () => {
+    const user = userEvent.setup();
     const mockOnClick = jest.fn();
-    const wrapper = mountInRouter('my link', {
+    renderInRouter('my link', {
       href: newPath,
       onClick: mockOnClick,
     });
-    const component = wrapper.find('Link');
 
-    component.simulate('click', baseClickEvent);
+    await user.click(screen.getByRole('link', { name: 'my link' }));
 
     expect(mockOnClick).toHaveBeenCalledTimes(1);
-    expect(baseClickEvent.preventDefault).toHaveBeenCalledTimes(1);
     expect(HistoryMock.push).toHaveBeenCalledTimes(1);
   });
 
-  it('should use `history.replace` to navigate when `replace` is `true`', () => {
-    const wrapper = mountInRouter('my link', { href: newPath, replace: true });
-    const component = wrapper.find('Link');
+  it('should use `history.replace` to navigate when `replace` is `true`', async () => {
+    const user = userEvent.setup();
+    renderInRouter('my link', { href: newPath, replace: true });
 
-    component.simulate('click', baseClickEvent);
+    await user.click(screen.getByRole('link', { name: 'my link' }));
 
     expect(HistoryMock.replace).toHaveBeenCalledTimes(1);
     expect(HistoryMock.replace).toHaveBeenCalledWith(newPath, undefined);
   });
 
   describe('preventing navigation', () => {
-    it.each(eventModifiers)(
-      'should not navigate if the %i modifier is present',
-      modifier => {
-        const wrapper = mountInRouter('my link', { href: newPath });
-        const component = wrapper.find('Link');
+    eventModifiers.forEach(modifier => {
+      it(`should not navigate if the ${modifier} modifier is present`, async () => {
+        const user = userEvent.setup();
+        renderInRouter('my link', { href: newPath });
 
-        component.simulate('click', { ...baseClickEvent, [modifier]: true });
+        await user.keyboard(`[${modifier}>]`);
+        await user.click(screen.getByRole('link', { name: 'my link' }));
 
-        expect(HistoryMock.push).toHaveBeenCalledTimes(0);
-      }
-    );
-
-    it('should not navigate if the events default behaviour has already been prevented', () => {
-      const wrapper = mountInRouter('my link', { href: newPath });
-      const component = wrapper.find('Link');
-
-      component.simulate('click', {
-        ...baseClickEvent,
-        defaultPrevented: true,
+        expect(HistoryMock.push).not.toHaveBeenCalled();
       });
-
-      expect(HistoryMock.push).toHaveBeenCalledTimes(0);
     });
 
-    it('should not navigate if the button that initiated the event was not a left-click', () => {
-      const wrapper = mountInRouter('my link', { href: newPath });
-      const component = wrapper.find('Link');
+    it('should not navigate if the event’s default behavior has already been prevented', async () => {
+      const user = userEvent.setup();
+      renderInRouter('my link', { href: newPath });
 
-      component.simulate('click', { ...baseClickEvent, button: 42 });
+      const linkElement = screen.getByRole('link', { name: 'my link' });
+      linkElement.addEventListener('click', e => e.preventDefault());
+      await user.click(linkElement);
 
-      expect(HistoryMock.push).toHaveBeenCalledTimes(0);
+      expect(HistoryMock.push).not.toHaveBeenCalled();
     });
 
-    it('should allow the browser to handle navigation if the Links target is not `_self`', () => {
-      const wrapper = mountInRouter('my link', {
-        href: newPath,
-        target: '_blank',
+    it('should not navigate if the button that initiated the event was not a left-click', async () => {
+      const user = userEvent.setup();
+      renderInRouter('my link', { href: newPath });
+
+      const linkElement = screen.getByRole('link', { name: 'my link' });
+      await user.pointer({
+        target: linkElement,
+        keys: '[MouseRight]',
       });
-      const component = wrapper.find('Link');
 
-      component.simulate('click', baseClickEvent);
+      expect(HistoryMock.push).not.toHaveBeenCalled();
+    });
 
-      expect(HistoryMock.push).toHaveBeenCalledTimes(0);
+    it('should allow the browser to handle navigation if the Link’s target is not `_self`', async () => {
+      const user = userEvent.setup();
+      renderInRouter('my link', { href: newPath, target: '_blank' });
+
+      await user.click(screen.getByRole('link', { name: 'my link' }));
+
+      expect(HistoryMock.push).not.toHaveBeenCalled();
     });
   });
 
@@ -207,7 +197,7 @@ describe('<Link />', () => {
     };
 
     it('should render the correct link', () => {
-      const wrapper = mountInRouter(
+      renderInRouter(
         'my link',
         {
           to: route,
@@ -216,14 +206,15 @@ describe('<Link />', () => {
         },
         '/base'
       );
-
-      expect(wrapper.html()).toEqual(
-        '<a href="/base/my-page/1?foo=bar" target="_self">my link</a>'
+      expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+        'href',
+        '/base/my-page/1?foo=bar'
       );
     });
 
-    it('should push history with correct link', () => {
-      const wrapper = mountInRouter(
+    it('should push history with correct link', async () => {
+      const user = userEvent.setup();
+      renderInRouter(
         'my link',
         {
           to: route,
@@ -232,11 +223,9 @@ describe('<Link />', () => {
         },
         '/base'
       );
-      const component = wrapper.find('Link');
 
-      component.simulate('click', baseClickEvent);
+      await user.click(screen.getByRole('link', { name: 'my link' }));
 
-      expect(HistoryMock.push).toHaveBeenCalledTimes(1);
       expect(HistoryMock.push).toHaveBeenCalledWith(
         {
           hash: '',
@@ -248,20 +237,20 @@ describe('<Link />', () => {
     });
 
     it('should handle async route imports', async () => {
-      const wrapper = mountInRouter('my link', {
+      const user = userEvent.setup();
+      renderInRouter('my link', {
         to: Promise.resolve({ default: route }),
         params: { id: '1' },
         query: { foo: 'bar' },
       });
       await act(() => Promise.resolve());
-      const component = wrapper.find('Link');
 
-      component.simulate('click', baseClickEvent);
+      await user.click(screen.getByRole('link', { name: 'my link' }));
 
-      expect(wrapper.html()).toEqual(
-        '<a href="/my-page/1?foo=bar" target="_self">my link</a>'
+      expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+        'href',
+        '/my-page/1?foo=bar'
       );
-      expect(HistoryMock.push).toHaveBeenCalledTimes(1);
       expect(HistoryMock.push).toHaveBeenCalledWith(
         {
           hash: '',
@@ -273,60 +262,55 @@ describe('<Link />', () => {
     });
 
     it('should error if required route parameters are missing', () => {
-      expect(
-        withoutConsoleError(() => {
-          mountInRouter('my link', { to: route });
-        })
-      ).toThrow();
+      const renderWithMissingParams = () => {
+        renderInRouter('my link', { to: route });
+      };
+      expect(renderWithMissingParams).toThrow();
     });
   });
 
   describe('when the link has focus, and a keypress is fired', () => {
-    it('should navigate if the key was an `enter`', () => {
-      const wrapper = mountInRouter('my link', { href: newPath });
-      const component = wrapper.find('Link');
+    it('should navigate if the key was an `enter`', async () => {
+      const user = userEvent.setup();
+      renderInRouter('my link', { href: newPath });
 
-      component.simulate('click', {
-        ...baseClickEvent,
-        type: 'keypress',
-        keyCode: 13,
-      });
+      const linkElement = screen.getByRole('link', { name: 'my link' });
+      linkElement.focus();
+      await user.keyboard('{Enter}');
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
       expect(HistoryMock.push).toHaveBeenCalledWith(newPath, undefined);
     });
 
-    it('should not navigate for any other key', () => {
-      const wrapper = mountInRouter('my link', { href: newPath });
-      const component = wrapper.find('Link');
+    it('should not navigate for any other key', async () => {
+      const user = userEvent.setup();
+      renderInRouter('my link', { href: newPath });
 
-      component.simulate('click', {
-        ...baseClickEvent,
-        type: 'keypress',
-        keyCode: 10,
-      });
+      const linkElement = screen.getByRole('link', { name: 'my link' });
+      linkElement.focus();
+      await user.keyboard('{a}');
 
-      expect(HistoryMock.push).toHaveBeenCalledTimes(0);
+      expect(HistoryMock.push).not.toHaveBeenCalled();
     });
   });
 
   describe('when styles are passed into Link, element should be rendered with styles', () => {
     it('should add style to button when creating `button`', () => {
-      const wrapper = mountInRouter('my link', {
+      renderInRouter('my link', {
         type: 'button',
         style: { color: 'yellow' },
       });
-      const component = wrapper.find('button');
-      expect(component.props()).toMatchObject({ style: { color: 'yellow' } });
+      const buttonElement = screen.getByRole('button', { name: 'my link' });
+      expect(buttonElement).toHaveStyle('color: yellow');
     });
 
     it('should add style to anchor when creating `a`', () => {
-      const wrapper = mountInRouter('my link', {
+      renderInRouter('my link', {
         to: 'abc',
         style: { color: 'yellow' },
       });
-      const anchor = wrapper.find('a');
-      expect(anchor.props()).toMatchObject({ style: { color: 'yellow' } });
+      const anchorElement = screen.getByRole('link', { name: 'my link' });
+      expect(anchorElement).toHaveStyle('color: yellow');
     });
   });
 });

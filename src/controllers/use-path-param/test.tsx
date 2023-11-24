@@ -1,7 +1,6 @@
-import { mount } from 'enzyme';
+import { render, act } from '@testing-library/react';
 import * as historyHelper from 'history';
 import React from 'react';
-import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { Router } from '../router';
@@ -61,7 +60,7 @@ describe('usePathParam()', () => {
   it('should return the right param value', () => {
     let ppVal: string | undefined;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -78,7 +77,7 @@ describe('usePathParam()', () => {
 
   it('should return undefined for non-existent params', () => {
     let ppVal: string | undefined;
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -100,7 +99,7 @@ describe('usePathParam()', () => {
       updateType?: 'push' | 'replace'
     ) => void;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -133,7 +132,7 @@ describe('usePathParam()', () => {
     let ppUpdateFn: (qp: string | undefined) => void;
     let renderCount = 0;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -172,7 +171,7 @@ describe('usePathParam()', () => {
       updateType?: 'push' | 'replace'
     ) => void;
 
-    mount(
+    render(
       <Router history={history} routes={mockRoutes} plugins={[]}>
         <MockComponent>
           {() => {
@@ -207,7 +206,7 @@ describe('usePathParam()', () => {
       component: () => <div>path</div>,
       name: '',
     };
-    mount(
+    render(
       <Router
         history={history}
         routes={[mockRouteWithOptionalParam]}
@@ -258,7 +257,7 @@ describe('usePathParam()', () => {
       component: () => <div>path</div>,
       name: '',
     };
-    mount(
+    render(
       <Router
         history={history}
         routes={[mockRouteWithOptionalParam]}

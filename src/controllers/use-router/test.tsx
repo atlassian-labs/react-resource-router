@@ -1,4 +1,4 @@
-import { mount } from 'enzyme';
+import { render } from '@testing-library/react';
 import React from 'react';
 
 import { useRouter } from './index';
@@ -17,7 +17,7 @@ describe('useRouter()', () => {
       return null;
     }
 
-    mount(<App />);
+    render(<App />);
 
     expect(state.location).toMatchInlineSnapshot(`
       Object {
