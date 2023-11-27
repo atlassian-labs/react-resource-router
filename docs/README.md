@@ -108,7 +108,7 @@ export const appRoutes = [
 
 ### Use the Router
 
-Now that you've set up your resources, components and configuration correctly, all you need to do is mount the [Router](api/components.md#router) in your react tree with a [`RouteComponent`](api/components.md#routecomponent) as a child. It will do the rest!
+Now that you've set up your resources, components and configuration correctly, all you need to do is mount the [Router](api/components.md#router) with the [Resources Plugin](api/components?id=resources-plugin) in your react tree, and a [`RouteComponent`](api/components.md#routecomponent) as a child. It will do the rest!
 
 ```js
 import {
@@ -116,12 +116,14 @@ import {
   RouteComponent,
   createBrowserHistory,
 } from 'react-resource-router';
+import {createResourcesPlugin} from "react-resource-router/resources";
 import { appRoutes } from './routing/routes';
 
 const history = createBrowserHistory();
+const resourcesPlugin = createResourcesPlugin({});
 
 const App = () => (
-  <Router routes={appRoutes} history={history}>
+  <Router routes={appRoutes} history={history} plugins={[resourcesPlugin]}>
     <RouteComponent />
   </Router>
 );
