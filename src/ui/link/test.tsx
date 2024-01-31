@@ -31,7 +31,6 @@ const defaultProps = {
 };
 
 const newPath = '/my-new-path';
-// const eventModifiers = [['metaKey'], ['altKey'], ['ctrlKey'], ['shiftKey']];
 const eventModifiers = ['ShiftLeft', 'ControlLeft', 'AltLeft', 'MetaLeft'];
 
 describe('<Link />', () => {
@@ -103,12 +102,21 @@ describe('<Link />', () => {
   });
 
   it('should call `event.preventDefault()` on navigation', () => {
+    /**
+     * This test will log a warning in the console we can ignore. We can't intercept the event here as we need to test.
+     *
+     * console.error
+     *  Error: Not implemented: navigation (except hash changes)
+     * type: 'not implemented
+     */
+
     renderInRouter('my link', { href: newPath });
     const linkElement = screen.getByRole('link', { name: 'my link' });
 
     const mockPreventDefault = jest.fn();
 
     const event = new MouseEvent('click', { bubbles: true });
+
     event.preventDefault = mockPreventDefault;
 
     act(() => {
@@ -143,13 +151,23 @@ describe('<Link />', () => {
   });
 
   describe('preventing navigation', () => {
+    Object.defineProperty(window, 'location', {
+      value: {
+        pathname: '/pathname',
+        assign: jest.fn(),
+      },
+    });
     eventModifiers.forEach(modifier => {
       it(`should not navigate if the ${modifier} modifier is present`, async () => {
         const user = userEvent.setup();
         renderInRouter('my link', { href: newPath });
 
+        const link = screen.getByRole('link', { name: 'my link' });
+        // We add an event listener to prevent JSDOM from throwing an error see: https://github.com/jsdom/jsdom/issues/2112#issuecomment-663672587
+        link.addEventListener('click', e => e.preventDefault(), false);
+
         await user.keyboard(`[${modifier}>]`);
-        await user.click(screen.getByRole('link', { name: 'my link' }));
+        await user.click(link);
 
         expect(HistoryMock.push).not.toHaveBeenCalled();
       });
@@ -262,10 +280,16 @@ describe('<Link />', () => {
     });
 
     it('should error if required route parameters are missing', () => {
+      // Mock the console error to prevent the desired error from polluting the test output
+      const consoleSpy = jest.spyOn(console, 'error');
+      consoleSpy.mockImplementation(() => {});
+
       const renderWithMissingParams = () => {
         renderInRouter('my link', { to: route });
       };
       expect(renderWithMissingParams).toThrow();
+
+      consoleSpy.mockRestore();
     });
   });
 
