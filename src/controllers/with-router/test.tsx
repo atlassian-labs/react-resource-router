@@ -1,7 +1,8 @@
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
 import React from 'react';
+import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { DEFAULT_ACTION, DEFAULT_ROUTE } from '../../common/constants';
@@ -103,40 +104,36 @@ describe('withRouter()', () => {
       {}
     );
 
-    history.push('/atlassian/jira');
-    await waitFor(() => {
-      expect(MockComponent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          location: expect.objectContaining({
-            pathname: '/atlassian/jira',
-          }),
-          match: expect.objectContaining({
-            params: { name: 'jira' },
-          }),
-          action: 'PUSH',
+    act(() => history.push('/atlassian/jira'));
+    expect(MockComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        location: expect.objectContaining({
+          pathname: '/atlassian/jira',
         }),
-        {}
-      );
-    });
+        match: expect.objectContaining({
+          params: { name: 'jira' },
+        }),
+        action: 'PUSH',
+      }),
+      {}
+    );
 
-    history.replace('/atlassian/foo');
-    await waitFor(() => {
-      expect(MockComponent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          location: expect.objectContaining({
-            pathname: '/atlassian/foo',
-          }),
-          match: expect.objectContaining({
-            params: { name: 'foo' },
-          }),
-          action: 'REPLACE',
+    act(() => history.replace('/atlassian/foo'));
+    expect(MockComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        location: expect.objectContaining({
+          pathname: '/atlassian/foo',
         }),
-        {}
-      );
-    });
+        match: expect.objectContaining({
+          params: { name: 'foo' },
+        }),
+        action: 'REPLACE',
+      }),
+      {}
+    );
   });
 
-  test('should pass null match to the wrapped component when no route has matched', async () => {
+  it('should pass null match to the wrapped component when no route has matched', async () => {
     const history = createMemoryHistory();
     const MockComponent = jest.fn(() => null);
     const ComponentWithRouter = withRouter(MockComponent);
@@ -147,20 +144,18 @@ describe('withRouter()', () => {
       </Router>
     );
 
-    history.push('/blabla');
-    await waitFor(() => {
-      expect(MockComponent).toHaveBeenCalledWith(
-        expect.objectContaining({
-          match: expect.objectContaining({
-            isExact: false,
-            path: expect.any(String),
-            url: expect.any(String),
-            params: expect.any(Object),
-            query: expect.any(Object),
-          }),
+    act(() => history.push('/blabla'));
+    expect(MockComponent).toHaveBeenCalledWith(
+      expect.objectContaining({
+        match: expect.objectContaining({
+          isExact: false,
+          path: expect.any(String),
+          url: expect.any(String),
+          params: expect.any(Object),
+          query: expect.any(Object),
         }),
-        {}
-      );
-    });
+      }),
+      {}
+    );
   });
 });

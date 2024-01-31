@@ -38,7 +38,6 @@ const historyBuildOptions = {
 let history = historyHelper.createMemoryHistory(historyBuildOptions);
 let historyPushSpy = jest.spyOn(history, 'push');
 let historyReplaceSpy = jest.spyOn(history, 'replace');
-const nextTick = () => new Promise(resolve => setTimeout(resolve));
 
 const MockComponent = ({ children, ...rest }: any) => {
   return children(rest);
@@ -116,7 +115,6 @@ describe('usePathParam()', () => {
     expect(ppVal).toEqual('123');
 
     act(() => ppUpdateFn('newVal', 'push'));
-    await nextTick();
 
     const { storeState } = getRouterStore();
     const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
@@ -151,7 +149,6 @@ describe('usePathParam()', () => {
 
     act(() => ppUpdateFn('newVal'));
     act(() => ppUpdateFn('newVal'));
-    await nextTick();
 
     const { storeState } = getRouterStore();
     const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
@@ -186,7 +183,6 @@ describe('usePathParam()', () => {
     expect(ppVal).toEqual('123');
 
     act(() => ppUpdateFn('newVal', 'replace'));
-    await nextTick();
 
     const { storeState } = getRouterStore();
     const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
@@ -227,7 +223,6 @@ describe('usePathParam()', () => {
     expect(ppVal).toEqual(undefined);
 
     act(() => ppUpdateFn('newVal'));
-    await nextTick();
 
     expect(ppVal).toEqual('newVal');
     const { storeState } = getRouterStore();
@@ -238,7 +233,6 @@ describe('usePathParam()', () => {
     );
 
     act(() => ppUpdateFn(undefined));
-    await nextTick();
 
     expect(ppVal).toEqual(undefined);
     expectedPath = `/projects/123/board/456${mockLocation.search}${mockLocation.hash}`;
@@ -278,7 +272,6 @@ describe('usePathParam()', () => {
     expect(ppVal).toEqual('456');
 
     act(() => ppUpdateFn('newVal'));
-    await nextTick();
 
     expect(ppVal).toEqual('newVal');
     const { storeState } = getRouterStore();

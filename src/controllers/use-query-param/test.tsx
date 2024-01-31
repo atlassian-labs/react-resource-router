@@ -38,7 +38,6 @@ const historyBuildOptions = {
 let history = historyHelper.createMemoryHistory(historyBuildOptions);
 let historyPushSpy = jest.spyOn(history, 'push');
 let historyReplaceSpy = jest.spyOn(history, 'replace');
-const nextTick = () => new Promise(resolve => setTimeout(resolve));
 
 const MockComponent = ({ children, ...rest }: any) => {
   return children(rest);
@@ -107,7 +106,6 @@ describe('useQueryParam()', () => {
     );
     expect(qpVal).toEqual(undefined);
     act(() => qpUpdateFn('val'));
-    await nextTick();
 
     expect(historyPushSpy).toBeCalledWith(
       `${mockPath}?foo=hello&bar=world&newqueryparam=val#hash`
@@ -135,7 +133,6 @@ describe('useQueryParam()', () => {
 
     expect(qpVal).toEqual('hello');
     act(() => qpUpdateFn('newVal', 'push'));
-    await nextTick();
 
     expect(historyReplaceSpy).not.toBeCalled();
     expect(historyPushSpy).toBeCalledWith(
@@ -167,7 +164,6 @@ describe('useQueryParam()', () => {
     expect(qpVal).toEqual('hello');
     act(() => qpUpdateFn('newVal'));
     act(() => qpUpdateFn('newVal'));
-    await nextTick();
 
     expect(historyPushSpy).toBeCalledTimes(1);
     expect(historyPushSpy).toBeCalledWith(
@@ -195,7 +191,6 @@ describe('useQueryParam()', () => {
 
     expect(qpVal).toEqual('hello');
     act(() => qpUpdateFn('newVal', 'replace'));
-    await nextTick();
 
     expect(historyPushSpy).not.toBeCalled();
     expect(historyReplaceSpy).toBeCalledWith(
@@ -225,8 +220,6 @@ describe('useQueryParam()', () => {
     expect(qpVal).toEqual('hello');
 
     act(() => qpUpdateFn(undefined));
-
-    await nextTick();
 
     expect(qpVal).toEqual(undefined);
     expect(historyPushSpy).toBeCalledWith(`${mockPath}?bar=world#hash`);
@@ -272,8 +265,9 @@ describe('useQueryParam()', () => {
 
     const { storeState, actions } = getRouterStore();
 
-    actions.push('/projects/123/board/456?foo=hello&bar=world');
-    await nextTick();
+    act(() => {
+      actions.push('/projects/123/board/456?foo=hello&bar=world');
+    });
 
     expect(fooVal).toEqual('hello');
     expect(barVal).toEqual('world');
@@ -281,7 +275,6 @@ describe('useQueryParam()', () => {
     expect(renderedBar).toEqual(2);
 
     act(() => fooUpdateFn('newVal'));
-    await nextTick();
 
     // URL is now — /projects/123/board/456?foo=newVal&bar=world
     expect(storeState.getState().location.pathname).toEqual(
@@ -296,7 +289,6 @@ describe('useQueryParam()', () => {
     expect(renderedBar).toEqual(2);
 
     act(() => barUpdateFn('newVal'));
-    await nextTick();
 
     // URL is now — /projects/123/board/456?foo=newVal&bar=newVal
     expect(storeState.getState().location.pathname).toEqual(
@@ -339,7 +331,6 @@ describe('useQueryParam()', () => {
     expect(barVal).toEqual('world');
 
     act(() => fooUpdateFn('newFoo'));
-    await nextTick();
 
     expect(fooVal).toEqual('newFoo');
     expect(barVal).toEqual('world');
@@ -348,7 +339,6 @@ describe('useQueryParam()', () => {
     );
 
     act(() => barUpdateFn('newBar'));
-    await nextTick();
 
     expect(fooVal).toEqual('newFoo');
     expect(barVal).toEqual('newBar');
