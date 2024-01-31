@@ -2,6 +2,7 @@ import { render, screen, waitFor } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
 import React, { Fragment } from 'react';
+import { act } from 'react-dom/test-utils';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../../common/utils/is-server-environment';
@@ -255,12 +256,10 @@ describe('<Router /> with resources client-side integration tests', () => {
         expect(screen.getByText(/data:\s*network-1/i)).toBeInTheDocument();
       });
 
-      history.push(route.path + '?query#hash');
+      act(() => history.push(route.path + '?query#hash'));
 
-      await waitFor(() => {
-        expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
-        expect(screen.getByText(/data:\s*network-1/i)).toBeInTheDocument();
-      });
+      expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
+      expect(screen.getByText(/data:\s*network-1/i)).toBeInTheDocument();
     });
 
     it('fresh data when transitioning to a new route', async () => {
@@ -292,12 +291,10 @@ describe('<Router /> with resources client-side integration tests', () => {
         expect(screen.getByText(/data:\s*network-1/i)).toBeInTheDocument();
       });
 
-      history.push(routes[1].path);
+      act(() => history.push(routes[1].path));
 
-      await waitFor(() => {
-        expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
-        expect(screen.getByText(/loading:\s*network/i)).toBeInTheDocument();
-      });
+      expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
+      expect(screen.getByText(/loading:\s*network/i)).toBeInTheDocument();
 
       await waitFor(() => {
         expect(screen.getByText(/data:\s*cache-1/i)).toBeInTheDocument();
