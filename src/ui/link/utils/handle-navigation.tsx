@@ -24,7 +24,7 @@ export const handleNavigation = (
   event: any,
   { onClick, target, replace, routerActions, href, to, state }: LinkPressArgs
 ): void => {
-  if (isKeyboardEvent(event) && event.key === 'Enter') {
+  if (isKeyboardEvent(event) && event.key !== 'Enter') {
     return;
   }
 
