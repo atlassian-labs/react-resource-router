@@ -24,7 +24,7 @@ export const handleNavigation = (
   event: any,
   { onClick, target, replace, routerActions, href, to, state }: LinkPressArgs
 ): void => {
-  if (isKeyboardEvent(event) && event.keyCode !== 13) {
+  if (isKeyboardEvent(event) && event.key !== 'Enter') {
     return;
   }
 
@@ -32,7 +32,7 @@ export const handleNavigation = (
 
   if (
     !event.defaultPrevented && // onClick prevented default
-    ((isKeyboardEvent(event) && event.keyCode === 13) || event.button === 0) && // ignore everything but left clicks and Enter key
+    ((isKeyboardEvent(event) && event.key === 'Enter') || event.button === 0) && // ignore everything but left clicks and Enter key
     (!target || target === '_self') && // let browser handle "target=_blank" etc.
     !isModifiedEvent(event) // ignore clicks with modifier keys
   ) {

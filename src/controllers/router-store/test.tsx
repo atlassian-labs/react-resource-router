@@ -1,4 +1,5 @@
 import { render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import * as history4 from 'history';
 import * as history5 from 'history-5';
 import React from 'react';

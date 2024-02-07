@@ -1,6 +1,7 @@
-import { render, screen } from '@testing-library/react';
+import { act, render, screen } from '@testing-library/react';
+import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
-import React, { Fragment } from 'react';
+import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../common/utils/is-server-environment';
@@ -94,7 +95,9 @@ describe('<Router /> client-side integration tests', () => {
 
     expect(screen.getByText('first route')).toBeInTheDocument();
 
-    history.push('/route2');
+    act(() => {
+      history.push('/route2');
+    });
 
     expect(screen.getByText('second route')).toBeInTheDocument();
   });
@@ -125,7 +128,9 @@ describe('<Router /> client-side integration tests', () => {
 
     expect(plugin.routeLoad).toBeCalled();
 
-    history.push('/route2');
+    act(() => {
+      history.push('/route2');
+    });
 
     expect((plugin.routeLoad as any).mock.calls[1][0].context.route).toBe(
       route2
@@ -153,7 +158,9 @@ describe('<Router /> client-side integration tests', () => {
 
       expect(plugin.routeLoad).toBeCalled();
 
-      history.push('/pathname?search=blah-blah-blah');
+      act(() => {
+        history.push('/pathname?search=blah-blah-blah');
+      });
 
       expect(plugin.routeLoad).toBeCalledTimes(1);
     });
@@ -180,7 +187,9 @@ describe('<Router /> client-side integration tests', () => {
 
       expect(plugin.routeLoad).toBeCalled();
 
-      history.push('/pathname?search=blah-blah-blah');
+      act(() => {
+        history.push('/pathname?search=blah-blah-blah');
+      });
 
       expect(plugin.routeLoad).toBeCalledTimes(2);
     });
@@ -207,7 +216,9 @@ describe('<Router /> client-side integration tests', () => {
 
       expect(plugin.routeLoad).toBeCalled();
 
-      history.push('/pathname?search=search&issue-key=1');
+      act(() => {
+        history.push('/pathname?search=search&issue-key=1');
+      });
 
       expect(plugin.routeLoad).toBeCalledTimes(1);
     });
