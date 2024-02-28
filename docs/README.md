@@ -116,7 +116,7 @@ import {
   RouteComponent,
   createBrowserHistory,
 } from 'react-resource-router';
-import {createResourcesPlugin} from "react-resource-router/resources";
+import { createResourcesPlugin } from "react-resource-router/resources";
 import { appRoutes } from './routing/routes';
 
 const history = createBrowserHistory();
