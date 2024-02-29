@@ -1,7 +1,7 @@
 import { act, render, screen } from '@testing-library/react';
 import '@testing-library/jest-dom';
 import { createMemoryHistory } from 'history';
-import React from 'react';
+import React, { StrictMode } from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { isServerEnvironment } from '../common/utils/is-server-environment';
@@ -23,122 +23,75 @@ describe('<Router /> client-side integration tests', () => {
     routes,
     plugins = [],
     location,
+    strictMode,
   }: {
     routes: Route[];
     plugins?: Plugin[];
     location?: string;
+    strictMode: boolean;
   }) {
     const history = createMemoryHistory({
       initialEntries: [location || routes[0].path],
     });
 
     render(
-      <Router history={history} plugins={plugins} routes={routes}>
-        <RouteComponent />
-      </Router>
+      strictMode ? (
+        <StrictMode>
+          <Router history={history} plugins={plugins} routes={routes}>
+            <RouteComponent />
+          </Router>
+        </StrictMode>
+      ) : (
+        <Router history={history} plugins={plugins} routes={routes}>
+          <RouteComponent />
+        </Router>
+      )
     );
 
     return { history };
   }
 
-  it('renders route', () => {
-    const location = '/pathname?search=search#hash=hash';
-    const route = {
-      component: () => <div>test</div>,
-      name: 'mock-route',
-      path: location.substring(0, location.indexOf('?')),
-    };
+  const strictModeStates = ['on', 'off'];
 
-    mountRouter({ routes: [route] });
+  for (const strictModeState of strictModeStates) {
+    const strictMode = strictModeState === 'on';
 
-    expect(screen.getByText('test')).toBeInTheDocument();
-  });
+    it(`renders route: strict mode ${strictModeState}`, () => {
+      const location = '/pathname?search=search#hash=hash';
+      const route = {
+        component: () => <div>test</div>,
+        name: 'mock-route',
+        path: location.substring(0, location.indexOf('?')),
+      };
 
-  it('triggers plugin.loadRoute when mounted', () => {
-    const location = '/pathname?search=search#hash=hash';
-    const route = {
-      component: () => <div>test</div>,
-      name: 'mock-route',
-      path: location.substring(0, location.indexOf('?')),
-    };
+      mountRouter({ routes: [route], strictMode });
 
-    const plugin: Plugin = {
-      id: 'test-plugin',
-      routeLoad: jest.fn(),
-    };
-
-    mountRouter({
-      routes: [route],
-      plugins: [plugin],
+      expect(screen.getByText('test')).toBeInTheDocument();
     });
 
-    expect(plugin.routeLoad).toBeCalled();
-  });
+    it(`triggers plugin.loadRoute when mounted: strict mode ${strictModeState}`, () => {
+      const location = '/pathname?search=search#hash=hash';
+      const route = {
+        component: () => <div>test</div>,
+        name: 'mock-route',
+        path: location.substring(0, location.indexOf('?')),
+      };
 
-  it('renders next route', () => {
-    const location = '/pathname?search=search#hash=hash';
-    const route = {
-      component: () => <div>first route</div>,
-      name: 'mock-route',
-      path: location.substring(0, location.indexOf('?')),
-    };
+      const plugin: Plugin = {
+        id: 'test-plugin',
+        routeLoad: jest.fn(),
+      };
 
-    const route2 = {
-      component: () => <div>second route</div>,
-      name: 'mock-route2',
-      path: '/route2',
-    };
+      mountRouter({
+        routes: [route],
+        plugins: [plugin],
+        strictMode,
+      });
 
-    const { history } = mountRouter({
-      routes: [route, route2],
+      expect(plugin.routeLoad).toBeCalled();
     });
 
-    expect(screen.getByText('first route')).toBeInTheDocument();
-
-    act(() => {
-      history.push('/route2');
-    });
-
-    expect(screen.getByText('second route')).toBeInTheDocument();
-  });
-
-  it('triggers plugin.loadRoute after URL change', async () => {
-    const location = '/pathname?search=search#hash=hash';
-    const route = {
-      component: () => <div>first route</div>,
-      name: 'mock-route',
-      path: location.substring(0, location.indexOf('?')),
-    };
-
-    const route2 = {
-      component: () => <div>second route</div>,
-      name: 'mock-route2',
-      path: '/route2',
-    };
-
-    const plugin: Plugin = {
-      id: 'test-plugin',
-      routeLoad: jest.fn(),
-    };
-
-    const { history } = mountRouter({
-      routes: [route, route2],
-      plugins: [plugin],
-    });
-
-    expect(plugin.routeLoad).toBeCalled();
-
-    act(() => {
-      history.push('/route2');
-    });
-
-    expect((plugin.routeLoad as any).mock.calls[1][0].context.route).toBe(
-      route2
-    );
-  });
-
-  describe('route re-rendering', () => {
-    it('route loaded once as URL pathname did not change', () => {
+    it(`renders next route: strict mode ${strictModeState}`, () => {
       const location = '/pathname?search=search#hash=hash';
       const route = {
         component: () => <div>first route</div>,
@@ -146,32 +99,38 @@ describe('<Router /> client-side integration tests', () => {
         path: location.substring(0, location.indexOf('?')),
       };
 
-      const plugin: Plugin = {
-        id: 'test-plugin',
-        routeLoad: jest.fn(),
+      const route2 = {
+        component: () => <div>second route</div>,
+        name: 'mock-route2',
+        path: '/route2',
       };
 
       const { history } = mountRouter({
-        routes: [route],
-        plugins: [plugin],
+        routes: [route, route2],
+        strictMode,
       });
 
-      expect(plugin.routeLoad).toBeCalled();
+      expect(screen.getByText('first route')).toBeInTheDocument();
 
       act(() => {
-        history.push('/pathname?search=blah-blah-blah');
+        history.push('/route2');
       });
 
-      expect(plugin.routeLoad).toBeCalledTimes(1);
+      expect(screen.getByText('second route')).toBeInTheDocument();
     });
 
-    it('route loads twice as query params change', () => {
+    it(`triggers plugin.loadRoute after URL change : strict mode ${strictModeState}`, async () => {
       const location = '/pathname?search=search#hash=hash';
       const route = {
         component: () => <div>first route</div>,
         name: 'mock-route',
-        query: ['search'],
         path: location.substring(0, location.indexOf('?')),
+      };
+
+      const route2 = {
+        component: () => <div>second route</div>,
+        name: 'mock-route2',
+        path: '/route2',
       };
 
       const plugin: Plugin = {
@@ -180,92 +139,184 @@ describe('<Router /> client-side integration tests', () => {
       };
 
       const { history } = mountRouter({
-        routes: [route],
+        routes: [route, route2],
         plugins: [plugin],
-        location,
+        strictMode,
       });
 
       expect(plugin.routeLoad).toBeCalled();
 
       act(() => {
-        history.push('/pathname?search=blah-blah-blah');
+        history.push('/route2');
       });
 
-      expect(plugin.routeLoad).toBeCalledTimes(2);
+      expect((plugin.routeLoad as any).mock.calls[1][0].context.route).toBe(
+        route2
+      );
     });
 
-    it('route loads once as defined query param did not change', () => {
-      const location = '/pathname?search=search';
+    describe(`route re-rendering: strict mode ${strictModeState}`, () => {
+      it(`route loaded once as URL pathname did not change: strict mode ${strictModeState}`, () => {
+        const location = '/pathname?search=search#hash=hash';
+        const route = {
+          component: () => <div>first route</div>,
+          name: 'mock-route',
+          path: location.substring(0, location.indexOf('?')),
+        };
+
+        const plugin: Plugin = {
+          id: 'test-plugin',
+          routeLoad: jest.fn(),
+        };
+
+        const { history } = mountRouter({
+          routes: [route],
+          plugins: [plugin],
+          strictMode,
+        });
+
+        expect(plugin.routeLoad).toBeCalled();
+
+        act(() => {
+          history.push('/pathname?search=blah-blah-blah');
+        });
+
+        expect(plugin.routeLoad).toBeCalledTimes(1);
+      });
+
+      it(`route loads twice as query params change: strict mode ${strictModeState}`, () => {
+        const location = '/pathname?search=search#hash=hash';
+        const route = {
+          component: () => <div>first route</div>,
+          name: 'mock-route',
+          query: ['search'],
+          path: location.substring(0, location.indexOf('?')),
+        };
+
+        const plugin: Plugin = {
+          id: 'test-plugin',
+          routeLoad: jest.fn(),
+        };
+
+        const { history } = mountRouter({
+          routes: [route],
+          plugins: [plugin],
+          location,
+          strictMode,
+        });
+
+        expect(plugin.routeLoad).toBeCalled();
+
+        act(() => {
+          history.push('/pathname?search=blah-blah-blah');
+        });
+
+        expect(plugin.routeLoad).toBeCalledTimes(2);
+      });
+
+      it(`route loads once as defined query param did not change: strict mode ${strictModeState}`, () => {
+        const location = '/pathname?search=search';
+        const route = {
+          component: () => <div>first route</div>,
+          name: 'mock-route',
+          query: ['search'],
+          path: location.substring(0, location.indexOf('?')),
+        };
+
+        const plugin: Plugin = {
+          id: 'test-plugin',
+          routeLoad: jest.fn(),
+        };
+
+        const { history } = mountRouter({
+          routes: [route],
+          plugins: [plugin],
+          location,
+          strictMode,
+        });
+
+        expect(plugin.routeLoad).toBeCalled();
+
+        act(() => {
+          history.push('/pathname?search=search&issue-key=1');
+        });
+
+        expect(plugin.routeLoad).toBeCalledTimes(1);
+      });
+    });
+
+    describe(`<Router /> server-side integration tests: strict mode ${strictModeState}`, () => {
       const route = {
-        component: () => <div>first route</div>,
-        name: 'mock-route',
-        query: ['search'],
-        path: location.substring(0, location.indexOf('?')),
+        component: () => <>route component</>,
+        name: '',
+        path: '/path',
       };
 
-      const plugin: Plugin = {
-        id: 'test-plugin',
-        routeLoad: jest.fn(),
-      };
-
-      const { history } = mountRouter({
-        routes: [route],
-        plugins: [plugin],
-        location,
+      beforeEach(() => {
+        (isServerEnvironment as any).mockReturnValue(true);
       });
 
-      expect(plugin.routeLoad).toBeCalled();
+      it(`renders the expected route when basePath is set: strict mode ${strictModeState}`, () => {
+        render(
+          strictMode ? (
+            <StrictMode>
+              <Router
+                basePath="/base-path"
+                history={createMemoryHistory({
+                  initialEntries: [`/base-path${route.path}`],
+                })}
+                plugins={[]}
+                routes={[route]}
+              >
+                <RouteComponent />
+              </Router>
+            </StrictMode>
+          ) : (
+            <Router
+              basePath="/base-path"
+              history={createMemoryHistory({
+                initialEntries: [`/base-path${route.path}`],
+              })}
+              plugins={[]}
+              routes={[route]}
+            >
+              <RouteComponent />
+            </Router>
+          )
+        );
 
-      act(() => {
-        history.push('/pathname?search=search&issue-key=1');
+        expect(screen.getByText('route component')).toBeInTheDocument();
       });
 
-      expect(plugin.routeLoad).toBeCalledTimes(1);
+      it(`renders the expected route when basePath is not set: strict mode ${strictModeState}`, () => {
+        render(
+          strictMode ? (
+            <StrictMode>
+              <Router
+                history={createMemoryHistory({
+                  initialEntries: [route.path],
+                })}
+                plugins={[]}
+                routes={[route]}
+              >
+                <RouteComponent />
+              </Router>
+            </StrictMode>
+          ) : (
+            <Router
+              history={createMemoryHistory({
+                initialEntries: [route.path],
+              })}
+              plugins={[]}
+              routes={[route]}
+            >
+              <RouteComponent />
+            </Router>
+          )
+        );
+
+        expect(screen.getByText('route component')).toBeInTheDocument();
+      });
     });
-  });
-});
-
-describe('<Router /> server-side integration tests', () => {
-  const route = {
-    component: () => <>route component</>,
-    name: '',
-    path: '/path',
-  };
-
-  beforeEach(() => {
-    (isServerEnvironment as any).mockReturnValue(true);
-  });
-
-  it('renders the expected route when basePath is set', () => {
-    render(
-      <Router
-        basePath="/base-path"
-        history={createMemoryHistory({
-          initialEntries: [`/base-path${route.path}`],
-        })}
-        plugins={[]}
-        routes={[route]}
-      >
-        <RouteComponent />
-      </Router>
-    );
-
-    expect(screen.getByText('route component')).toBeInTheDocument();
-  });
-
-  it('renders the expected route when basePath is not set', () => {
-    render(
-      <Router
-        history={createMemoryHistory({
-          initialEntries: [route.path],
-        })}
-        plugins={[]}
-        routes={[route]}
-      >
-        <RouteComponent />
-      </Router>
-    );
-
-    expect(screen.getByText('route component')).toBeInTheDocument();
-  });
+  }
 });

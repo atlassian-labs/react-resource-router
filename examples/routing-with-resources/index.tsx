@@ -1,5 +1,5 @@
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { homeRoute, aboutRoute } from './routes';
 
@@ -28,4 +28,9 @@ const App = () => {
   );
 };
 
-render(<App />, document.getElementById('root'));
+const container = document.getElementById('root');
+if (!container)
+  throw new Error('No root element found to render resources example');
+
+const root = createRoot(container);
+root.render(<App />);

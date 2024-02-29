@@ -15,13 +15,13 @@ export const Router = ({
   onPrefetch,
   routes,
 }: RouterProps) => {
-  useEffect(() => {
-    const { unlisten } = getRouterState();
+  const { unlisten } = getRouterState();
 
+  useEffect(() => {
     return () => {
       unlisten && unlisten();
     };
-  }, []);
+  }, [unlisten]);
 
   return (
     <RouterContainer
