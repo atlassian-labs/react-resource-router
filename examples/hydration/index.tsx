@@ -1,6 +1,6 @@
 import { createMemoryHistory } from 'history';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { defaultRegistry } from 'react-sweet-state';
 
 import { homeRoute } from './routes';
@@ -53,7 +53,12 @@ const main = async () => {
     );
   };
 
-  render(<App />, document.getElementById('root'));
+  const container = document.getElementById('root');
+  if (!container)
+    throw new Error('No root element found to render hydration example');
+
+  const root = createRoot(container);
+  root.render(<App />);
 };
 
 main();

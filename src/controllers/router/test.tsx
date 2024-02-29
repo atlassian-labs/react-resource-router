@@ -46,7 +46,7 @@ describe('<Router />', () => {
     expect(screen.getByText('test')).toBeInTheDocument();
   });
 
-  it('calls history.listen()() on unmount', () => {
+  it('calls history.listen()() on unmount', async () => {
     const unlisten = jest.fn();
     jest.spyOn(history, 'listen').mockReturnValue(unlisten);
 
@@ -54,7 +54,7 @@ describe('<Router />', () => {
       <Router history={history} routes={routes} plugins={[]} />
     );
 
-    unmount();
+    await unmount();
 
     expect(unlisten).toHaveBeenCalledTimes(1);
   });

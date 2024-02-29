@@ -1,7 +1,7 @@
 import { createHashHistory as createHashHistory4 } from 'history';
 import { createHashHistory as createHashHistory5 } from 'history-5';
 import React from 'react';
-import { render } from 'react-dom';
+import { createRoot } from 'react-dom/client';
 
 import { About } from './about';
 import { Home } from './home';
@@ -42,4 +42,9 @@ const App = () => {
   );
 };
 
-render(<App />, document.getElementById('root'));
+const container = document.getElementById('root');
+if (!container)
+  throw new Error('No root element found to render hash routing example');
+
+const root = createRoot(container);
+root.render(<App />);
