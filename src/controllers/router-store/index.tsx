@@ -383,12 +383,16 @@ export const RouterContainer = createContainer<State, Actions, ContainerProps>(
         dispatch(actions.bootstrapStore(props));
         !isServerEnvironment() && dispatch(actions.loadPlugins());
       },
-    onCleanup: () => () => {
+    onCleanup: () => state => {
       if (process.env.NODE_ENV === 'development') {
         // eslint-disable-next-line no-console
         console.warn(
           `Warning: react-resource-router has been unmounted! Was this intentional? Resources will be refetched when the router is mounted again.`
         );
+      }
+      if (!isServerEnvironment()) {
+        const { unlisten } = state.getState();
+        unlisten && unlisten();
       }
     },
   }

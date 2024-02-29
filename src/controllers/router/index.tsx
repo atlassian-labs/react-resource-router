@@ -1,7 +1,7 @@
 import { createMemoryHistory } from 'history';
-import React, { useMemo, useEffect } from 'react';
+import React, { useMemo } from 'react';
 
-import { getRouterState, RouterContainer } from '../router-store';
+import { RouterContainer } from '../router-store';
 
 import { RouterProps, MemoryRouterProps } from './types';
 
@@ -15,14 +15,6 @@ export const Router = ({
   onPrefetch,
   routes,
 }: RouterProps) => {
-  const { unlisten } = getRouterState();
-
-  useEffect(() => {
-    return () => {
-      unlisten && unlisten();
-    };
-  }, [unlisten]);
-
   return (
     <RouterContainer
       basePath={basePath}
