@@ -71,7 +71,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
               generateLocationFromPath(route.path, routeAttributes)
             )) ||
           ''
-        : to;
+        : `${routeAttributes.basePath}${to}`;
 
     const triggerPrefetch = useCallback(() => {
       // ignore if async route not ready yet
