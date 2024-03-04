@@ -67,6 +67,30 @@ describe('<Link />', () => {
     expect(linkElement).toHaveAttribute('href', newPath);
   });
 
+  it('should support the `to` prop with basePath', () => {
+    renderInRouter('my link', { to: '/my-page/1?foo=bar' }, '/base');
+    const linkElement = screen.getByRole('link', { name: 'my link' });
+    expect(linkElement).toHaveAttribute('href', `/base/my-page/1?foo=bar`);
+  });
+
+  it('should push history with correct link given basePath', async () => {
+    const user = userEvent.setup();
+    renderInRouter(
+      'my link',
+      {
+        to: '/my-page/1?foo=bar',
+      },
+      '/base'
+    );
+
+    await user.click(screen.getByRole('link', { name: 'my link' }));
+
+    expect(HistoryMock.push).toHaveBeenCalledWith(
+      '/base/my-page/1?foo=bar',
+      undefined
+    );
+  });
+
   it('should pass props to the child element', () => {
     renderInRouter('my link', {
       ...defaultProps,
