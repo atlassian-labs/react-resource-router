@@ -14,7 +14,7 @@ export type RouterProps = PropsWithChildren<{
   isGlobal?: boolean;
   onPrefetch?: (routerContext: RouterContext) => void;
   routes: Routes;
-  plugins: Plugin[];
+  plugins?: Plugin[];
 }>;
 
 export type MemoryRouterProps = PropsWithChildren<{
