@@ -22,7 +22,7 @@ export const Router = ({
       initialRoute={initialRoute}
       isGlobal={isGlobal}
       onPrefetch={onPrefetch}
-      plugins={plugins}
+      plugins={plugins ?? []}
       routes={routes}
     >
       {children}
@@ -44,7 +44,7 @@ export function MemoryRouter(props: MemoryRouterProps) {
       {...props}
       history={history}
       isGlobal={false}
-      plugins={props.plugins || []}
+      plugins={props?.plugins ?? []}
     />
   );
 }
