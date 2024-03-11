@@ -24,8 +24,8 @@ describe('invokePluginLoad', () => {
       routes: [],
     });
 
-    expect(pluginOne.routeLoad).toBeCalled();
-    expect(pluginTwo.routeLoad).toBeCalled();
-    expect(pluginThree.routeLoad).toBeCalled();
+    expect(pluginOne.routeLoad).toHaveBeenCalled();
+    expect(pluginTwo.routeLoad).toHaveBeenCalled();
+    expect(pluginThree.routeLoad).toHaveBeenCalled();
   });
 });

@@ -134,7 +134,7 @@ describe('useQueryParam()', () => {
     expect(qpVal).toEqual('hello');
     act(() => qpUpdateFn('newVal', 'push'));
 
-    expect(historyReplaceSpy).not.toBeCalled();
+    expect(historyReplaceSpy).not.toHaveBeenCalled();
     expect(historyPushSpy).toBeCalledWith(
       `${mockPath}?foo=newVal&bar=world#hash`
     );
@@ -165,7 +165,7 @@ describe('useQueryParam()', () => {
     act(() => qpUpdateFn('newVal'));
     act(() => qpUpdateFn('newVal'));
 
-    expect(historyPushSpy).toBeCalledTimes(1);
+    expect(historyPushSpy).toHaveBeenCalledTimes(1);
     expect(historyPushSpy).toBeCalledWith(
       `${mockPath}?foo=newVal&bar=world#hash`
     );
@@ -192,7 +192,7 @@ describe('useQueryParam()', () => {
     expect(qpVal).toEqual('hello');
     act(() => qpUpdateFn('newVal', 'replace'));
 
-    expect(historyPushSpy).not.toBeCalled();
+    expect(historyPushSpy).not.toHaveBeenCalled();
     expect(historyReplaceSpy).toBeCalledWith(
       `${mockPath}?foo=newVal&bar=world#hash`
     );

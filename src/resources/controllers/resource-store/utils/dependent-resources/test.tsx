@@ -89,9 +89,9 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toEqual([1, 2]);
 
-      expect(mockApi.setState).not.toBeCalled();
+      expect(mockApi.setState).not.toHaveBeenCalled();
       expect(mockApi.dispatch).toHaveBeenCalledTimes(2);
-      expect(action).toBeCalledTimes(2);
+      expect(action).toHaveBeenCalledTimes(2);
     });
 
     it('should dispatch independent resources even if missing from current route', () => {
@@ -108,9 +108,9 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toEqual([1, 2]);
 
-      expect(mockApi.setState).not.toBeCalled();
+      expect(mockApi.setState).not.toHaveBeenCalled();
       expect(mockApi.dispatch).toHaveBeenCalledTimes(2);
-      expect(action).toBeCalledTimes(2);
+      expect(action).toHaveBeenCalledTimes(2);
     });
 
     it.each([
@@ -130,9 +130,9 @@ describe('dependent resources', () => {
           ])(mockApi)
         ).toEqual([1, 2]);
 
-        expect(mockApi.setState).not.toBeCalled();
+        expect(mockApi.setState).not.toHaveBeenCalled();
         expect(mockApi.dispatch).toHaveBeenCalledTimes(2);
-        expect(action).toBeCalledTimes(2);
+        expect(action).toHaveBeenCalledTimes(2);
       }
     );
 
@@ -153,9 +153,9 @@ describe('dependent resources', () => {
           ])(mockApi)
         ).toEqual([1, 2]);
 
-        expect(mockApi.setState).not.toBeCalled();
+        expect(mockApi.setState).not.toHaveBeenCalled();
         expect(mockApi.dispatch).toHaveBeenCalledTimes(2);
-        expect(action).toBeCalledTimes(2);
+        expect(action).toHaveBeenCalledTimes(2);
       }
     );
 
@@ -170,7 +170,7 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toEqual([1]);
 
-      expect(mockApi.setState).toBeCalledTimes(2);
+      expect(mockApi.setState).toHaveBeenCalledTimes(2);
       expect(mockApi.setState).toHaveBeenNthCalledWith(1, {
         executing: [
           [resourceX, null],
@@ -179,7 +179,7 @@ describe('dependent resources', () => {
         ],
       });
       expect(mockApi.dispatch).toHaveBeenCalledTimes(1);
-      expect(action).toBeCalledTimes(1);
+      expect(action).toHaveBeenCalledTimes(1);
       expect(mockApi.setState).toHaveBeenNthCalledWith(2, { executing: null });
     });
 
@@ -194,7 +194,7 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toEqual([1]);
 
-      expect(mockApi.setState).toBeCalledTimes(2);
+      expect(mockApi.setState).toHaveBeenCalledTimes(2);
       expect(mockApi.setState).toHaveBeenNthCalledWith(1, {
         executing: [
           [resourceX, action],
@@ -203,7 +203,7 @@ describe('dependent resources', () => {
         ],
       });
       expect(mockApi.dispatch).toHaveBeenCalledTimes(1);
-      expect(action).toBeCalledTimes(1);
+      expect(action).toHaveBeenCalledTimes(1);
       expect(mockApi.setState).toHaveBeenNthCalledWith(2, { executing: null });
     });
 
@@ -226,7 +226,7 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toEqual([1]);
 
-      expect(mockApi.setState).toBeCalledTimes(2);
+      expect(mockApi.setState).toHaveBeenCalledTimes(2);
       expect(mockApi.setState).toHaveBeenNthCalledWith(1, {
         executing: [
           [resourceX, action],
@@ -235,7 +235,7 @@ describe('dependent resources', () => {
         ],
       });
       expect(mockApi.dispatch).toHaveBeenCalledTimes(1);
-      expect(action).toBeCalledTimes(1);
+      expect(action).toHaveBeenCalledTimes(1);
       expect(mockApi.setState).toHaveBeenNthCalledWith(2, { executing: null });
     });
 
@@ -269,7 +269,7 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toEqual([1]);
 
-      expect(mockApi.setState).toBeCalledTimes(3);
+      expect(mockApi.setState).toHaveBeenCalledTimes(3);
       expect(mockApi.setState).toHaveBeenNthCalledWith(1, {
         executing: [
           [resourceX, action1],
@@ -285,8 +285,8 @@ describe('dependent resources', () => {
         ],
       });
       expect(mockApi.dispatch).toHaveBeenCalledTimes(3);
-      expect(action1).toBeCalledTimes(1);
-      expect(action2).toBeCalledTimes(2);
+      expect(action1).toHaveBeenCalledTimes(1);
+      expect(action2).toHaveBeenCalledTimes(2);
       expect(mockApi.setState).toHaveBeenNthCalledWith(3, { executing: null });
     });
 
@@ -311,7 +311,7 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toThrow('execution reached an inconsistent state');
 
-      expect(mockApi.setState).toBeCalledTimes(3);
+      expect(mockApi.setState).toHaveBeenCalledTimes(3);
       expect(mockApi.setState).toHaveBeenNthCalledWith(1, {
         executing: [
           [resourceX, action1],
@@ -325,8 +325,8 @@ describe('dependent resources', () => {
         ],
       });
       expect(mockApi.dispatch).toHaveBeenCalledTimes(1);
-      expect(action1).toBeCalledTimes(1);
-      expect(action2).not.toBeCalled();
+      expect(action1).toHaveBeenCalledTimes(1);
+      expect(action2).not.toHaveBeenCalled();
       expect(mockApi.setState).toHaveBeenNthCalledWith(3, { executing: null });
     });
 
@@ -360,9 +360,9 @@ describe('dependent resources', () => {
 
       executeForDependents(resourceX, actionCreator)(mockApi);
 
-      expect(mockApi.getState).toBeCalled();
-      expect(mockApi.setState).not.toBeCalled();
-      expect(actionCreator).not.toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
+      expect(mockApi.setState).not.toHaveBeenCalled();
+      expect(actionCreator).not.toHaveBeenCalled();
     });
 
     it('should do nothing where given resource is not executing', () => {
@@ -376,9 +376,9 @@ describe('dependent resources', () => {
 
       executeForDependents(resourceX, actionCreator)(mockApi);
 
-      expect(mockApi.getState).toBeCalled();
-      expect(mockApi.setState).not.toBeCalled();
-      expect(actionCreator).not.toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
+      expect(mockApi.setState).not.toHaveBeenCalled();
+      expect(actionCreator).not.toHaveBeenCalled();
     });
 
     it('should revise action for resources in executing state dependent on the given resource', () => {
@@ -396,7 +396,7 @@ describe('dependent resources', () => {
 
       executeForDependents(resourceX, actionCreator)(mockApi);
 
-      expect(mockApi.getState).toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
       expect(mockApi.setState).toBeCalledWith({
         executing: [
           [resourceX, null],
@@ -404,7 +404,7 @@ describe('dependent resources', () => {
           [resourceZ, 2],
         ],
       });
-      expect(actionCreator).toBeCalledTimes(2);
+      expect(actionCreator).toHaveBeenCalledTimes(2);
       expect(actionCreator).toHaveBeenNthCalledWith(1, resourceY);
       expect(actionCreator).toHaveBeenNthCalledWith(2, resourceZ);
     });
@@ -420,7 +420,7 @@ describe('dependent resources', () => {
 
       executeForDependents(resourceY, actionCreator)(mockApi);
 
-      expect(mockApi.getState).toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
       expect(mockApi.setState).toBeCalledWith({
         executing: [
           [resourceX, null],
@@ -442,7 +442,7 @@ describe('dependent resources', () => {
 
       executeForDependents(resourceX, actionCreator)(mockApi);
 
-      expect(mockApi.getState).toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
       expect(mockApi.setState).toBeCalledWith({
         executing: [
           [resourceZ, null],
@@ -450,7 +450,7 @@ describe('dependent resources', () => {
           [resourceY, 1],
         ],
       });
-      expect(actionCreator).toBeCalledTimes(1);
+      expect(actionCreator).toHaveBeenCalledTimes(1);
       expect(actionCreator).toBeCalledWith(resourceY);
     });
   });
@@ -478,7 +478,7 @@ describe('dependent resources', () => {
         )(mockApi)
       ).toEqual({});
 
-      expect(mockApi.getState).not.toBeCalled();
+      expect(mockApi.getState).not.toHaveBeenCalled();
     });
 
     it('should return null where called outside of executing state', () => {
@@ -492,7 +492,7 @@ describe('dependent resources', () => {
         )
       );
 
-      expect(mockApi.getState).toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
     });
 
     it('should throw ResourceDependencyError where given dependent resource is not in executing state', () => {
@@ -511,7 +511,7 @@ describe('dependent resources', () => {
         )
       );
 
-      expect(mockApi.getState).toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
     });
 
     it('should throw ResourceDependencyError for first dependency missing from executing state', () => {
@@ -562,8 +562,8 @@ describe('dependent resources', () => {
         )
       );
 
-      expect(mockApi.getState).toBeCalled();
-      expect(mockApi.setState).not.toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
+      expect(mockApi.setState).not.toHaveBeenCalled();
     });
 
     it('should return {type:slice} for dependencies preceding given resource in executing state', () => {
@@ -586,7 +586,7 @@ describe('dependent resources', () => {
         y: slice2,
       });
 
-      expect(mockApi.getState).toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
       expect(mockApi.setState).not.toBeCalledWith({});
     });
 
@@ -609,8 +609,8 @@ describe('dependent resources', () => {
         y: slice2,
       });
 
-      expect(mockApi.getState).toBeCalled();
-      expect(mockApi.setState).not.toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
+      expect(mockApi.setState).not.toHaveBeenCalled();
     });
 
     it('should throw ResourceDependencyError for first dependency following given resource in executing state', () => {
@@ -633,8 +633,8 @@ describe('dependent resources', () => {
         )
       );
 
-      expect(mockApi.getState).toBeCalled();
-      expect(mockApi.setState).not.toBeCalled();
+      expect(mockApi.getState).toHaveBeenCalled();
+      expect(mockApi.setState).not.toHaveBeenCalled();
     });
   });
 });
