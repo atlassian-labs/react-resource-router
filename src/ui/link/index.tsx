@@ -66,12 +66,12 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       href != null
         ? href
         : typeof to !== 'string'
-        ? (route &&
-            createPath(
-              generateLocationFromPath(route.path, routeAttributes)
-            )) ||
-          ''
-        : to;
+          ? (route &&
+              createPath(
+                generateLocationFromPath(route.path, routeAttributes)
+              )) ||
+            ''
+          : to;
     const staticBasePath =
       href == null && typeof to === 'string' ? routeAttributes.basePath : '';
 

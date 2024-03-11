@@ -24,7 +24,7 @@ export const useQueryParam = (
   paramKey: string
 ): [
   string | undefined,
-  (newValue: string | undefined, updateType?: HistoryUpdateType) => void
+  (newValue: string | undefined, updateType?: HistoryUpdateType) => void,
 ] => {
   const [paramVal, routerActions] = createQueryParamHook({ paramKey });
 
