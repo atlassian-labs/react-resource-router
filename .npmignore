@@ -8,7 +8,6 @@ jest.config.js
 webpack.config.js
 *.config.*.js
 *.setup.js
-.flowconfig
 tsconfig.json
 tsconfig.build.json
 

@@ -13,8 +13,6 @@ module.exports = {
   globals: {
     // enable webpack require
     require: 'readonly',
-    // fix for eslint-plugin-flowtype/384 not supporting wildcard
-    _: 'readonly',
   },
   parser: '@babel/eslint-parser',
   parserOptions: {
@@ -49,15 +47,6 @@ module.exports = {
     semi: 'off',
   },
   overrides: [
-    {
-      // Flow specific rules
-      extends: ['plugin:flowtype/recommended'],
-      files: ['*.flow'],
-      plugins: ['flowtype'],
-      rules: {
-        'flowtype/generic-spacing': 'off',
-      },
-    },
     {
       // TypeScript specific rules
       files: ['*.{ts,tsx}'],
