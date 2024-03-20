@@ -58,11 +58,10 @@
     "lint:fix": "eslint --ext .ts,.tsx,.js src/ examples/ --fix",
     "lint:types": "tsc --noEmit",
     "lint:types-watch": "tsc --noEmit --watch",
-    "prepack": "npm run preversion -s && npm run build -s",
+    "release": "npx changeset publish",
     "start": "webpack-dev-server --open",
     "test": "jest",
-    "test:watch": "jest --watch",
-    "preversion": "npm run lint -s && npm run lint:types -s && npm run lint:deps -s && npm run test -s"
+    "test:watch": "jest --watch"
   },
   "dependencies": {
     "lodash.debounce": "^4.0.8",
@@ -85,6 +84,7 @@
     "@babel/preset-react": "^7.23.3",
     "@babel/preset-typescript": "^7.23.3",
     "@babel/runtime": "^7.24.0",
+    "@changesets/cli": "^2.27.1",
     "@codeshift/cli": "^0.22.0",
     "@codeshift/test-utils": "^0.3.2",
     "@codeshift/utils": "^0.2.5",
