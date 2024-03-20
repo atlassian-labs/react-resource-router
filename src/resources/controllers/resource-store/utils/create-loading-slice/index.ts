@@ -61,9 +61,9 @@ export function createLoadingSlice({
         return maybeData;
       })
     : // if we already have a result, wrap it so consumers can access it via same API
-    data !== undefined
-    ? Promise.resolve(data)
-    : (promiseOrData as Promise<unknown>);
+      data !== undefined
+      ? Promise.resolve(data)
+      : (promiseOrData as Promise<unknown>);
 
   const resourceMaxAge = getExpiresAt(
     resource.maxAge ?? DEFAULT_RESOURCE_MAX_AGE

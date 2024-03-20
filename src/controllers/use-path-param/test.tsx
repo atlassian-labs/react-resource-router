@@ -118,7 +118,7 @@ describe('usePathParam()', () => {
 
     const { storeState } = getRouterStore();
     const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
-    expect(historyReplaceSpy).not.toBeCalled();
+    expect(historyReplaceSpy).not.toHaveBeenCalled();
     expect(historyPushSpy).toBeCalledWith(expectedPath);
     expect(storeState.getState().location.pathname).toEqual(
       '/projects/newVal/board/456'
@@ -153,7 +153,7 @@ describe('usePathParam()', () => {
     const { storeState } = getRouterStore();
     const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
 
-    expect(historyPushSpy).toBeCalledTimes(1);
+    expect(historyPushSpy).toHaveBeenCalledTimes(1);
     expect(historyPushSpy).toBeCalledWith(expectedPath);
     expect(storeState.getState().location.pathname).toEqual(
       '/projects/newVal/board/456'
@@ -186,7 +186,7 @@ describe('usePathParam()', () => {
 
     const { storeState } = getRouterStore();
     const expectedPath = `/projects/newVal/board/456${mockLocation.search}${mockLocation.hash}`;
-    expect(historyPushSpy).not.toBeCalled();
+    expect(historyPushSpy).not.toHaveBeenCalled();
     expect(historyReplaceSpy).toBeCalledWith(expectedPath);
     expect(storeState.getState().location.pathname).toEqual(
       '/projects/newVal/board/456'

@@ -20,7 +20,7 @@ describe('useRouter()', () => {
     render(<App />);
 
     expect(state.location).toMatchInlineSnapshot(`
-      Object {
+      {
         "hash": "",
         "pathname": "/",
         "search": "",
@@ -28,7 +28,7 @@ describe('useRouter()', () => {
     `);
 
     expect(actions).toMatchInlineSnapshot(`
-      Object {
+      {
         "bootstrapStore": [Function],
         "getBasePath": [Function],
         "getContext": [Function],

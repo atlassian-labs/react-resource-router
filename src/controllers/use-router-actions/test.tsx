@@ -16,7 +16,7 @@ describe('useRouterActions()', () => {
     render(<App />);
 
     expect(routerActions).toMatchInlineSnapshot(`
-      Object {
+      {
         "bootstrapStore": [Function],
         "getBasePath": [Function],
         "getContext": [Function],

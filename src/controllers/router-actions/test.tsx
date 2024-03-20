@@ -68,8 +68,8 @@ describe('<RouterActions />', () => {
 
     expect(window.location.assign).toBeCalledWith('push');
     expect(window.history.replaceState).toBeCalledWith({}, '', 'replace');
-    expect(window.history.back).toBeCalled();
-    expect(window.history.forward).toBeCalled();
+    expect(window.history.back).toHaveBeenCalled();
+    expect(window.history.forward).toHaveBeenCalled();
 
     expect(unblockMethod).toEqual(noop);
   });
@@ -100,8 +100,8 @@ describe('<RouterActions />', () => {
 
     expect(HistoryMock.push).toBeCalledWith('push', undefined);
     expect(HistoryMock.replace).toBeCalledWith('replace', undefined);
-    expect(HistoryMock.goBack).toBeCalled();
-    expect(HistoryMock.goForward).toBeCalled();
+    expect(HistoryMock.goBack).toHaveBeenCalled();
+    expect(HistoryMock.goForward).toHaveBeenCalled();
     expect(HistoryMock.block).toHaveBeenCalledWith(blockCallback);
     expect(unblocker).toEqual(unblockMethod);
   });

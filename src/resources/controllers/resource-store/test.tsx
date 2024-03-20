@@ -208,7 +208,7 @@ describe('resource store', () => {
           mockOptions
         );
 
-        expect(spy).toBeCalledTimes(2);
+        expect(spy).toHaveBeenCalledTimes(2);
         expect(spy).toHaveBeenNthCalledWith(1, {
           context: {},
           data: {
@@ -963,9 +963,9 @@ describe('resource store', () => {
             mockOptions
           );
 
-          expect(getData).not.toBeCalled();
-          expect(getAccessedAt).not.toBeCalled();
-          expect(getExpiresAt).not.toBeCalled();
+          expect(getData).not.toHaveBeenCalled();
+          expect(getAccessedAt).not.toHaveBeenCalled();
+          expect(getExpiresAt).not.toHaveBeenCalled();
           const slice = getResourceSlice(type);
           expect(slice).toEqual(
             expect.objectContaining({
@@ -981,8 +981,8 @@ describe('resource store', () => {
 
           const returnValue = await pending;
 
-          expect(getAccessedAt).not.toBeCalled();
-          expect(getExpiresAt).not.toBeCalled();
+          expect(getAccessedAt).not.toHaveBeenCalled();
+          expect(getExpiresAt).not.toHaveBeenCalled();
           expect(returnValue).toEqual(slice);
         });
       });
@@ -1005,7 +1005,7 @@ describe('resource store', () => {
             mockOptions
           );
 
-          expect(getData).toBeCalled();
+          expect(getData).toHaveBeenCalled();
           const slice1 = getResourceSlice(type);
           expect(slice1).toEqual(
             expect.objectContaining({
@@ -1020,8 +1020,8 @@ describe('resource store', () => {
           await expect(slice1.promise).resolves.toEqual(data);
           const returnValue = await pending;
 
-          expect(getAccessedAt).toBeCalled();
-          expect(getExpiresAt).toBeCalled();
+          expect(getAccessedAt).toHaveBeenCalled();
+          expect(getExpiresAt).toHaveBeenCalled();
           const slice2 = getResourceSlice(type);
           expect(returnValue).toEqual(slice2);
         });
@@ -1044,7 +1044,7 @@ describe('resource store', () => {
             { ...mockOptions }
           );
 
-          expect(getData).toBeCalled();
+          expect(getData).toHaveBeenCalled();
 
           const slice1 = getResourceSlice(type);
           expect(slice1).toEqual(
@@ -1081,7 +1081,7 @@ describe('resource store', () => {
               { ...mockOptions, timeout }
             );
 
-            expect(getData).toBeCalled();
+            expect(getData).toHaveBeenCalled();
             const slice1 = getResourceSlice(type);
             expect(slice1).toEqual(
               expect.objectContaining({
@@ -1132,7 +1132,7 @@ describe('resource store', () => {
               { ...mockOptions, timeout }
             );
 
-            expect(getData).toBeCalled();
+            expect(getData).toHaveBeenCalled();
             const slice1 = getResourceSlice(type);
             expect(slice1).toEqual(
               expect.objectContaining({
@@ -1183,7 +1183,7 @@ describe('resource store', () => {
             { ...mockOptions, timeout: 100 }
           );
 
-          expect(getData).toBeCalled();
+          expect(getData).toHaveBeenCalled();
           const slice1 = getResourceSlice(type);
           expect(slice1).toEqual(
             expect.objectContaining({
@@ -1227,7 +1227,7 @@ describe('resource store', () => {
           { ...mockOptions }
         );
 
-        expect(getData).toBeCalled();
+        expect(getData).toHaveBeenCalled();
         await pending;
         expect(getResourceSlice(type)).toEqual(slice);
       });
@@ -1848,7 +1848,7 @@ describe('resource store', () => {
           const slice = getResourceSlice(type);
           expect(slice.loading).toBe(false);
 
-          expect(spy1).not.toBeCalled();
+          expect(spy1).not.toHaveBeenCalled();
           expect(spy2).toHaveBeenCalledWith(
             {
               dependencies: {
@@ -1890,8 +1890,8 @@ describe('resource store', () => {
           })
         );
 
-        expect(spy1).not.toBeCalled();
-        expect(spy2).not.toBeCalled();
+        expect(spy1).not.toHaveBeenCalled();
+        expect(spy2).not.toHaveBeenCalled();
       });
     });
 
@@ -2156,8 +2156,8 @@ describe('resource store', () => {
 
         expect(getResourceSlice(mockResource.type)).toBeUndefined();
         expect(getResourceSlice(mockDependentResource.type)).toBeUndefined();
-        expect(spy1).not.toBeCalled();
-        expect(spy2).not.toBeCalled();
+        expect(spy1).not.toHaveBeenCalled();
+        expect(spy2).not.toHaveBeenCalled();
       });
 
       it('update new value should request dependent resource with dependency not loading', () => {
@@ -2178,7 +2178,7 @@ describe('resource store', () => {
           })
         );
 
-        expect(spy1).not.toBeCalled();
+        expect(spy1).not.toHaveBeenCalled();
         expect(spy2).toHaveBeenCalledWith(
           {
             dependencies: {
@@ -2209,8 +2209,8 @@ describe('resource store', () => {
           })
         );
 
-        expect(spy1).not.toBeCalled();
-        expect(spy2).not.toBeCalled();
+        expect(spy1).not.toHaveBeenCalled();
+        expect(spy2).not.toHaveBeenCalled();
       });
     });
 
@@ -2224,7 +2224,7 @@ describe('resource store', () => {
         { prefetch: true }
       );
 
-      expect(spy1).toBeCalled();
+      expect(spy1).toHaveBeenCalled();
       expect(spy2).toHaveBeenCalledWith(
         {
           dependencies: {

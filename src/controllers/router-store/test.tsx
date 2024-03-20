@@ -163,7 +163,7 @@ describe('RouterStore', () => {
           plugins,
         });
 
-        expect(plugin.routeLoad).toBeCalled();
+        expect(plugin.routeLoad).toHaveBeenCalled();
       });
     });
 
@@ -340,11 +340,11 @@ describe('RouterStore', () => {
             actions.push(nextLocation);
 
             // Plugin actions would not be called as path/match/query does not change
-            expect(plugin.beforeRouteLoad).not.toBeCalled();
+            expect(plugin.beforeRouteLoad).not.toHaveBeenCalled();
             expect(plugin.routeLoad).toHaveBeenCalledTimes(1); // called only on router init
 
             // For Resources plugin keeping old behaviour
-            expect(resourcesPlugin.beforeRouteLoad).toBeCalled();
+            expect(resourcesPlugin.beforeRouteLoad).toHaveBeenCalled();
             expect(resourcesPlugin.routeLoad).toHaveBeenCalledTimes(2); // called both on router init and URL change
           });
         }

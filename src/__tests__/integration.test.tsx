@@ -88,7 +88,7 @@ describe('<Router /> client-side integration tests', () => {
         strictMode,
       });
 
-      expect(plugin.routeLoad).toBeCalled();
+      expect(plugin.routeLoad).toHaveBeenCalled();
     });
 
     it(`renders next route: strict mode ${strictModeState}`, () => {
@@ -144,7 +144,7 @@ describe('<Router /> client-side integration tests', () => {
         strictMode,
       });
 
-      expect(plugin.routeLoad).toBeCalled();
+      expect(plugin.routeLoad).toHaveBeenCalled();
 
       act(() => {
         history.push('/route2');
@@ -175,13 +175,13 @@ describe('<Router /> client-side integration tests', () => {
           strictMode,
         });
 
-        expect(plugin.routeLoad).toBeCalled();
+        expect(plugin.routeLoad).toHaveBeenCalled();
 
         act(() => {
           history.push('/pathname?search=blah-blah-blah');
         });
 
-        expect(plugin.routeLoad).toBeCalledTimes(1);
+        expect(plugin.routeLoad).toHaveBeenCalledTimes(1);
       });
 
       it(`route loads twice as query params change: strict mode ${strictModeState}`, () => {
@@ -205,13 +205,13 @@ describe('<Router /> client-side integration tests', () => {
           strictMode,
         });
 
-        expect(plugin.routeLoad).toBeCalled();
+        expect(plugin.routeLoad).toHaveBeenCalled();
 
         act(() => {
           history.push('/pathname?search=blah-blah-blah');
         });
 
-        expect(plugin.routeLoad).toBeCalledTimes(2);
+        expect(plugin.routeLoad).toHaveBeenCalledTimes(2);
       });
 
       it(`route loads once as defined query param did not change: strict mode ${strictModeState}`, () => {
@@ -235,13 +235,13 @@ describe('<Router /> client-side integration tests', () => {
           strictMode,
         });
 
-        expect(plugin.routeLoad).toBeCalled();
+        expect(plugin.routeLoad).toHaveBeenCalled();
 
         act(() => {
           history.push('/pathname?search=search&issue-key=1');
         });
 
-        expect(plugin.routeLoad).toBeCalledTimes(1);
+        expect(plugin.routeLoad).toHaveBeenCalledTimes(1);
       });
     });
 

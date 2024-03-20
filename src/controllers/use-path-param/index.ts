@@ -25,7 +25,7 @@ export const usePathParam = (
   paramKey: string
 ): [
   string | undefined,
-  (newValue: string | undefined, updateType?: HistoryUpdateType) => void
+  (newValue: string | undefined, updateType?: HistoryUpdateType) => void,
 ] => {
   const [paramVal, routerActions] = createPathParamHook({ paramKey });
 
