@@ -1,6 +1,6 @@
 // TAKEN FROM https://github.com/ReactTraining/react-router/blob/master/packages/react-router/modules/matchPath.js
 
-import pathToRegexp from 'path-to-regexp';
+import { pathToRegexp } from 'path-to-regexp';
 
 const cache: { [key: string]: any } = {};
 const cacheLimit = 10000;
