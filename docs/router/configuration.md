@@ -35,6 +35,19 @@ export const routes = [
 ];
 ```
 
+When passing path params to a route, ensure you use the `:` prefix. For example, if you want to pass a `userId` to a route, you would do so like this
+
+```js
+export const routes = [
+  {
+    path: '/user/:userId',
+    name: 'USER',
+    component: User,
+    resources: [userResource],
+  },
+];
+```
+
 ## History
 
 You must provide a `history` instance to the router. Again, this will feel familiar to users of `react-router`. Here is how to do this
