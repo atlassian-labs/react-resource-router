@@ -48,6 +48,8 @@ export const routes = [
 ];
 ```
 
+You can also mark a path param as optional by using the `?` suffix. For example, if you want to make the `userId` param optional, you would do so like this `'/user/:userId?'`.
+
 ## History
 
 You must provide a `history` instance to the router. Again, this will feel familiar to users of `react-router`. Here is how to do this
