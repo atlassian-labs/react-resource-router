@@ -50,3 +50,22 @@ const basePath = '/base';
 const { pathname, search } = window.location;
 const matchedRoute = matchRoute(routes, pathname, search, basePath);
 ```
+
+## generatePath
+
+The same as in React Router library, `generatePath` can be used to generate URLs from the routes. Internally the `path-to-regexp` library is used.
+It accepts route path with parameters in it, and an object with those parameters values.
+
+```
+// Will return /user/1/posts
+generatePath("/user/:id/:entity(posts|comments)", {
+  id: 1,
+  entity: "posts"
+});
+```
+
+If provided params and path don’t match, an error will be thrown.
+```
+// TypeError: Expected "entity" to be defined
+generatePath("/user/:id/:entity(posts|comments)", { id: 1 });
+```
