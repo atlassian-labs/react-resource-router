@@ -1,4 +1,4 @@
-import { Plugin, RouterContext } from '../../index';
+import type { Plugin, RouterContext } from '../../index';
 import type {
   ResourceStoreContext,
   RouteResourceResponse,

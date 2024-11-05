@@ -1,4 +1,4 @@
-import { RouterContext } from '../../../../../index';
+import { type RouterContext } from '../../../../../index';
 import {
   ResourceStoreContext,
   RouteResource,

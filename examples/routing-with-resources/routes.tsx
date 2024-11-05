@@ -1,3 +1,4 @@
+/* eslint-disable import/no-cycle */
 import { About, aboutResource } from './about';
 import { Home, homeResource } from './home';
 
