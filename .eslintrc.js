@@ -45,7 +45,7 @@ module.exports = {
     'react-hooks/exhaustive-deps': 'warn',
     'react-hooks/rules-of-hooks': 'error',
     semi: 'off',
-    'import/no-cycle': 'warn',
+    'import/no-cycle': 'error',
   },
   overrides: [
     {
