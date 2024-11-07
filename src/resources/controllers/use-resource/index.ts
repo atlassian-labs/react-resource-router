@@ -1,19 +1,21 @@
 import { useCallback, useMemo } from 'react';
 import { createHook } from 'react-sweet-state';
 
+import { type RouterContext } from '../../../common/types';
 import {
-  RouterContext,
   RouterStore,
   useRouterStoreActions,
+} from '../../../controllers/router-store';
+import {
   type EntireRouterState,
   type AllRouterActions,
-} from '../../../index';
+} from '../../../controllers/router-store/types';
 import {
   RouteResource,
   RouteResourceResponse,
   RouteResourceUpdater,
   UseResourceHookResponse,
-} from '../../index';
+} from '../../common/types';
 import { useResourceStore, useResourceStoreActions } from '../resource-store';
 
 type UseResourceOptions = {

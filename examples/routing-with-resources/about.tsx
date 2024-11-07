@@ -1,5 +1,6 @@
 import React from 'react';
 
+// eslint-disable-next-line import/no-cycle
 import { homeRoute } from './routes';
 
 import { Link, useQueryParam } from 'react-resource-router';
