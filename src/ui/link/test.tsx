@@ -105,7 +105,7 @@ describe('<Link />', () => {
     );
   });
 
-  it('should not add basePath for external links', () => {
+  it('should not add basePath for absolute links', () => {
     renderInRouter(
       'my link',
       {
