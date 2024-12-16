@@ -119,6 +119,20 @@ describe('<Link />', () => {
     );
   });
 
+  it('should not add basePath for absolute links with no protocol specified', () => {
+    renderInRouter(
+      'my link',
+      {
+        href: '//www.atlassian.com/',
+      },
+      '/base'
+    );
+    expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+      'href',
+      '//www.atlassian.com/'
+    );
+  });
+
   it('should pass props to the child element', () => {
     renderInRouter('my link', {
       ...defaultProps,

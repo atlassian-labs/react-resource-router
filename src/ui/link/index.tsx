@@ -72,7 +72,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
               )) ||
             ''
           : to;
-    const IS_ABSOLUTE_LINK_REGEX = /^(?:(http|https):\/\/)/;
+    const IS_ABSOLUTE_LINK_REGEX = /^((?:(http|https):\/\/)|\/\/)/;
     const staticBasePath =
       (href != null && !IS_ABSOLUTE_LINK_REGEX.test(href)) || typeof to === 'string' ? routeAttributes.basePath : '';
 
