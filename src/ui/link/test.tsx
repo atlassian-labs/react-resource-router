@@ -91,7 +91,7 @@ describe('<Link />', () => {
     );
   });
 
-  it('should push history with correct link for href when given basePath', () => {
+  it('should push history with correct link for relative href when given basePath', () => {
     renderInRouter(
       'my link',
       {
@@ -102,6 +102,20 @@ describe('<Link />', () => {
     expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
       'href',
       '/base/route/1?foo=bar'
+    );
+  });
+
+  it('should not add basePath for external links', () => {
+    renderInRouter(
+      'my link',
+      {
+        href: 'https://www.atlassian.com/',
+      },
+      '/base'
+    );
+    expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+      'href',
+      'https://www.atlassian.com/'
     );
   });
 
