@@ -91,6 +91,20 @@ describe('<Link />', () => {
     );
   });
 
+  it('should push history with correct link for href when given basePath', () => {
+    renderInRouter(
+      'my link',
+      {
+        href: '/route/1?foo=bar',
+      },
+      '/base'
+    );
+    expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+      'href',
+      '/base/route/1?foo=bar'
+    );
+  });
+
   it('should pass props to the child element', () => {
     renderInRouter('my link', {
       ...defaultProps,
