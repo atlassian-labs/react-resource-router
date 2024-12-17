@@ -91,6 +91,48 @@ describe('<Link />', () => {
     );
   });
 
+  it('should push history with correct link for relative href when given basePath', () => {
+    renderInRouter(
+      'my link',
+      {
+        href: '/route/1?foo=bar',
+      },
+      '/base'
+    );
+    expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+      'href',
+      '/base/route/1?foo=bar'
+    );
+  });
+
+  it('should not add basePath for absolute links', () => {
+    renderInRouter(
+      'my link',
+      {
+        href: 'https://www.atlassian.com/',
+      },
+      '/base'
+    );
+    expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+      'href',
+      'https://www.atlassian.com/'
+    );
+  });
+
+  it('should not add basePath for absolute links with no protocol specified', () => {
+    renderInRouter(
+      'my link',
+      {
+        href: '//www.atlassian.com/',
+      },
+      '/base'
+    );
+    expect(screen.getByRole('link', { name: 'my link' })).toHaveAttribute(
+      'href',
+      '//www.atlassian.com/'
+    );
+  });
+
   it('should pass props to the child element', () => {
     renderInRouter('my link', {
       ...defaultProps,
