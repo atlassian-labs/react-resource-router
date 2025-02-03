@@ -72,8 +72,12 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
               )) ||
             ''
           : to;
+    const IS_ABSOLUTE_LINK_REGEX = /^((?:(http|https):\/\/)|\/\/)/;
     const staticBasePath =
-      href == null && typeof to === 'string' ? routeAttributes.basePath : '';
+      (href != null && !IS_ABSOLUTE_LINK_REGEX.test(href)) ||
+      typeof to === 'string'
+        ? routeAttributes.basePath
+        : '';
 
     const triggerPrefetch = useCallback(() => {
       // ignore if async route not ready yet
