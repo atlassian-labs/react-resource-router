@@ -1,5 +1,11 @@
 # react-resource-router
 
+## 0.29.2
+
+### Patch Changes
+
+- 7d56bc3: Support basePath for relative href prop
+
 ## 0.29.1
 
 ### Patch Changes
