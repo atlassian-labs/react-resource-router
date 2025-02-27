@@ -26,6 +26,8 @@ const matchRoute = <T extends Route | InvariantRoute>(
   queryParams: Query = {},
   basePath = ''
 ) => {
+  // if navigating to to `/` or just basePath, then do not append basePath
+  const updatedBasePath = ['/', basePath].includes(pathname) ? '' : basePath;
   const queryParamObject =
     typeof queryParams === 'string'
       ? (qs.parse(queryParams) as Query)
@@ -34,7 +36,7 @@ const matchRoute = <T extends Route | InvariantRoute>(
   const cachedMatch = matchRouteCache.get<T>(
     pathname,
     queryParamObject,
-    basePath
+    updatedBasePath
   );
   if (cachedMatch && routes.includes(cachedMatch.route)) return cachedMatch;
 
@@ -43,10 +45,10 @@ const matchRoute = <T extends Route | InvariantRoute>(
       routes[i],
       pathname,
       queryParamObject,
-      basePath
+      updatedBasePath
     );
     if (matchedRoute) {
-      matchRouteCache.set(pathname, queryParamObject, basePath, matchedRoute);
+      matchRouteCache.set(pathname, queryParamObject, updatedBasePath, matchedRoute);
 
       return matchedRoute;
     }
