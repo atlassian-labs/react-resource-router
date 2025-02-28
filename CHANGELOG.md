@@ -1,5 +1,11 @@
 # react-resource-router
 
+## 0.30.0
+
+### Minor Changes
+
+- bf5a671: Supporting navigation to / and basePath when basePath is defined
+
 ## 0.29.2
 
 ### Patch Changes
