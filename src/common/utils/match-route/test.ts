@@ -128,6 +128,106 @@ describe('matchRoute()', () => {
         route: routeB,
       });
     });
+
+    it('should ignore basePath when navigating to / without path params', () => {
+      const routeA = { path: '/', component: Noop };
+      const routeB = { path: '/:bar', component: Noop };
+      const basePath = '/base';
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeB],
+          '/',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeA,
+      });
+
+      expect(
+        // @ts-ignore
+        matchRoute([routeA, routeB], '/abc', DEFAULT_QUERY_PARAMS, basePath)
+      ).toBeNull();
+
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeB],
+          '/base/abc',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeA,
+      });
+
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeB, routeA],
+          '/base/def',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeB,
+      });
+    });
+
+    it('should ignore basePath when navigating to just basePath', () => {
+      const routeA = { path: '/base', component: Noop };
+      const routeB = { path: '/', component: Noop };
+      const routeC = { path: '/:bar', component: Noop };
+      const basePath = '/base';
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeB, routeC],
+          basePath,
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeA,
+      });
+
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeB, routeC],
+          '/base/base',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeA,
+      });
+
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeC, routeA, routeB],
+          '/base/',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeB,
+      });
+
+      expect(
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeC, routeB],
+          '/base/abc',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
+      ).toMatchObject({
+        route: routeC,
+      });
+    });
   });
 
   describe('query', () => {
