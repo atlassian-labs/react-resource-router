@@ -48,7 +48,12 @@ const matchRoute = <T extends Route | InvariantRoute>(
       updatedBasePath
     );
     if (matchedRoute) {
-      matchRouteCache.set(pathname, queryParamObject, updatedBasePath, matchedRoute);
+      matchRouteCache.set(
+        pathname,
+        queryParamObject,
+        updatedBasePath,
+        matchedRoute
+      );
 
       return matchedRoute;
     }

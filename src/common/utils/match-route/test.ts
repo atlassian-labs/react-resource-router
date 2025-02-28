@@ -151,15 +151,25 @@ describe('matchRoute()', () => {
       ).toBeNull();
 
       expect(
-        // @ts-ignore
-        matchRoute([routeA, routeB], '/base/abc', DEFAULT_QUERY_PARAMS, basePath)
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeB],
+          '/base/abc',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
       ).toMatchObject({
         route: routeA,
       });
 
       expect(
-        // @ts-ignore
-        matchRoute([routeB, routeA], '/base/def', DEFAULT_QUERY_PARAMS, basePath)
+        matchRoute(
+          // @ts-ignore
+          [routeB, routeA],
+          '/base/def',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
       ).toMatchObject({
         route: routeB,
       });
@@ -207,12 +217,16 @@ describe('matchRoute()', () => {
       });
 
       expect(
-        // @ts-ignore
-        matchRoute([routeA, routeC, routeB], '/base/abc', DEFAULT_QUERY_PARAMS, basePath)
+        matchRoute(
+          // @ts-ignore
+          [routeA, routeC, routeB],
+          '/base/abc',
+          DEFAULT_QUERY_PARAMS,
+          basePath
+        )
       ).toMatchObject({
         route: routeC,
       });
-
     });
   });
 
