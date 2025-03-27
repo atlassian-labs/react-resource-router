@@ -58,6 +58,6 @@ invokePluginLoad([resourcesPlugin], {
 
 | prop       | type       | description                                                 |
 | ---------- | ---------- | ----------------------------------------------------------- |
-| `history`  | `History`  | Your application's routes |
-| `routes`   | `Routes`   | The history instance for the router, if omitted memory history will be used |
+| `history`  | `History`  | The history instance for the router, if omitted memory history will be used |
+| `routes`   | `Routes`   | Your application's routes |
 | `basePath?`| `string`   | Base path string that will get prepended to all route paths |
