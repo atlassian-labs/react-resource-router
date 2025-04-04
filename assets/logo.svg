@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="200" height="200" viewBox="0 0 200 200" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+        <linearGradient id="grad1" x1="0%" y1="0%" x2="100%" y2="100%">
+            <stop offset="0%" style="stop-color:#00C353;stop-opacity:1" />
+            <stop offset="100%" style="stop-color:#009940;stop-opacity:1" />
+        </linearGradient>
+    </defs>
+    <g fill="none" stroke="url(#grad1)" stroke-width="12">
+        <!-- Outer circle representing the React ecosystem -->
+        <circle cx="100" cy="100" r="80" />
+        
+        <!-- Router paths represented as curved lines -->
+        <path d="M 60,60 Q 100,20 140,60" stroke-linecap="round"/>
+        <path d="M 60,140 Q 100,180 140,140" stroke-linecap="round"/>
+        <path d="M 60,60 Q 20,100 60,140" stroke-linecap="round"/>
+        <path d="M 140,60 Q 180,100 140,140" stroke-linecap="round"/>
+        
+        <!-- Central node representing the router -->
+        <circle cx="100" cy="100" r="15" fill="url(#grad1)" stroke="none"/>
+    </g>
+</svg>

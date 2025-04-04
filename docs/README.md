@@ -1,5 +1,5 @@
 <h1>
-  <img align="middle" src="https://user-images.githubusercontent.com/84136/83958672-e99bba00-a8b7-11ea-81c7-0397f23e8a04.png" alt="react-resource-router logo" height="80" /> &nbsp;
+  <img align="middle" src="../assets/logo.svg" alt="react-resource-router logo" height="80" /> &nbsp;
   <span>react-resource-router</span>
 </h1>
 
