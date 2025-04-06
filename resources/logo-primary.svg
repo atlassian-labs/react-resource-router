@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="80" viewBox="0 0 240 80" version="1.1" xmlns="http://www.w3.org/2000/svg">
+  <!-- Router path lines -->
+  <path d="M40,40 C60,40 60,20 80,20 L160,20" 
+        stroke="#0052CC" 
+        stroke-width="4" 
+        fill="none"/>
+  <path d="M40,40 C60,40 60,60 80,60 L160,60" 
+        stroke="#0065FF" 
+        stroke-width="4" 
+        fill="none"/>
+  
+  <!-- React-like circular node -->
+  <circle cx="40" cy="40" r="12" 
+          fill="#0052CC"/>
+  
+  <!-- Destination nodes -->
+  <circle cx="160" cy="20" r="8" 
+          fill="#0065FF"/>
+  <circle cx="160" cy="60" r="8" 
+          fill="#0052CC"/>
+  
+  <!-- Text -->
+  <text x="180" y="45" 
+        font-family="Arial, sans-serif" 
+        font-size="24" 
+        font-weight="bold" 
+        fill="#172B4D">RRR</text>
+</svg>
