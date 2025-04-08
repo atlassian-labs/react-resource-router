@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background Circle -->
+  <circle cx="120" cy="120" r="110" fill="#0052CC" opacity="0.1"/>
+  
+  <!-- Router Path Lines -->
+  <path d="M60,120 C60,80 180,80 180,120" stroke="#0052CC" stroke-width="8" fill="none"/>
+  <path d="M60,120 C60,160 180,160 180,120" stroke="#0065FF" stroke-width="8" fill="none"/>
+  
+  <!-- Resource Nodes -->
+  <circle cx="60" cy="120" r="20" fill="#0052CC"/>
+  <circle cx="180" cy="120" r="20" fill="#0065FF"/>
+  <circle cx="120" cy="80" r="15" fill="#0052CC"/>
+  <circle cx="120" cy="160" r="15" fill="#0065FF"/>
+  
+  <!-- React Orbit -->
+  <ellipse cx="120" cy="120" rx="90" ry="25" stroke="#172B4D" stroke-width="4" fill="none" transform="rotate(30 120 120)"/>
+  <ellipse cx="120" cy="120" rx="90" ry="25" stroke="#172B4D" stroke-width="4" fill="none" transform="rotate(150 120 120)"/>
+  <ellipse cx="120" cy="120" rx="90" ry="25" stroke="#172B4D" stroke-width="4" fill="none" transform="rotate(270 120 120)"/>
+  
+  <!-- Central Node -->
+  <circle cx="120" cy="120" r="12" fill="#172B4D"/>
+</svg>
