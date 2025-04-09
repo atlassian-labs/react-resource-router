@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="120" viewBox="0 0 400 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Orbital circles representing React -->
+  <ellipse cx="60" cy="60" rx="50" ry="20" stroke="#253858" stroke-width="2" fill="none" transform="rotate(45 60 60)"/>
+  <ellipse cx="60" cy="60" rx="50" ry="20" stroke="#253858" stroke-width="2" fill="none" transform="rotate(-45 60 60)"/>
+  <ellipse cx="60" cy="60" rx="50" ry="20" stroke="#253858" stroke-width="2" fill="none"/>
+  
+  <!-- Router path symbol -->
+  <path d="M40 60 L80 60 M60 40 L60 80" stroke="#253858" stroke-width="4" fill="none"/>
+  <circle cx="60" cy="60" r="8" fill="#253858"/>
+  
+  <!-- Resource nodes -->
+  <circle cx="40" cy="40" r="6" fill="#253858"/>
+  <circle cx="80" cy="40" r="6" fill="#253858"/>
+  <circle cx="40" cy="80" r="6" fill="#253858"/>
+  <circle cx="80" cy="80" r="6" fill="#253858"/>
+  
+  <!-- Text -->
+  <text x="120" y="70" font-family="Arial, sans-serif" font-size="24" fill="#253858">
+    React Resource Router
+  </text>
+</svg>
