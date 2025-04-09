@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="240" viewBox="0 0 240 240" xmlns="http://www.w3.org/2000/svg">
+  <!-- React-like orbital ring -->
+  <ellipse cx="120" cy="120" rx="100" ry="30" fill="none" stroke="#61DAFB" stroke-width="6" transform="rotate(30,120,120)"/>
+  <ellipse cx="120" cy="120" rx="100" ry="30" fill="none" stroke="#61DAFB" stroke-width="6" transform="rotate(150,120,120)"/>
+  <ellipse cx="120" cy="120" rx="100" ry="30" fill="none" stroke="#61DAFB" stroke-width="6" transform="rotate(270,120,120)"/>
+  
+  <!-- Router path arrows -->
+  <path d="M80,120 L160,120 L140,100 M140,140 L160,120" fill="none" stroke="#0052CC" stroke-width="8" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Resource cube -->
+  <path d="M120,90 L145,105 L145,135 L120,150 L95,135 L95,105 Z" fill="#2684FF" stroke="#0052CC" stroke-width="2"/>
+  
+  <!-- Central dot -->
+  <circle cx="120" cy="120" r="12" fill="#0052CC"/>
+</svg>
