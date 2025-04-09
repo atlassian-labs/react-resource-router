@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="400" height="100" viewBox="0 0 400 100" xmlns="http://www.w3.org/2000/svg">
+  <!-- Router Path Background -->
+  <path d="M20,50 C20,30 380,30 380,50 C380,70 20,70 20,50" fill="#0052CC" opacity="0.1"/>
+  
+  <!-- Resource Nodes -->
+  <circle cx="50" cy="50" r="15" fill="#0052CC"/>
+  <circle cx="200" cy="50" r="15" fill="#0052CC"/>
+  <circle cx="350" cy="50" r="15" fill="#0052CC"/>
+  
+  <!-- Connecting Lines -->
+  <path d="M65,50 L185,50" stroke="#0052CC" stroke-width="3"/>
+  <path d="M215,50 L335,50" stroke="#0052CC" stroke-width="3"/>
+  
+  <!-- React Symbol in Center -->
+  <circle cx="200" cy="50" r="8" fill="white"/>
+  <ellipse cx="200" cy="50" rx="20" ry="7" stroke="#0052CC" stroke-width="2" fill="none" transform="rotate(0 200 50)"/>
+  <ellipse cx="200" cy="50" rx="20" ry="7" stroke="#0052CC" stroke-width="2" fill="none" transform="rotate(60 200 50)"/>
+  <ellipse cx="200" cy="50" rx="20" ry="7" stroke="#0052CC" stroke-width="2" fill="none" transform="rotate(-60 200 50)"/>
+  
+  <!-- Text -->
+  <text x="50" y="90" font-family="Arial, sans-serif" font-size="14" fill="#0052CC" text-anchor="middle">React</text>
+  <text x="200" y="90" font-family="Arial, sans-serif" font-size="14" fill="#0052CC" text-anchor="middle">Resource</text>
+  <text x="350" y="90" font-family="Arial, sans-serif" font-size="14" fill="#0052CC" text-anchor="middle">Router</text>
+</svg>
