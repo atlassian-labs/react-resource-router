@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="240" height="240" viewBox="0 0 240 240" version="1.1" xmlns="http://www.w3.org/2000/svg">
+    <!-- Background Circle -->
+    <circle cx="120" cy="120" r="110" fill="#0052CC" opacity="0.1"/>
+    
+    <!-- Router Paths -->
+    <path d="M60,120 C60,80 180,80 180,120" stroke="#0052CC" stroke-width="4" fill="none"/>
+    <path d="M60,120 C60,160 180,160 180,120" stroke="#0052CC" stroke-width="4" fill="none"/>
+    
+    <!-- React Orbital -->
+    <ellipse cx="120" cy="120" rx="70" ry="25" stroke="#2684FF" stroke-width="3" fill="none" transform="rotate(30 120 120)"/>
+    <ellipse cx="120" cy="120" rx="70" ry="25" stroke="#2684FF" stroke-width="3" fill="none" transform="rotate(150 120 120)"/>
+    <ellipse cx="120" cy="120" rx="70" ry="25" stroke="#2684FF" stroke-width="3" fill="none" transform="rotate(270 120 120)"/>
+    
+    <!-- Central Resource Node -->
+    <circle cx="120" cy="120" r="15" fill="#2684FF"/>
+    
+    <!-- Connection Points -->
+    <circle cx="60" cy="120" r="8" fill="#0052CC"/>
+    <circle cx="180" cy="120" r="8" fill="#0052CC"/>
+</svg>
