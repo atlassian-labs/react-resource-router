@@ -362,7 +362,9 @@ describe('<Link />', () => {
   describe('when the link has focus, and a keypress is fired', () => {
     it('should navigate if the key was an `enter`', async () => {
       const user = userEvent.setup();
-      renderInRouter('my link', { href: newPath });
+      const mockKeyHandler = jest.fn();
+
+      renderInRouter('my link', { href: newPath, onKeyDown: mockKeyHandler });
 
       const linkElement = screen.getByRole('link', { name: 'my link' });
       linkElement.focus();
@@ -370,6 +372,7 @@ describe('<Link />', () => {
 
       expect(HistoryMock.push).toHaveBeenCalledTimes(1);
       expect(HistoryMock.push).toHaveBeenCalledWith(newPath, undefined);
+      expect(mockKeyHandler).not.toHaveBeenCalled();
     });
 
     it('should not navigate for any other key', async () => {
@@ -381,6 +384,19 @@ describe('<Link />', () => {
       await user.keyboard('{a}');
 
       expect(HistoryMock.push).not.toHaveBeenCalled();
+    });
+
+    it('should respect onKeyDown as long as it is not {Enter}', async () => {
+      const user = userEvent.setup();
+      const mockKeyHandler = jest.fn();
+      renderInRouter('my link', { href: newPath, onKeyDown: mockKeyHandler });
+
+      const linkElement = screen.getByRole('link', { name: 'my link' });
+      linkElement.focus();
+      await user.keyboard('{a}');
+
+      expect(HistoryMock.push).not.toHaveBeenCalled();
+      expect(mockKeyHandler).toHaveBeenCalled();
     });
   });
 

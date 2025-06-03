@@ -1,6 +1,6 @@
-import { KeyboardEvent, MouseEvent } from 'react';
+import type { KeyboardEvent, MouseEvent } from 'react';
 
-import { Route } from '../../../common/types';
+import type { Route } from '../../../common/types';
 import { isKeyboardEvent, isModifiedEvent } from '../../../common/utils/event';
 
 type LinkNavigationEvent = MouseEvent | KeyboardEvent;
@@ -16,15 +16,27 @@ type LinkPressArgs = {
   replace: boolean;
   href: string;
   onClick?: (e: LinkNavigationEvent) => void;
+  onKeyDown?: (e: KeyboardEvent<HTMLAnchorElement>) => void;
   to: [Route, any] | void;
   state?: unknown;
 };
 
 export const handleNavigation = (
   event: any,
-  { onClick, target, replace, routerActions, href, to, state }: LinkPressArgs
+  {
+    onClick,
+    onKeyDown,
+    target,
+    replace,
+    routerActions,
+    href,
+    to,
+    state,
+  }: LinkPressArgs
 ): void => {
   if (isKeyboardEvent(event) && event.key !== 'Enter') {
+    onKeyDown?.(event as KeyboardEvent<HTMLAnchorElement>);
+
     return;
   }
 

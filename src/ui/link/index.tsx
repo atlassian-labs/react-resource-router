@@ -31,6 +31,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       href = undefined,
       to = undefined,
       onClick = undefined,
+      onKeyDown = undefined,
       onMouseEnter = undefined,
       onMouseLeave = undefined,
       onPointerDown = undefined,
@@ -103,6 +104,7 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
     const handleLinkPress = (e: MouseEvent | KeyboardEvent) =>
       handleNavigation(e, {
         onClick,
+        onKeyDown,
         target,
         replace,
         routerActions,
