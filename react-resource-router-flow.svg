@@ -1,0 +1,42 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Resource-focused design: Data flow and progressive rendering -->
+  <defs>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#36B37E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00875A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="nodeGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#2684FF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#0052CC;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Data flow streams -->
+  <path d="M15 30 Q30 15, 45 30 Q60 45, 75 30 Q90 15, 105 30" 
+        stroke="url(#flowGradient)" 
+        stroke-width="4" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <path d="M15 60 Q30 45, 45 60 Q60 75, 75 60 Q90 45, 105 60" 
+        stroke="url(#flowGradient)" 
+        stroke-width="4" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <path d="M15 90 Q30 75, 45 90 Q60 105, 75 90 Q90 75, 105 90" 
+        stroke="url(#flowGradient)" 
+        stroke-width="4" 
+        fill="none" 
+        stroke-linecap="round"/>
+  
+  <!-- Resource nodes -->
+  <circle cx="25" cy="30" r="6" fill="url(#nodeGradient)"/>
+  <circle cx="60" cy="60" r="8" fill="url(#nodeGradient)"/>
+  <circle cx="95" cy="90" r="6" fill="url(#nodeGradient)"/>
+  
+  <!-- Progressive rendering indicators -->
+  <rect x="50" y="20" width="20" height="4" rx="2" fill="#36B37E" opacity="0.8"/>
+  <rect x="50" y="28" width="16" height="4" rx="2" fill="#36B37E" opacity="0.6"/>
+  <rect x="50" y="36" width="12" height="4" rx="2" fill="#36B37E" opacity="0.4"/>
+</svg>
