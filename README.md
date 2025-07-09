@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/84136/83958672-e99bba00-a8b7-11ea-81c7-0397f23e8a04.png" alt="react-resource-router logo" height="150" />
+  <img src="react-resource-router-logo-1.svg" alt="react-resource-router logo - routing paths" height="120" style="margin: 0 10px;" />
+  <img src="react-resource-router-logo-2.svg" alt="react-resource-router logo - progressive loading" height="120" style="margin: 0 10px;" />
+  <img src="react-resource-router-logo-3.svg" alt="react-resource-router logo - network nodes" height="120" style="margin: 0 10px;" />
 </p>
 <h1 align="center">react-resource-router</h1>
 <p align="center">

@@ -1,0 +1,23 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="none" stroke="#E3E8F0" stroke-width="2"/>
+  
+  <!-- Main routing paths -->
+  <path d="M20 60 L100 60" stroke="#0052CC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M60 20 L60 100" stroke="#0052CC" stroke-width="3" stroke-linecap="round"/>
+  <path d="M35 35 L85 85" stroke="#0052CC" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  <path d="M85 35 L35 85" stroke="#0052CC" stroke-width="2" stroke-linecap="round" opacity="0.6"/>
+  
+  <!-- Resource nodes -->
+  <circle cx="60" cy="60" r="8" fill="#FF5630"/>
+  <circle cx="30" cy="60" r="5" fill="#0052CC"/>
+  <circle cx="90" cy="60" r="5" fill="#0052CC"/>
+  <circle cx="60" cy="30" r="5" fill="#0052CC"/>
+  <circle cx="60" cy="90" r="5" fill="#0052CC"/>
+  
+  <!-- Progressive loading indicators -->
+  <circle cx="45" cy="45" r="3" fill="#FF5630" opacity="0.7"/>
+  <circle cx="75" cy="45" r="3" fill="#FF5630" opacity="0.5"/>
+  <circle cx="45" cy="75" r="3" fill="#FF5630" opacity="0.7"/>
+  <circle cx="75" cy="75" r="3" fill="#FF5630" opacity="0.5"/>
+</svg>

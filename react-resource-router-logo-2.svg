@@ -1,0 +1,32 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Progressive layers representing async loading -->
+  <rect x="20" y="70" width="80" height="8" rx="4" fill="#E3E8F0"/>
+  <rect x="20" y="70" width="60" height="8" rx="4" fill="#0052CC" opacity="0.3"/>
+  <rect x="20" y="70" width="40" height="8" rx="4" fill="#0052CC" opacity="0.6"/>
+  <rect x="20" y="70" width="20" height="8" rx="4" fill="#0052CC"/>
+  
+  <!-- Route paths as flowing curves -->
+  <path d="M15 45 Q60 25 105 45" stroke="#0052CC" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M15 55 Q60 35 105 55" stroke="#FF5630" stroke-width="2" fill="none" stroke-linecap="round"/>
+  
+  <!-- Resource connection points -->
+  <circle cx="15" cy="45" r="4" fill="#0052CC"/>
+  <circle cx="60" cy="30" r="6" fill="#FF5630"/>
+  <circle cx="105" cy="45" r="4" fill="#0052CC"/>
+  
+  <!-- Data flow indicators -->
+  <polygon points="25,42 35,45 25,48" fill="#0052CC"/>
+  <polygon points="45,27 55,30 45,33" fill="#FF5630"/>
+  <polygon points="75,42 85,45 75,48" fill="#0052CC"/>
+  <polygon points="95,27 105,30 95,33" fill="#FF5630"/>
+  
+  <!-- Configuration grid -->
+  <g opacity="0.2">
+    <line x1="30" y1="85" x2="90" y2="85" stroke="#0052CC" stroke-width="1"/>
+    <line x1="30" y1="95" x2="90" y2="95" stroke="#0052CC" stroke-width="1"/>
+    <line x1="30" y1="85" x2="30" y2="95" stroke="#0052CC" stroke-width="1"/>
+    <line x1="50" y1="85" x2="50" y2="95" stroke="#0052CC" stroke-width="1"/>
+    <line x1="70" y1="85" x2="70" y2="95" stroke="#0052CC" stroke-width="1"/>
+    <line x1="90" y1="85" x2="90" y2="95" stroke="#0052CC" stroke-width="1"/>
+  </g>
+</svg>
