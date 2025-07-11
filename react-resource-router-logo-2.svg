@@ -1,0 +1,34 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Resource-focused design: Data flow and resource management -->
+  <defs>
+    <linearGradient id="resourceGradient" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#36B37E;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00875A;stop-opacity:1" />
+    </linearGradient>
+    <linearGradient id="flowGradient" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#2684FF;stop-opacity:0.3" />
+      <stop offset="100%" style="stop-color:#2684FF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Resource containers -->
+  <rect x="15" y="25" width="20" height="20" rx="4" fill="url(#resourceGradient)"/>
+  <rect x="15" y="50" width="20" height="20" rx="4" fill="url(#resourceGradient)"/>
+  <rect x="15" y="75" width="20" height="20" rx="4" fill="url(#resourceGradient)"/>
+  
+  <!-- Data flow arrows -->
+  <path d="M40 35 L75 35" stroke="url(#flowGradient)" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M40 60 L75 60" stroke="url(#flowGradient)" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  <path d="M40 85 L75 85" stroke="url(#flowGradient)" stroke-width="2" fill="none" marker-end="url(#arrowhead)"/>
+  
+  <!-- Router/Component -->
+  <rect x="80" y="40" width="25" height="40" rx="6" fill="#2684FF"/>
+  <rect x="85" y="45" width="15" height="30" rx="2" fill="white"/>
+  
+  <!-- Arrow marker -->
+  <defs>
+    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+      <polygon points="0 0, 10 3.5, 0 7" fill="#2684FF"/>
+    </marker>
+  </defs>
+</svg>
