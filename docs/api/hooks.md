@@ -127,7 +127,7 @@ export const MyRouteComponent = () => {
 
 ## useRouterActions
 
-You can access [Router Actions](#routeractions) using this hook.
+You can access [Router Actions](./components.md#routeractions) using this hook.
 
 ```js
 export const RouterActionsHookExample = () => {

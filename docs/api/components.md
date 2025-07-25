@@ -253,7 +253,7 @@ export const Avatar = () => (
 
 ## RouterActions
 
-Actions that communicate with the router's routing functionality are exposed safely via the `RouterActions` component and [`useRouterActions`](#userouteractions) hook.
+Actions that communicate with the router's routing functionality are exposed safely via the `RouterActions` component and [`useRouterActions`](./hooks.md#userouteractions) hook.
 
 By using either of these you will gain access to the following actions
 
