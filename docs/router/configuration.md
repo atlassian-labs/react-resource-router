@@ -48,7 +48,7 @@ export const routes = [
 ];
 ```
 
-You can also mark a path param as optional by using the `?` suffix. For example, if you want to make the `userId` param optional, you would do so like this `'/user/:userId?'`.
+You can also mark a path param as optional by using the `?` suffix. For example, if you want to make the `userId` param optional, you would do so like this `'/user/:userId?'`. This also applies to query parameters, e.g `query: ['foo', 'baz?']`.
 
 ## History
 
