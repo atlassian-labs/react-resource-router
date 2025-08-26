@@ -1,0 +1,37 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo 2: Resource Flow - Data flowing through structured channels -->
+  <defs>
+    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="50%" style="stop-color:#4C9AFF;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#FF5630;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Resource containers/channels -->
+  <rect x="15" y="25" width="90" height="12" rx="6" fill="#0052CC" opacity="0.3"/>
+  <rect x="15" y="45" width="90" height="12" rx="6" fill="#4C9AFF" opacity="0.3"/>
+  <rect x="15" y="65" width="90" height="12" rx="6" fill="#0052CC" opacity="0.3"/>
+  <rect x="15" y="85" width="90" height="12" rx="6" fill="#4C9AFF" opacity="0.3"/>
+  
+  <!-- Data flow elements -->
+  <circle cx="25" cy="31" r="4" fill="#0052CC"/>
+  <circle cx="45" cy="31" r="4" fill="#0052CC"/>
+  <circle cx="65" cy="31" r="4" fill="#0052CC"/>
+  
+  <circle cx="35" cy="51" r="4" fill="#4C9AFF"/>
+  <circle cx="55" cy="51" r="4" fill="#4C9AFF"/>
+  <circle cx="75" cy="51" r="4" fill="#4C9AFF"/>
+  <circle cx="95" cy="51" r="4" fill="#4C9AFF"/>
+  
+  <circle cx="25" cy="71" r="4" fill="#0052CC"/>
+  <circle cx="45" cy="71" r="4" fill="#0052CC"/>
+  
+  <circle cx="35" cy="91" r="4" fill="#4C9AFF"/>
+  <circle cx="55" cy="91" r="4" fill="#4C9AFF"/>
+  <circle cx="75" cy="91" r="4" fill="#4C9AFF"/>
+  
+  <!-- Central processing node -->
+  <circle cx="60" cy="60" r="12" fill="#FF5630"/>
+  <circle cx="60" cy="60" r="6" fill="white"/>
+</svg>

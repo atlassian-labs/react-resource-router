@@ -1,0 +1,24 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Logo 1: Routing Paths - Interconnected nodes representing route navigation -->
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#4C9AFF;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Main routing paths -->
+  <path d="M20 60 Q40 30 60 60 Q80 90 100 60" stroke="#0052CC" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M60 20 Q60 40 60 60 Q60 80 60 100" stroke="#4C9AFF" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Route nodes -->
+  <circle cx="20" cy="60" r="8" fill="#0052CC"/>
+  <circle cx="60" cy="20" r="8" fill="#FF5630"/>
+  <circle cx="60" cy="60" r="10" fill="#0052CC"/>
+  <circle cx="60" cy="100" r="8" fill="#4C9AFF"/>
+  <circle cx="100" cy="60" r="8" fill="#4C9AFF"/>
+  
+  <!-- Inner connection points -->
+  <circle cx="40" cy="45" r="4" fill="#4C9AFF" opacity="0.7"/>
+  <circle cx="80" cy="75" r="4" fill="#4C9AFF" opacity="0.7"/>
+</svg>
