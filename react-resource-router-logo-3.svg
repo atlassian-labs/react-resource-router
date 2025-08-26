@@ -1,0 +1,30 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Outer routing ring -->
+  <circle cx="60" cy="60" r="50" stroke="#1B365D" stroke-width="2" fill="none" opacity="0.3"/>
+  
+  <!-- Route segments -->
+  <path d="M 60 10 A 50 50 0 0 1 95 35" stroke="#0052CC" stroke-width="4" fill="none"/>
+  <path d="M 95 35 A 50 50 0 0 1 95 85" stroke="#00B8D9" stroke-width="4" fill="none"/>
+  <path d="M 95 85 A 50 50 0 0 1 25 85" stroke="#0052CC" stroke-width="4" fill="none"/>
+  <path d="M 25 85 A 50 50 0 0 1 25 35" stroke="#00B8D9" stroke-width="4" fill="none"/>
+  <path d="M 25 35 A 50 50 0 0 1 60 10" stroke="#1B365D" stroke-width="4" fill="none"/>
+  
+  <!-- Inner resource core -->
+  <circle cx="60" cy="60" r="20" fill="#1B365D"/>
+  <circle cx="60" cy="60" r="15" fill="#0052CC"/>
+  <circle cx="60" cy="60" r="8" fill="#00B8D9"/>
+  
+  <!-- Configuration points -->
+  <circle cx="60" cy="10" r="4" fill="#1B365D"/>
+  <circle cx="95" cy="35" r="4" fill="#0052CC"/>
+  <circle cx="95" cy="85" r="4" fill="#00B8D9"/>
+  <circle cx="25" cy="85" r="4" fill="#0052CC"/>
+  <circle cx="25" cy="35" r="4" fill="#1B365D"/>
+  
+  <!-- Data connection lines -->
+  <line x1="60" y1="40" x2="60" y2="10" stroke="#00B8D9" stroke-width="1" opacity="0.6"/>
+  <line x1="80" y1="50" x2="95" y2="35" stroke="#00B8D9" stroke-width="1" opacity="0.6"/>
+  <line x1="80" y1="70" x2="95" y2="85" stroke="#00B8D9" stroke-width="1" opacity="0.6"/>
+  <line x1="40" y1="70" x2="25" y2="85" stroke="#00B8D9" stroke-width="1" opacity="0.6"/>
+  <line x1="40" y1="50" x2="25" y2="35" stroke="#00B8D9" stroke-width="1" opacity="0.6"/>
+</svg>

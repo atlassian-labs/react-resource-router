@@ -1,0 +1,26 @@
+<svg width="120" height="120" viewBox="0 0 120 120" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background circle -->
+  <circle cx="60" cy="60" r="55" fill="#1B365D" opacity="0.1"/>
+  
+  <!-- Main routing paths -->
+  <path d="M20 60 L100 60" stroke="#0052CC" stroke-width="3" fill="none"/>
+  <path d="M60 20 L60 100" stroke="#0052CC" stroke-width="3" fill="none"/>
+  <path d="M35 35 L85 85" stroke="#00B8D9" stroke-width="2" fill="none"/>
+  <path d="M85 35 L35 85" stroke="#00B8D9" stroke-width="2" fill="none"/>
+  
+  <!-- Resource nodes -->
+  <circle cx="30" cy="30" r="6" fill="#0052CC"/>
+  <circle cx="90" cy="30" r="6" fill="#0052CC"/>
+  <circle cx="30" cy="90" r="6" fill="#0052CC"/>
+  <circle cx="90" cy="90" r="6" fill="#0052CC"/>
+  
+  <!-- Central hub -->
+  <circle cx="60" cy="60" r="8" fill="#1B365D"/>
+  <circle cx="60" cy="60" r="4" fill="#00B8D9"/>
+  
+  <!-- Data flow indicators -->
+  <circle cx="45" cy="60" r="2" fill="#00B8D9" opacity="0.8"/>
+  <circle cx="75" cy="60" r="2" fill="#00B8D9" opacity="0.8"/>
+  <circle cx="60" cy="45" r="2" fill="#00B8D9" opacity="0.8"/>
+  <circle cx="60" cy="75" r="2" fill="#00B8D9" opacity="0.8"/>
+</svg>
