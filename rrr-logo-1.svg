@@ -1,0 +1,19 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="256" height="256" viewBox="0 0 64 64" xmlns="http://www.w3.org/2000/svg" role="img" aria-label="React Resource Router logo - routes and resources">
+  <defs>
+    <style>
+      .blue{stroke:#2684FF;}
+      .teal{stroke:#00B8D9; fill:none;}
+    </style>
+  </defs>
+  <g fill="none" stroke-linecap="round" stroke-linejoin="round">
+    <!-- Route path -->
+    <path class="blue" d="M8 48 C 18 38, 30 38, 40 32 S 52 22, 56 24" stroke-width="4"/>
+    <!-- Start node -->
+    <circle cx="8" cy="48" r="4" fill="#2684FF"/>
+    <!-- Resource node (emphasized ring) -->
+    <circle class="teal" cx="32" cy="32" r="6" stroke-width="4"/>
+    <!-- End node -->
+    <circle cx="56" cy="24" r="4" fill="#2684FF"/>
+  </g>
+</svg>
