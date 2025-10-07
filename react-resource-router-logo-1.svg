@@ -1,0 +1,30 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Logo 1: Network/Resource Flow -->
+  <defs>
+    <linearGradient id="gradient1" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#36B37E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Central router node -->
+  <circle cx="100" cy="100" r="20" fill="#0052CC"/>
+  
+  <!-- Resource nodes -->
+  <circle cx="50" cy="50" r="12" fill="#36B37E"/>
+  <circle cx="150" cy="50" r="12" fill="#36B37E"/>
+  <circle cx="50" cy="150" r="12" fill="#36B37E"/>
+  <circle cx="150" cy="150" r="12" fill="#36B37E"/>
+  
+  <!-- Progressive flow lines -->
+  <path d="M 62 62 Q 80 80 80 100" stroke="url(#gradient1)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 138 62 Q 120 80 120 100" stroke="url(#gradient1)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 62 138 Q 80 120 80 100" stroke="url(#gradient1)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  <path d="M 138 138 Q 120 120 120 100" stroke="url(#gradient1)" stroke-width="3" fill="none" stroke-linecap="round"/>
+  
+  <!-- Data flow indicators -->
+  <circle cx="70" cy="75" r="2" fill="#0052CC" opacity="0.6"/>
+  <circle cx="130" cy="75" r="2" fill="#0052CC" opacity="0.6"/>
+  <circle cx="70" cy="125" r="2" fill="#0052CC" opacity="0.6"/>
+  <circle cx="130" cy="125" r="2" fill="#0052CC" opacity="0.6"/>
+</svg>

@@ -1,0 +1,25 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 200 200" width="200" height="200">
+  <!-- Logo 2: Route Layers/Progressive -->
+  <defs>
+    <linearGradient id="gradient2" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#0052CC;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#36B37E;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Progressive layers representing route rendering -->
+  <rect x="40" y="60" width="120" height="20" rx="10" fill="#0052CC" opacity="0.3"/>
+  <rect x="50" y="80" width="100" height="20" rx="10" fill="#0052CC" opacity="0.5"/>
+  <rect x="60" y="100" width="80" height="20" rx="10" fill="#0052CC" opacity="0.7"/>
+  <rect x="70" y="120" width="60" height="20" rx="10" fill="#36B37E"/>
+  
+  <!-- Router symbol - stylized R -->
+  <path d="M 85 140 L 85 155 M 85 140 L 95 140 Q 100 140 100 145 Q 100 150 95 150 L 85 150 M 95 150 L 100 155" 
+        stroke="#0052CC" stroke-width="3" fill="none" stroke-linecap="round" stroke-linejoin="round"/>
+  
+  <!-- Connection dots -->
+  <circle cx="45" cy="70" r="3" fill="#36B37E"/>
+  <circle cx="155" cy="70" r="3" fill="#36B37E"/>
+  <circle cx="55" cy="90" r="3" fill="#36B37E"/>
+  <circle cx="145" cy="90" r="3" fill="#36B37E"/>
+</svg>

@@ -1,5 +1,7 @@
 <p align="center">
-  <img src="https://user-images.githubusercontent.com/84136/83958672-e99bba00-a8b7-11ea-81c7-0397f23e8a04.png" alt="react-resource-router logo" height="150" />
+  <img src="react-resource-router-logo-1.svg" alt="React Resource Router Logo - Network Flow" height="120" />
+  <img src="react-resource-router-logo-2.svg" alt="React Resource Router Logo - Progressive Layers" height="120" />
+  <img src="react-resource-router-logo-3.svg" alt="React Resource Router Logo - Route Tree" height="120" />
 </p>
 <h1 align="center">react-resource-router</h1>
 <p align="center">
