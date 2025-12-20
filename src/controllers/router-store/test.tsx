@@ -64,11 +64,12 @@ describe('RouterStore', () => {
       return {
         actions: getRouterStore().actions,
         getState: getRouterState,
-        history: Object.assign({}, history, {
+        history: {
+          ...history,
           listen,
           push,
           replace,
-        }),
+        },
         plugins,
       };
     }

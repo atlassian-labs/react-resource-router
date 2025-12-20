@@ -16,8 +16,8 @@ import { getPrefetchSlice, getResourceState } from '../manage-resource-state';
 // https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Global_Objects/Object/fromEntries
 const fromEntries =
   Object.fromEntries ??
-  (<T>(entries: [string, T][]) =>
-    Object.assign({}, ...entries.map(([k, v]) => ({ [k]: v }))));
+  (<T>(entries: [string, T][]): Record<string, T> =>
+    entries.reduce((acc, [k, v]) => ({ ...acc, [k]: v }), {}));
 
 type MatchableType =
   | { type: ResourceType }

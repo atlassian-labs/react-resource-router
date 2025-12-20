@@ -78,7 +78,7 @@ describe('resource store', () => {
     maxAge: Number.MAX_SAFE_INTEGER,
   });
   const resolver = (resolveWith: any, delay = 0) =>
-    new Promise(resolve => setTimeout(() => resolve(resolveWith), delay));
+    new Promise(resolve => setTimeout(resolve, delay, resolveWith));
 
   const getResourceSlice = (
     t: ResourceType

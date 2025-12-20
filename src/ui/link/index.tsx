@@ -63,15 +63,14 @@ const Link = forwardRef<HTMLButtonElement | HTMLAnchorElement, LinkProps>(
       basePath: routerActions.getBasePath(),
     };
     const linkDestination =
-      href != null
-        ? href
-        : typeof to !== 'string'
-          ? (route &&
-              createPath(
-                generateLocationFromPath(route.path, routeAttributes)
-              )) ||
-            ''
-          : to;
+      href ??
+      (typeof to !== 'string'
+        ? (route &&
+            createPath(
+              generateLocationFromPath(route.path, routeAttributes)
+            )) ||
+          ''
+        : to);
     const IS_ABSOLUTE_LINK_REGEX = /^((?:(http|https):\/\/)|\/\/)/;
     const staticBasePath =
       (href != null && !IS_ABSOLUTE_LINK_REGEX.test(href)) ||

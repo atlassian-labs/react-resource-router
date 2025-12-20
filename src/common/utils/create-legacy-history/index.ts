@@ -1,11 +1,27 @@
 import { createPath } from 'history';
-import debounce from 'lodash.debounce';
-import noop from 'lodash.noop';
 
 import { BrowserHistory, Location } from '../../types';
+import { noop } from '../noop';
 
 type HistoryAction = 'POP' | 'PUSH' | 'REPLACE';
 type Listener = (location: Location, action: HistoryAction) => void;
+
+const debounce = <T extends (...args: any[]) => any>(
+  func: T,
+  wait: number
+): ((...args: Parameters<T>) => void) => {
+  let timeout: ReturnType<typeof setTimeout> | null = null;
+
+  return (...args: Parameters<T>) => {
+    if (timeout !== null) {
+      clearTimeout(timeout);
+    }
+    timeout = setTimeout(() => {
+      timeout = null;
+      func(...args);
+    }, wait);
+  };
+};
 
 const hasWindow = () => typeof window !== 'undefined';
 
@@ -82,7 +98,7 @@ const createLegacyListener = (updateExposedLocation: Listener) => {
   }
 
   return (listener: any) => {
-    listeners = listeners.concat(listener);
+    listeners = [...listeners, listener];
 
     return () => {
       listeners = listeners.filter(lst => lst !== listener);

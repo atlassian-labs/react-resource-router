@@ -1,6 +1,7 @@
-import noop from 'lodash.noop';
-
 import { createLegacyHistory } from './utils/create-legacy-history';
+import { noop } from './utils/noop';
+
+export { noop };
 
 export const DEFAULT_LOCATION = { pathname: '', search: '', hash: '' };
 

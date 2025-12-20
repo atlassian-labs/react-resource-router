@@ -1,8 +1,8 @@
 import { render } from '@testing-library/react';
-import noop from 'lodash.noop';
 import React from 'react';
 import { defaultRegistry } from 'react-sweet-state';
 
+import { noop } from '../../common/utils/noop';
 import { Router } from '../router';
 
 import { RouterActions } from './index';
