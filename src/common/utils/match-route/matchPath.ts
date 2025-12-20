@@ -43,7 +43,7 @@ function matchPath(
     sensitive = false,
     basePath = '',
   } = options;
-  const paths = [].concat(basePath + p);
+  const paths = [basePath + p].flat();
 
   return paths.reduce((matched: any, path: any) => {
     if (!path && path !== '') return null;

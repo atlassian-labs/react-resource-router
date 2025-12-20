@@ -64,8 +64,6 @@
     "test:watch": "jest --watch"
   },
   "dependencies": {
-    "lodash.debounce": "^4.0.8",
-    "lodash.noop": "^3.0.1",
     "path-to-regexp": "^6.3.0",
     "react-sweet-state": "^2.6.4",
     "url-parse": "^1.5.10"
@@ -95,8 +93,6 @@
     "@types/history-5": "npm:@types/history@^5.0.0",
     "@types/jest": "^29.5.12",
     "@types/jscodeshift": "^0.11.11",
-    "@types/lodash.debounce": "^4.0.9",
-    "@types/lodash.noop": "^3.0.9",
     "@types/react": "^18.2.64",
     "@types/react-dom": "^18.2.21",
     "@types/url-parse": "^1.4.11",

@@ -42,7 +42,7 @@ export const useResource = <RouteResourceData extends unknown>(
       >(RouterStore, {
         selector: ({ match, query, route }, keyArg): string =>
           resource.getKey(
-            keyArg != null ? keyArg : { match, query, route },
+            keyArg ?? { match, query, route },
             actions.getContext()
           ),
       }),

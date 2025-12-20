@@ -36,7 +36,7 @@ function matchQuery(
       }
 
       /* First check if queryParams contains the relevant param */
-      let match = Object.prototype.hasOwnProperty.call(queryParams, name);
+      let match = Object.hasOwn(queryParams, name);
       /* Save actual value so we expose it as part of match object */
       if (match) {
         queryMatch[name] = queryParams[name] || '';

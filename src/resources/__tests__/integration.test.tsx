@@ -29,7 +29,7 @@ describe('<Router /> with resources client-side integration tests', () => {
 
   it('re-triggers requests for timed out resources when mounted', async () => {
     const resolver = (resolveWith: any, delay = 0) =>
-      new Promise(resolve => setTimeout(() => resolve(resolveWith), delay));
+      new Promise(resolve => setTimeout(resolve, delay, resolveWith));
 
     const completedResource = createResource({
       getKey: () => 'key',
